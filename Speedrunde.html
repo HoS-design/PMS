@@ -254,13 +254,26 @@
     @media (prefers-reduced-motion: reduce){
       *{ transition:none !important; }
     }
+
+    /* Meme-Sticker 😄 */
+    .meme{
+      position:absolute;
+      right:14px;
+      top:12px;
+      width:120px;
+      image-rendering: pixelated;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+      transform: rotate(4deg);
+    }
+
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <header>
-      <span class="badge">⚡ Speedrunde • Zeitformen • <b style="color:var(--b)">made by HoS</b> • 60 Sekunden</span>
+      <img src="chatistthisreal.png" onerror="this.onerror=null;this.src='chatisthisreal.png';" alt="Chat is this real?" class="meme">
+      <span class="badge">⚡ Speedrunde • Zeitformen • <b style="color:var(--b)">HoS</b> • 60 Sekunden</span>
       <h1>Wie schnell bist du? 🏁</h1>
       <p>Du hast genau <b>60 Sekunden</b>. Jede richtige Antwort gibt Punkte. Falsch? Kein Drama – weiter geht’s! 😄</p>
     </header>
