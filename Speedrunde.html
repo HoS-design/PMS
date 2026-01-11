@@ -366,29 +366,115 @@ a.btn{ display:inline-flex; align-items:center; justify-content:center; text-dec
     // "aux"  = Hilfsverb-Detektiv
     // "use"  = Verwendung erkennen
 
-    const pool = [
-      // ================= BESTEHENDE FORMATE (pick) =================
-      { type:"pick", text:"Ich gehe morgen spazieren.", answer:"Präsens" },
-      { type:"pick", text:"Ich ging nach Hause.", answer:"Präteritum" },
-      { type:"pick", text:"Ich habe gegessen.", answer:"Perfekt" },
-      { type:"pick", text:"Ich hatte gegessen, bevor ich ging.", answer:"Plusquamperfekt" },
-      { type:"pick", text:"Ich werde lernen.", answer:"Futur I" },
-      { type:"pick", text:"Ich werde gelernt haben.", answer:"Futur II" },
+    // ====== Fragenpool (gemischt) ======
+    // type:
+    //  - pick: Satz → Zeitform wählen
+    //  - tf:   Richtig/Falsch
+    //  - aux:  Hilfsverb-Detektiv (Zeitform trotz Hinweis)
+    //  - use:  Verwendung erkennen
 
-      // ================= NEUE FORMATE (gleiche Anzahl) =================
+    const pickPool = [
+      // Präsens
+      { type:"pick", text:"Ich gehe morgen spazieren.", answer:"Präsens", tip:"Zeitangabe → Präsens kann Zukunft sein." },
+      { type:"pick", text:"Wir lernen jetzt für den Test.", answer:"Präsens", tip:"Gegenwart." },
+      { type:"pick", text:"Jeden Montag spiele ich Fußball.", answer:"Präsens", tip:"Gewohnheit." },
+      { type:"pick", text:"Im Winter schneit es oft.", answer:"Präsens", tip:"Allgemeingültiges." },
+      { type:"pick", text:"Ich komme gleich!", answer:"Präsens", tip:"Nahe Zukunft." },
+      { type:"pick", text:"Nächste Woche schreibe ich eine Schularbeit.", answer:"Präsens", tip:"Plan mit Zeitangabe." },
+      { type:"pick", text:"Die Erde dreht sich um die Sonne.", answer:"Präsens", tip:"Fakten." },
+      { type:"pick", text:"Heute Abend sehe ich einen Film.", answer:"Präsens", tip:"Zeitangabe → Zukunft." },
 
-      // Richtig / Falsch
-      { type:"tf", text:"Ich hatte gegessen. → Perfekt", correct:false, explain:"‚hatte gegessen‘ ist Plusquamperfekt." },
-      { type:"tf", text:"Er wird jetzt zu Hause sein. → Futur I (Vermutung)", correct:true, explain:"Futur I kann Vermutung ausdrücken." },
+      // Präteritum
+      { type:"pick", text:"Ich ging nach Hause.", answer:"Präteritum", tip:"Erzählzeit." },
+      { type:"pick", text:"Er war gestern sehr müde.", answer:"Präteritum", tip:"sein oft im Präteritum." },
+      { type:"pick", text:"Wir hatten keine Zeit.", answer:"Präteritum", tip:"haben im Präteritum." },
+      { type:"pick", text:"Sie schrieb einen Brief.", answer:"Präteritum", tip:"schriftlich/Erzählung." },
+      { type:"pick", text:"Der Hund bellte die ganze Nacht.", answer:"Präteritum", tip:"Vergangenheit." },
+      { type:"pick", text:"Ich machte die Hausübung und ging schlafen.", answer:"Präteritum", tip:"Abfolge in der Vergangenheit." },
+      { type:"pick", text:"Wir spielten im Park.", answer:"Präteritum", tip:"Vergangenheit." },
+      { type:"pick", text:"Es gab ein Problem.", answer:"Präteritum", tip:"gab = Präteritum." },
 
-      // Hilfsverb-Detektiv
-      { type:"aux", text:"Ich habe gegessen.", aux:"haben", answer:"Perfekt" },
-      { type:"aux", text:"Wir werden gegangen sein.", aux:"werden + sein", answer:"Futur II" },
+      // Perfekt
+      { type:"pick", text:"Ich habe gegessen.", answer:"Perfekt", tip:"haben + Partizip II." },
+      { type:"pick", text:"Wir sind gelaufen.", answer:"Perfekt", tip:"sein + Partizip II." },
+      { type:"pick", text:"Sie hat den Film gesehen.", answer:"Perfekt", tip:"haben + Partizip II." },
+      { type:"pick", text:"Ich bin zu spät gekommen.", answer:"Perfekt", tip:"kommen → sein." },
+      { type:"pick", text:"Wir haben lange gewartet.", answer:"Perfekt", tip:"haben + Partizip II." },
+      { type:"pick", text:"Sie ist schnell eingeschlafen.", answer:"Perfekt", tip:"sein + Partizip II." },
+      { type:"pick", text:"Ich bin nach Hause gegangen.", answer:"Perfekt", tip:"gehen → sein." },
+      { type:"pick", text:"Er hat sich entschuldigt.", answer:"Perfekt", tip:"haben + Partizip II." },
 
-      // Verwendung erkennen
-      { type:"use", text:"Er wird schon schlafen.", answer:"Vermutung (Gegenwart)" },
-      { type:"use", text:"Ich hatte gelernt, deshalb war ich ruhig.", answer:"Vorvergangenheit" }
+      // Plusquamperfekt
+      { type:"pick", text:"Ich hatte gegessen, bevor ich ging.", answer:"Plusquamperfekt", tip:"Vorvergangenheit." },
+      { type:"pick", text:"Wir waren schon gegangen, als er ankam.", answer:"Plusquamperfekt", tip:"waren + Partizip II." },
+      { type:"pick", text:"Sie hatte gelernt, darum war sie ruhig.", answer:"Plusquamperfekt", tip:"hatte + Partizip II." },
+      { type:"pick", text:"Nachdem wir gegessen hatten, gingen wir raus.", answer:"Plusquamperfekt", tip:"…hatten = früher." },
+      { type:"pick", text:"Er war eingeschlafen, bevor der Film zu Ende war.", answer:"Plusquamperfekt", tip:"war + Partizip II." },
+      { type:"pick", text:"Ich hatte den Bus verpasst, deshalb kam ich zu spät.", answer:"Plusquamperfekt", tip:"früher als kam." },
+      { type:"pick", text:"Er war schon losgefahren, als ich anrief.", answer:"Plusquamperfekt", tip:"früher als anrief." },
+      { type:"pick", text:"Wir hatten gewonnen, bevor der Schiri abpfiff.", answer:"Plusquamperfekt", tip:"früher als abpfiff." },
+
+      // Futur I
+      { type:"pick", text:"Ich werde lernen.", answer:"Futur I", tip:"werden + Infinitiv." },
+      { type:"pick", text:"Wir werden das schaffen.", answer:"Futur I", tip:"Zukunft." },
+      { type:"pick", text:"Er wird jetzt zu Hause sein.", answer:"Futur I", tip:"Vermutung (Gegenwart)." },
+      { type:"pick", text:"Ich werde morgen früher aufstehen.", answer:"Futur I", tip:"werden + Infinitiv." },
+      { type:"pick", text:"Es wird gleich regnen.", answer:"Futur I", tip:"Vermutung/Zukunft." },
+      { type:"pick", text:"Das wird schon passen.", answer:"Futur I", tip:"Vermutung." },
+      { type:"pick", text:"Wir werden später telefonieren.", answer:"Futur I", tip:"Plan." },
+      { type:"pick", text:"Ich werde dir helfen.", answer:"Futur I", tip:"Absicht." },
+
+      // Futur II
+      { type:"pick", text:"Ich werde gelernt haben.", answer:"Futur II", tip:"werden + Partizip II + haben/sein." },
+      { type:"pick", text:"Bis morgen wirst du das erledigt haben.", answer:"Futur II", tip:"bis dann fertig." },
+      { type:"pick", text:"Er wird wohl schon gegangen sein.", answer:"Futur II", tip:"Vermutung (Vergangenheit)." },
+      { type:"pick", text:"In einer Stunde werde ich die Aufgabe gelöst haben.", answer:"Futur II", tip:"abgeschlossen bis dann." },
+      { type:"pick", text:"Bis 18 Uhr werden wir alles vorbereitet haben.", answer:"Futur II", tip:"bis dahin fertig." },
+      { type:"pick", text:"Wenn du ankommst, werde ich schon gekocht haben.", answer:"Futur II", tip:"vor Zukunftspunkt fertig." },
+      { type:"pick", text:"Er wird die Nachricht bereits gelesen haben.", answer:"Futur II", tip:"Vermutung: schon passiert." },
+      { type:"pick", text:"Um diese Zeit morgen wirst du längst angekommen sein.", answer:"Futur II", tip:"sein + Partizip II." }
     ];
+
+    // Neue Aufgabenformate: gleiche Anzahl wie pickPool
+    const extraPool = [
+      // tf (8)
+      { type:"tf", text:"Ich hatte gegessen. → Perfekt", correct:false, explain:"‚hatte gegessen‘ ist Plusquamperfekt." },
+      { type:"tf", text:"Wir sind gelaufen. → Perfekt", correct:true, explain:"sein + Partizip II = Perfekt." },
+      { type:"tf", text:"Ich werde lernen. → Futur II", correct:false, explain:"Futur II braucht Partizip II + haben/sein." },
+      { type:"tf", text:"Er war müde. → Präteritum", correct:true, explain:"war = Präteritum von sein." },
+      { type:"tf", text:"Bis morgen wirst du das erledigt haben. → Futur II", correct:true, explain:"bis dann fertig = Futur II." },
+      { type:"tf", text:"Ich gehe nächste Woche schwimmen. → Futur I", correct:false, explain:"Das ist Präsens mit Zeitangabe." },
+      { type:"tf", text:"Ich hatte gewonnen, bevor er kam. → Plusquamperfekt", correct:true, explain:"hatte gewonnen = Vorvergangenheit." },
+      { type:"tf", text:"Er wird jetzt zu Hause sein. → Vermutung", correct:true, explain:"Futur I kann Vermutung ausdrücken." },
+
+      // aux (8)
+      { type:"aux", text:"Ich habe gegessen.", aux:"haben", answer:"Perfekt", tip:"haben + Partizip II" },
+      { type:"aux", text:"Wir sind gegangen.", aux:"sein", answer:"Perfekt", tip:"sein + Partizip II" },
+      { type:"aux", text:"Ich hatte gelernt.", aux:"hatte", answer:"Plusquamperfekt", tip:"Präteritum von haben + Partizip II" },
+      { type:"aux", text:"Wir waren angekommen.", aux:"waren", answer:"Plusquamperfekt", tip:"Präteritum von sein + Partizip II" },
+      { type:"aux", text:"Ich werde lernen.", aux:"werden", answer:"Futur I", tip:"werden + Infinitiv" },
+      { type:"aux", text:"Ich werde gelernt haben.", aux:"werden + haben", answer:"Futur II", tip:"werden + Partizip II + haben" },
+      { type:"aux", text:"Er war müde.", aux:"–", answer:"Präteritum", tip:"einfache Vergangenheit" },
+      { type:"aux", text:"Ich gehe morgen.", aux:"–", answer:"Präsens", tip:"Präsens mit Zeitangabe" },
+
+      // use (8)
+      { type:"use", text:"Er wird schon schlafen.", choices:["Zukunft","Vermutung (Gegenwart)","Vorvergangenheit"], answer:"Vermutung (Gegenwart)", tip:"Futur I als Vermutung" },
+      { type:"use", text:"Bis morgen werde ich fertig sein.", choices:["Zukunft","Vermutung (Vergangenheit)","Vorvergangenheit"], answer:"Zukunft", tip:"Futur I: Plan/Zukunft" },
+      { type:"use", text:"Er wird wohl schon gegangen sein.", choices:["Zukunft","Vermutung (Vergangenheit)","Gewohnheit"], answer:"Vermutung (Vergangenheit)", tip:"Futur II als Vermutung" },
+      { type:"use", text:"Ich gehe morgen zum Arzt.", choices:["Plan/Zukunft","Vorvergangenheit","Vermutung"], answer:"Plan/Zukunft", tip:"Präsens als Zukunft" },
+      { type:"use", text:"Ich hatte gegessen, bevor ich ging.", choices:["Vorvergangenheit","Zukunft","Gegenwart"], answer:"Vorvergangenheit", tip:"Plusquamperfekt" },
+      { type:"use", text:"Ich habe gegessen.", choices:["gesprochenes Deutsch","Vorvergangenheit","Zukunft"], answer:"gesprochenes Deutsch", tip:"Perfekt ist sehr häufig gesprochen" },
+      { type:"use", text:"Ich ging nach Hause.", choices:["Erzählzeit","Vermutung","Zukunft"], answer:"Erzählzeit", tip:"Präteritum in Erzählungen" },
+      { type:"use", text:"In einer Stunde werde ich die Aufgabe gelöst haben.", choices:["abgeschlossen bis dann","Gewohnheit","Gegenwart"], answer:"abgeschlossen bis dann", tip:"Futur II" }
+    ];
+
+    // gleiche Anzahl: wenn extraPool kürzer ist, füllen wir mit weiteren gemischten Fragen auf
+    while(extraPool.length < pickPool.length){
+      extraPool.push({ type:"tf", text:"Ich habe gelernt. → Perfekt", correct:true, explain:"haben + Partizip II." });
+    }
+    extraPool.length = pickPool.length;
+
+    const pool = [...pickPool, ...extraPool];
 
     const options = ["Präsens", "Präteritum", "Perfekt", "Plusquamperfekt", "Futur I", "Futur II"];
 
@@ -456,20 +542,60 @@ a.btn{ display:inline-flex; align-items:center; justify-content:center; text-dec
       current = pickQuestion();
       asked++;
 
-      questionText.innerHTML = `🧩 <b>${current.text}</b>`;
-      hintEl.textContent = "Tipp: " + current.tip;
+      // Default hint
+      hintEl.textContent = current.tip ? ("Tipp: " + current.tip) : "Los geht’s 😄";
 
       answersEl.innerHTML = "";
-      const shuffled = shuffle(options);
 
-      shuffled.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "option";
-        btn.textContent = opt;
-        btn.addEventListener("click", () => choose(opt, btn));
-        answersEl.appendChild(btn);
-      });
+      if(current.type === "tf"){
+        questionText.innerHTML = `⚡ <b>Richtig oder falsch?</b><br><span style="color:var(--muted)">${current.text}</span>`;
+        const tfOpts = ["Richtig", "Falsch"];
+        tfOpts.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.addEventListener("click", () => choose(opt, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+      else if(current.type === "aux"){
+        questionText.innerHTML = `🕵️ <b>Hilfsverb-Detektiv</b> • Hinweis: <span class="pill">${current.aux}</span><br>🧩 <b>${current.text}</b>`;
+        const shuffled = shuffle(options);
+        shuffled.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.addEventListener("click", () => choose(opt, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+      else if(current.type === "use"){
+        questionText.innerHTML = `🎯 <b>Wofür wird’s verwendet?</b><br>🧩 <b>${current.text}</b>`;
+        const useOpts = shuffle(current.choices || ["Zukunft","Vermutung","Erzählzeit","Vorvergangenheit"]);
+        useOpts.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.addEventListener("click", () => choose(opt, btn));
+          answersEl.appendChild(btn);
+        });
+      }
+      else {
+        // pick
+        questionText.innerHTML = `🧩 <b>${current.text}</b>`;
+        const shuffled = shuffle(options);
+        shuffled.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.addEventListener("click", () => choose(opt, btn));
+          answersEl.appendChild(btn);
+        });
+      }
 
       setUIEnabled(running);
     }
@@ -661,18 +787,23 @@ a.btn{ display:inline-flex; align-items:center; justify-content:center; text-dec
     function choose(opt, btn){
       if(!running) return;
 
-      // Buttons kurz sperren für Feedback
       const buttons = Array.from(answersEl.querySelectorAll("button"));
       buttons.forEach(b => b.disabled = true);
 
-      const isCorrect = (opt === current.answer);
+      // determine correct option
+      let correctOpt = null;
+      if(current.type === "tf") correctOpt = (current.correct ? "Richtig" : "Falsch");
+      else correctOpt = current.answer;
+
+      const isCorrect = (opt === correctOpt);
 
       if(isCorrect){
-        correct++;
+        if(current.type !== "use") correct++; // use-Fragen zählen auch als richtig
+        else correct++;
+
         streak++;
         streakMax = Math.max(streakMax, streak);
 
-        // Punkte: Basis 1 + Bonus je nach Streak
         let add = 1;
         if(streak >= 3) add = 2;
         if(streak >= 6) add = 3;
@@ -690,13 +821,13 @@ a.btn{ display:inline-flex; align-items:center; justify-content:center; text-dec
         streakEl.textContent = "0";
         btn.classList.add("no");
 
-        const correctBtn = buttons.find(b => b.textContent === current.answer);
+        const correctBtn = buttons.find(b => b.textContent === correctOpt);
         if(correctBtn) correctBtn.classList.add("ok");
 
-        hintEl.textContent = `Fast! 😅 Richtig wäre: ${current.answer}.`;
+        if(current.type === "tf") hintEl.textContent = current.explain ? (`Nope 😅 ${current.explain}`) : `Nope 😅 Richtig: ${correctOpt}`;
+        else hintEl.textContent = `Fast! 😅 Richtig wäre: ${correctOpt}.`;
       }
 
-      // nach kurzem Moment nächste Frage
       setTimeout(() => {
         if(running){
           renderQuestion();
