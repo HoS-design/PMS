@@ -254,27 +254,12 @@
     @media (prefers-reduced-motion: reduce){
       *{ transition:none !important; }
     }
-	.meme{
-  position:absolute;
-  right:14px;
-  top:12px;
-  width:120px;
-  image-rendering: pixelated;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
-  transform: rotate(4deg);
-}
-
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <header>
-	<img src="chatisthisreal.png"
-     alt="Chat is this real?"
-     class="meme">
-
-      <img class="sticker" alt="Chat is this real?" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAABk30lEQVR4XmMYBaMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjI
       <span class="badge">⚡ Speedrunde • Zeitformen • <b style="color:var(--b)">HoS</b> • 60 Sekunden</span>
       <h1>Wie schnell bist du? 🏁</h1>
       <p>Du hast genau <b>60 Sekunden</b>. Jede richtige Antwort gibt Punkte. Falsch? Kein Drama – weiter geht’s! 😄</p>
@@ -308,35 +293,89 @@
   <script>
     // ====== Fragenpool (du kannst hier beliebig erweitern) ======
     const pool = [
-      // Präsens
+      // ===== Präsens =====
       { text: "Ich gehe morgen spazieren.", answer: "Präsens", tip: "Präsens kann mit Zeitangabe Zukunft sein." },
       { text: "Wir lernen jetzt für den Test.", answer: "Präsens", tip: "Gegenwart." },
-      { text: "Jeden Montag spiele ich Fußball.", answer: "Präsens", tip: "Allgemeingültig / Gewohnheit." },
+      { text: "Jeden Montag spiele ich Fußball.", answer: "Präsens", tip: "Gewohnheit/Allgemeines." },
+      { text: "Im Winter schneit es oft.", answer: "Präsens", tip: "Allgemeingültiges." },
+      { text: "Ich komme gleich!", answer: "Präsens", tip: "Gegenwart/nahe Zukunft." },
+      { text: "Nächste Woche schreibe ich eine Schularbeit.", answer: "Präsens", tip: "Zeitangabe → Zukunft im Präsens." },
+      { text: "Die Erde dreht sich um die Sonne.", answer: "Präsens", tip: "Fakten stehen oft im Präsens." },
+      { text: "Pass auf, ich bin gleich fertig!", answer: "Präsens", tip: "Gegenwart/nahe Zukunft." },
+      { text: "Heute Abend sehe ich einen Film.", answer: "Präsens", tip: "Zeitangabe → Zukunft." },
+      { text: "Wir treffen uns um 18 Uhr.", answer: "Präsens", tip: "Zukünftiger Plan." },
+      { text: "Jetzt regnet es.", answer: "Präsens", tip: "Gegenwart." },
+      { text: "Ich verstehe das.", answer: "Präsens", tip: "Zustand in der Gegenwart." },
 
-      // Präteritum
+      // ===== Präteritum =====
       { text: "Ich ging nach Hause.", answer: "Präteritum", tip: "Erzählzeit." },
       { text: "Er war gestern sehr müde.", answer: "Präteritum", tip: "sein/haben oft im Präteritum." },
       { text: "Wir hatten keine Zeit.", answer: "Präteritum", tip: "haben im Präteritum: hatten." },
+      { text: "Sie schrieb einen Brief.", answer: "Präteritum", tip: "Erzählung/berichtend." },
+      { text: "Der Hund bellte die ganze Nacht.", answer: "Präteritum", tip: "Vergangenheit in Geschichten." },
+      { text: "Ich machte die Hausübung und ging schlafen.", answer: "Präteritum", tip: "Abfolge im Präteritum." },
+      { text: "Er sagte, er komme später.", answer: "Präteritum", tip: "sagte = Präteritum." },
+      { text: "Wir spielten im Park.", answer: "Präteritum", tip: "Vergangenes (schriftlich)." },
+      { text: "Ich fand den Schlüssel nicht.", answer: "Präteritum", tip: "2. Stammform + Endung." },
+      { text: "Sie las das Buch in einem Zug.", answer: "Präteritum", tip: "las = Präteritum." },
+      { text: "Es gab ein Problem.", answer: "Präteritum", tip: "gab = Präteritum von geben." },
+      { text: "Ich wusste das schon.", answer: "Präteritum", tip: "wusste = Präteritum." },
 
-      // Perfekt
+      // ===== Perfekt =====
       { text: "Ich habe gegessen.", answer: "Perfekt", tip: "haben/sein + Partizip II." },
       { text: "Wir sind gelaufen.", answer: "Perfekt", tip: "sein + Partizip II (Bewegung)." },
       { text: "Sie hat den Film gesehen.", answer: "Perfekt", tip: "haben + Partizip II." },
+      { text: "Ich bin zu spät gekommen.", answer: "Perfekt", tip: "kommen → sein." },
+      { text: "Wir haben lange gewartet.", answer: "Perfekt", tip: "haben + Partizip II." },
+      { text: "Er hat seine Jacke vergessen.", answer: "Perfekt", tip: "haben + Partizip II." },
+      { text: "Ich habe die Aufgabe verstanden.", answer: "Perfekt", tip: "haben + Partizip II." },
+      { text: "Sie ist schnell eingeschlafen.", answer: "Perfekt", tip: "sein + Partizip II." },
+      { text: "Wir haben die Türen geschlossen.", answer: "Perfekt", tip: "Abgeschlossenes (gesprochen)." },
+      { text: "Ich bin nach Hause gegangen.", answer: "Perfekt", tip: "gehen → sein." },
+      { text: "Er hat sich entschuldigt.", answer: "Perfekt", tip: "haben + Partizip II." },
+      { text: "Wir sind umgezogen.", answer: "Perfekt", tip: "umziehen → sein." },
 
-      // Plusquamperfekt
+      // ===== Plusquamperfekt =====
       { text: "Ich hatte gegessen, bevor ich ging.", answer: "Plusquamperfekt", tip: "Vorvergangenheit." },
       { text: "Wir waren schon gegangen, als er ankam.", answer: "Plusquamperfekt", tip: "waren + Partizip II." },
       { text: "Sie hatte gelernt, darum war sie ruhig.", answer: "Plusquamperfekt", tip: "hatte + Partizip II." },
+      { text: "Ich hatte den Bus verpasst, deshalb kam ich zu spät.", answer: "Plusquamperfekt", tip: "Vor einem anderen Vergangenheitsmoment." },
+      { text: "Nachdem wir gegessen hatten, gingen wir raus.", answer: "Plusquamperfekt", tip: "gegessen hatten = Plusquamperfekt." },
+      { text: "Er war eingeschlafen, bevor der Film zu Ende war.", answer: "Plusquamperfekt", tip: "war + Partizip II." },
+      { text: "Sie hatte ihre Schlüssel verloren und rief mich an.", answer: "Plusquamperfekt", tip: "hatte verloren = vor dem Anruf." },
+      { text: "Wir hatten schon begonnen, als du gekommen bist.", answer: "Plusquamperfekt", tip: "hatten begonnen = früher." },
+      { text: "Ich hatte das Heft zu Hause vergessen.", answer: "Plusquamperfekt", tip: "hatte + Partizip II." },
+      { text: "Er war schon losgefahren, als ich anrief.", answer: "Plusquamperfekt", tip: "war losgefahren = früher." },
+      { text: "Sie hatte nicht aufgepasst, deshalb verstand sie es nicht.", answer: "Plusquamperfekt", tip: "Vorvergangenheit." },
+      { text: "Wir hatten gewonnen, bevor der Schiri abpfiff.", answer: "Plusquamperfekt", tip: "hatten gewonnen = früher." },
 
-      // Futur I
+      // ===== Futur I =====
       { text: "Ich werde lernen.", answer: "Futur I", tip: "werden + Infinitiv." },
       { text: "Wir werden das schaffen.", answer: "Futur I", tip: "Zukunft." },
       { text: "Er wird jetzt zu Hause sein.", answer: "Futur I", tip: "Vermutung über die Gegenwart." },
+      { text: "Ich werde morgen früher aufstehen.", answer: "Futur I", tip: "werden + Infinitiv." },
+      { text: "Du wirst das schon können.", answer: "Futur I", tip: "Vermutung/Zuversicht." },
+      { text: "Es wird gleich regnen.", answer: "Futur I", tip: "Vermutung/Zukunft." },
+      { text: "Wir werden später telefonieren.", answer: "Futur I", tip: "Plan in der Zukunft." },
+      { text: "Ich werde dir helfen.", answer: "Futur I", tip: "Zukünftige Absicht." },
+      { text: "Er wird sicher noch im Bus sitzen.", answer: "Futur I", tip: "Vermutung (Gegenwart)." },
+      { text: "Bald wirst du lachen.", answer: "Futur I", tip: "werden + Infinitiv." },
+      { text: "Das wird schon passen.", answer: "Futur I", tip: "Vermutung/Zuversicht." },
+      { text: "Wir werden nächstes Jahr nach Berlin fahren.", answer: "Futur I", tip: "Zukunft." },
 
-      // Futur II
+      // ===== Futur II =====
       { text: "Ich werde gelernt haben.", answer: "Futur II", tip: "werden + Partizip II + haben/sein." },
       { text: "Bis morgen wirst du das erledigt haben.", answer: "Futur II", tip: "bis dann fertig." },
-      { text: "Er wird wohl schon gegangen sein.", answer: "Futur II", tip: "Vermutung über Vergangenes." }
+      { text: "Er wird wohl schon gegangen sein.", answer: "Futur II", tip: "Vermutung über Vergangenes." },
+      { text: "In einer Stunde werde ich die Aufgabe gelöst haben.", answer: "Futur II", tip: "abgeschlossen in der Zukunft." },
+      { text: "Bis 18 Uhr werden wir alles vorbereitet haben.", answer: "Futur II", tip: "bis dahin fertig." },
+      { text: "Sie wird das bestimmt vergessen haben.", answer: "Futur II", tip: "Vermutung über Vergangenes." },
+      { text: "Wenn du ankommst, werde ich schon gekocht haben.", answer: "Futur II", tip: "vor einem zukünftigen Zeitpunkt abgeschlossen." },
+      { text: "Bis nächste Woche werden wir den Stoff wiederholt haben.", answer: "Futur II", tip: "abgeschlossen bis dann." },
+      { text: "Er wird die Nachricht bereits gelesen haben.", answer: "Futur II", tip: "Vermutung: schon passiert." },
+      { text: "Um diese Zeit morgen wirst du längst angekommen sein.", answer: "Futur II", tip: "sein + Partizip II." },
+      { text: "Bis dahin werde ich mich entschieden haben.", answer: "Futur II", tip: "abgeschlossen." },
+      { text: "Sie werden sicher schon begonnen haben.", answer: "Futur II", tip: "Vermutung (Vergangenheit)." }
     ];
 
     const options = ["Präsens", "Präteritum", "Perfekt", "Plusquamperfekt", "Futur I", "Futur II"];
