@@ -232,6 +232,10 @@
       font-weight:700;
     }
 
+    /* Link-Button wie ein Button */
+    a.btn{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+    .btn.disabled{ opacity:.55; pointer-events:none; }
+
     .hint{
       color:var(--muted);
       font-size:.95rem;
@@ -290,11 +294,16 @@
       <div class="answers" id="answers"></div>
 
       <div class="controls">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+          <input id="studentName" placeholder="Name (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
+          <input id="studentClass" placeholder="Klasse (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
+        </div>
         <div class="hint" id="hint">Klick dich warm – dann wird’s wild 😄</div>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button class="btn" id="startBtn" type="button">Start 🚀</button>
           <button class="btn secondary" id="skipBtn" type="button" disabled>Skip 🙈</button>
           <button class="btn secondary" id="restartBtn" type="button" disabled>Neustart 🔁</button>
+          <a class="btn secondary disabled" id="mailLink" href="#" aria-disabled="true">Score mailen ✉️</a>
         </div>
       </div>
 
@@ -304,6 +313,10 @@
   </div>
 
   <script>
+    // ====== Mail-Einstellung (Option 1) ======
+    // Trage hier DEINE E-Mail ein:
+    const MY_EMAIL = "stefan.holzer@edulinu.com";
+
     // ====== Fragenpool (du kannst hier beliebig erweitern) ======
     const pool = [
       // ===== Präsens =====
@@ -412,6 +425,9 @@
     const answersEl = document.getElementById("answers");
     const hintEl = document.getElementById("hint");
     const resultBox = document.getElementById("resultBox");
+    const mailLink = document.getElementById("mailLink");
+    const nameInput = document.getElementById("studentName");
+    const classInput = document.getElementById("studentClass");
 
     const startBtn = document.getElementById("startBtn");
     const skipBtn = document.getElementById("skipBtn");
@@ -525,6 +541,29 @@
           Tipp: Mehr Punkte bekommst du mit Streaks (ab 3 wird’s juicy 😄).
         </div>
       `;
+
+      // Mail-Link vorbereiten (öffnet das Mailprogramm – Nutzer klickt auf „Senden“)
+      const subject = encodeURIComponent("Speedrunde Zeitformen – Score");
+      const body = encodeURIComponent(
+        `Name: ${nameInput.value || "–"}
+` +
+        `Klasse: ${classInput.value || "–"}
+
+` +
+        `Score: ${score}
+` +
+        `Fragen: ${asked}
+` +
+        `Richtig: ${correct} (${pct}%)
+` +
+        `Beste Streak: ${streakMax}
+` +
+        `
+— gesendet aus der Zeitformen-Speedrunde (HoS) —`
+      );
+      mailLink.href = `mailto:${MY_EMAIL}?subject=${subject}&body=${body}`;
+      mailLink.classList.remove("disabled");
+      mailLink.setAttribute("aria-disabled","false");
 
       startBtn.textContent = "Start 🚀";
       startBtn.disabled = false;
