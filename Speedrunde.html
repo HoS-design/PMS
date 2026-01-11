@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zeitformen – Speedrunde (60s)</title>
+  <style>
+    :root{
+      --bg1:#2a0000;          /* dunkles Rot */
+      --bg2:#4a0000;          /* Deutsch‑Rot Verlauf */
+      --card: rgba(255,255,255,.10);
+      --border: rgba(255,255,255,.22);
+      --text:#fff5f5;
+      --muted:#ffd6d6;
+      --a:#b30000;            /* Deutsch‑Rot (Hauptfarbe) */
+      --b:#ff6b6b;            /* helles Rot */
+      --c:#ff9a9a;            /* Pastell‑Rot */
+      --d:#ffd1d1;            /* sehr helles Rot */
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1000px 700px at 10% 10%, rgba(179,0,0,.28), transparent 55%),
+        radial-gradient(900px 650px at 90% 10%, rgba(255,107,107,.22), transparent 55%),
+        radial-gradient(900px 650px at 65% 90%, rgba(255,154,154,.20), transparent 55%),
+        radial-gradient(800px 600px at 18% 88%, rgba(255,209,209,.18), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    /* Glitzer-Konfetti ✨ */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(2px 2px at 10% 20%, rgba(255,180,180,.9) 40%, transparent 42%),
+        radial-gradient(2px 2px at 30% 70%, rgba(255,120,120,.9) 40%, transparent 42%),
+        radial-gradient(2px 2px at 55% 35%, rgba(255,160,160,.85) 40%, transparent 42%),
+        radial-gradient(2px 2px at 80% 25%, rgba(255,200,200,.85) 40%, transparent 42%),
+        radial-gradient(2px 2px at 85% 80%, rgba(255,120,120,.7) 40%, transparent 42%),
+        radial-gradient(2px 2px at 15% 85%, rgba(255,180,180,.7) 40%, transparent 42%);
+      opacity:.26;
+      filter: blur(.2px);
+    }
+
+    .wrap{
+      width:min(980px, 100%);
+      display:grid;
+      gap:14px;
+    }
+
+    header{
+      background: linear-gradient(90deg, rgba(255,122,217,.18), rgba(124,247,198,.12), rgba(125,183,255,.14));
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:16px 18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      inset:-40px;
+      background: radial-gradient(400px 140px at 70% 20%, rgba(255,209,102,.22), transparent 60%);
+      pointer-events:none;
+      transform: rotate(6deg);
+    }
+
+    header > *{position:relative}
+
+    .badge{
+      display:inline-flex;
+      gap:.55rem;
+      align-items:center;
+      padding:7px 11px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    h1{
+      margin:10px 0 6px;
+      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+    }
+
+    p{margin:0;color:var(--muted);max-width:75ch;line-height:1.5}
+
+    .card{
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:16px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .card::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:10px;
+      background: linear-gradient(180deg, var(--a), var(--b), var(--c), var(--d));
+      opacity:.9;
+    }
+
+    .card::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(540px 220px at 20% 0%, rgba(255,209,102,.12), transparent 60%),
+        radial-gradient(520px 220px at 92% 0%, rgba(255,122,217,.10), transparent 60%);
+      pointer-events:none;
+    }
+
+    .card > *{position:relative}
+
+    .toprow{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:.45rem;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.16);
+      color:var(--text);
+      font-size:.95rem;
+      white-space:nowrap;
+    }
+
+    .timer{
+      font-variant-numeric: tabular-nums;
+      font-weight:850;
+      letter-spacing:.4px;
+    }
+
+    .progress{
+      height:10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      width:min(380px, 100%);
+    }
+
+    .bar{
+      height:100%;
+      width:100%;
+      background: linear-gradient(90deg, var(--d), var(--b), var(--c), var(--a));
+      transition: width .15s linear;
+    }
+
+    .q{
+      margin:10px 0 0;
+      font-size:1.08rem;
+    }
+
+    .answers{
+      margin-top:12px;
+      display:grid;
+      gap:10px;
+    }
+
+    button.option{
+      width:100%;
+      text-align:left;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.18);
+      padding:12px 12px;
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+      font-size:1rem;
+    }
+
+    button.option:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+    button.option[disabled]{opacity:.78; cursor:not-allowed; transform:none}
+
+    .ok{ outline:2px solid rgba(124,247,198,.7); }
+    .no{ outline:2px solid rgba(255,122,217,.65); }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .btn{
+      border:0;
+      padding:10px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      color:#0b1024;
+      background: linear-gradient(90deg, var(--b), var(--d));
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+
+    .btn.secondary{
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.22);
+      font-weight:700;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:.95rem;
+      min-height:1.35em;
+    }
+
+    .result{
+      display:none;
+      margin-top:14px;
+      padding:12px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.25);
+      background: linear-gradient(90deg, rgba(125,183,255,.12), rgba(124,247,198,.10), rgba(255,209,102,.10));
+    }
+
+    .result strong{ color: var(--d); }
+
+    .tiny{ font-size:.9rem; color:var(--muted); }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <img class="sticker" alt="Chat is this real?" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAABk30lEQVR4XmMYBaMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjITAaAqMhMBoCoyEwGgKjI
+      <span class="badge">⚡ Speedrunde • Zeitformen • <b style="color:var(--b)">HoS</b> • 60 Sekunden</span>
+      <h1>Wie schnell bist du? 🏁</h1>
+      <p>Du hast genau <b>60 Sekunden</b>. Jede richtige Antwort gibt Punkte. Falsch? Kein Drama – weiter geht’s! 😄</p>
+    </header>
+
+    <main class="card">
+      <div class="toprow">
+        <div class="pill">⏱️ Zeit: <span class="timer" id="time">60</span>s</div>
+        <div class="progress" aria-label="Zeitbalken"><div class="bar" id="bar"></div></div>
+        <div class="pill">🏆 Punkte: <span id="score">0</span></div>
+        <div class="pill">🎯 Streak: <span id="streak">0</span></div>
+      </div>
+
+      <div class="q" id="questionText"></div>
+      <div class="answers" id="answers"></div>
+
+      <div class="controls">
+        <div class="hint" id="hint">Klick dich warm – dann wird’s wild 😄</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="startBtn" type="button">Start 🚀</button>
+          <button class="btn secondary" id="skipBtn" type="button" disabled>Skip 🙈</button>
+          <button class="btn secondary" id="restartBtn" type="button" disabled>Neustart 🔁</button>
+        </div>
+      </div>
+
+      <div class="result" id="resultBox"></div>
+      <div class="tiny" style="margin-top:10px;">Tipp für Google Sites: diese Datei hosten und per „Einbetten → Von URL“ einbauen.</div>
+    </main>
+  </div>
+
+  <script>
+    // ====== Fragenpool (du kannst hier beliebig erweitern) ======
+    const pool = [
+      // Präsens
+      { text: "Ich gehe morgen spazieren.", answer: "Präsens", tip: "Präsens kann mit Zeitangabe Zukunft sein." },
+      { text: "Wir lernen jetzt für den Test.", answer: "Präsens", tip: "Gegenwart." },
+      { text: "Jeden Montag spiele ich Fußball.", answer: "Präsens", tip: "Allgemeingültig / Gewohnheit." },
+
+      // Präteritum
+      { text: "Ich ging nach Hause.", answer: "Präteritum", tip: "Erzählzeit." },
+      { text: "Er war gestern sehr müde.", answer: "Präteritum", tip: "sein/haben oft im Präteritum." },
+      { text: "Wir hatten keine Zeit.", answer: "Präteritum", tip: "haben im Präteritum: hatten." },
+
+      // Perfekt
+      { text: "Ich habe gegessen.", answer: "Perfekt", tip: "haben/sein + Partizip II." },
+      { text: "Wir sind gelaufen.", answer: "Perfekt", tip: "sein + Partizip II (Bewegung)." },
+      { text: "Sie hat den Film gesehen.", answer: "Perfekt", tip: "haben + Partizip II." },
+
+      // Plusquamperfekt
+      { text: "Ich hatte gegessen, bevor ich ging.", answer: "Plusquamperfekt", tip: "Vorvergangenheit." },
+      { text: "Wir waren schon gegangen, als er ankam.", answer: "Plusquamperfekt", tip: "waren + Partizip II." },
+      { text: "Sie hatte gelernt, darum war sie ruhig.", answer: "Plusquamperfekt", tip: "hatte + Partizip II." },
+
+      // Futur I
+      { text: "Ich werde lernen.", answer: "Futur I", tip: "werden + Infinitiv." },
+      { text: "Wir werden das schaffen.", answer: "Futur I", tip: "Zukunft." },
+      { text: "Er wird jetzt zu Hause sein.", answer: "Futur I", tip: "Vermutung über die Gegenwart." },
+
+      // Futur II
+      { text: "Ich werde gelernt haben.", answer: "Futur II", tip: "werden + Partizip II + haben/sein." },
+      { text: "Bis morgen wirst du das erledigt haben.", answer: "Futur II", tip: "bis dann fertig." },
+      { text: "Er wird wohl schon gegangen sein.", answer: "Futur II", tip: "Vermutung über Vergangenes." }
+    ];
+
+    const options = ["Präsens", "Präteritum", "Perfekt", "Plusquamperfekt", "Futur I", "Futur II"];
+
+    // ====== State ======
+    let timeLeft = 60;
+    let timerId = null;
+    let running = false;
+    let score = 0;
+    let streak = 0;
+    let current = null;
+    let asked = 0;
+    let correct = 0;
+
+    // ====== DOM ======
+    const timeEl = document.getElementById("time");
+    const bar = document.getElementById("bar");
+    const scoreEl = document.getElementById("score");
+    const streakEl = document.getElementById("streak");
+    const questionText = document.getElementById("questionText");
+    const answersEl = document.getElementById("answers");
+    const hintEl = document.getElementById("hint");
+    const resultBox = document.getElementById("resultBox");
+
+    const startBtn = document.getElementById("startBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    // ====== Helpers ======
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let j=a.length-1; j>0; j--){
+        const k = Math.floor(Math.random()*(j+1));
+        [a[j], a[k]] = [a[k], a[j]];
+      }
+      return a;
+    }
+
+    function pickQuestion(){
+      // zufällig aus Pool wählen
+      const q = pool[Math.floor(Math.random() * pool.length)];
+      // kleine Kopie zurückgeben
+      return { ...q };
+    }
+
+    function setUIEnabled(enabled){
+      skipBtn.disabled = !enabled;
+      restartBtn.disabled = !enabled;
+      const buttons = Array.from(answersEl.querySelectorAll("button"));
+      buttons.forEach(b => b.disabled = !enabled);
+    }
+
+    function renderQuestion(){
+      current = pickQuestion();
+      asked++;
+
+      questionText.innerHTML = `🧩 <b>${current.text}</b>`;
+      hintEl.textContent = "Tipp: " + current.tip;
+
+      answersEl.innerHTML = "";
+      const shuffled = shuffle(options);
+
+      shuffled.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.textContent = opt;
+        btn.addEventListener("click", () => choose(opt, btn));
+        answersEl.appendChild(btn);
+      });
+
+      setUIEnabled(running);
+    }
+
+    function updateTimerUI(){
+      timeEl.textContent = String(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / 60) * 100));
+      bar.style.width = pct + "%";
+
+      // Wenn es knapp wird: kleine Warnung im Hint
+      if(running && timeLeft <= 10){
+        hintEl.textContent = `🔥 Noch ${timeLeft}s! Schnell, bevor die Zeit wegflutscht!`;
+      }
+    }
+
+    function start(){
+      if(running) return;
+      running = true;
+      resultBox.style.display = "none";
+
+      startBtn.textContent = "Läuft! ⚡";
+      startBtn.disabled = true;
+
+      skipBtn.disabled = false;
+      restartBtn.disabled = false;
+
+      renderQuestion();
+      updateTimerUI();
+
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateTimerUI();
+        if(timeLeft <= 0){
+          finish();
+        }
+      }, 1000);
+    }
+
+    function finish(){
+      running = false;
+      clearInterval(timerId);
+      timerId = null;
+      setUIEnabled(false);
+      bar.style.width = "0%";
+      timeEl.textContent = "0";
+
+      const pct = asked ? Math.round((correct / asked) * 100) : 0;
+
+      let mood = "Solide! 😄";
+      if(score >= 25) mood = "Zeitformen-Ninja! 🥷✨";
+      else if(score >= 18) mood = "Turbo-Hirn! 🚀";
+      else if(score >= 10) mood = "Guter Lauf! 🌱";
+      else mood = "Warm-up war's 😅 – nochmal!";
+
+      resultBox.style.display = "block";
+      resultBox.innerHTML = `
+        <div style="font-size:1.1rem;">
+          <strong>Time's up! ⏰</strong> Score: <b>${score}</b> – ${mood}
+        </div>
+        <div style="margin-top:8px; color: rgba(255,255,255,.85);">
+          Fragen: <b>${asked}</b> • Richtig: <b>${correct}</b> (${pct}%) • Beste Streak: <b>${streakMax}</b>
+        </div>
+        <div style="margin-top:8px; color: rgba(255,255,255,.85);">
+          Tipp: Mehr Punkte bekommst du mit Streaks (ab 3 wird’s juicy 😄).
+        </div>
+      `;
+
+      startBtn.textContent = "Start 🚀";
+      startBtn.disabled = false;
+      hintEl.textContent = "Nochmal? Dein Gehirn hat gerade ein Level-up gemacht 🧠✨";
+    }
+
+    let streakMax = 0;
+
+    function choose(opt, btn){
+      if(!running) return;
+
+      // Buttons kurz sperren für Feedback
+      const buttons = Array.from(answersEl.querySelectorAll("button"));
+      buttons.forEach(b => b.disabled = true);
+
+      const isCorrect = (opt === current.answer);
+
+      if(isCorrect){
+        correct++;
+        streak++;
+        streakMax = Math.max(streakMax, streak);
+
+        // Punkte: Basis 1 + Bonus je nach Streak
+        let add = 1;
+        if(streak >= 3) add = 2;
+        if(streak >= 6) add = 3;
+        score += add;
+
+        scoreEl.textContent = String(score);
+        streakEl.textContent = String(streak);
+
+        btn.classList.add("ok");
+        hintEl.textContent = (add > 1)
+          ? `YES! 🎉 +${add} (Streak-Bonus!)`
+          : "YES! 🎉";
+      } else {
+        streak = 0;
+        streakEl.textContent = "0";
+        btn.classList.add("no");
+
+        const correctBtn = buttons.find(b => b.textContent === current.answer);
+        if(correctBtn) correctBtn.classList.add("ok");
+
+        hintEl.textContent = `Fast! 😅 Richtig wäre: ${current.answer}.`;
+      }
+
+      // nach kurzem Moment nächste Frage
+      setTimeout(() => {
+        if(running){
+          renderQuestion();
+        }
+      }, 420);
+    }
+
+    function resetAll(){
+      clearInterval(timerId);
+      timerId = null;
+      running = false;
+
+      timeLeft = 60;
+      score = 0;
+      streak = 0;
+      asked = 0;
+      correct = 0;
+      streakMax = 0;
+
+      scoreEl.textContent = "0";
+      streakEl.textContent = "0";
+      hintEl.textContent = "Klick dich warm – dann wird’s wild 😄";
+      resultBox.style.display = "none";
+
+      startBtn.textContent = "Start 🚀";
+      startBtn.disabled = false;
+      skipBtn.disabled = true;
+      restartBtn.disabled = true;
+
+      updateTimerUI();
+      questionText.innerHTML = "🧩 <b>Bereit?</b> Klick auf Start, dann geht’s los!";
+      answersEl.innerHTML = "";
+
+      // Buttons vorbereiten (disabled)
+      const shuffled = shuffle(options);
+      shuffled.forEach(opt => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "option";
+        b.textContent = opt;
+        b.disabled = true;
+        answersEl.appendChild(b);
+      });
+    }
+
+    // ====== Buttons ======
+    startBtn.addEventListener("click", start);
+
+    restartBtn.addEventListener("click", resetAll);
+
+    skipBtn.addEventListener("click", () => {
+      if(!running) return;
+      streak = 0;
+      streakEl.textContent = "0";
+      renderQuestion();
+    });
+
+    // init
+    resetAll();
+  </script>
+</body>
+</html>
