@@ -7,7 +7,6 @@
   <style>
     :root{
       --bg:#0b1220;
-      --card:#111a2e;
       --ink:#e8eefc;
       --muted:#a9b6d8;
       --line:rgba(255,255,255,.12);
@@ -26,7 +25,7 @@
       align-items:center;
       padding:20px;
     }
-    .wrap{width:min(900px,100%);}
+    .wrap{width:min(980px,100%);}
     .card{
       background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border:1px solid var(--line);
@@ -34,9 +33,35 @@
       box-shadow:0 10px 30px rgba(0,0,0,.25);
       padding:20px;
     }
-    h1{margin-top:0}
-    .word{font-size:34px;font-weight:900;margin:10px 0}
-    .meta{color:var(--muted);font-size:13px}
+    header{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start}
+    h1{margin:0}
+    .badge{
+      white-space:nowrap;
+      background:rgba(122,162,255,.18);
+      border:1px solid rgba(122,162,255,.35);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--ink);
+    }
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    button{
+      background:linear-gradient(180deg, rgba(122,162,255,.95), rgba(122,162,255,.75));
+      color:#08102a;
+      border:none;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:transparent;
+      color:var(--ink);
+      border:1px solid var(--line);
+      font-weight:700;
+    }
+    .word{font-size:36px;font-weight:950;margin:14px 0 4px}
+    .meta{color:var(--muted);font-size:13px;margin:0 0 10px}
     .box{
       border:1px solid var(--line);
       border-radius:14px;
@@ -44,37 +69,53 @@
       background:rgba(0,0,0,.18);
       margin:12px 0;
     }
-    button{
-      background:linear-gradient(180deg, rgba(122,162,255,.95), rgba(122,162,255,.75));
-      color:#08102a;
-      border:none;
-      padding:10px 14px;
-      border-radius:12px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    button.secondary{
-      background:transparent;
-      color:var(--ink);
-      border:1px solid var(--line);
-    }
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    a{color:var(--accent2)}
     .auftrag{
       background:rgba(52,211,153,.12);
       border:1px solid rgba(52,211,153,.35);
+    }
+    a{color:var(--accent2);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .stats{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color:var(--muted); font-size:12px; margin-top:10px
+    }
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      border-radius:999px;
+      padding:6px 10px;
+    }
+    .kbd{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.15);
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--ink);
     }
   </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <h1>Fremdwörter im Kontext</h1>
-    <p class="meta">Zufälliges Fremdwort · Bedeutung (Duden-orientiert)</p>
+    <header>
+      <div>
+        <h1>Fremdwörter im Kontext</h1>
+        <p class="meta">Zufälliges Fremdwort · kurze Bedeutung · Duden-Link · ohne Beispielsatz</p>
+      </div>
+      <div class="badge">Station • HoS</div>
+    </header>
 
     <div class="row">
-      <button id="newWord">Neues Fremdwort</button>
-      <button id="reset" class="secondary">Reset</button>
+      <button id="newWord" title="Neues Wort (N)">Neues Fremdwort</button>
+      <button id="reset" class="secondary" title="Reset (R)">Reset</button>
+    </div>
+
+    <div class="stats">
+      <span class="pill">Benutzt: <b id="usedCount">0</b></span>
+      <span class="pill">Verfügbar: <b id="leftCount">0</b></span>
+      <span class="pill">Gesamt: <b id="totalCount">0</b></span>
+      <span class="pill">Tastatur: <span class="kbd">N</span> / <span class="kbd">R</span></span>
     </div>
 
     <h2 class="word" id="word">–</h2>
@@ -82,12 +123,12 @@
 
     <div class="box">
       <b>Bedeutung</b>
-      <p id="meaning">–</p>
+      <p id="meaning" style="margin:8px 0 0">–</p>
     </div>
 
     <div class="box auftrag">
       <b>✏️ Arbeitsauftrag</b>
-      <p>
+      <p style="margin:8px 0 0">
         Schreibe <b>einen eigenen Satz</b>, in dem das Fremdwort sinnvoll verwendet wird.<br>
         Der Satz muss zeigen, dass du die Bedeutung verstanden hast.
       </p>
@@ -95,7 +136,7 @@
 
     <div class="box">
       <b>Duden-Link</b><br>
-      <a id="duden" href="#" target="_blank">–</a>
+      <a id="duden" href="#" target="_blank" rel="noopener">–</a>
     </div>
   </div>
 </div>
@@ -103,53 +144,146 @@
 <script>
   const duden = w => `https://www.duden.de/rechtschreibung/${encodeURIComponent(w)}`;
 
+  // ✅ 60 Wörter (ohne Beispielsätze)
   const words = [
+    // Allgemein / Schule
     {w:"System", p:"Substantiv", m:"Geordnete Struktur oder Regelwerk.", d:duden("System")},
     {w:"Methode", p:"Substantiv", m:"Geplantes Vorgehen, um ein Ziel zu erreichen.", d:duden("Methode")},
-    {w:"Niveau", p:"Substantiv", m:"Stufe oder Grad von Leistung oder Qualität.", d:duden("Niveau")},
+    {w:"Niveau", p:"Substantiv", m:"Stufe oder Grad von Leistung/Qualität.", d:duden("Niveau")},
     {w:"Alternative", p:"Substantiv", m:"Andere Möglichkeit, zwischen der man wählen kann.", d:duden("Alternative")},
+    {w:"Prinzip", p:"Substantiv", m:"Grundsatz, nach dem man handelt oder etwas funktioniert.", d:duden("Prinzip")},
+    {w:"Struktur", p:"Substantiv", m:"Aufbau oder Gliederung von etwas.", d:duden("Struktur")},
+    {w:"Strategie", p:"Substantiv", m:"Plan, wie man ein Ziel erreichen will.", d:duden("Strategie")},
     {w:"Analyse", p:"Substantiv", m:"Genaues Untersuchen, um etwas zu verstehen.", d:duden("Analyse")},
-    {w:"Strategie", p:"Substantiv", m:"Plan zum Erreichen eines Ziels.", d:duden("Strategie")},
+    {w:"Prozess", p:"Substantiv", m:"Ablauf/Entwicklung in mehreren Schritten.", d:duden("Prozess")},
+    {w:"Resultat", p:"Substantiv", m:"Ergebnis.", d:duden("Resultat")},
+
+    // Denken / Verhalten
     {w:"naiv", p:"Adjektiv", m:"Unkritisch oder leichtgläubig.", d:duden("naiv")},
     {w:"kritisch", p:"Adjektiv", m:"Prüfend und hinterfragend.", d:duden("kritisch")},
-    {w:"Manipulation", p:"Substantiv", m:"Gezielte Beeinflussung anderer.", d:duden("Manipulation")},
+    {w:"impulsiv", p:"Adjektiv", m:"Spontan handelnd, ohne lange zu überlegen.", d:duden("impulsiv")},
+    {w:"rational", p:"Adjektiv", m:"Vernünftig und logisch begründet.", d:duden("rational")},
+    {w:"tolerant", p:"Adjektiv", m:"Offen gegenüber anderen; duldend.", d:duden("tolerant")},
+    {w:"arrogant", p:"Adjektiv", m:"Überheblich; sich überlegen fühlend.", d:duden("arrogant")},
+    {w:"sensibel", p:"Adjektiv", m:"Feinfühlig; empfindsam.", d:duden("sensibel")},
+    {w:"dominant", p:"Adjektiv", m:"Bestimmend; andere übertönend/leitend.", d:duden("dominant")},
+    {w:"passiv", p:"Adjektiv", m:"Nicht aktiv handelnd; eher abwartend.", d:duden("passiv")},
+    {w:"aktiv", p:"Adjektiv", m:"Tatkräftig; handelnd.", d:duden("aktiv")},
+
+    // Sprache / Argumentieren
+    {w:"Argument", p:"Substantiv", m:"Begründung, die eine Meinung stützt.", d:duden("Argument")},
+    {w:"Diskussion", p:"Substantiv", m:"Austausch verschiedener Meinungen.", d:duden("Diskussion")},
+    {w:"Position", p:"Substantiv", m:"Standpunkt/Meinung zu einem Thema.", d:duden("Position")},
+    {w:"Perspektive", p:"Substantiv", m:"Blickwinkel, aus dem man etwas betrachtet.", d:duden("Perspektive")},
+    {w:"These", p:"Substantiv", m:"Behauptung, die begründet werden muss.", d:duden("These")},
+    {w:"Kommentar", p:"Substantiv", m:"Meinungsäußerung zu einem Thema.", d:duden("Kommentar")},
+    {w:"Kritik", p:"Substantiv", m:"Beurteilung; oft Hinweis auf Fehler/Probleme.", d:duden("Kritik")},
+    {w:"Ironie", p:"Substantiv", m:"Spöttische Ausdrucksweise; oft Gegenteil gemeint.", d:duden("Ironie")},
+    {w:"Provokation", p:"Substantiv", m:"Absichtliches Reizen/Herausfordern.", d:duden("Provokation")},
+    {w:"Manipulation", p:"Substantiv", m:"Gezielte Beeinflussung (oft unbemerkt).", d:duden("Manipulation")},
+
+    // Gesellschaft / Öffentlichkeit
     {w:"Renommee", p:"Substantiv", m:"Guter Ruf oder Ansehen.", d:duden("Renommee")},
+    {w:"Prestige", p:"Substantiv", m:"Ansehen, das mit Status verbunden ist.", d:duden("Prestige")},
+    {w:"Elite", p:"Substantiv", m:"Gruppe, die als besonders leistungsstark gilt.", d:duden("Elite")},
+    {w:"Autorität", p:"Substantiv", m:"Ansehen oder Macht, die anerkannt wird.", d:duden("Autorität")},
+    {w:"Institution", p:"Substantiv", m:"Feste Einrichtung/Organisation (z. B. Schule).", d:duden("Institution")},
+    {w:"Tradition", p:"Substantiv", m:"Überlieferte Gewohnheit oder Sitte.", d:duden("Tradition")},
+    {w:"Integration", p:"Substantiv", m:"Eingliederung/Einbeziehen in eine Gemeinschaft.", d:duden("Integration")},
+    {w:"Isolation", p:"Substantiv", m:"Absonderung/Abgeschiedenheit.", d:duden("Isolation")},
+    {w:"Konflikt", p:"Substantiv", m:"Streit oder Gegensatz.", d:duden("Konflikt")},
+    {w:"Kompromiss", p:"Substantiv", m:"Einigung, bei der beide Seiten nachgeben.", d:duden("Kompromiss")},
+
+    // Medien / Moderne Welt
+    {w:"Information", p:"Substantiv", m:"Mitteilung; Wissen über etwas.", d:duden("Information")},
+    {w:"Technologie", p:"Substantiv", m:"Einsatz von Technik/Wissen zur Lösung von Problemen.", d:duden("Technologie")},
+    {w:"Kommunikation", p:"Substantiv", m:"Austausch von Nachrichten/Gedanken.", d:duden("Kommunikation")},
+    {w:"digital", p:"Adjektiv", m:"Mit elektronischer Datenverarbeitung verbunden.", d:duden("digital")},
+    {w:"anonym", p:"Adjektiv", m:"Ohne erkennbaren Namen/Identität.", d:duden("anonym")},
+    {w:"Plattform", p:"Substantiv", m:"(Online-)Ort/Angebot für Inhalte/Services.", d:duden("Plattform")},
+    {w:"Innovation", p:"Substantiv", m:"Neuerung, die etwas verbessert.", d:duden("Innovation")},
+    {w:"Simulation", p:"Substantiv", m:"Nachbildung eines Vorgangs (oft am Computer).", d:duden("Simulation")},
+    {w:"Virtualität", p:"Substantiv", m:"Virtuelle Wirklichkeit/virtuelles Erleben.", d:duden("Virtualität")},
+    {w:"Algorithmus", p:"Substantiv", m:"Feste Schrittfolge zur Lösung eines Problems.", d:duden("Algorithmus")},
+
+    // Bewertung / Leistung
+    {w:"Blamage", p:"Substantiv", m:"Peinlicher Vorfall; Bloßstellung.", d:duden("Blamage")},
+    {w:"Defizit", p:"Substantiv", m:"Mangel; Fehlbetrag; etwas fehlt.", d:duden("Defizit")},
+    {w:"Potenzial", p:"Substantiv", m:"Möglichkeit/Reserve, sich zu entwickeln.", d:duden("Potenzial")},
+    {w:"Qualität", p:"Substantiv", m:"Güte/Beschaffenheit.", d:duden("Qualität")},
+    {w:"Quantität", p:"Substantiv", m:"Menge/Umfang.", d:duden("Quantität")},
+    {w:"Effekt", p:"Substantiv", m:"Wirkung.", d:duden("Effekt")},
+    {w:"Konsequenz", p:"Substantiv", m:"Folge; auch: konsequentes Handeln.", d:duden("Konsequenz")},
+    {w:"Risiko", p:"Substantiv", m:"Gefahr, dass etwas schiefgeht.", d:duden("Risiko")},
+    {w:"Genie", p:"Substantiv", m:"Außergewöhnliche Begabung oder Person mit solcher Begabung.", d:duden("Genie")},
+    {w:"Amateur", p:"Substantiv", m:"Jemand, der etwas nicht beruflich, sondern als Hobby macht.", d:duden("Amateur")},
+
+    // Stil / Gesellschaft
+    {w:"Kavalier", p:"Substantiv", m:"Besonders höflicher Mann (oft veraltet).", d:duden("Kavalier")},
     {w:"Hautevolee", p:"Substantiv", m:"Vornehme Gesellschaftsschicht.", d:duden("Hautevolee")},
-    {w:"Algorithmus", p:"Substantiv", m:"Feste Schrittfolge zur Lösung eines Problems.", d:duden("Algorithmus")}
-    // 👉 Liste beliebig erweiterbar (60+ empfohlen)
+
+    // Extra – sehr nützlich im Schulkontext
+    {w:"Motivation", p:"Substantiv", m:"Antrieb/Grund, etwas zu tun.", d:duden("Motivation")},
+    {w:"Disziplin", p:"Substantiv", m:"Selbstbeherrschung; konsequentes Durchhalten.", d:duden("Disziplin")},
+    {w:"Konzentration", p:"Substantiv", m:"Gezielte Aufmerksamkeit auf eine Sache.", d:duden("Konzentration")},
+    {w:"Reaktion", p:"Substantiv", m:"Antwort/Verhalten auf etwas.", d:duden("Reaktion")},
+    {w:"Organisation", p:"Substantiv", m:"Planung und Ordnung von Aufgaben/Abläufen.", d:duden("Organisation")},
+    {w:"Priorität", p:"Substantiv", m:"Vorrang; das Wichtigste zuerst.", d:duden("Priorität")},
+    {w:"Fazit", p:"Substantiv", m:"Schlussfolgerung am Ende.", d:duden("Fazit")},
+    {w:"Relevanz", p:"Substantiv", m:"Bedeutsamkeit; wichtig sein.", d:duden("Relevanz")},
+    {w:"Kontext", p:"Substantiv", m:"Zusammenhang, in dem etwas steht.", d:duden("Kontext")},
+    {w:"Interpretation", p:"Substantiv", m:"Deutung/Erklärung (z. B. eines Textes).", d:duden("Interpretation")}
   ];
 
   let used = new Set();
 
+  const $ = (id) => document.getElementById(id);
+
+  function updateStats(){
+    $("totalCount").textContent = words.length;
+    $("usedCount").textContent = used.size;
+    $("leftCount").textContent = Math.max(0, words.length - used.size);
+  }
+
   function newWord(){
-    if(used.size === words.length){
-      alert("Alle Wörter wurden verwendet.");
+    if (used.size >= words.length){
+      alert("Alle Wörter wurden verwendet. Bitte Reset drücken.");
       return;
     }
     let i;
-    do { i = Math.floor(Math.random()*words.length); }
-    while(used.has(i));
+    do { i = Math.floor(Math.random() * words.length); }
+    while (used.has(i));
     used.add(i);
 
     const x = words[i];
-    document.getElementById("word").textContent = x.w;
-    document.getElementById("pos").textContent = x.p;
-    document.getElementById("meaning").textContent = x.m;
-    document.getElementById("duden").textContent = x.d;
-    document.getElementById("duden").href = x.d;
+    $("word").textContent = x.w;
+    $("pos").textContent = x.p;
+    $("meaning").textContent = x.m;
+    $("duden").textContent = x.d;
+    $("duden").href = x.d;
+
+    updateStats();
   }
 
   function reset(){
     used.clear();
-    document.getElementById("word").textContent = "–";
-    document.getElementById("pos").textContent = "–";
-    document.getElementById("meaning").textContent = "–";
-    document.getElementById("duden").textContent = "–";
-    document.getElementById("duden").href = "#";
+    $("word").textContent = "–";
+    $("pos").textContent = "–";
+    $("meaning").textContent = "–";
+    $("duden").textContent = "–";
+    $("duden").href = "#";
+    updateStats();
   }
 
-  document.getElementById("newWord").onclick = newWord;
-  document.getElementById("reset").onclick = reset;
+  $("newWord").addEventListener("click", newWord);
+  $("reset").addEventListener("click", reset);
+
+  document.addEventListener("keydown", (e) => {
+    if(e.key.toLowerCase() === "n") newWord();
+    if(e.key.toLowerCase() === "r") reset();
+  });
+
+  updateStats();
 </script>
 </body>
 </html>
