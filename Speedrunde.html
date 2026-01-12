@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="de">
 <head>
   <meta charset="utf-8" />
@@ -17,350 +18,343 @@
       --c:#ff9a9a;            /* Pastell‑Rot */
       --d:#ffd1d1;            /* sehr helles Rot */
       --shadow: 0 18px 50px rgba(0,0,0,.45);
-    }
+    }*{box-sizing:border-box}
 
-    *{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+  color:var(--text);
+  background:
+    radial-gradient(1000px 700px at 10% 10%, rgba(179,0,0,.28), transparent 55%),
+    radial-gradient(900px 650px at 90% 10%, rgba(255,107,107,.22), transparent 55%),
+    radial-gradient(900px 650px at 65% 90%, rgba(255,154,154,.20), transparent 55%),
+    radial-gradient(800px 600px at 18% 88%, rgba(255,209,209,.18), transparent 60%),
+    linear-gradient(180deg, var(--bg1), var(--bg2));
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
 
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
-      background:
-        radial-gradient(1000px 700px at 10% 10%, rgba(179,0,0,.28), transparent 55%),
-        radial-gradient(900px 650px at 90% 10%, rgba(255,107,107,.22), transparent 55%),
-        radial-gradient(900px 650px at 65% 90%, rgba(255,154,154,.20), transparent 55%),
-        radial-gradient(800px 600px at 18% 88%, rgba(255,209,209,.18), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-    }
+/* Glitzer-Konfetti ✨ */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(2px 2px at 10% 20%, rgba(255,180,180,.9) 40%, transparent 42%),
+    radial-gradient(2px 2px at 30% 70%, rgba(255,120,120,.9) 40%, transparent 42%),
+    radial-gradient(2px 2px at 55% 35%, rgba(255,160,160,.85) 40%, transparent 42%),
+    radial-gradient(2px 2px at 80% 25%, rgba(255,200,200,.85) 40%, transparent 42%),
+    radial-gradient(2px 2px at 85% 80%, rgba(255,120,120,.7) 40%, transparent 42%),
+    radial-gradient(2px 2px at 15% 85%, rgba(255,180,180,.7) 40%, transparent 42%);
+  opacity:.26;
+  filter: blur(.2px);
+}
 
-    /* Glitzer-Konfetti ✨ */
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(2px 2px at 10% 20%, rgba(255,180,180,.9) 40%, transparent 42%),
-        radial-gradient(2px 2px at 30% 70%, rgba(255,120,120,.9) 40%, transparent 42%),
-        radial-gradient(2px 2px at 55% 35%, rgba(255,160,160,.85) 40%, transparent 42%),
-        radial-gradient(2px 2px at 80% 25%, rgba(255,200,200,.85) 40%, transparent 42%),
-        radial-gradient(2px 2px at 85% 80%, rgba(255,120,120,.7) 40%, transparent 42%),
-        radial-gradient(2px 2px at 15% 85%, rgba(255,180,180,.7) 40%, transparent 42%);
-      opacity:.26;
-      filter: blur(.2px);
-    }
+.wrap{
+  width:min(980px, 100%);
+  display:grid;
+  gap:14px;
+}
 
-    .wrap{
-      width:min(980px, 100%);
-      display:grid;
-      gap:14px;
-    }
+header{
+  background: linear-gradient(90deg, rgba(255,122,217,.18), rgba(124,247,198,.12), rgba(125,183,255,.14));
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:16px 18px;
+  box-shadow: var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
 
-    header{
-      background: linear-gradient(90deg, rgba(255,122,217,.18), rgba(124,247,198,.12), rgba(125,183,255,.14));
-      border:1px solid var(--border);
-      border-radius:22px;
-      padding:16px 18px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
+header::after{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background: radial-gradient(400px 140px at 70% 20%, rgba(255,209,102,.22), transparent 60%);
+  pointer-events:none;
+  transform: rotate(6deg);
+}
 
-    header::after{
-      content:"";
-      position:absolute;
-      inset:-40px;
-      background: radial-gradient(400px 140px at 70% 20%, rgba(255,209,102,.22), transparent 60%);
-      pointer-events:none;
-      transform: rotate(6deg);
-    }
+header > *{position:relative}
 
-    header > *{position:relative}
+.badge{
+  display:inline-flex;
+  gap:.55rem;
+  align-items:center;
+  padding:7px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+  color:var(--muted);
+  font-size:.95rem;
+}
 
-    .badge{
-      display:inline-flex;
-      gap:.55rem;
-      align-items:center;
-      padding:7px 11px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.18);
-      color:var(--muted);
-      font-size:.95rem;
-    }
+h1{
+  margin:10px 0 6px;
+  font-size: clamp(1.5rem, 3.6vw, 2.3rem);
+}
 
-    h1{
-      margin:10px 0 6px;
-      font-size: clamp(1.5rem, 3.6vw, 2.3rem);
-    }
+p{margin:0;color:var(--muted);max-width:75ch;line-height:1.5}
 
-    p{margin:0;color:var(--muted);max-width:75ch;line-height:1.5}
+.card{
+  background: rgba(255,255,255,.08);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:16px;
+  box-shadow: var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
 
-    .card{
-      background: rgba(255,255,255,.08);
-      border:1px solid var(--border);
-      border-radius:22px;
-      padding:16px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
+.card::before{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:10px;
+  background: linear-gradient(180deg, var(--a), var(--b), var(--c), var(--d));
+  opacity:.9;
+}
 
-    .card::before{
-      content:"";
-      position:absolute;
-      left:0; top:0; bottom:0;
-      width:10px;
-      background: linear-gradient(180deg, var(--a), var(--b), var(--c), var(--d));
-      opacity:.9;
-    }
+.card::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+    radial-gradient(540px 220px at 20% 0%, rgba(255,209,102,.12), transparent 60%),
+    radial-gradient(520px 220px at 92% 0%, rgba(255,122,217,.10), transparent 60%);
+  pointer-events:none;
+}
 
-    .card::after{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(540px 220px at 20% 0%, rgba(255,209,102,.12), transparent 60%),
-        radial-gradient(520px 220px at 92% 0%, rgba(255,122,217,.10), transparent 60%);
-      pointer-events:none;
-    }
+.card > *{position:relative}
 
-    .card > *{position:relative}
+.toprow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
 
-    .toprow{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.16);
+  color:var(--text);
+  font-size:.95rem;
+  white-space:nowrap;
+}
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:.45rem;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.16);
-      color:var(--text);
-      font-size:.95rem;
-      white-space:nowrap;
-    }
+.timer{
+  font-variant-numeric: tabular-nums;
+  font-weight:850;
+  letter-spacing:.4px;
+}
 
-    .timer{
-      font-variant-numeric: tabular-nums;
-      font-weight:850;
-      letter-spacing:.4px;
-    }
+.progress{
+  height:10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.18);
+  overflow:hidden;
+  width:min(380px, 100%);
+}
 
-    .progress{
-      height:10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-      width:min(380px, 100%);
-    }
+.bar{
+  height:100%;
+  width:100%;
+  background: linear-gradient(90deg, var(--d), var(--b), var(--c), var(--a));
+  transition: width .15s linear;
+}
 
-    .bar{
-      height:100%;
-      width:100%;
-      background: linear-gradient(90deg, var(--d), var(--b), var(--c), var(--a));
-      transition: width .15s linear;
-    }
+.q{
+  margin:10px 0 0;
+  font-size:1.08rem;
+}
 
-    .q{
-      margin:10px 0 0;
-      font-size:1.08rem;
-    }
+.answers{
+  margin-top:12px;
+  display:grid;
+  gap:10px;
+}
 
-    .answers{
-      margin-top:12px;
-      display:grid;
-      gap:10px;
-    }
+button.option{
+  width:100%;
+  text-align:left;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.18);
+  padding:12px 12px;
+  background: rgba(0,0,0,.18);
+  color:var(--text);
+  cursor:pointer;
+  transition: transform .12s ease, background .12s ease;
+  font-size:1rem;
+}
 
-    button.option{
-      width:100%;
-      text-align:left;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.18);
-      padding:12px 12px;
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease;
-      font-size:1rem;
-    }
+button.option:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+button.option[disabled]{opacity:.78; cursor:not-allowed; transform:none}
 
-    button.option:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
-    button.option[disabled]{opacity:.78; cursor:not-allowed; transform:none}
+.ok{ outline:2px solid rgba(124,247,198,.7); }
+.no{ outline:2px solid rgba(255,122,217,.65); }
 
-    .ok{ outline:2px solid rgba(124,247,198,.7); }
-    .no{ outline:2px solid rgba(255,122,217,.65); }
+.controls{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    .controls{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-      justify-content:space-between;
-      align-items:center;
-    }
+.btn{
+  border:0;
+  padding:10px 14px;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:800;
+  color:#0b1024;
+  background: linear-gradient(90deg, var(--b), var(--d));
+  box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
 
-    .btn{
-      border:0;
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:800;
-      color:#0b1024;
-      background: linear-gradient(90deg, var(--b), var(--d));
-      box-shadow: 0 14px 34px rgba(0,0,0,.35);
-    }
+.btn.secondary{
+  background: rgba(0,0,0,.18);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.22);
+  font-weight:700;
+}
 
-    .btn.secondary{
-      background: rgba(0,0,0,.18);
-      color:var(--text);
-      border:1px solid rgba(255,255,255,.22);
-      font-weight:700;
-    }
+/* Link-Button wie ein Button */
+a.btn{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
+.btn.disabled{ opacity:.55; pointer-events:none; }
 
-    /* Link-Button wie ein Button */
-    a.btn{ display:inline-flex; align-items:center; justify-content:center; text-decoration:none; }
-    .btn.disabled{ opacity:.55; pointer-events:none; }
+.hint{
+  color:var(--muted);
+  font-size:.95rem;
+  min-height:1.35em;
+}
 
-    .hint{
-      color:var(--muted);
-      font-size:.95rem;
-      min-height:1.35em;
-    }
+.result{
+  display:none;
+  margin-top:14px;
+  padding:12px;
+  border-radius:16px;
+  border:1px dashed rgba(255,255,255,.25);
+  background: linear-gradient(90deg, rgba(125,183,255,.12), rgba(124,247,198,.10), rgba(255,209,102,.10));
+}
 
-    .result{
-      display:none;
-      margin-top:14px;
-      padding:12px;
-      border-radius:16px;
-      border:1px dashed rgba(255,255,255,.25);
-      background: linear-gradient(90deg, rgba(125,183,255,.12), rgba(124,247,198,.10), rgba(255,209,102,.10));
-    }
+/* Mini-Game */
+.mini{
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  padding:12px;
+  background: rgba(0,0,0,.14);
+}
+.miniHead{ display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; margin-bottom:10px; }
+.miniBox{
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,.20);
+  background: rgba(0,0,0,.18);
+  padding:14px;
+  min-height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  user-select:none;
+  cursor:pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+.miniBox:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+.miniBox.good{ background: rgba(179,0,0,.40); border-color: rgba(255,200,200,.55); }
+.miniBox.wait{ background: rgba(0,0,0,.26); }
 
-    /* Mini-Game */
-    .mini{
-      border:1px solid rgba(255,255,255,.16);
-      border-radius:18px;
-      padding:12px;
-      background: rgba(0,0,0,.14);
-    }
-    .miniHead{ display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between; margin-bottom:10px; }
-    .miniBox{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.20);
-      background: rgba(0,0,0,.18);
-      padding:14px;
-      min-height:110px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      user-select:none;
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease;
-    }
-    .miniBox:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
-    .miniBox.good{ background: rgba(179,0,0,.40); border-color: rgba(255,200,200,.55); }
-    .miniBox.wait{ background: rgba(0,0,0,.26); }
+.result strong{ color: var(--d); }
 
-    .result strong{ color: var(--d); }
+.tiny{ font-size:.9rem; color:var(--muted); }
 
-    .tiny{ font-size:.9rem; color:var(--muted); }
+@media (prefers-reduced-motion: reduce){
+  *{ transition:none !important; }
+}
 
-    @media (prefers-reduced-motion: reduce){
-      *{ transition:none !important; }
-    }
-
-    /* Meme-Sticker 😄 */
-    .meme{
-      position:absolute;
-      right:14px;
-      top:12px;
-      width:120px;
-      image-rendering: pixelated;
-      filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
-      transform: rotate(4deg);
-    }
+/* Meme-Sticker 😄 */
+.meme{
+  position:absolute;
+  right:14px;
+  top:12px;
+  width:120px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+  transform: rotate(4deg);
+}
 
   </style>
-</head>
-
-<body>
+</head><body>
   <div class="wrap">
     <header>
       <img src="chatistthisreal.png" onerror="this.onerror=null;this.src='chatisthisreal.png';" alt="Chat is this real?" class="meme">
       <span class="badge">⚡ Speedrunde • Zeitformen • <b style="color:var(--b)">HoS</b> • 60 Sekunden</span>
-      <h1>Wie schnell bist DU? 🏁</h1>
+      <h1>Wie schnell bist du? 🏁</h1>
       <p>Du hast genau <b>60 Sekunden</b>. Jede richtige Antwort gibt Punkte. Falsch? Kein Drama – weiter geht’s! 😄</p>
-    </header>
-
-    <main class="card">
-      <div class="toprow">
-        <div class="pill">⏱️ Zeit: <span class="timer" id="time">60</span>s</div>
-        <div class="progress" aria-label="Zeitbalken"><div class="bar" id="bar"></div></div>
-        <div class="pill">🏆 Punkte: <span id="score">0</span></div>
-        <div class="pill">🎯 Streak: <span id="streak">0</span></div>
-      </div>
-
-      <div class="q" id="questionText"></div>
-      <div class="answers" id="answers"></div>
-
-      <div class="controls">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
-          <input id="studentName" placeholder="Name (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
-          <input id="studentClass" placeholder="Klasse (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
-        </div>
-        <div class="hint" id="hint">Klick dich warm – dann wird’s wild 😄</div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn" id="startBtn" type="button">Start 🚀</button>
-          <button class="btn secondary" id="skipBtn" type="button" disabled>Skip 🙈</button>
-          <button class="btn secondary" id="restartBtn" type="button" disabled>Neustart 🔁</button>
-          <a class="btn secondary disabled" id="mailLink" href="#" aria-disabled="true">Score mailen ✉️</a>
-        </div>
-      </div>
-
-      <div class="result" id="resultBox"></div>
-
-      <!-- Bonus-Spiel: Reaktions-Test -->
-      <section class="mini" id="miniGame" aria-label="Bonus-Spiel" style="display:none; margin-top:14px;">
-        <div class="miniHead">
-          <div class="pill">🎮 Bonus-Spiel: Reaktions-Check</div>
-          <div class="pill">Bestzeit: <span id="bestRT">–</span> ms</div>
-        </div>
-
-        <div class="miniBox" id="rtBox" role="button" tabindex="0" aria-label="Reaktionsfeld">
-          <div id="rtText" style="font-size:1.05rem; color: var(--muted);">
-            Klicke <b>Start</b> und warte… sobald es <b>ROT</b> ist: <b>SOFORT klicken!</b> 😄
-          </div>
-        </div>
-
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-          <button class="btn" id="rtStart" type="button">Start 🎯</button>
-          <button class="btn secondary" id="rtReset" type="button">Nochmal 🔁</button>
-          <button class="btn secondary" id="rtBack" type="button">Zurück zur Speedrunde ↩️</button>
-        </div>
-
-        <div class="tiny" style="margin-top:8px;">Tipp: Wenn du zu früh klickst → „Zu früh!“ 😅</div>
-      </section>
-      <div class="tiny" style="margin-top:10px;">Tipp für Google Sites: diese Datei hosten und per „Einbetten → Von URL“ einbauen.</div>
-    </main>
+    </header><main class="card">
+  <div class="toprow">
+    <div class="pill">⏱️ Zeit: <span class="timer" id="time">60</span>s</div>
+    <div class="progress" aria-label="Zeitbalken"><div class="bar" id="bar"></div></div>
+    <div class="pill">🏆 Punkte: <span id="score">0</span></div>
+    <div class="pill">🎯 Streak: <span id="streak">0</span></div>
   </div>
 
-  <script>
+  <div class="q" id="questionText"></div>
+  <div class="answers" id="answers"></div>
+
+  <div class="controls">
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+      <input id="studentName" placeholder="Name (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
+      <input id="studentClass" placeholder="Klasse (freiwillig)" style="padding:8px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.2);color:white;">
+    </div>
+    <div class="hint" id="hint">Klick dich warm – dann wird’s wild 😄</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="btn" id="startBtn" type="button">Start 🚀</button>
+      <button class="btn secondary" id="skipBtn" type="button" disabled>Skip 🙈</button>
+      <button class="btn secondary" id="restartBtn" type="button" disabled>Neustart 🔁</button>
+      <a class="btn secondary disabled" id="mailLink" href="#" aria-disabled="true">Score mailen ✉️</a>
+    </div>
+  </div>
+
+  <div class="result" id="resultBox"></div>
+
+  <!-- Bonus-Spiel: Reaktions-Test -->
+  <section class="mini" id="miniGame" aria-label="Bonus-Spiel" style="display:none; margin-top:14px;">
+    <div class="miniHead">
+      <div class="pill">🎮 Bonus-Spiel: Reaktions-Check</div>
+      <div class="pill">Bestzeit: <span id="bestRT">–</span> ms</div>
+    </div>
+
+    <div class="miniBox" id="rtBox" role="button" tabindex="0" aria-label="Reaktionsfeld">
+      <div id="rtText" style="font-size:1.05rem; color: var(--muted);">
+        Klicke <b>Start</b> und warte… sobald es <b>ROT</b> ist: <b>SOFORT klicken!</b> 😄
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+      <button class="btn" id="rtStart" type="button">Start 🎯</button>
+      <button class="btn secondary" id="rtReset" type="button">Nochmal 🔁</button>
+      <button class="btn secondary" id="rtBack" type="button">Zurück zur Speedrunde ↩️</button>
+    </div>
+
+    <div class="tiny" style="margin-top:8px;">Tipp: Wenn du zu früh klickst → „Zu früh!“ 😅</div>
+  </section>
+  <div class="tiny" style="margin-top:10px;">Tipp für Google Sites: diese Datei hosten und per „Einbetten → Von URL“ einbauen.</div>
+</main>
+
+  </div>  <script>
     // ====== Mail-Einstellung (Option 1) ======
     // Trage hier DEINE E-Mail ein:
     const MY_EMAIL = "stefan.holzer@edulinu.com";
@@ -893,6 +887,5 @@
 
     // init
     resetAll();
-  </script>
-</body>
+  </script></body>
 </html>
