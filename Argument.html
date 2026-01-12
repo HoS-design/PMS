@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Argument-Bausteine – Drag & Drop (HoS)</title>
+  <style>
+    :root{
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --line:#d1d5db;
+      --soft:#f8fafc;
+      --card:#ffffff;
+      --bg:#0b1220;
+      --bg2:#101a33;
+      --accent:#2563eb;
+      --ok:#10b981;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:radial-gradient(1000px 600px at 20% 0%, var(--bg2) 0%, var(--bg) 60%);
+      min-height:100vh;
+      padding:18px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+    .app{width:min(1100px,100%);}
+
+    header{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .meme{
+      width:92px;
+      height:92px;
+      object-fit:cover;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow:0 10px 25px rgba(0,0,0,.25);
+      background:rgba(255,255,255,.06);
+    }
+    .titles h1{
+      margin:0;
+      font-size:clamp(18px,2.6vw,28px);
+      color:#e8eefc;
+      letter-spacing:.2px;
+    }
+    .titles p{
+      margin:6px 0 0 0;
+      color:rgba(232,238,252,.72);
+      line-height:1.35;
+      max-width:68ch;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(37,99,235,.18);
+      border:1px solid rgba(37,99,235,.35);
+      color:#e8eefc;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.85));
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:18px;
+      box-shadow:0 16px 40px rgba(0,0,0,.24);
+      overflow:hidden;
+    }
+    .card .inner{padding:16px;}
+    .card h2{margin:0 0 8px 0;font-size:16px;}
+    .sub{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    button{
+      cursor:pointer;
+      border:none;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:800;
+      background:var(--accent);
+      color:white;
+    }
+    button.secondary{
+      background:transparent;
+      color:var(--ink);
+      border:1px solid var(--line);
+      font-weight:800;
+    }
+    button:active{transform:translateY(1px)}
+    .kpi{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      border:1px solid rgba(31,41,55,.15);
+      background:rgba(255,255,255,.7);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill b{color:var(--ink)}
+
+    /* DnD */
+    .bank{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+    .tile{
+      user-select:none;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:14px;
+      line-height:1.35;
+      box-shadow:0 6px 18px rgba(0,0,0,.08);
+    }
+    .tile[draggable="true"]{cursor:grab}
+    .tile.dragging{opacity:.55; transform:scale(.98)}
+    .tile.locked{
+      opacity:.88;
+      cursor:default;
+    }
+    .dropzone{
+      background:rgba(255,255,255,.65);
+      border:2px dashed rgba(107,114,128,.35);
+      border-radius:16px;
+      padding:12px;
+      min-height:56px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dropzone.over{
+      border-color:rgba(37,99,235,.75);
+      background:rgba(37,99,235,.08);
+    }
+    .slotlabel{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      width:170px;
+      flex:0 0 auto;
+    }
+    .slotcontent{
+      flex:1 1 auto;
+      min-height:24px;
+    }
+    .hint{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+    }
+    .msg{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(31,41,55,.12);
+      background:rgba(255,255,255,.7);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .msg.ok{border-color:rgba(16,185,129,.45); background:rgba(16,185,129,.10)}
+    .msg.bad{border-color:rgba(239,68,68,.45); background:rgba(239,68,68,.10)}
+    .msg.warn{border-color:rgba(245,158,11,.45); background:rgba(245,158,11,.12)}
+    .kbd{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      border:1px solid rgba(31,41,55,.15);
+      background:rgba(255,255,255,.8);
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--ink);
+      font-weight:700;
+    }
+    footer{
+      margin-top:12px;
+      color:rgba(232,238,252,.70);
+      font-size:12px;
+      line-height:1.45;
+    }
+    .smalllink{color:#a7f3d0;text-decoration:none}
+    .smalllink:hover{text-decoration:underline}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <img
+          src="chatisthisreal.png"
+          onerror="this.onerror=null;this.src='chatisthisreal.png';"
+          alt="Chat is this real?"
+          class="meme"
+        />
+        <div class="titles">
+          <h1>Argumente aus Bausteinen bauen (Drag &amp; Drop)</h1>
+          <p>
+            Ordne Textbausteine zu einem <b>sauberen Argument</b>:
+            <b>Behauptung → Begründung → Beispiel/Erklärung → Rückbezug</b>.
+            (Kein Erzählen, sachlich bleiben.)
+          </p>
+        </div>
+      </div>
+
+      <div class="badge">🧠 3. Plan • Erörterung &amp; Argumentation • <span style="opacity:.95">HoS</span></div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT: Workspace -->
+      <section class="card">
+        <div class="inner">
+          <h2 id="taskTitle">Aufgabe</h2>
+          <p class="sub" id="taskPrompt">–</p>
+
+          <div class="kpi">
+            <span class="pill">Aufgabe: <b id="taskIndex">1</b>/<b id="taskTotal">1</b></span>
+            <span class="pill">Punkte: <b id="score">0</b></span>
+            <span class="pill">Tastatur: <span class="kbd">C</span> prüfen • <span class="kbd">N</span> nächste • <span class="kbd">R</span> reset</span>
+          </div>
+
+          <div style="margin-top:14px;">
+            <div class="dropzone" data-slot="0">
+              <div class="slotlabel">Behauptung</div>
+              <div class="slotcontent" id="slot0"></div>
+            </div>
+            <div class="dropzone" data-slot="1" style="margin-top:10px;">
+              <div class="slotlabel">Begründung</div>
+              <div class="slotcontent" id="slot1"></div>
+            </div>
+            <div class="dropzone" data-slot="2" style="margin-top:10px;">
+              <div class="slotlabel">Beispiel/Erklärung</div>
+              <div class="slotcontent" id="slot2"></div>
+            </div>
+            <div class="dropzone" data-slot="3" style="margin-top:10px;">
+              <div class="slotlabel">Rückbezug</div>
+              <div class="slotcontent" id="slot3"></div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button id="btnCheck">Prüfen</button>
+            <button class="secondary" id="btnNext">Nächste Aufgabe</button>
+            <button class="secondary" id="btnReset">Reset</button>
+          </div>
+
+          <div class="msg warn" id="message" style="display:none;"></div>
+
+          <div class="hint">
+            Tipp: Ziehe Bausteine per Drag &amp; Drop in die Felder. Ein Baustein kann auch wieder zurück in die Bank gezogen werden.
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Bank -->
+      <aside class="card">
+        <div class="inner">
+          <h2>Baustein-Bank</h2>
+          <p class="sub">Ziehe passende Bausteine in die vier Felder. Manche Aufgaben enthalten <b>einen Störbaustein</b>.</p>
+
+          <div class="bank" id="bank" aria-label="Baustein-Bank"></div>
+
+          <footer>
+            Für die Erörterung: Baue danach aus deinem Argument einen kurzen Absatz (3–5 Sätze) und ergänze ggf. ein Gegenargument.
+          </footer>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      Hinweis: Das Bild <b>chatisthisreal.png</b> wird aus deinem Repository geladen (im selben Ordner wie diese HTML-Datei).
+      Wenn es anders heißt, passe den Dateinamen oben an.
+    </footer>
+  </div>
+
+<script>
+  // ---------------------------
+  // Aufgaben (3. Plan: Argumentation)
+  // Jede Aufgabe: prompt + korrekte Reihenfolge (4 IDs) + Bausteine (inkl. optionaler Distraktor)
+  // ---------------------------
+  const TASKS = [
+    {
+      title: "Aufgabe 1 – Handyregeln in der Schule",
+      prompt: "Setze ein Pro-Argument zusammen: Sollte es klare Handyregeln im Unterricht geben?",
+      pieces: [
+        { id:"a1", text:"Klare Handyregeln im Unterricht können die Konzentration verbessern." },         // Behauptung
+        { id:"a2", text:"Denn ständige Benachrichtigungen lenken viele Lernende vom Unterricht ab." },    // Begründung
+        { id:"a3", text:"Wenn das Handy sichtbar auf dem Tisch liegt, greifen manche automatisch danach." }, // Beispiel
+        { id:"a4", text:"Deshalb können klare Regeln das Lernen im Unterricht unterstützen." }           // Rückbezug
+      ],
+      correct: ["a1","a2","a3","a4"]
+    },
+    {
+      title: "Aufgabe 2 – Hausaufgaben",
+      prompt: "Setze ein Contra-Argument zusammen: Sollten Hausaufgaben jeden Tag verpflichtend sein?",
+      pieces: [
+        { id:"b1", text:"Tägliche Hausaufgaben können zu Überlastung führen." },                         // Behauptung
+        { id:"b2", text:"Weil neben der Schule auch Freizeit, Familie und Erholung wichtig sind." },     // Begründung
+        { id:"b3", text:"Wenn Aufgaben zu lange dauern, bleibt kaum Zeit für Sport oder Schlaf." },      // Beispiel
+        { id:"b4", text:"Darum sollten Umfang und Häufigkeit der Hausaufgaben begrenzt werden." },       // Rückbezug
+        { id:"bx", text:"Viele mögen Hausaufgaben einfach nicht." }                                      // Distraktor (Meinung)
+      ],
+      correct: ["b1","b2","b3","b4"]
+    },
+    {
+      title: "Aufgabe 3 – Schuluniform",
+      prompt: "Setze ein Pro-Argument zusammen: Könnte eine Schuluniform das Klassenklima verbessern?",
+      pieces: [
+        { id:"c1", text:"Eine Schuluniform kann soziale Unterschiede weniger sichtbar machen." },        // Behauptung
+        { id:"c2", text:"Denn Kleidung wird oft als Statussymbol genutzt und kann Druck erzeugen." },    // Begründung
+        { id:"c3", text:"Wenn Marken und Preise nicht im Vordergrund stehen, gibt es weniger Anlass zum Vergleichen." }, // Beispiel
+        { id:"c4", text:"Damit kann eine Uniform dazu beitragen, dass der Fokus stärker auf dem Miteinander liegt." }    // Rückbezug
+      ],
+      correct: ["c1","c2","c3","c4"]
+    }
+  ];
+
+  // ---------------------------
+  // State
+  // ---------------------------
+  let taskIdx = 0;
+  let score = 0;
+  let checkedThisRound = false;
+
+  // DOM helpers
+  const $ = (id) => document.getElementById(id);
+
+  const bankEl = $("bank");
+  const msgEl = $("message");
+
+  const slots = [
+    $("slot0"),
+    $("slot1"),
+    $("slot2"),
+    $("slot3"),
+  ];
+
+  // ---------------------------
+  // Utilities
+  // ---------------------------
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function clearMessage(){
+    msgEl.style.display = "none";
+    msgEl.className = "msg";
+    msgEl.textContent = "";
+  }
+
+  function showMessage(kind, text){
+    msgEl.style.display = "block";
+    msgEl.className = `msg ${kind}`;
+    msgEl.textContent = text;
+  }
+
+  function updateTop(){
+    $("taskTotal").textContent = String(TASKS.length);
+    $("taskIndex").textContent = String(taskIdx + 1);
+    $("score").textContent = String(score);
+    $("taskTitle").textContent = TASKS[taskIdx].title;
+    $("taskPrompt").textContent = TASKS[taskIdx].prompt;
+  }
+
+  function makeTile(piece){
+    const div = document.createElement("div");
+    div.className = "tile";
+    div.setAttribute("draggable", "true");
+    div.dataset.pieceId = piece.id;
+    div.textContent = piece.text;
+
+    div.addEventListener("dragstart", (e) => {
+      if (div.classList.contains("locked")) return;
+      div.classList.add("dragging");
+      e.dataTransfer.setData("text/plain", piece.id);
+      e.dataTransfer.effectAllowed = "move";
+    });
+
+    div.addEventListener("dragend", () => {
+      div.classList.remove("dragging");
+    });
+
+    return div;
+  }
+
+  function findTileById(id){
+    return document.querySelector(`.tile[data-piece-id="${CSS.escape(id)}"]`);
+  }
+
+  function clearSlots(){
+    for(const s of slots){
+      s.innerHTML = "";
+    }
+  }
+
+  function fillBank(pieces){
+    bankEl.innerHTML = "";
+    const shuffled = shuffle(pieces);
+    for(const p of shuffled){
+      bankEl.appendChild(makeTile(p));
+    }
+  }
+
+  function enableDnD(){
+    // Dropzones (4 slots + bank)
+    const dropzones = document.querySelectorAll(".dropzone");
+    dropzones.forEach(z => {
+      z.addEventListener("dragover", (e) => {
+        if (checkedThisRound) return;
+        e.preventDefault();
+        z.classList.add("over");
+        e.dataTransfer.dropEffect = "move";
+      });
+      z.addEventListener("dragleave", () => z.classList.remove("over"));
+      z.addEventListener("drop", (e) => {
+        if (checkedThisRound) return;
+        e.preventDefault();
+        z.classList.remove("over");
+        const pieceId = e.dataTransfer.getData("text/plain");
+        if(!pieceId) return;
+
+        const tile = findTileById(pieceId);
+        if(!tile) return;
+
+        const slotIndex = Number(z.dataset.slot);
+        const slotEl = slots[slotIndex];
+
+        // allow only one tile per slot; if occupied, swap back to bank
+        if (slotEl.children.length > 0){
+          bankEl.appendChild(slotEl.children[0]);
+        }
+        slotEl.appendChild(tile);
+        clearMessage();
+      });
+    });
+
+    // Bank as drop target
+    bankEl.addEventListener("dragover", (e) => {
+      if (checkedThisRound) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    });
+    bankEl.addEventListener("drop", (e) => {
+      if (checkedThisRound) return;
+      e.preventDefault();
+      const pieceId = e.dataTransfer.getData("text/plain");
+      if(!pieceId) return;
+      const tile = findTileById(pieceId);
+      if(!tile) return;
+      bankEl.appendChild(tile);
+      clearMessage();
+    });
+  }
+
+  function lockTiles(lock){
+    document.querySelectorAll(".tile").forEach(t => {
+      if (lock) t.classList.add("locked");
+      else t.classList.remove("locked");
+    });
+  }
+
+  // ---------------------------
+  // Logic
+  // ---------------------------
+  function loadTask(idx){
+    taskIdx = idx;
+    checkedThisRound = false;
+    clearMessage();
+    updateTop();
+    clearSlots();
+    fillBank(TASKS[taskIdx].pieces);
+    lockTiles(false);
+  }
+
+  function currentSelection(){
+    // Return array of 4 pieceIds (or null)
+    const picked = [];
+    for(const slotEl of slots){
+      const tile = slotEl.querySelector(".tile");
+      picked.push(tile ? tile.dataset.pieceId : null);
+    }
+    return picked;
+  }
+
+  function check(){
+    clearMessage();
+    const picked = currentSelection();
+
+    if(picked.some(x => !x)){
+      showMessage("warn", "Bitte fülle alle vier Felder (Behauptung, Begründung, Beispiel/Erklärung, Rückbezug).");
+      return;
+    }
+
+    const correct = TASKS[taskIdx].correct;
+    const ok = picked.every((id, i) => id === correct[i]);
+
+    checkedThisRound = true;
+    lockTiles(true);
+
+    if(ok){
+      score += 1;
+      updateTop();
+      showMessage("ok", "✔ Sehr gut! Das ist ein logisch vollständiges Argument.");
+    }else{
+      // give minimal feedback without revealing full solution
+      let wrongCount = 0;
+      for(let i=0;i<4;i++) if(picked[i] !== correct[i]) wrongCount++;
+      showMessage("bad", `✖ Noch nicht. ${wrongCount} Feld(er) sind nicht passend oder in falscher Reihenfolge. Nutze „Reset“ und versuche es nochmal.`);
+    }
+  }
+
+  function resetTask(){
+    checkedThisRound = false;
+    clearMessage();
+    clearSlots();
+    fillBank(TASKS[taskIdx].pieces);
+    lockTiles(false);
+    updateTop();
+  }
+
+  function nextTask(){
+    const next = (taskIdx + 1) % TASKS.length;
+    loadTask(next);
+  }
+
+  // ---------------------------
+  // Events
+  // ---------------------------
+  $("btnCheck").addEventListener("click", check);
+  $("btnReset").addEventListener("click", resetTask);
+  $("btnNext").addEventListener("click", nextTask);
+
+  document.addEventListener("keydown", (e) => {
+    const k = e.key.toLowerCase();
+    if(k === "c") check();
+    if(k === "r") resetTask();
+    if(k === "n") nextTask();
+  });
+
+  // Init
+  enableDnD();
+  loadTask(0);
+</script>
+</body>
+</html>
