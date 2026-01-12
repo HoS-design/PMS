@@ -2,271 +2,198 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HoS · Deutsch Übungen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HoS · Lernübungen</title>
+
   <style>
     :root{
       --bg:#0b1220;
       --card:#0f1a33;
-      --card2:#0c1730;
-      --ink:#e7eefc;
-      --muted:#a9b7d6;
+      --ink:#e6eefc;
+      --muted:#9fb0d0;
       --line:rgba(255,255,255,.12);
       --a:#60a5fa;
       --b:#34d399;
-      --c:#f59e0b;
-      --d:#f472b6;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --y:#fbbf24;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
       --r:18px;
     }
+
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       background:
-        radial-gradient(900px 500px at 10% 10%, rgba(96,165,250,.20), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(52,211,153,.16), transparent 60%),
-        radial-gradient(900px 600px at 70% 90%, rgba(244,114,182,.12), transparent 60%),
+        radial-gradient(1200px 700px at 10% 10%, rgba(96,165,250,.18), transparent 60%),
+        radial-gradient(1000px 600px at 90% 20%, rgba(52,211,153,.16), transparent 55%),
         var(--bg);
       color:var(--ink);
+      min-height:100vh;
     }
-    a{color:inherit;text-decoration:none}
+
     .wrap{
-      max-width:980px;
+      max-width:1100px;
       margin:0 auto;
-      padding:18px 14px 40px;
+      padding:20px 14px 50px;
     }
+
     header{
-      position:relative;
-      padding:18px;
+      display:flex;
+      gap:16px;
+      align-items:center;
+      padding:16px;
       border:1px solid var(--line);
       border-radius:var(--r);
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      background:rgba(255,255,255,.05);
       box-shadow:var(--shadow);
-      overflow:hidden;
     }
-    .meme{
-      width:76px;height:76px;object-fit:cover;
+
+    header img{
+      width:80px;
+      height:80px;
       border-radius:16px;
       border:1px solid var(--line);
-      box-shadow:0 8px 18px rgba(0,0,0,.35);
-      float:right;
-      margin-left:12px;
+      object-fit:cover;
     }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:.5rem;
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--muted);
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-    }
-    h1{margin:10px 0 6px;font-size:26px;letter-spacing:.2px}
-    p{margin:0;color:var(--muted);line-height:1.5}
-    .grid{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns:repeat(12, 1fr);
-      gap:12px;
-    }
-    .card{
-      grid-column:span 12;
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-    @media(min-width:720px){
-      .card{grid-column:span 6;}
-      .wide{grid-column:span 12;}
-    }
-    .card a{
-      display:block;
-      padding:14px 14px 12px;
-    }
-    .top{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:10px;
-    }
-    .title{
-      font-size:16px;
-      font-weight:700;
+
+    h1{
       margin:0;
+      font-size:1.4rem;
     }
-    .meta{
-      margin-top:6px;
-      font-size:13px;
+
+    .sub{
+      margin-top:4px;
       color:var(--muted);
-      line-height:1.45;
     }
-    .tag{
-      font-size:11px;
-      padding:4px 9px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(0,0,0,.18);
-      color:var(--muted);
-      white-space:nowrap;
+
+    section{
+      margin-top:28px;
     }
-    .accent{
-      position:absolute; inset:auto 0 0 0;
-      height:4px;
-      background:linear-gradient(90deg, var(--a), var(--b));
-      opacity:.9;
-    }
-    .accent.alt{background:linear-gradient(90deg, var(--c), var(--d));}
-    .accent.pink{background:linear-gradient(90deg, var(--d), var(--a));}
-    .accent.green{background:linear-gradient(90deg, var(--b), var(--c));}
-    .hint{
-      margin-top:14px;
-      padding:12px 14px;
-      border:1px dashed rgba(255,255,255,.22);
-      border-radius:var(--r);
-      background:rgba(0,0,0,.20);
-      color:var(--muted);
-      line-height:1.5;
-    }
-    .row{
+
+    section h2{
+      margin:0 0 12px;
+      font-size:1.2rem;
+      color:#dbe7ff;
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:10px;
       align-items:center;
-      color:var(--muted);
-      font-size:12px;
+      gap:10px;
     }
-    .kbd{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:11px;
-      padding:3px 7px;
-      border-radius:8px;
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:14px;
+    }
+
+    .card{
+      display:block;
+      padding:16px;
+      border-radius:var(--r);
       border:1px solid var(--line);
-      background:rgba(255,255,255,.05);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      box-shadow:var(--shadow);
+      text-decoration:none;
       color:var(--ink);
+      transition:transform .15s ease, background .15s ease;
     }
+
+    .card:hover{
+      transform:translateY(-2px);
+      background:rgba(255,255,255,.08);
+    }
+
+    .card h3{
+      margin:0 0 6px;
+      font-size:1.05rem;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.35;
+    }
+
     footer{
-      margin-top:14px;
+      margin-top:40px;
       text-align:center;
-      color:rgba(255,255,255,.45);
-      font-size:12px;
+      color:var(--muted);
+      font-size:.9rem;
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
 
     <header>
-      <img src="chatistthisreal.png" onerror="this.onerror=null;this.src='chatisthisreal.png';"
-           alt="Chat is this real?" class="meme">
-      <span class="badge">🏫 Deutsch · Freiarbeit • <b style="color:var(--b)">HoS</b> • zentrale Startseite</span>
-      <h1>Übungen auswählen 🚀</h1>
-      <p>Tippe auf eine Kachel, um direkt zu starten. Alles läuft lokal (HTML) – ideal für Handy, Tablet & PC.</p>
-
-      <div class="row" aria-label="Tipps">
-        <span class="kbd">Tipp</span>
-        <span>Wenn ein Bild nicht lädt: Datei heißt <b>chatistthisreal.png</b> (liegt im gleichen Ordner).</span>
+      <img src="chatistthisreal.png" alt="Chat is this real?">
+      <div>
+        <h1>HoS · Digitale Lernübungen</h1>
+        <div class="sub">Deutsch & Mathematik · interaktiv · selbstständig</div>
       </div>
     </header>
 
-    <section class="grid" aria-label="Übungen">
+    <!-- ===================== -->
+    <!-- DEUTSCH               -->
+    <!-- ===================== -->
+    <section>
+      <h2>📘 Deutsch</h2>
+      <div class="grid">
 
-      <article class="card wide">
-        <a href="Argument.html" aria-label="Argumentation öffnen">
-          <div class="top">
-            <div>
-              <h2 class="title">🗣 Argumentation · Bausteine & Störbausteine</h2>
-              <div class="meta">Übe, Argumente aus Bausteinen zusammenzusetzen (mit optionalen Störbausteinen). Ideal für Erörterung & Diskussion.</div>
-            </div>
-            <span class="tag">Argument · Aufbau</span>
-          </div>
+        <a href="Argument.html" class="card">
+          <h3>🧩 Argumente bauen</h3>
+          <p>Argumente aus Bausteinen zusammensetzen<br>
+             mit Störbausteinen</p>
         </a>
-        <div class="accent alt"></div>
-      </article>
 
-      <article class="card">
-        <a href="ZeitformenQuiz.html" aria-label="Zeitformen Quiz öffnen">
-          <div class="top">
-            <div>
-              <h2 class="title">⏳ ZeitformenQuiz</h2>
-              <div class="meta">Klassisches Quiz: Zeitformen erkennen & sicher werden.</div>
-            </div>
-            <span class="tag">Quiz</span>
-          </div>
+        <a href="FremdwortGenerator.html" class="card">
+          <h3>📚 Fremdwort-Generator</h3>
+          <p>Begriffe verstehen & korrekt verwenden</p>
         </a>
-        <div class="accent"></div>
-      </article>
 
-      <article class="card">
-        <a href="Speedrunde.html" aria-label="Speedrunde öffnen">
-          <div class="top">
-            <div>
-              <h2 class="title">⚡ Speedrunde</h2>
-              <div class="meta">60 Sekunden: schnell entscheiden, Punkte sammeln – perfekt als Warm-up oder Abschluss.</div>
-            </div>
-            <span class="tag">Tempo</span>
-          </div>
+        <a href="ZeitformenQuiz.html" class="card">
+          <h3>⏳ Zeitformen-Quiz</h3>
+          <p>Präsens · Präteritum · Perfekt · Futur</p>
         </a>
-        <div class="accent green"></div>
-      </article>
 
-      <article class="card">
-        <a href="FremdwortGenerator.html" aria-label="Fremdwort Generator öffnen">
-          <div class="top">
-            <div>
-              <h2 class="title">🧠 FremdwortGenerator</h2>
-              <div class="meta">Neue Fremdwörter generieren (ohne Beispielsätze) und Wortschatz erweitern.</div>
-            </div>
-            <span class="tag">Wortschatz</span>
-          </div>
+        <a href="Speedrunde.html" class="card">
+          <h3>⚡ Speedrunde</h3>
+          <p>60-Sekunden-Quiz zu Grammatik & Zeitformen</p>
         </a>
-        <div class="accent pink"></div>
-      </article>
 
-      <article class="card">
-        <a href="ZeitformenQuiz.html" aria-label="Zeitformen Quiz öffnen (Alternative Link)">
-          <div class="top">
-            <div>
-              <h2 class="title">✅ Check: Zeitformen sicher?</h2>
-              <div class="meta">Wenn du unsicher bist: starte mit dem Quiz und gehe danach in die Speedrunde.</div>
-            </div>
-            <span class="tag">Empfehlung</span>
-          </div>
-        </a>
-        <div class="accent"></div>
-      </article>
-
-      <article class="card">
-        <a href="Argument.html" aria-label="Argumentation öffnen (Alternative Link)">
-          <div class="top">
-            <div>
-              <h2 class="title">🧩 Check: Erörterung & Argumente</h2>
-              <div class="meta">Wenn du für eine Erörterung übst: Bausteine zusammensetzen → dann selbst schreiben.</div>
-            </div>
-            <span class="tag">Strategie</span>
-          </div>
-        </a>
-        <div class="accent alt"></div>
-      </article>
-
+      </div>
     </section>
 
-    <div class="hint">
-      <b style="color:var(--ink)">Kurze Empfehlung:</b><br>
-      1) <b>ZeitformenQuiz</b> (sicher werden) → 2) <b>Speedrunde</b> (Tempo) → 3) <b>Argumentation</b> (Struktur) → 4) <b>FremdwortGenerator</b> (Wortschatz).
-      <div class="row" style="margin-top:10px">
-        <span class="kbd">HoS</span>
-        <span>Kein Rückbezug eingebaut • Störbausteine erlaubt • mobilfreundlich</span>
-      </div>
-    </div>
+    <!-- ===================== -->
+    <!-- MATHEMATIK            -->
+    <!-- ===================== -->
+    <section>
+      <h2>📐 Mathematik</h2>
+      <div class="grid">
 
-    <footer>HoS · Deutsch Übungen · lokal lauffähig (nur HTML)</footer>
+        <a href="dreiecke.html" class="card">
+          <h3>🔺 Dreiecke – Winkelarten</h3>
+          <p>spitz · recht · stumpf<br>
+             erkennen & selbst herstellen</p>
+        </a>
+
+        <!-- Platz für zukünftige Mathe-Übungen -->
+        <!--
+        <a href="brueche.html" class="card">
+          <h3>➗ Brüche</h3>
+          <p>kürzen · erweitern · vergleichen</p>
+        </a>
+        -->
+
+      </div>
+    </section>
+
+    <footer>
+      HoS · Unterricht & Freiarbeit · interaktive Übungen
+    </footer>
+
   </div>
 </body>
 </html>
