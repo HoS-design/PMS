@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HoS · Dreiecke – spitz / recht / stumpf</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a33;
+      --card2:#0c1630;
+      --ink:#e6eefc;
+      --muted:#9fb0d0;
+      --line:rgba(255,255,255,.12);
+      --a:#60a5fa;
+      --b:#34d399;
+      --w:#fbbf24;
+      --bad:#fb7185;
+      --good:#22c55e;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 12% 10%, rgba(96,165,250,.22), transparent 60%),
+        radial-gradient(900px 600px at 90% 18%, rgba(52,211,153,.18), transparent 55%),
+        radial-gradient(900px 600px at 30% 95%, rgba(251,191,36,.14), transparent 55%),
+        var(--bg);
+      min-height:100vh;
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 14px 40px}
+    header{
+      display:flex;gap:14px;align-items:center;
+      padding:14px 16px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+    }
+    .meme{
+      width:74px;height:74px;border-radius:14px;object-fit:cover;
+      border:1px solid var(--line);
+      background:#0b1020;
+    }
+    h1{margin:0;font-size:1.25rem;letter-spacing:.2px}
+    .sub{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+    .badge{
+      margin-left:auto;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:.9rem;
+      white-space:nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .badge{display:none}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .card h2{
+      margin:0;padding:12px 14px;
+      font-size:1rem;
+      border-bottom:1px solid var(--line);
+      color:#dbe7ff;
+      display:flex;align-items:center;gap:10px;
+    }
+    .pill{
+      font-size:.85rem;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .card .body{padding:12px 14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .row + .row{margin-top:10px}
+    .btn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.15s transform,.15s background;
+      user-select:none;
+    }
+    .btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.06)}
+    .btn:active{transform:translateY(0px)}
+    .btn.primary{border-color:rgba(96,165,250,.5);box-shadow:0 0 0 3px rgba(96,165,250,.12) inset}
+    .btn.good{border-color:rgba(34,197,94,.45)}
+    .btn.warn{border-color:rgba(251,191,36,.45)}
+    .btn.bad{border-color:rgba(251,113,133,.45)}
+    .btn.tiny{padding:8px 10px;border-radius:12px;font-size:.92rem}
+    .switch{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+      padding:10px 14px;
+      border-bottom:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+    }
+    .switch .btn{font-weight:700}
+    .switch .btn.active{
+      background:rgba(96,165,250,.12);
+      border-color:rgba(96,165,250,.55);
+    }
+
+    canvas{
+      width:100%;
+      background:linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.24));
+      border:1px solid var(--line);
+      border-radius:16px;
+      display:block;
+      touch-action:none;
+    }
+    .hint{color:var(--muted);font-size:.92rem;line-height:1.35}
+    .status{
+      padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .kpi{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:10px;
+    }
+    .kpi .box{
+      padding:10px 12px;border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+    .kpi .big{font-size:1.2rem;font-weight:800;color:#eaf2ff}
+    .kpi .lab{font-size:.85rem;color:var(--muted)}
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .small{font-size:.88rem;color:var(--muted)}
+    .tag{
+      display:inline-flex;gap:6px;align-items:center;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);font-size:.9rem;
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--a);display:inline-block}
+    .dot.b{background:var(--b)}
+    .dot.w{background:var(--w)}
+    .dot.bad{background:var(--bad)}
+    .toplink{
+      margin-left:auto;
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:.9rem;
+      white-space:nowrap;
+    }
+    .toplink:hover{background:rgba(255,255,255,.06)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <img src="../chatistthisreal.png"
+           onerror="this.onerror=null;this.src='chatistthisreal.png';"
+           alt="Chat is this real?"
+           class="meme">
+      <div>
+        <h1>Dreiecke · Winkelart üben <span style="color:var(--b)">HoS</span></h1>
+        <div class="sub">Erkennen & Herstellen: spitzwinkelig · rechtwinkelig · stumpfwinkelig</div>
+      </div>
+      <a class="toplink" href="../index.html" title="Zur zentralen Startseite">⬅︎ Startseite</a>
+      <div class="badge">🧠 Mathe-Übung • Interaktiv • Canvas</div>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="mainCard">
+        <div class="switch">
+          <button class="btn active" id="modeRecognize">1) Erkennen</button>
+          <button class="btn" id="modeBuild">2) Herstellen</button>
+          <span class="pill" id="taskPill">Aufgabe</span>
+        </div>
+        <div class="body">
+          <canvas id="cv" width="980" height="640" aria-label="Dreieck-Canvas"></canvas>
+
+          <div class="row" style="margin-top:12px">
+            <span class="tag"><span class="dot"></span> Punkt A</span>
+            <span class="tag"><span class="dot b"></span> Punkt B</span>
+            <span class="tag"><span class="dot w"></span> Punkt C</span>
+            <span class="status" id="liveInfo">Ziehe Punkte / beantworte die Aufgabe.</span>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row" id="answerRow">
+            <button class="btn primary" data-ans="acute">Spitzwinkelig</button>
+            <button class="btn warn" data-ans="right">Rechtwinkelig</button>
+            <button class="btn bad" data-ans="obtuse">Stumpfwinkelig</button>
+            <button class="btn tiny" id="nextBtn">Nächste Aufgabe</button>
+          </div>
+
+          <div class="row" id="buildRow" style="display:none">
+            <button class="btn good" id="checkBuild">Prüfen</button>
+            <button class="btn tiny" id="resetBuild">Neu anordnen</button>
+            <button class="btn tiny" id="nextBuild">Nächste Vorgabe</button>
+            <span class="hint">Tipp: Punkte ziehen. Ziel: die geforderte Winkelart herstellen.</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h2>Lehrer-Panel <span class="pill">Settings</span></h2>
+        <div class="body">
+          <div class="kpi">
+            <div class="box"><div class="big" id="score">0</div><div class="lab">Punkte</div></div>
+            <div class="box"><div class="big" id="streak">0</div><div class="lab">Streak</div></div>
+            <div class="box"><div class="big" id="done">0</div><div class="lab">Aufgaben</div></div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row">
+            <button class="btn tiny" id="toggleGrid">Raster: an/aus</button>
+            <button class="btn tiny" id="newTriangle">Neues Dreieck</button>
+          </div>
+
+          <div class="row">
+            <button class="btn tiny" id="levelEasy">Level: easy</button>
+            <button class="btn tiny" id="levelMed">Level: medium</button>
+            <button class="btn tiny" id="levelHard">Level: hard</button>
+          </div>
+
+          <div class="sep"></div>
+          <div class="hint">
+            <b>Technik:</b> Winkel werden aus Seitenlängen (Kosinussatz) berechnet und klassifiziert.
+            <br><br>
+            Erweiterbar: Seitenarten, Winkelanzeigen, Timer/Ranking, Aufgabenpool, Export.
+          </div>
+
+          <div class="sep"></div>
+          <div class="small" id="debug"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+
+  // UI
+  const modeRecognizeBtn = document.getElementById('modeRecognize');
+  const modeBuildBtn = document.getElementById('modeBuild');
+  const answerRow = document.getElementById('answerRow');
+  const buildRow = document.getElementById('buildRow');
+  const nextBtn = document.getElementById('nextBtn');
+  const checkBuild = document.getElementById('checkBuild');
+  const resetBuild = document.getElementById('resetBuild');
+  const nextBuild = document.getElementById('nextBuild');
+  const taskPill = document.getElementById('taskPill');
+  const liveInfo = document.getElementById('liveInfo');
+
+  const scoreEl = document.getElementById('score');
+  const streakEl = document.getElementById('streak');
+  const doneEl = document.getElementById('done');
+  const debugEl = document.getElementById('debug');
+
+  const toggleGridBtn = document.getElementById('toggleGrid');
+  const newTriBtn = document.getElementById('newTriangle');
+  const lvlEasy = document.getElementById('levelEasy');
+  const lvlMed = document.getElementById('levelMed');
+  const lvlHard = document.getElementById('levelHard');
+
+  // State
+  let mode = 'recognize'; // recognize | build
+  let showGrid = true;
+  let level = 'medium';
+  let score = 0, streak = 0, done = 0;
+
+  const EPS_RIGHT = 2.0; // degrees tolerance for right angle
+  const pointRadius = 12; // hit radius
+
+  // Points (in canvas coords)
+  let A = {x: 240, y: 180, c: '#60a5fa', name: 'A'};
+  let B = {x: 720, y: 220, c: '#34d399', name: 'B'};
+  let C = {x: 420, y: 520, c: '#fbbf24', name: 'C'};
+  let dragging = null;
+
+  // Task
+  const types = [
+    {key:'acute',  label:'Spitzwinkelig'},
+    {key:'right',  label:'Rechtwinkelig'},
+    {key:'obtuse', label:'Stumpfwinkelig'}
+  ];
+  let currentExpected = null;
+
+  // Utils
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const dist = (p,q) => Math.hypot(p.x-q.x, p.y-q.y);
+
+  function angleFromSides(a, b, c){
+    const cosA = clamp((b*b + c*c - a*a) / (2*b*c), -1, 1);
+    return Math.acos(cosA) * 180/Math.PI;
+  }
+
+  function triangleAngles(A,B,C){
+    const ab = dist(A,B);
+    const bc = dist(B,C);
+    const ca = dist(C,A);
+    const angA = angleFromSides(bc, ab, ca);
+    const angB = angleFromSides(ca, ab, bc);
+    const angC = 180 - angA - angB;
+    return {angA, angB, angC, ab, bc, ca};
+  }
+
+  function classifyByAngles(angles){
+    const {angA, angB, angC} = angles;
+    const maxAng = Math.max(angA, angB, angC);
+    if (Math.abs(maxAng - 90) <= EPS_RIGHT) return 'right';
+    if (maxAng > 90 + EPS_RIGHT) return 'obtuse';
+    return 'acute';
+  }
+
+  function prettyType(key){
+    return types.find(t=>t.key===key)?.label ?? key;
+  }
+
+  function setMode(m){
+    mode = m;
+    const rec = (mode === 'recognize');
+    modeRecognizeBtn.classList.toggle('active', rec);
+    modeBuildBtn.classList.toggle('active', !rec);
+    answerRow.style.display = rec ? '' : 'none';
+    buildRow.style.display  = rec ? 'none' : '';
+    taskPill.textContent = rec ? 'Aufgabe: Erkennen' : 'Aufgabe: Herstellen';
+    if(rec) newRecognizeTask();
+    else newBuildTask();
+    draw();
+  }
+
+  function randInt(lo, hi){ return Math.floor(Math.random()*(hi-lo+1))+lo; }
+  function randomPoint(margin=80){
+    return { x: randInt(margin, cv.width - margin), y: randInt(margin, cv.height - margin) };
+  }
+  function area2(A,B,C){
+    return Math.abs((B.x-A.x)*(C.y-A.y) - (B.y-A.y)*(C.x-A.x));
+  }
+
+  function generateTriangleOfType(wanted){
+    const tries = 2500;
+    for(let i=0;i<tries;i++){
+      const p1 = randomPoint();
+      const p2 = randomPoint();
+      const p3 = randomPoint();
+      if(area2(p1,p2,p3) < 18000) continue;
+      const ang = triangleAngles(p1,p2,p3);
+      const cls = classifyByAngles(ang);
+
+      const maxAng = Math.max(ang.angA, ang.angB, ang.angC);
+      const nearRight = Math.abs(maxAng-90);
+
+      if (wanted === 'right'){
+        if (nearRight > (level==='easy' ? 0.7 : level==='medium' ? 1.6 : 2.0)) continue;
+        if(level==='easy'){
+          const legs = [ang.ab, ang.bc, ang.ca].sort((a,b)=>a-b);
+          if(legs[2] / legs[0] > 2.2) continue;
+        }
+      } else if (wanted === 'obtuse'){
+        if (cls !== 'obtuse') continue;
+        if(level==='easy' && maxAng < 110) continue;
+        if(level==='hard' && maxAng > 110) continue;
+      } else {
+        if (cls !== 'acute') continue;
+        if(level==='easy' && maxAng > 80) continue;
+        if(level==='hard' && maxAng < 80) continue;
+      }
+      return {p1,p2,p3, cls};
+    }
+    const p1 = {x:200,y:160}, p2={x:760,y:220}, p3={x:460,y:560};
+    return {p1,p2,p3, cls: classifyByAngles(triangleAngles(p1,p2,p3))};
+  }
+
+  function newRecognizeTask(){
+    const wanted = types[randInt(0,2)].key;
+    const g = generateTriangleOfType(wanted);
+    A.x=g.p1.x; A.y=g.p1.y;
+    B.x=g.p2.x; B.y=g.p2.y;
+    C.x=g.p3.x; C.y=g.p3.y;
+    currentExpected = g.cls;
+    liveInfo.textContent = "Klicke: Spitzwinkelig / Rechtwinkelig / Stumpfwinkelig.";
+    updateDebug();
+  }
+
+  function newBuildTask(){
+    currentExpected = types[randInt(0,2)].key;
+    const g = generateTriangleOfType('acute');
+    A.x=g.p1.x; A.y=g.p1.y;
+    B.x=g.p2.x; B.y=g.p2.y;
+    C.x=g.p3.x; C.y=g.p3.y;
+    liveInfo.textContent = "Vorgabe: " + prettyType(currentExpected) + " — Ziehe Punkte, dann „Prüfen“.";
+    updateDebug();
+  }
+
+  function addPoints(ok){
+    done++;
+    doneEl.textContent = done;
+    if(ok){
+      score += 10 + Math.min(10, streak*2);
+      streak++;
+      liveInfo.textContent = "✅ Richtig! +" + (10 + Math.min(10, (streak-1)*2)) + " Punkte.";
+    } else {
+      streak = 0;
+      liveInfo.textContent = "❌ Nicht ganz. Versuch’s nochmal oder „Nächste Aufgabe“.";
+    }
+    scoreEl.textContent = score;
+    streakEl.textContent = streak;
+  }
+
+  function drawGrid(){
+    const step = 40;
+    ctx.save();
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = "rgba(255,255,255,.12)";
+    ctx.lineWidth = 1;
+
+    for(let x=0;x<=cv.width;x+=step){
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,cv.height); ctx.stroke();
+    }
+    for(let y=0;y<=cv.height;y+=step){
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(cv.width,y); ctx.stroke();
+    }
+
+    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = "rgba(96,165,250,.20)";
+    ctx.beginPath(); ctx.moveTo(0, cv.height/2); ctx.lineTo(cv.width, cv.height/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cv.width/2, 0); ctx.lineTo(cv.width/2, cv.height); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawTriangle(){
+    ctx.save();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "rgba(255,255,255,.75)";
+    ctx.fillStyle = "rgba(96,165,250,.10)";
+    ctx.beginPath();
+    ctx.moveTo(A.x,A.y);
+    ctx.lineTo(B.x,B.y);
+    ctx.lineTo(C.x,C.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPoint(p){
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(p.x,p.y, 16, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,.08)";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y, 9, 0, Math.PI*2);
+    ctx.fillStyle = p.c;
+    ctx.fill();
+
+    ctx.font = "700 14px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillStyle = "rgba(230,238,252,.92)";
+    ctx.fillText(p.name, p.x + 12, p.y - 12);
+    ctx.restore();
+  }
+
+  function drawOverlay(){
+    const ang = triangleAngles(A,B,C);
+    const cls = classifyByAngles(ang);
+
+    ctx.save();
+    ctx.font = "700 16px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillStyle = "rgba(230,238,252,.92)";
+    const headline = (mode==='recognize')
+      ? "Was für ein Dreieck ist das?"
+      : ("Baue: " + prettyType(currentExpected));
+    ctx.fillText(headline, 16, 28);
+
+    ctx.font = "600 13px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+    ctx.fillStyle = "rgba(159,176,208,.95)";
+    const maxAng = Math.max(ang.angA, ang.angB, ang.angC);
+    const s = `Aktuell: ${prettyType(cls)} · Winkel: ${ang.angA.toFixed(1)}° / ${ang.angB.toFixed(1)}° / ${ang.angC.toFixed(1)}° (max ${maxAng.toFixed(1)}°)`;
+    ctx.fillText(s, 16, cv.clientHeight - 18);
+
+    ctx.restore();
+  }
+
+  function draw(){
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const cssW = cv.clientWidth, cssH = cv.clientHeight;
+    if (cv.width !== Math.round(cssW * dpr) || cv.height !== Math.round(cssH * dpr)) {
+      cv.width = Math.round(cssW * dpr);
+      cv.height = Math.round(cssH * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+
+    ctx.clearRect(0,0,cv.clientWidth, cv.clientHeight);
+
+    ctx.save();
+    ctx.fillStyle = "rgba(0,0,0,.12)";
+    ctx.fillRect(0,0,cv.clientWidth, cv.clientHeight);
+    ctx.restore();
+
+    if(showGrid) drawGrid();
+    drawTriangle();
+    drawPoint(A); drawPoint(B); drawPoint(C);
+    drawOverlay();
+    updateDebug();
+  }
+
+  function updateDebug(){
+    const ang = triangleAngles(A,B,C);
+    const cls = classifyByAngles(ang);
+    const maxAng = Math.max(ang.angA, ang.angB, ang.angC);
+
+    debugEl.innerHTML =
+      `<div class="small">
+        <b>Live-Check:</b> aktuell <b>${prettyType(cls)}</b><br>
+        Winkel: A=${ang.angA.toFixed(1)}°, B=${ang.angB.toFixed(1)}°, C=${ang.angC.toFixed(1)}° (max ${maxAng.toFixed(1)}°)<br>
+        Toleranz rechtwinkelig: ±${EPS_RIGHT.toFixed(1)}°
+      </div>`;
+  }
+
+  function toCanvasCoords(evt){
+    const rect = cv.getBoundingClientRect();
+    return { x: (evt.clientX - rect.left), y: (evt.clientY - rect.top) };
+  }
+  function hitPoint(p, x, y){
+    return Math.hypot(p.x - x, p.y - y) <= pointRadius + 6;
+  }
+
+  function onDown(e){
+    const pos = toCanvasCoords(e);
+    if(hitPoint(A,pos.x,pos.y)) dragging = A;
+    else if(hitPoint(B,pos.x,pos.y)) dragging = B;
+    else if(hitPoint(C,pos.x,pos.y)) dragging = C;
+    if(dragging){ cv.setPointerCapture?.(e.pointerId); }
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const pos = toCanvasCoords(e);
+    dragging.x = clamp(pos.x, 40, cv.clientWidth - 40);
+    dragging.y = clamp(pos.y, 40, cv.clientHeight - 40);
+    draw();
+  }
+  function onUp(){ dragging = null; }
+
+  cv.addEventListener('pointerdown', onDown);
+  cv.addEventListener('pointermove', onMove);
+  cv.addEventListener('pointerup', onUp);
+  cv.addEventListener('pointercancel', onUp);
+  window.addEventListener('resize', draw);
+
+  document.querySelectorAll('#answerRow .btn[data-ans]').forEach(btn=>{
+    btn.addEventListener('click', () => {
+      if(mode !== 'recognize') return;
+      const chosen = btn.getAttribute('data-ans');
+      const ok = (chosen === currentExpected);
+      addPoints(ok);
+      if(ok) newRecognizeTask();
+      draw();
+    });
+  });
+  nextBtn.addEventListener('click', () => {
+    if(mode !== 'recognize') return;
+    newRecognizeTask();
+    draw();
+  });
+
+  checkBuild.addEventListener('click', () => {
+    if(mode !== 'build') return;
+    const cls = classifyByAngles(triangleAngles(A,B,C));
+    const ok = (cls === currentExpected);
+    addPoints(ok);
+    if(ok) newBuildTask();
+    draw();
+  });
+  resetBuild.addEventListener('click', () => {
+    if(mode !== 'build') return;
+    const g = generateTriangleOfType('acute');
+    A.x=g.p1.x; A.y=g.p1.y;
+    B.x=g.p2.x; B.y=g.p2.y;
+    C.x=g.p3.x; C.y=g.p3.y;
+    liveInfo.textContent = "Vorgabe: " + prettyType(currentExpected) + " — Ziehe Punkte, dann „Prüfen“.";
+    draw();
+  });
+  nextBuild.addEventListener('click', () => {
+    if(mode !== 'build') return;
+    newBuildTask();
+    draw();
+  });
+
+  modeRecognizeBtn.addEventListener('click', () => setMode('recognize'));
+  modeBuildBtn.addEventListener('click', () => setMode('build'));
+
+  toggleGridBtn.addEventListener('click', () => {
+    showGrid = !showGrid;
+    toggleGridBtn.textContent = "Raster: " + (showGrid ? "an" : "aus");
+    draw();
+  });
+  newTriBtn.addEventListener('click', () => {
+    if(mode === 'recognize') newRecognizeTask();
+    else newBuildTask();
+    draw();
+  });
+
+  function setLevel(l){
+    level = l;
+    lvlEasy.classList.toggle('active', l==='easy');
+    lvlMed.classList.toggle('active', l==='medium');
+    lvlHard.classList.toggle('active', l==='hard');
+  }
+  lvlEasy.addEventListener('click', ()=>{setLevel('easy'); newTriBtn.click();});
+  lvlMed.addEventListener('click', ()=>{setLevel('medium'); newTriBtn.click();});
+  lvlHard.addEventListener('click', ()=>{setLevel('hard'); newTriBtn.click();});
+
+  setLevel('medium');
+  setMode('recognize');
+  draw();
+})();
+</script>
+</body>
+</html>
