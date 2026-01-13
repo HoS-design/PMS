@@ -3,32 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HoS · 3D Wasserpistolen-Spiel (Rechtschreibung & Groß/Klein)</title>
+  <title>HoS · 3D Wasserpistolen-Spiel (Satz-Leiste, schön & hell)</title>
   <style>
     :root{
       --bg:#0b1220;
       --ink:#e7eefc;
       --muted:#b8c2dd;
       --line: rgba(255,255,255,.14);
-      --good:#22c55e;
-      --bad:#ef4444;
-      --accent:#7c3aed;
-      --warn:#f59e0b;
       --shadow: 0 20px 60px rgba(0,0,0,.35);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     }
     *{box-sizing:border-box}
     body{
       margin:0; font-family:var(--sans); color:var(--ink);
       background:
-        radial-gradient(1200px 800px at 20% 10%, rgba(124,58,237,.25), transparent 60%),
-        radial-gradient(900px 600px at 80% 20%, rgba(34,197,94,.18), transparent 55%),
-        radial-gradient(1000px 700px at 50% 110%, rgba(245,158,11,.10), transparent 55%),
-        var(--bg);
-      height:100vh;
-      overflow:hidden;
-      user-select:none;
+        radial-gradient(1200px 800px at 20% 10%, rgba(124,58,237,.28), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(34,197,94,.20), transparent 55%),
+        radial-gradient(1000px 700px at 50% 110%, rgba(245,158,11,.12), transparent 55%),
+        #09101d;
+      height:100vh; overflow:hidden; user-select:none;
     }
     canvas{display:block;width:100%;height:100%}
 
@@ -36,58 +30,42 @@
     .topbar{display:flex; gap:10px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;}
     .pill{
       pointer-events:auto;
-      display:inline-flex; gap:10px; align-items:center;
-      padding:10px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.25);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      font-size:13px;
-      color:var(--muted);
-      flex-wrap:wrap;
+      display:inline-flex; gap:10px; align-items:center; flex-wrap:wrap;
+      padding:10px 12px; border-radius:999px; border:1px solid var(--line);
+      background: rgba(0,0,0,.22); box-shadow: var(--shadow); backdrop-filter: blur(10px);
+      font-size:13px; color:var(--muted);
     }
     .pill b{color:var(--ink)}
     .btn{
       pointer-events:auto;
-      appearance:none;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-size:13px;
-      box-shadow: 0 12px 35px rgba(0,0,0,.22);
-      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      appearance:none; border:1px solid var(--line); background: rgba(255,255,255,.06);
+      color:var(--ink); padding:10px 12px; border-radius:14px; cursor:pointer;
+      font-size:13px; box-shadow: 0 12px 35px rgba(0,0,0,.22);
     }
-    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22);}
-    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
 
     .center{
       position:absolute; left:50%; top:50%;
       transform:translate(-50%,-50%);
-      width:18px; height:18px;
-      display:grid; place-items:center;
-      opacity:.9;
+      width:24px; height:24px; display:grid; place-items:center; opacity:.92;
     }
-    .cross{width:18px; height:18px; position:relative;}
+    .cross{width:24px; height:24px; position:relative;}
     .cross:before,.cross:after{
       content:""; position:absolute; left:50%; top:50%;
-      background: rgba(231,238,252,.9);
+      background: rgba(231,238,252,.92);
       transform:translate(-50%,-50%);
       border-radius:2px;
-      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
     }
-    .cross:before{ width:16px; height:2px; }
-    .cross:after{ width:2px; height:16px; }
+    .cross:before{ width:22px; height:2px; }
+    .cross:after{ width:2px; height:22px; }
 
     .bottom{margin-top:auto; display:flex; justify-content:center;}
     .card{
       pointer-events:auto;
-      width:min(1050px, calc(100vw - 24px));
+      width:min(1100px, calc(100vw - 24px));
       border:1px solid var(--line);
-      background: rgba(0,0,0,.28);
+      background: rgba(0,0,0,.24);
       box-shadow: var(--shadow);
       border-radius:22px;
       padding:12px 14px;
@@ -95,39 +73,24 @@
     }
     .title{
       display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;
-      align-items:center;
-      margin-bottom:8px;
+      align-items:center; margin-bottom:8px;
     }
     .title h1{margin:0; font-size:14px; letter-spacing:.25px; text-transform:uppercase; color:var(--muted);}
     .sentence{margin:0; font-size:18px; line-height:1.35; color:var(--ink);}
     .hint{margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.5;}
     .kbd{
-      font-family:var(--mono);
-      font-size:11px;
-      padding:4px 6px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
-      color:var(--ink);
+      font-family:var(--mono); font-size:11px; padding:4px 6px; border-radius:10px;
+      border:1px solid var(--line); background: rgba(0,0,0,.22); color:var(--ink);
     }
-    .bar{
-      height:10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-      margin-top:10px;
-    }
+    .bar{height:10px; border-radius:999px; border:1px solid var(--line); background: rgba(0,0,0,.18); overflow:hidden; margin-top:10px;}
     .fill{height:100%; width:0%; background: linear-gradient(90deg, rgba(34,197,94,.85), rgba(124,58,237,.85));}
 
     .overlay{
-      position:fixed; inset:0;
-      display:grid; place-items:center;
-      background: rgba(0,0,0,.45);
-      backdrop-filter: blur(8px);
+      position:fixed; inset:0; display:grid; place-items:center;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
     }
     .panel{
-      width:min(760px, calc(100vw - 24px));
+      width:min(780px, calc(100vw - 24px));
       border:1px solid var(--line);
       border-radius:26px;
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
@@ -135,16 +98,15 @@
       padding:18px 18px 16px;
       text-align:left;
     }
-    .panelHead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
     .badge{
       display:inline-flex; align-items:center; gap:10px;
-      padding:8px 10px;
-      border-radius:999px;
+      padding:8px 10px; border-radius:999px;
       border:1px solid var(--line);
       background: rgba(0,0,0,.18);
       color:var(--muted);
       font-size:12px;
     }
+    .panelHead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
     .panel h2{margin:8px 0 8px; font-size:22px; letter-spacing:.2px;}
     .panel p{margin:0 0 10px; color:var(--muted); line-height:1.55;}
     .grid2{display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;}
@@ -159,18 +121,12 @@
       line-height:1.5;
     }
     .note b{color:var(--ink)}
+
     .flash{
       position:fixed; left:50%; top:14px; transform:translateX(-50%);
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.35);
-      color:var(--ink);
-      font-size:13px;
-      box-shadow: var(--shadow);
-      opacity:0;
-      pointer-events:none;
-      transition: opacity .15s ease, transform .15s ease;
+      padding:10px 12px; border-radius:14px; border:1px solid var(--line);
+      background: rgba(0,0,0,.35); color:var(--ink); font-size:13px; box-shadow: var(--shadow);
+      opacity:0; pointer-events:none; transition: opacity .15s ease, transform .15s ease;
       backdrop-filter: blur(10px);
     }
     .flash.show{opacity:1; transform:translateX(-50%) translateY(-2px);}
@@ -203,9 +159,9 @@
     <div class="bottom">
       <div class="card">
         <div class="title">
-          <h1 id="missionTitle">Auftrag: Schieße das fehlerhafte Wort (Groß/Klein oder Rechtschreibung)</h1>
+          <h1 id="missionTitle">Auftrag: Schieße das fehlerhafte Wort aus dem Satz heraus</h1>
           <div class="pill" style="padding:8px 10px; font-size:12px;">
-            WASD bewegen · Maus schauen · Klick schießen · ESC frei · Ziele bewegen & verstecken · Deckung blockt
+            WASD bewegen · Maus schauen · Klick schießen · ESC frei · Wort fliegt weg + Wassertrail
           </div>
         </div>
         <p class="sentence" id="sentence">—</p>
@@ -221,28 +177,27 @@
         <span class="badge">HoS · 3D Spiel · Deutsch</span>
         <span class="badge">Laptop Mode ✅</span>
       </div>
-      <h2>Wasserpistolen-Entspannung (mit Grammatik-Bonus) 😄</h2>
+      <h2>Wasserpistolen-Entspannung (hell & lesbar) 😄</h2>
       <p>
-        Im Satz unten ist <b>genau ein Wort</b> falsch: entweder <b>Groß/Klein</b> oder <b>Rechtschreibung</b>
-        (z.B. <i>giebt</i>, <i>Maschiene</i>, <i>seid/seit</i>, <i>dass/das</i> …).
-        <b>Schieße dieses Wort</b> als Ziel im Raum weg. <br><br>
-        <b>Bonus:</b> Am Ende kommt eine <b>Bossrunde</b> mit <b>2 Fehlern</b> (beide treffen = +30).
+        Im 3D-Raum siehst du den Satz als zusammenhängende Wort-Leiste.
+        Schieße das falsche Wort <b>aus dem Satz heraus</b> – es fliegt weg und hinterlässt eine Lücke.
+        <br><br>
+        <b>Bonus:</b> Am Ende kommt eine Bossrunde mit <b>2 Fehlern</b> (beide treffen = +30).
       </p>
       <div class="grid2">
         <div class="note">
           <b>Steuerung</b><br>
           • <span class="kbd">Klick</span> schießen<br>
-          • <span class="kbd">WASD</span> laufen<br>
+          • <span class="kbd">WASD</span> laufen (W vorwärts ✅)<br>
           • Maus schauen (Pointer Lock)<br>
           • <span class="kbd">R</span> nachladen<br>
           • <span class="kbd">ESC</span> Maus frei
         </div>
         <div class="note">
           <b>Punkte</b><br>
-          ✅ korrektes Ziel: +10 + Streak-Bonus<br>
-          ❌ falsches Ziel: −5, Streak = 0<br>
-          👑 Bossrunde: 2 Fehler → beide treffen = <b>+30</b><br>
-          <span style="color:rgba(255,255,255,.7)">Quickcheck: Score/Streak oben.</span>
+          ✅ richtig: +10 + Streak-Bonus<br>
+          ❌ falsch: −5, Streak = 0 (außer Übungsmodus)<br>
+          👑 Boss: 2 Fehler → beide treffen = <b>+30</b><br>
         </div>
       </div>
       <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
@@ -258,24 +213,14 @@
     import * as THREE from "./lib/three.module.js";
 
     // -----------------------------
-    // Aufgabenpool (genau 1 Fehler pro Satz)
-    // wrong muss exakt so im Satz vorkommen
+    // Aufgaben
     // -----------------------------
     const TASKS = [
-      // Fälschlich groß
       { sentence: "Gestern ging ich Schnell nach Hause, weil es regnete.", wrong: "Schnell", note: "Adverb klein: schnell." },
       { sentence: "Bitte stelle die Tasse Vorsichtig auf den Tisch.", wrong: "Vorsichtig", note: "Adverb klein: vorsichtig." },
-      { sentence: "Der Lehrer erklärte Ruhig die Aufgabe.", wrong: "Ruhig", note: "Adverb klein: ruhig." },
-      { sentence: "Wir wollen Später noch lernen.", wrong: "Später", note: "Adverb klein: später." },
       { sentence: "Wir sind Morgen um acht Uhr fertig.", wrong: "Morgen", note: "Zeitadverb klein: morgen." },
-
-      // Fälschlich klein (Nomen)
       { sentence: "Die maschine steht heute in der Werkstatt.", wrong: "maschine", note: "Nomen groß: Maschine." },
       { sentence: "Im winter tragen viele Menschen warme Jacken.", wrong: "winter", note: "Nomen groß: Winter." },
-      { sentence: "Er legte das buch auf den Tisch.", wrong: "buch", note: "Nomen groß: Buch." },
-      { sentence: "Das mädchen lachte laut und rannte weg.", wrong: "mädchen", note: "Nomen groß: Mädchen." },
-
-      // Häufige Rechtschreibfehler
       { sentence: "Er giebt mir jeden Tag eine neue Aufgabe.", wrong: "giebt", note: "Richtig: gibt." },
       { sentence: "Die Maschiene ist sehr laut, aber zuverlässig.", wrong: "Maschiene", note: "Richtig: Maschine." },
       { sentence: "Ich glaube, das du heute früher kommst.", wrong: "das", note: "Konjunktion: dass." },
@@ -285,33 +230,11 @@
       { sentence: "Sie hat das Problem wiederspiegeln wollen, aber es gelang nicht.", wrong: "wiederspiegeln", note: "Richtig: widerspiegeln." }
     ];
 
-    // -----------------------------
-    // Bossrunde (2 Fehler pro Satz) – beide müssen weg
-    // wrongs: exakte Schreibweise im Satz
-    // -----------------------------
     const BOSS_TASKS = [
-      {
-        sentence: "Ich glaube, das du die Maschiene schon morgen reparierst.",
-        wrongs: ["das", "Maschiene"],
-        note: "Konjunktion: dass · Richtig: Maschine."
-      },
-      {
-        sentence: "Er giebt zu, das er vieleicht zu Laut gesprochen hat.",
-        wrongs: ["giebt", "das", "vieleicht", "Laut"] // zu viele – wir brauchen genau 2 → wir nehmen nur 2:
-      },
-      {
-        sentence: "Er giebt zu, das er vieleicht zu laut gesprochen hat.",
-        wrongs: ["giebt", "das"],
-        note: "Richtig: gibt · Konjunktion: dass."
-      },
-      {
-        sentence: "Im winter ist die Maschiene oft kaputt, aber das passiert selten.",
-        wrongs: ["winter", "Maschiene"],
-        note: "Nomen: Winter · Richtig: Maschine."
-      }
-    ].filter(b => b.wrongs.length === 2);
+      { sentence: "Ich glaube, das du die Maschiene schon morgen reparierst.", wrongs: ["das", "Maschiene"], note: "dass · Maschine" },
+      { sentence: "Im winter ist die Maschiene oft kaputt, aber das passiert selten.", wrongs: ["winter", "Maschiene"], note: "Winter · Maschine" }
+    ];
 
-    // Shuffle helper
     function shuffle(arr){
       for(let i=arr.length-1;i>0;i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -337,7 +260,6 @@
       locked: false,
       paused: true,
       level: 1,
-
       bossActive: false,
       bossHitsRemaining: 0,
       bossBonusAwarded: false
@@ -366,7 +288,7 @@
       flash.classList.toggle("good", good);
       flash.classList.toggle("bad", !good);
       clearTimeout(flash._t);
-      flash._t = setTimeout(()=>flash.classList.remove("show"), 900);
+      flash._t = setTimeout(()=>flash.classList.remove("show"), 950);
     }
 
     function uiUpdate(){
@@ -375,144 +297,256 @@
       streakEl.textContent = String(state.streak);
       levelEl.textContent = String(state.level);
 
-      // progress: Boss zählt als extra "letzter Schritt"
       const denom = state.total + 1;
       const numer = state.done + (state.bossActive ? 1 : 0);
       progress.style.width = `${Math.round((numer/denom)*100)}%`;
 
       bossTag.style.display = state.bossActive ? "inline" : "none";
       missionTitle.textContent = state.bossActive
-        ? `👑 Bossrunde: Schieße beide fehlerhaften Wörter weg (${state.bossHitsRemaining} übrig)`
-        : "Auftrag: Schieße das fehlerhafte Wort (Groß/Klein oder Rechtschreibung)";
+        ? `👑 Bossrunde: Schieße beide Fehler (${state.bossHitsRemaining} übrig)`
+        : "Auftrag: Schieße das fehlerhafte Wort aus dem Satz heraus";
     }
 
-    // Root: Startseite
     $("#homeBtn").addEventListener("click", ()=>{ window.location.href = "index.html"; });
-
     $("#resetBtn").addEventListener("click", ()=>{
       hardReset();
       overlay.style.display = "grid";
       state.paused = true;
       unlockPointer();
-      restoreOverlayText();
     });
-
-    $("#startBtn").addEventListener("click", ()=>{
-      state.practice = false;
-      startGame();
-    });
-    $("#practiceBtn").addEventListener("click", ()=>{
-      state.practice = true;
-      startGame();
-    });
-
-    function restoreOverlayText(){
-      overlay.querySelector("h2").textContent = "Wasserpistolen-Entspannung (mit Grammatik-Bonus) 😄";
-      overlay.querySelector("p").innerHTML =
-        `Im Satz unten ist <b>genau ein Wort</b> falsch: entweder <b>Groß/Klein</b> oder <b>Rechtschreibung</b>
-         (z.B. <i>giebt</i>, <i>Maschiene</i>, <i>seid/seit</i>, <i>dass/das</i> …).
-         <b>Schieße dieses Wort</b> als Ziel im Raum weg.<br><br>
-         <b>Bonus:</b> Am Ende kommt eine <b>Bossrunde</b> mit <b>2 Fehlern</b> (beide treffen = +30).`;
-    }
+    $("#startBtn").addEventListener("click", ()=>{ state.practice=false; startGame(); });
+    $("#practiceBtn").addEventListener("click", ()=>{ state.practice=true; startGame(); });
 
     // -----------------------------
-    // Three.js setup
+    // Three.js (heller + Tone Mapping)
     // -----------------------------
     const canvas = $("#c");
     const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
     renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
     renderer.setSize(innerWidth, innerHeight);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.35; // heller!
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0b1220, 14, 55);
+    scene.fog = new THREE.Fog(0x0b1220, 10, 70);
 
-    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 200);
-    camera.position.set(0, 1.7, 8);
+    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 300);
+    camera.position.set(0, 1.7, 6.2);
 
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x223355, 0.85));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    dirLight.position.set(7, 12, 5);
-    scene.add(dirLight);
+    // Sky dome (soft gradient)
+    const skyGeo = new THREE.SphereGeometry(140, 32, 20);
+    const skyMat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms: {
+        topColor: { value: new THREE.Color(0x233a66) },
+        bottomColor: { value: new THREE.Color(0x070b13) },
+        offset: { value: 30.0 },
+        exponent: { value: 0.75 }
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 wp = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = wp.xyz;
+          gl_Position = projectionMatrix * viewMatrix * wp;
+        }`,
+      fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform float offset;
+        uniform float exponent;
+        varying vec3 vWorldPosition;
+        void main() {
+          float h = normalize(vWorldPosition + vec3(0.0, offset, 0.0)).y;
+          float t = pow(max(h, 0.0), exponent);
+          gl_FragColor = vec4(mix(bottomColor, topColor, t), 1.0);
+        }`
+    });
+    const sky = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(sky);
 
-    // Ground
+    // Better lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.50));
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x334466, 0.85));
+
+    const dirKey = new THREE.DirectionalLight(0xffffff, 1.15);
+    dirKey.position.set(8, 12, 6);
+    dirKey.castShadow = false;
+    scene.add(dirKey);
+
+    const dirFill = new THREE.DirectionalLight(0x9fd7ff, 0.55);
+    dirFill.position.set(-10, 6, -8);
+    scene.add(dirFill);
+
+    // Ground with subtle grid texture
+    function makeGridTexture(){
+      const c = document.createElement("canvas");
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#0b1220";
+      ctx.fillRect(0,0,c.width,c.height);
+
+      // small grid
+      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.lineWidth = 1;
+      for(let i=0;i<=32;i++){
+        const p = i*(c.width/32);
+        ctx.beginPath(); ctx.moveTo(p,0); ctx.lineTo(p,c.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0,p); ctx.lineTo(c.width,p); ctx.stroke();
+      }
+      // big grid
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      ctx.lineWidth = 2;
+      for(let i=0;i<=8;i++){
+        const p = i*(c.width/8);
+        ctx.beginPath(); ctx.moveTo(p,0); ctx.lineTo(p,c.height); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0,p); ctx.lineTo(c.width,p); ctx.stroke();
+      }
+      // vignette-ish
+      const g = ctx.createRadialGradient(256,256,40,256,256,260);
+      g.addColorStop(0,"rgba(255,255,255,0.00)");
+      g.addColorStop(1,"rgba(0,0,0,0.35)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,512,512);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(20,20);
+      tex.anisotropy = 8;
+      return tex;
+    }
+
     const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(240, 240),
-      new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.95, metalness: 0.02 })
+      new THREE.PlaneGeometry(260, 260),
+      new THREE.MeshStandardMaterial({
+        map: makeGridTexture(),
+        color: 0xffffff,
+        roughness: 0.95,
+        metalness: 0.0
+      })
     );
     ground.rotation.x = -Math.PI/2;
     ground.position.y = 0;
     scene.add(ground);
 
-    // Scenery poles
-    const poles = new THREE.Group();
-    scene.add(poles);
-    for(let i=0;i<28;i++){
-      const h = 1.2 + Math.random()*3.5;
-      const m = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.08, 0.10, h, 10),
-        new THREE.MeshStandardMaterial({ color: 0x1a2a44, roughness: 0.75 })
-      );
-      const a = Math.random()*Math.PI*2;
-      const r = 12 + Math.random()*24;
-      m.position.set(Math.cos(a)*r, h/2, Math.sin(a)*r);
-      poles.add(m);
+    // Extra environment props (simple, but nicer)
+    const props = new THREE.Group();
+    scene.add(props);
+    const crateMat = new THREE.MeshStandardMaterial({ color: 0x1a2a44, roughness: 0.8, metalness: 0.05 });
+    const crateEdge = new THREE.MeshStandardMaterial({ color: 0x2a4a74, roughness: 0.5, metalness: 0.08 });
+
+    function addCrate(x,z,s=1){
+      const g = new THREE.Group();
+      const box = new THREE.Mesh(new THREE.BoxGeometry(1.0*s, 0.9*s, 1.0*s), crateMat);
+      box.position.y = 0.45*s;
+      const rim = new THREE.Mesh(new THREE.BoxGeometry(1.05*s, 0.12*s, 1.05*s), crateEdge);
+      rim.position.y = 0.90*s;
+      g.add(box, rim);
+      g.position.set(x,0,z);
+      props.add(g);
     }
+    addCrate(-6,-10,1.1);
+    addCrate(0,-11.2,1.3);
+    addCrate(6,-9.6,1.0);
+    addCrate(-2.7,-13.2,1.15);
+    addCrate(2.8,-13.6,1.05);
 
     // -----------------------------
-    // 3D Wasserpistole
+    // 3D Wasserpistole (upgraded)
     // -----------------------------
     const gun = new THREE.Group();
     camera.add(gun);
     scene.add(camera);
 
     function makeGun(){
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x7c3aed, roughness: 0.35, metalness: 0.05 });
-      const darkMat = new THREE.MeshStandardMaterial({ color: 0x101827, roughness: 0.7, metalness: 0.05 });
-      const tankMat = new THREE.MeshStandardMaterial({ color: 0x66ccff, roughness: 0.2, metalness: 0.02, transparent:true, opacity:0.75 });
-      const accentMat = new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.35, metalness: 0.04 });
+      const bodyMat  = new THREE.MeshStandardMaterial({ color: 0x7c3aed, roughness: 0.25, metalness: 0.10 });
+      const darkMat  = new THREE.MeshStandardMaterial({ color: 0x0b1220, roughness: 0.55, metalness: 0.08 });
+      const accentMat= new THREE.MeshStandardMaterial({ color: 0x22c55e, roughness: 0.25, metalness: 0.06 });
+      const tankMat  = new THREE.MeshStandardMaterial({
+        color: 0x66ccff, roughness: 0.12, metalness: 0.02, transparent:true, opacity:0.65
+      });
+      const chromeMat= new THREE.MeshStandardMaterial({ color: 0xcbd5e1, roughness: 0.18, metalness: 0.65 });
 
-      const body = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.20, 0.82), bodyMat);
-      body.position.set(0.42, -0.28, -0.80);
+      const g = new THREE.Group();
 
-      const grip = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.30, 0.26), darkMat);
-      grip.position.set(0.52, -0.46, -0.55);
+      // main body
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.24, 0.98), bodyMat);
+      body.position.set(0.50, -0.30, -0.96);
+
+      // front housing
+      const front = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.18, 0.40), bodyMat);
+      front.position.set(0.46, -0.27, -1.40);
+
+      // barrel
+      const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.070, 0.070, 0.72, 16), darkMat);
+      barrel.rotation.x = Math.PI/2;
+      barrel.position.set(0.44, -0.28, -1.68);
+
+      // nozzle + ring
+      const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.065, 0.14, 16), accentMat);
+      nozzle.rotation.x = Math.PI/2;
+      nozzle.position.set(0.44, -0.28, -2.06);
+
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.015, 10, 22), chromeMat);
+      ring.position.set(0.44, -0.28, -2.00);
+      ring.rotation.x = Math.PI/2;
+
+      // grip
+      const grip = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.38, 0.30), darkMat);
+      grip.position.set(0.64, -0.55, -0.68);
       grip.rotation.x = 0.12;
 
-      const triggerGuard = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.02, 10, 20), darkMat);
-      triggerGuard.position.set(0.56, -0.40, -0.62);
-      triggerGuard.rotation.x = Math.PI/2;
+      // trigger guard + trigger
+      const guard = new THREE.Mesh(new THREE.TorusGeometry(0.10, 0.022, 10, 24), darkMat);
+      guard.position.set(0.66, -0.46, -0.78);
+      guard.rotation.x = Math.PI/2;
 
-      const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.55, 14), darkMat);
-      barrel.rotation.x = Math.PI/2;
-      barrel.position.set(0.38, -0.26, -1.18);
+      const trigger = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.10, 0.02), chromeMat);
+      trigger.position.set(0.66, -0.48, -0.78);
 
-      const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.10, 14), accentMat);
-      nozzle.rotation.x = Math.PI/2;
-      nozzle.position.set(0.38, -0.26, -1.45);
-
-      const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.38, 16), tankMat);
+      // tank + cap
+      const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.52, 20), tankMat);
       tank.rotation.z = Math.PI/2;
-      tank.position.set(0.20, -0.18, -0.72);
+      tank.position.set(0.16, -0.20, -0.86);
 
-      const sight = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.06, 0.12), accentMat);
-      sight.position.set(0.40, -0.16, -0.92);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.10, 16), accentMat);
+      cap.rotation.z = Math.PI/2;
+      cap.position.set(-0.10, -0.10, -0.86);
 
-      gun.add(body, grip, triggerGuard, barrel, nozzle, tank, sight);
-      gun.rotation.set(0.02, -0.06, 0.00);
+      // top rail
+      const rail = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.05, 0.40), chromeMat);
+      rail.position.set(0.48, -0.14, -1.05);
+
+      // side accent
+      const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.12, 0.60), accentMat);
+      stripe.position.set(0.26, -0.28, -0.98);
+
+      g.add(body, front, barrel, nozzle, ring, grip, guard, trigger, tank, cap, rail, stripe);
+
+      // slight camera-gun sway anchor
+      g.position.set(0,0,0);
+      g.rotation.set(0.02, -0.06, 0.00);
+
+      gun.add(g);
       gun.userData.nozzle = nozzle;
+      gun.userData.root = g;
     }
     makeGun();
 
-    // Muzzle flash
+    // muzzle flash
     const muzzleFlash = new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 10, 10),
-      new THREE.MeshStandardMaterial({ color: 0x66ccff, emissive: 0x66ccff, emissiveIntensity: 1.8, transparent:true, opacity:0.0 })
+      new THREE.SphereGeometry(0.075, 12, 12),
+      new THREE.MeshStandardMaterial({
+        color: 0x66ccff, emissive: 0x66ccff, emissiveIntensity: 2.2, transparent:true, opacity:0.0
+      })
     );
     gun.add(muzzleFlash);
-    muzzleFlash.position.copy(gun.userData.nozzle.position).add(new THREE.Vector3(0,0,-0.05));
+    muzzleFlash.position.copy(gun.userData.nozzle.position).add(new THREE.Vector3(0,0,-0.06));
 
     // -----------------------------
-    // Pointer lock FPS
+    // Controls
     // -----------------------------
     let yaw = 0, pitch = 0;
     const vel = new THREE.Vector3();
@@ -527,7 +561,6 @@
       if(!state.locked && !state.paused){
         overlay.style.display = "grid";
         state.paused = true;
-        restoreOverlayText();
       }
     });
 
@@ -582,31 +615,16 @@
     });
 
     // -----------------------------
-    // Targets + cover
+    // Sentence strip (word planes) + placeholders
     // -----------------------------
-    const targetGroup = new THREE.Group();
-    scene.add(targetGroup);
+    const sentenceGroup = new THREE.Group();
+    scene.add(sentenceGroup);
 
-    const coverGroup = new THREE.Group();
-    scene.add(coverGroup);
-
-    const coverMat = new THREE.MeshStandardMaterial({ color: 0x15233a, roughness: 0.9, metalness: 0.02 });
-    function buildCovers(){
-      coverGroup.clear();
-      const placements = [
-        { x:-5.2, z:-9.8, w:1.2, h:2.6, d:0.7 },
-        { x: 0.0, z:-10.6, w:1.6, h:3.0, d:0.9 },
-        { x: 5.0, z:-9.4, w:1.1, h:2.2, d:0.7 },
-        { x:-2.6, z:-13.0, w:1.4, h:2.8, d:0.8 },
-        { x: 2.6, z:-13.4, w:1.3, h:2.6, d:0.8 }
-      ];
-      for(const p of placements){
-        const m = new THREE.Mesh(new THREE.BoxGeometry(p.w,p.h,p.d), coverMat);
-        m.position.set(p.x, p.h/2, p.z);
-        coverGroup.add(m);
-      }
-    }
-    buildCovers();
+    const plate = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 1.65),
+      new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 1.0, metalness: 0.0, transparent:true, opacity:0.30 })
+    );
+    sentenceGroup.add(plate);
 
     function roundRect(ctx, x, y, w, h, r){
       const rr = Math.min(r, w/2, h/2);
@@ -619,74 +637,98 @@
       ctx.closePath();
     }
 
-    function makeWordSprite(text, isWrong){
+    function makeWordCanvas(text, isWrong){
       const c = document.createElement("canvas");
       const ctx = c.getContext("2d");
-      ctx.font = "700 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      const padX = 26;
+      const fontPx = 76;                // BIG
+      ctx.font = `800 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      const padX = 46;
       const w = Math.ceil(ctx.measureText(text).width) + padX*2;
-      c.width = Math.min(1024, Math.max(260, w));
-      c.height = 128;
+      c.width = Math.min(1500, Math.max(520, w));
+      c.height = 220;
 
       ctx.clearRect(0,0,c.width,c.height);
 
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      roundRect(ctx, 10, 20, c.width-20, c.height-40, 28);
+      // background
+      ctx.fillStyle = "rgba(0,0,0,0.48)";
+      roundRect(ctx, 14, 30, c.width-28, c.height-60, 46);
       ctx.fill();
 
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = isWrong ? "rgba(239,68,68,0.70)" : "rgba(255,255,255,0.22)";
-      roundRect(ctx, 10, 20, c.width-20, c.height-40, 28);
+      // border
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = isWrong ? "rgba(239,68,68,0.88)" : "rgba(255,255,255,0.22)";
+      roundRect(ctx, 14, 30, c.width-28, c.height-60, 46);
       ctx.stroke();
 
-      ctx.fillStyle = "rgba(231,238,252,0.95)";
+      // text
+      ctx.fillStyle = "rgba(231,238,252,0.98)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(text, c.width/2, c.height/2);
 
       if(isWrong){
-        ctx.fillStyle = "rgba(239,68,68,0.9)";
-        ctx.font = "900 28px ui-monospace, Menlo, Consolas, monospace";
-        ctx.fillText("!", c.width-34, 38);
+        ctx.fillStyle = "rgba(239,68,68,0.95)";
+        ctx.font = "900 48px ui-monospace, Menlo, Consolas, monospace";
+        ctx.fillText("!", c.width-52, 64);
       }
 
+      return c;
+    }
+
+    function makePlaceholderCanvas(widthPx){
+      const c = document.createElement("canvas");
+      c.width = widthPx;
+      c.height = 220;
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0,0,c.width,c.height);
+
+      // dashed outline
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 8;
+      ctx.setLineDash([18, 14]);
+      roundRect(ctx, 18, 36, c.width-36, c.height-72, 44);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // subtle fill
+      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      roundRect(ctx, 18, 36, c.width-36, c.height-72, 44);
+      ctx.fill();
+
+      // tiny underscore hint
+      ctx.fillStyle = "rgba(231,238,252,0.45)";
+      ctx.font = "700 58px ui-monospace, Menlo, Consolas, monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("____", c.width/2, c.height/2 + 6);
+
+      return c;
+    }
+
+    function canvasToPlane(c, opacity=1.0){
       const tex = new THREE.CanvasTexture(c);
+      tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = 8;
 
-      const mat = new THREE.SpriteMaterial({ map: tex, transparent:true, depthWrite:false });
-      const spr = new THREE.Sprite(mat);
-
-      const scaleX = (c.width / 512) * 2.25;
-      spr.scale.set(scaleX, 0.88, 1);
-
-      spr.userData.text = text;
-      spr.userData.isWrong = isWrong;
-      spr.userData.alive = true;
-
-      // movement
-      spr.userData.base = new THREE.Vector3();
-      spr.userData.phase = Math.random()*Math.PI*2;
-      spr.userData.speed = 0.55 + Math.random()*0.6;
-      spr.userData.ampX = 0.35 + Math.random()*0.55;
-      spr.userData.ampY = 0.18 + Math.random()*0.32;
-      spr.userData.ampZ = 0.25 + Math.random()*0.55;
-
-      // hide behavior
-      spr.userData.hideT = 1.4 + Math.random()*2.2;
-      spr.userData.hidden = false;
-
-      return spr;
+      const mat = new THREE.MeshBasicMaterial({ map: tex, transparent:true, opacity });
+      const aspect = c.width / c.height;
+      const height = 0.62;
+      const width = height * aspect;
+      const geo = new THREE.PlaneGeometry(width, height);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.userData.w = width;
+      mesh.userData._canvasW = c.width;
+      return mesh;
     }
 
-    function disposeSprite(spr){
-      if(spr.material?.map) spr.material.map.dispose();
-      if(spr.material) spr.material.dispose();
-    }
-
-    function clearTargets(){
-      for(const o of [...targetGroup.children]) {
-        targetGroup.remove(o);
-        disposeSprite(o);
+    function clearSentence(){
+      const keep = new Set([plate]);
+      for(const child of [...sentenceGroup.children]){
+        if(keep.has(child)) continue;
+        sentenceGroup.remove(child);
+        if(child.material?.map) child.material.map.dispose();
+        if(child.material) child.material.dispose();
+        if(child.geometry) child.geometry.dispose();
       }
     }
 
@@ -694,159 +736,197 @@
       return sentence.split(" ").filter(Boolean);
     }
 
-    function spawnNormal(i){
-      state.bossActive = false;
-      state.bossHitsRemaining = 0;
-      state.bossBonusAwarded = false;
+    // sentence group motion
+    const strip = {
+      base: new THREE.Vector3(0, 2.55, -8.0),
+      phase: Math.random()*Math.PI*2,
+      speed: 0.50,
+      ampX: 1.45,
+      ampY: 0.30,
+      hideT: 999,
+      hidden: false
+    };
 
-      clearTargets();
-      const t = TASKS[i % TASKS.length];
-      sentenceEl.textContent = t.sentence;
+    function buildSentenceStrip(sentence, wrongOrWrongs){
+      clearSentence();
 
-      state.level = 1 + Math.floor(state.done / 6);
+      const tokens = tokenize(sentence);
+      const wrongs = Array.isArray(wrongOrWrongs) ? wrongOrWrongs : [wrongOrWrongs];
 
-      const info = t.note ? `Hinweis nach Treffer: ${t.note}` : "";
-      hintEl.innerHTML = state.practice
-        ? `Übungsmodus: keine Minuspunkte. Genau <b>1 Wort</b> ist falsch. ${info ? `<span style="opacity:.85">(${info})</span>` : ""}`
-        : `Treffer-Regel: ✅ richtig +10 (+Streak), ❌ falsch −5 (Streak reset). ${info ? `<span style="opacity:.85">(${info})</span>` : ""}`;
-
-      const tokens = tokenize(t.sentence);
-      const wrong = t.wrong;
-
-      const baseZ = -10 - Math.min(6, state.level) * 0.55;
-      const radius = 8.2 + Math.min(4, state.level) * 0.35;
-      const yTop = 3.05;
-      const yBottom = 1.45;
-
-      const n = tokens.length;
-      const split = n > 9 ? Math.ceil(n/2) : n;
-
-      for(let k=0;k<n;k++){
-        const tok = tokens[k];
-        const isWrong = tok.includes(wrong);
-
-        const spr = makeWordSprite(tok, isWrong);
-
-        const row = (n > 9 && k >= split) ? 1 : 0;
-        const inRowIndex = row ? (k - split) : k;
-        const inRowCount = row ? (n - split) : split;
-
-        const a0 = -0.98, a1 = 0.98;
-        const a = inRowCount === 1 ? 0 : THREE.MathUtils.lerp(a0, a1, inRowIndex/(inRowCount-1));
-
-        const x = Math.sin(a) * radius;
-        const z = Math.cos(a) * radius + baseZ;
-        const y = row ? yBottom : yTop;
-
-        spr.position.set(x, y, z);
-        spr.userData.base.set(x,y,z);
-
-        targetGroup.add(spr);
-      }
-
-      uiUpdate();
-    }
-
-    function spawnBoss(){
-      state.bossActive = true;
-      state.bossBonusAwarded = false;
-
-      clearTargets();
-      const boss = BOSS_TASKS[0]; // bereits geshuffled
-      state.bossHitsRemaining = boss.wrongs.length;
-
-      sentenceEl.textContent = boss.sentence;
-      hintEl.innerHTML = state.practice
-        ? `👑 <b>Bossrunde:</b> <b>2 Fehler</b> im Satz. Triff beide (kein Abzug im Übungsmodus). <span style="opacity:.85">(${boss.note || ""})</span>`
-        : `👑 <b>Bossrunde:</b> <b>2 Fehler</b> im Satz. Triff beide → <b>+30 Bonus</b>. <span style="opacity:.85">(${boss.note || ""})</span>`;
-
-      // Boss = etwas schwerer
-      state.level = Math.max(state.level, 4);
-
-      const tokens = tokenize(boss.sentence);
-      const wrongs = boss.wrongs;
-
-      const baseZ = -12 - Math.min(7, state.level) * 0.60;
-      const radius = 8.6 + Math.min(5, state.level) * 0.40;
-      const yTop = 3.15;
-      const yBottom = 1.55;
-
-      const n = tokens.length;
-      const split = n > 9 ? Math.ceil(n/2) : n;
-
-      for(let k=0;k<n;k++){
-        const tok = tokens[k];
+      const wordMeshes = [];
+      for(const tok of tokens){
         const isWrong = wrongs.some(w => tok.includes(w));
-
-        const spr = makeWordSprite(tok, isWrong);
-
-        // Boss-Ziele etwas schneller & mehr verstecken
-        spr.userData.speed *= 1.25;
-        spr.userData.ampX *= 1.25;
-        spr.userData.ampY *= 1.15;
-        spr.userData.ampZ *= 1.25;
-        spr.userData.hideT *= 0.8;
-
-        const row = (n > 9 && k >= split) ? 1 : 0;
-        const inRowIndex = row ? (k - split) : k;
-        const inRowCount = row ? (n - split) : split;
-
-        const a0 = -0.98, a1 = 0.98;
-        const a = inRowCount === 1 ? 0 : THREE.MathUtils.lerp(a0, a1, inRowIndex/(inRowCount-1));
-
-        const x = Math.sin(a) * radius;
-        const z = Math.cos(a) * radius + baseZ;
-        const y = row ? yBottom : yTop;
-
-        spr.position.set(x, y, z);
-        spr.userData.base.set(x,y,z);
-
-        targetGroup.add(spr);
+        const c = makeWordCanvas(tok, isWrong);
+        const m = canvasToPlane(c, 1.0);
+        m.userData.text = tok;
+        m.userData.isWrong = isWrong;
+        m.userData.alive = true;
+        m.userData.kind = "word";
+        wordMeshes.push(m);
       }
 
-      uiUpdate();
-      flashMsg("👑 Bossrunde gestartet! 2 Fehler!", true);
+      const gap = 0.10;
+      let totalW = -gap;
+      for(const w of wordMeshes) totalW += w.userData.w + gap;
+
+      let x = -totalW/2;
+      for(const w of wordMeshes){
+        w.position.set(x + w.userData.w/2, 0, 0);
+        w.userData.baseLocal = w.position.clone();
+        x += w.userData.w + gap;
+        sentenceGroup.add(w);
+      }
+
+      plate.geometry.dispose();
+      plate.geometry = new THREE.PlaneGeometry(Math.max(6.0, totalW + 0.8), 1.05);
+      plate.position.set(0, 0, -0.03);
+
+      sentenceGroup.position.copy(strip.base);
+      sentenceGroup.rotation.set(0, 0, 0);
+      sentenceGroup.visible = true;
+    }
+
+    function createPlaceholderFor(wordMesh){
+      const wpx = wordMesh.userData._canvasW || 700;
+      const c = makePlaceholderCanvas(wpx);
+      const ph = canvasToPlane(c, 0.85);
+      ph.userData.kind = "placeholder";
+      ph.userData.w = wordMesh.userData.w;
+      ph.position.copy(wordMesh.position);
+      ph.userData.baseLocal = ph.position.clone();
+      return ph;
     }
 
     // -----------------------------
-    // Shooting
+    // Flying words + water trail
     // -----------------------------
-    const raycaster = new THREE.Raycaster();
+    const flyingWords = [];
+    const waterTrail = [];
+    const trailGeo = new THREE.SphereGeometry(0.035, 8, 8);
+    const trailMatBase = new THREE.MeshStandardMaterial({
+      color: 0x66ccff, roughness: 0.25, metalness: 0.02, transparent:true, opacity:0.85
+    });
 
-    const streams = [];
-    const dropGeo = new THREE.SphereGeometry(0.03, 8, 8);
-    const dropBaseMat = new THREE.MeshStandardMaterial({ color: 0x66ccff, roughness: 0.25, metalness: 0.02, transparent:true, opacity:0.9 });
+    function spawnFlyingWordFrom(mesh){
+      // clone geometry/material/texture
+      const w = new THREE.Mesh(mesh.geometry.clone(), mesh.material.clone());
+      w.material.opacity = 1.0;
+      w.material.transparent = true;
 
-    function addWaterBurst(){
+      // world transform from sentenceGroup local
+      mesh.updateMatrixWorld(true);
+      const pos = new THREE.Vector3();
+      const quat = new THREE.Quaternion();
+      const scl = new THREE.Vector3();
+      mesh.matrixWorld.decompose(pos, quat, scl);
+
+      w.position.copy(pos);
+      w.quaternion.copy(quat);
+      w.scale.copy(scl);
+
+      // velocity: away from camera + a bit upward + random sideways
+      const camDir = camera.getWorldDirection(new THREE.Vector3()).normalize();
+      const v = camDir.clone().multiplyScalar(-8.5); // “flies away” from camera
+      v.y += 2.6;
+      v.x += (Math.random()-0.5)*1.6;
+      v.z += (Math.random()-0.5)*1.6;
+
+      w.userData.v = v;
+      w.userData.w = mesh.userData.w;
+      w.userData.life = 1.15; // seconds
+      w.userData.spin = new THREE.Vector3(
+        (Math.random()-0.5)*2.2,
+        (Math.random()-0.5)*2.2,
+        (Math.random()-0.5)*1.2
+      );
+
+      scene.add(w);
+      flyingWords.push(w);
+    }
+
+    function addWaterBurstAtNozzle(){
+      // muzzle flash
+      muzzleFlash.position.copy(gun.userData.nozzle.position).add(new THREE.Vector3(0,0,-0.06));
+      muzzleFlash.material.opacity = 0.95;
+
+      // quick droplets
       const nozzle = gun.userData.nozzle;
       const muzzleWorld = new THREE.Vector3();
       nozzle.getWorldPosition(muzzleWorld);
 
-      muzzleFlash.position.copy(nozzle.position).add(new THREE.Vector3(0,0,-0.05));
-      muzzleFlash.material.opacity = 0.9;
-
       const dir = camera.getWorldDirection(new THREE.Vector3()).normalize();
-
-      const count = 14;
+      const count = 16;
       for(let i=0;i<count;i++){
-        const m = new THREE.Mesh(dropGeo, dropBaseMat.clone());
+        const m = new THREE.Mesh(trailGeo, trailMatBase.clone());
         m.position.copy(muzzleWorld);
-
-        const spread = 0.06 + Math.random()*0.06;
+        const spread = 0.08 + Math.random()*0.07;
         const jitter = new THREE.Vector3(
           (Math.random()-0.5)*spread,
           (Math.random()-0.5)*spread,
           (Math.random()-0.5)*spread
         );
-
-        const v = dir.clone().multiplyScalar(16 + Math.random()*6).add(jitter.multiplyScalar(20));
+        const v = dir.clone().multiplyScalar(22 + Math.random()*7).add(jitter.multiplyScalar(26));
         m.userData.v = v;
-        m.userData.life = 0.35 + Math.random()*0.20;
-
+        m.userData.life = 0.28 + Math.random()*0.20;
         scene.add(m);
-        streams.push(m);
+        waterTrail.push(m);
       }
     }
+
+    function dripTrailFrom(pos){
+      // small trailing droplets behind the flying word
+      const m = new THREE.Mesh(trailGeo, trailMatBase.clone());
+      m.position.copy(pos);
+      m.userData.v = new THREE.Vector3((Math.random()-0.5)*1.2, Math.random()*1.4, (Math.random()-0.5)*1.2);
+      m.userData.life = 0.20 + Math.random()*0.18;
+      scene.add(m);
+      waterTrail.push(m);
+    }
+
+    // -----------------------------
+    // Spawning tasks
+    // -----------------------------
+    function spawnNormal(i){
+      state.bossActive = false;
+      state.bossHitsRemaining = 0;
+      state.bossBonusAwarded = false;
+
+      const t = TASKS[i % TASKS.length];
+      sentenceEl.textContent = t.sentence;
+
+      state.level = 1 + Math.floor(state.done / 6);
+
+      const info = t.note ? `(${t.note})` : "";
+      hintEl.innerHTML = state.practice
+        ? `Übungsmodus: keine Minuspunkte. Genau <b>1 Wort</b> ist falsch. <span style="opacity:.85">${info}</span>`
+        : `✅ richtig +10 (+Streak), ❌ falsch −5 (Streak reset). <span style="opacity:.85">${info}</span>`;
+
+      buildSentenceStrip(t.sentence, t.wrong);
+      uiUpdate();
+      flashMsg("Neuer Satz!", true);
+    }
+
+    function spawnBoss(){
+      const boss = BOSS_TASKS[0];
+      state.bossActive = true;
+      state.bossBonusAwarded = false;
+      state.bossHitsRemaining = boss.wrongs.length;
+
+      sentenceEl.textContent = boss.sentence;
+      hintEl.innerHTML = state.practice
+        ? `👑 <b>Bossrunde:</b> 2 Fehler. Triff beide (kein Abzug). <span style="opacity:.85">(${boss.note})</span>`
+        : `👑 <b>Bossrunde:</b> 2 Fehler. Beide treffen → <b>+30 Bonus</b>. <span style="opacity:.85">(${boss.note})</span>`;
+
+      state.level = Math.max(state.level, 4);
+      buildSentenceStrip(boss.sentence, boss.wrongs);
+      uiUpdate();
+      flashMsg("👑 Bossrunde!", true);
+    }
+
+    // -----------------------------
+    // Raycast shooting (words only)
+    // -----------------------------
+    const raycaster = new THREE.Raycaster();
 
     function shoot(){
       if(state.ammo <= 0){
@@ -856,42 +936,47 @@
       state.ammo--;
       uiUpdate();
 
-      addWaterBurst();
+      addWaterBurstAtNozzle();
 
       const origin = camera.getWorldPosition(new THREE.Vector3());
       const direction = camera.getWorldDirection(new THREE.Vector3()).normalize();
 
       raycaster.set(origin, direction);
-      raycaster.far = 120;
+      raycaster.far = 300;
 
-      const hits = raycaster.intersectObjects([...coverGroup.children, ...targetGroup.children], false);
+      const wordTargets = sentenceGroup.children.filter(o => o.userData?.kind === "word" && o.userData.alive);
+      const hits = raycaster.intersectObjects(wordTargets, false);
+
       if(!hits.length){
         flashMsg("💦 Daneben!", false);
         return;
       }
 
       const hit = hits[0].object;
-
-      if(coverGroup.children.includes(hit)){
-        flashMsg("🧱 Geblockt! (Deckung)", false);
-        return;
-      }
-
-      if(!hit.userData.alive || !hit.visible){
+      if(!hit.userData.alive){
         flashMsg("💦 Fast!", false);
         return;
       }
 
-      const isWrong = !!hit.userData.isWrong;
+      if(hit.userData.isWrong){
+        // visible “shoot out” effect:
+        // 1) spawn flying clone in world space
+        spawnFlyingWordFrom(hit);
 
-      if(isWrong){
+        // 2) replace with placeholder in the strip
+        const ph = createPlaceholderFor(hit);
+        sentenceGroup.add(ph);
+
+        // 3) remove original
         hit.userData.alive = false;
-        targetGroup.remove(hit);
-        disposeSprite(hit);
+        sentenceGroup.remove(hit);
+        if(hit.material?.map) hit.material.map.dispose();
+        if(hit.material) hit.material.dispose();
+        if(hit.geometry) hit.geometry.dispose();
 
         // scoring
-        const bonus = Math.min(12, state.streak);
-        state.score += 10 + bonus;
+        const streakBonus = Math.min(12, state.streak);
+        state.score += 10 + streakBonus;
         state.streak += 1;
 
         if(state.bossActive){
@@ -904,33 +989,28 @@
             state.score += 30;
             uiUpdate();
             flashMsg("👑 Boss besiegt! +30 Bonus!", true);
-            setTimeout(()=>endGame(true), 650);
+            setTimeout(()=>endGame(true), 700);
           }
           return;
         }
 
         state.done += 1;
-
-        if(state.done % 6 === 0){
-          flashMsg(`✅ Treffer! Level ${1 + Math.floor(state.done/6)}!`, true);
-        }else{
-          flashMsg("✅ Treffer!", true);
-        }
+        uiUpdate();
+        flashMsg("✅ Treffer!", true);
 
         if(state.done >= state.total){
-          // Start boss round
-          setTimeout(()=>spawnBoss(), 520);
+          setTimeout(()=>spawnBoss(), 650);
         }else{
           state.idx += 1;
-          setTimeout(()=>spawnNormal(state.idx), 420);
+          setTimeout(()=>spawnNormal(state.idx), 650);
         }
       }else{
         if(!state.practice){
           state.score = Math.max(0, state.score - 5);
           state.streak = 0;
         }
-        flashMsg("❌ Falsches Wort!", false);
         uiUpdate();
+        flashMsg("❌ Falsches Wort!", false);
       }
     }
 
@@ -948,12 +1028,12 @@
       state.bossHitsRemaining = 0;
       state.bossBonusAwarded = false;
 
-      camera.position.set(0, 1.7, 8);
+      camera.position.set(0, 1.7, 6.2);
       yaw = 0; pitch = 0;
       camera.rotation.set(0,0,0);
 
-      uiUpdate();
       spawnNormal(0);
+      uiUpdate();
     }
 
     function startGame(){
@@ -970,21 +1050,24 @@
       overlay.querySelector("h2").textContent = wonBoss ? "Bossrunde geschafft! 🏆" : "Runde geschafft! 🎉";
       overlay.querySelector("p").innerHTML =
         `Ergebnis: <b>${state.score}</b> Punkte · Streak: <b>${state.streak}</b><br>
-         ${wonBoss ? "Bonus wurde vergeben: <b>+30</b> ✅<br>" : ""}
+         ${wonBoss ? "Bonus: <b>+30</b> ✅<br>" : ""}
          Du kannst neu starten oder Übungsmodus wählen.`;
-      flashMsg(wonBoss ? "🏆 Perfekt! Boss down." : "🎉 Fertig!", true);
+      flashMsg(wonBoss ? "🏆 Perfekt!" : "🎉 Fertig!", true);
     }
 
     // -----------------------------
-    // Movement + target motion + water
+    // Update loop (movement + strip + effects)
     // -----------------------------
+    const clock = new THREE.Clock();
+
     function updateMovement(dt){
       if(state.locked && !state.paused){
-        const speed = keys.shift ? 6.4 : 4.4;
+        const speed = keys.shift ? 6.6 : 4.6;
 
         moveDir.set(0,0,0);
-        if(keys.w) moveDir.z -= 1;
-        if(keys.s) moveDir.z += 1;
+        // W forward, S backward
+        if(keys.w) moveDir.z += 1;
+        if(keys.s) moveDir.z -= 1;
         if(keys.a) moveDir.x -= 1;
         if(keys.d) moveDir.x += 1;
 
@@ -1003,67 +1086,98 @@
         camera.position.z += vel.z * dt;
 
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, -40, 40);
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -42, 20);
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -40, 35);
         camera.position.y = 1.7;
       }
     }
 
-    function updateTargets(t, dt){
-      for(const spr of targetGroup.children){
-        spr.quaternion.copy(camera.quaternion);
+    function updateSentenceStrip(t, dt){
+      // group moves together (fair, readable)
+      const L = Math.min(7, state.level);
+      strip.speed = 0.36 + L*0.05;
+      strip.ampX = 1.05 + L*0.20;
+      strip.ampY = 0.18 + L*0.05;
 
-        const L = Math.min(7, state.level);
-        const sp = spr.userData.speed * (1.0 + L*0.10);
-        const ph = spr.userData.phase;
+      sentenceGroup.position.x = strip.base.x + Math.sin(t*strip.speed + strip.phase) * strip.ampX;
+      sentenceGroup.position.y = strip.base.y + Math.sin(t*strip.speed*1.2 + strip.phase*1.7) * strip.ampY;
+      sentenceGroup.position.z = strip.base.z;
 
-        const bx = spr.userData.base.x;
-        const by = spr.userData.base.y;
-        const bz = spr.userData.base.z;
+      // face camera, keep stable
+      sentenceGroup.quaternion.copy(camera.quaternion);
+      const e = new THREE.Euler().setFromQuaternion(sentenceGroup.quaternion, "YXZ");
+      e.z = 0;
+      e.x *= 0.12;
+      sentenceGroup.quaternion.setFromEuler(e);
+    }
 
-        spr.position.x = bx + Math.sin(t*sp + ph) * spr.userData.ampX * (1.0 + L*0.15);
-        spr.position.y = by + Math.sin(t*sp*1.25 + ph*1.7) * spr.userData.ampY * (1.0 + L*0.12);
-        spr.position.z = bz + Math.cos(t*sp*0.9 + ph*0.7) * spr.userData.ampZ * (1.0 + L*0.18);
+    function updateGunSway(t){
+      // subtle bob + recoil recovery
+      const r = gun.userData.root;
+      if(!r) return;
+      const bob = state.locked && !state.paused ? 1.0 : 0.3;
+      r.position.x = 0.02 * Math.sin(t*6.2) * bob;
+      r.position.y = -0.01 * Math.abs(Math.sin(t*6.2)) * bob;
+    }
 
-        spr.userData.hideT -= dt * (1.0 + L*0.22);
-        if(!spr.userData.hidden && spr.userData.hideT <= 0){
-          spr.userData.hidden = true;
-          spr.visible = false;
-          spr.userData.hideT = 0.55 + Math.random()*0.65;
-        }else if(spr.userData.hidden && spr.userData.hideT <= 0){
-          spr.userData.hidden = false;
-          spr.visible = true;
-          spr.userData.hideT = 1.1 + Math.random()*2.2;
+    function updateMuzzle(dt){
+      muzzleFlash.material.opacity = Math.max(0, muzzleFlash.material.opacity - dt*2.9);
+    }
+
+    function updateFlyingWords(dt){
+      for(let i=flyingWords.length-1;i>=0;i--){
+        const w = flyingWords[i];
+        w.userData.life -= dt;
+
+        w.position.addScaledVector(w.userData.v, dt);
+        w.userData.v.y -= 7.0 * dt; // gravity-ish
+        w.rotation.x += w.userData.spin.x * dt;
+        w.rotation.y += w.userData.spin.y * dt;
+        w.rotation.z += w.userData.spin.z * dt;
+
+        // dripping trail
+        if(Math.random() < 0.55){
+          dripTrailFrom(w.position);
+        }
+
+        // fade
+        if(w.material) w.material.opacity = Math.max(0, Math.min(1, w.userData.life / 1.15));
+
+        if(w.userData.life <= 0){
+          scene.remove(w);
+          if(w.material?.map) w.material.map.dispose();
+          if(w.material) w.material.dispose();
+          if(w.geometry) w.geometry.dispose();
+          flyingWords.splice(i,1);
         }
       }
     }
 
-    function updateWater(dt){
-      muzzleFlash.material.opacity *= Math.pow(0.02, dt);
-      muzzleFlash.material.opacity = Math.max(0, muzzleFlash.material.opacity - dt*2.2);
+    function updateWaterTrail(dt){
+      for(let i=waterTrail.length-1;i>=0;i--){
+        const p = waterTrail[i];
+        p.userData.life -= dt;
+        p.position.addScaledVector(p.userData.v, dt);
+        p.userData.v.y -= 10.0 * dt;
+        if(p.material) p.material.opacity = Math.max(0, p.userData.life / 0.55);
 
-      for(let i=streams.length-1;i>=0;i--){
-        const m = streams[i];
-        m.userData.life -= dt;
-        m.position.addScaledVector(m.userData.v, dt);
-        m.userData.v.y -= 10.0*dt;
-        if(m.material) m.material.opacity = Math.max(0, m.userData.life / 0.6);
-
-        if(m.userData.life <= 0){
-          scene.remove(m);
-          if(m.material) m.material.dispose();
-          streams.splice(i,1);
+        if(p.userData.life <= 0){
+          scene.remove(p);
+          if(p.material) p.material.dispose();
+          waterTrail.splice(i,1);
         }
       }
     }
 
-    const clock = new THREE.Clock();
     function loop(){
       const dt = Math.min(0.033, clock.getDelta());
       const t = clock.getElapsedTime();
 
       updateMovement(dt);
-      updateTargets(t, dt);
-      updateWater(dt);
+      updateSentenceStrip(t, dt);
+      updateGunSway(t);
+      updateMuzzle(dt);
+      updateFlyingWords(dt);
+      updateWaterTrail(dt);
 
       renderer.render(scene, camera);
       requestAnimationFrame(loop);
