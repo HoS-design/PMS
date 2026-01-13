@@ -131,7 +131,6 @@
       font-size:.95rem;
     }
 
-    /* Canvas area */
     canvas{
       width:100%;
       height:620px;
@@ -145,7 +144,6 @@
       canvas{height:540px}
     }
 
-    /* Palette tiles */
     .tile{
       display:flex;align-items:center;justify-content:space-between;
       gap:10px;
@@ -153,10 +151,15 @@
       border:1px solid var(--line);
       border-radius:14px;
       background:rgba(255,255,255,.03);
-      cursor:grab;
+      cursor:pointer;
       user-select:none;
+      transition: .12s transform, .12s background, .12s border-color;
     }
-    .tile:active{cursor:grabbing}
+    .tile:hover{transform:translateY(-1px);background:rgba(255,255,255,.05)}
+    .tile.active{
+      border-color: rgba(96,165,250,.55);
+      background: rgba(96,165,250,.12);
+    }
     .tile .name{font-weight:900}
     .tile .meta{color:var(--muted);font-size:.9rem}
     .kbd{
@@ -204,21 +207,22 @@
       <div class="sub">Variante B: Netz bauen (mit Andocken) · Aufgabenmodus: Zylinder & Kegel</div>
     </div>
     <a class="toplink" href="index.html">⬅︎ Startseite</a>
-    <div class="badge">🧲 Snap · Drag & Drop</div>
+    <div class="badge">🧲 Snap · Platzieren + Drag</div>
   </header>
 
   <div class="grid">
     <!-- Palette -->
     <section class="card">
-      <h2>Bausteine <span class="pill">Drag ins Feld</span></h2>
+      <h2>Bausteine <span class="pill">klick → klick</span></h2>
       <div class="body">
         <div class="tile" data-spawn="circle">
           <div>
             <div class="name">Kreis</div>
             <div class="meta">Grund/Deckfläche (Zylinder)</div>
           </div>
-          <span class="kbd">ziehen</span>
+          <span class="kbd">klick</span>
         </div>
+
         <div class="row" style="margin-top:10px"></div>
 
         <div class="tile" data-spawn="rect">
@@ -226,7 +230,7 @@
             <div class="name">Rechteck</div>
             <div class="meta">Mantelfläche (Zylinder)</div>
           </div>
-          <span class="kbd">ziehen</span>
+          <span class="kbd">klick</span>
         </div>
 
         <div class="sep"></div>
@@ -236,7 +240,7 @@
             <div class="name">Kreissektor</div>
             <div class="meta">Mantelfläche (Kegel)</div>
           </div>
-          <span class="kbd">ziehen</span>
+          <span class="kbd">klick</span>
         </div>
 
         <div class="tile" data-spawn="circle_small">
@@ -244,17 +248,20 @@
             <div class="name">Kreis (klein)</div>
             <div class="meta">Grundfläche (Kegel)</div>
           </div>
-          <span class="kbd">ziehen</span>
+          <span class="kbd">klick</span>
         </div>
 
         <div class="sep"></div>
 
         <div class="hint">
           <b>Steuerung</b><br>
-          • Teil anklicken = auswählen<br>
-          • <span class="kbd">Q</span>/<span class="kbd">E</span> drehen (im 15°-Schritt)<br>
-          • <span class="kbd">Entf</span> löschen (oder Papierkorb rechts)<br>
-          • Andocken: Kanten/Marken werden „magnetisch“
+          • Baustein anklicken = auswählen zum Platzieren<br>
+          • Dann ins Arbeitsfeld klicken = Teil erscheint dort<br>
+          • <b>Danach endet der Platziermodus automatisch</b><br>
+          • Teil anklicken = auswählen/ziehen<br>
+          • <span class="kbd">Q</span>/<span class="kbd">E</span> drehen (15°)<br>
+          • <span class="kbd">Entf</span> löschen (oder 🗑️)<br>
+          • <b>Doppelklick / Doppeltap</b> auf Teil = löschen
         </div>
       </div>
     </section>
@@ -267,7 +274,7 @@
 
         <div class="row" style="margin-top:12px">
           <span class="tag"><span class="dot"></span> Zylinder: 2× Kreis + 1× Rechteck</span>
-          <span class="tag"><span class="dot y"></span> Kegel: 1× Kreis + 1× Kreissektor</span>
+          <span class="tag"><span class="dot y"></span> Kegel: 1× Kreis(klein) + 1× Kreissektor</span>
           <span class="tag"><span class="dot bad"></span> Kein Live-Check</span>
         </div>
 
@@ -277,7 +284,9 @@
           <button class="btn good" id="checkBtn">Prüfen</button>
           <button class="btn tiny" id="nextBtn">Nächste Aufgabe</button>
           <button class="btn tiny" id="resetBtn">Alles löschen</button>
-          <div class="status" id="status" style="flex:1;min-width:240px">Ziehe Bausteine ins Feld und docke sie aneinander an.</div>
+          <div class="status" id="status" style="flex:1;min-width:240px">
+            Wähle links einen Baustein und klicke dann ins Arbeitsfeld, um ihn zu platzieren.
+          </div>
         </div>
       </div>
     </section>
@@ -302,13 +311,9 @@
         <div class="sep"></div>
 
         <div class="hint">
-          <b>Prüflogik (einfach & robust):</b><br>
-          Es wird geprüft, ob die richtigen Teile vorhanden sind <i>und</i> ob sie sinnvoll verbunden sind:
-          <br><br>
-          <b>Zylinder:</b> Rechteck muss an <i>beide</i> Kreise angedockt sein.<br>
-          <b>Kegel:</b> Kreissektor muss am Kreis angedockt sein.
-          <br><br>
-          Hinweis: Es geht um die Struktur, nicht um perfekte Zeichnungen.
+          <b>Prüflogik:</b><br>
+          <b>Zylinder:</b> Rechteck muss an beide Kreise andocken.<br>
+          <b>Kegel:</b> Kreissektor muss am kleinen Kreis andocken.
         </div>
       </div>
     </aside>
@@ -341,17 +346,19 @@
   ];
   let currentTask = TASKS[Math.floor(Math.random()*TASKS.length)];
 
-  // Interaction state
+  // State
   let selectedId = null;
   let dragging = null;
   let dragOffset = {x:0,y:0};
   let snapEnabled = true;
 
+  // Placement mode (selected palette type)
+  let placeType = null;
+
   // Board items
   const items = [];
   let nextId = 1;
 
-  // Coordinate system: draw in CSS units (DPR-safe)
   function resizeForDPR(){
     const dpr = Math.max(1, window.devicePixelRatio || 1);
     const rect = cv.getBoundingClientRect();
@@ -360,25 +367,16 @@
     if (cv.width !== w || cv.height !== h){
       cv.width = w; cv.height = h;
     }
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // CSS units
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     return {w: rect.width, h: rect.height};
   }
 
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
-  function dist(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
 
   function toPos(e){
     const r = cv.getBoundingClientRect();
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   }
-
-  // Basic shapes & anchors (simplified "net" connectors)
-  // Each item has anchor points where other items can snap.
-  // We'll use a few anchors per shape:
-  // - circle: top, bottom, left, right (on circumference)
-  // - rect: midpoints of 4 edges
-  // - sector: "arc midpoint" + "radius-edge midpoint" (approx)
-  // Anchors rotate with the item.
 
   function rotatePoint(p, angle){
     const c = Math.cos(angle), s = Math.sin(angle);
@@ -401,12 +399,9 @@
       base.push({name:'left',   x:-w/2,y:0});
       base.push({name:'right',  x:w/2, y:0});
     } else if(item.type === 'sector'){
-      // Approximate anchors:
-      // - arc-midpoint (where the sector would meet the circle base when rolled)
-      // - straight-edge midpoint (one radius edge)
       const r = item.r;
-      base.push({name:'arc',  x:0, y:r});          // arc side
-      base.push({name:'edge', x:r*0.6, y:-r*0.2}); // one straight edge-ish
+      base.push({name:'arc',  x:0, y:r});
+      base.push({name:'edge', x:r*0.6, y:-r*0.2});
     }
     return base.map(p => {
       const rp = rotatePoint(p, a);
@@ -415,7 +410,6 @@
   }
 
   function boundingHit(item, p){
-    // simple hit-test in local coords (good enough)
     const dx = p.x - item.x;
     const dy = p.y - item.y;
     const c = Math.cos(-item.angle), s = Math.sin(-item.angle);
@@ -429,62 +423,76 @@
       return Math.abs(lx) <= item.w/2 && Math.abs(ly) <= item.h/2;
     }
     if(item.type === 'sector'){
-      // rough: triangle-ish + circle segment — we'll allow circular hit
       return Math.hypot(lx, ly) <= item.r;
     }
     return false;
   }
 
-  function spawn(type){
-    const {w,h} = resizeForDPR();
-    const center = {x: w*0.5, y: h*0.45};
-
-    let item = { id: nextId++, type, x:center.x, y:center.y, angle:0, links:[] };
-
-    if(type === 'circle'){
-      item.r = 48;
-      item.kind = 'circle';
-    } else if(type === 'circle_small'){
-      item.r = 38;
-      item.kind = 'circle';
-    } else if(type === 'rect'){
-      item.w = 150; item.h = 70;
-      item.kind = 'rect';
-    } else if(type === 'sector'){
-      item.r = 90;
-      item.kind = 'sector';
+  function itemAt(p){
+    for(let i=items.length-1;i>=0;i--){
+      if(boundingHit(items[i], p)) return items[i];
     }
+    return null;
+  }
+
+  function spawnAt(type, x, y){
+    const {w,h} = resizeForDPR();
+    const pad = 40;
+    x = clamp(x, pad, w-pad);
+    y = clamp(y, pad, h-pad);
+
+    const item = { id: nextId++, type, x, y, angle:0, links:[] };
+
+    if(type === 'circle'){ item.r = 48; item.kind = 'circle'; }
+    else if(type === 'circle_small'){ item.r = 38; item.kind = 'circle'; }
+    else if(type === 'rect'){ item.w = 150; item.h = 70; item.kind = 'rect'; }
+    else if(type === 'sector'){ item.r = 90; item.kind = 'sector'; }
 
     items.push(item);
     selectedId = item.id;
-    statusEl.textContent = "Teil hinzugefügt. Du kannst es verschieben, drehen (Q/E) und andocken.";
     draw();
   }
 
-  // Palette drag-to-spawn: easiest via pointerdown and clone spawn at release in canvas
-  let paletteDragType = null;
-  document.querySelectorAll('.tile[data-spawn]').forEach(tile => {
-    tile.addEventListener('pointerdown', (e) => {
-      paletteDragType = tile.getAttribute('data-spawn');
-      tile.setPointerCapture?.(e.pointerId);
-      statusEl.textContent = "Zieh ins Arbeitsfeld und lass los.";
-    });
-    tile.addEventListener('pointerup', () => {
-      // If user releases outside canvas, ignore
-      paletteDragType = null;
+  // Palette selection
+  const tiles = [...document.querySelectorAll('.tile[data-spawn]')];
+
+  function setActiveTile(type){
+    placeType = type;
+    tiles.forEach(t => t.classList.toggle('active', t.getAttribute('data-spawn') === type));
+  }
+
+  function clearPlacementMode(msg){
+    placeType = null;
+    tiles.forEach(t => t.classList.remove('active'));
+    if(msg) statusEl.textContent = msg;
+  }
+
+  tiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+      const type = tile.getAttribute('data-spawn');
+      setActiveTile(type);
+      statusEl.textContent = "Baustein gewählt – klicke ins Arbeitsfeld zum Platzieren.";
+      draw();
     });
   });
 
-  // Snap
+  // Snap logic
   const SNAP_DIST = 18;
+
+  function addLink(a,b){
+    const A = items.find(x=>x.id===a);
+    const B = items.find(x=>x.id===b);
+    if(!A || !B) return;
+    if(!A.links.includes(b)) A.links.push(b);
+    if(!B.links.includes(a)) B.links.push(a);
+  }
 
   function trySnap(item){
     if(!snapEnabled) return;
 
     const myAnch = anchorsFor(item);
+    let best = null;
 
-    // Find best other anchor near any of my anchors
-    let best = null; // {dx,dy, mineName, otherId, otherName, d}
     for(const other of items){
       if(other.id === item.id) continue;
       const oAnch = anchorsFor(other);
@@ -492,14 +500,7 @@
         for(const oa of oAnch){
           const d = Math.hypot(ma.x-oa.x, ma.y-oa.y);
           if(d <= SNAP_DIST && (!best || d < best.d)){
-            best = {
-              d,
-              dx: (oa.x - ma.x),
-              dy: (oa.y - ma.y),
-              mineName: ma.name,
-              otherId: other.id,
-              otherName: oa.name
-            };
+            best = { d, dx: (oa.x - ma.x), dy: (oa.y - ma.y), otherId: other.id };
           }
         }
       }
@@ -508,18 +509,8 @@
     if(best){
       item.x += best.dx;
       item.y += best.dy;
-
-      // store link (undirected)
       addLink(item.id, best.otherId);
     }
-  }
-
-  function addLink(a,b){
-    const A = items.find(x=>x.id===a);
-    const B = items.find(x=>x.id===b);
-    if(!A || !B) return;
-    if(!A.links.includes(b)) A.links.push(b);
-    if(!B.links.includes(a)) B.links.push(a);
   }
 
   // Drawing
@@ -538,83 +529,7 @@
     ctx.restore();
   }
 
-  function drawItem(item){
-    const isSel = (item.id === selectedId);
-
-    ctx.save();
-    ctx.translate(item.x, item.y);
-    ctx.rotate(item.angle);
-
-    // style
-    ctx.lineWidth = isSel ? 3 : 2;
-    ctx.strokeStyle = isSel ? "rgba(96,165,250,.95)" : "rgba(255,255,255,.70)";
-    ctx.fillStyle = isSel ? "rgba(96,165,250,.14)" : "rgba(255,255,255,.06)";
-
-    if(item.type === 'circle' || item.type === 'circle_small'){
-      ctx.beginPath();
-      ctx.arc(0,0,item.r,0,Math.PI*2);
-      ctx.fill(); ctx.stroke();
-
-      // tiny "tab" markers (helps snapping visually)
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = "rgba(255,255,255,.25)";
-      ctx.beginPath(); ctx.arc(0,-item.r,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(0,item.r,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(-item.r,0,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(item.r,0,4,0,Math.PI*2); ctx.fill();
-
-    } else if(item.type === 'rect'){
-      ctx.beginPath();
-      ctx.rect(-item.w/2, -item.h/2, item.w, item.h);
-      ctx.fill(); ctx.stroke();
-
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = "rgba(255,255,255,.25)";
-      ctx.beginPath(); ctx.arc(0,-item.h/2,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(0,item.h/2,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(-item.w/2,0,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(item.w/2,0,4,0,Math.PI*2); ctx.fill();
-
-    } else if(item.type === 'sector'){
-      // draw sector shape (simple)
-      const r = item.r;
-      const ang = Math.PI * 0.95; // ~171°
-      ctx.beginPath();
-      ctx.moveTo(0,0);
-      ctx.arc(0,0,r, -ang/2, ang/2);
-      ctx.closePath();
-      ctx.fill(); ctx.stroke();
-
-      // markers
-      ctx.globalAlpha = 0.85;
-      ctx.fillStyle = "rgba(255,255,255,.25)";
-      ctx.beginPath(); ctx.arc(0,r,4,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(r*0.6,-r*0.2,4,0,Math.PI*2); ctx.fill();
-    }
-
-    // id badge
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = "rgba(0,0,0,.35)";
-    ctx.strokeStyle = "rgba(255,255,255,.12)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect?.(-18, -22, 36, 20, 6);
-    if(!ctx.roundRect){
-      // fallback
-      ctx.rect(-18, -22, 36, 20);
-    }
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "rgba(230,238,252,.90)";
-    ctx.font = "800 12px system-ui,-apple-system,Segoe UI,Roboto,Arial";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(String(item.id), 0, -12);
-
-    ctx.restore();
-  }
-
   function drawLinks(){
-    // show links only subtly (no "solution"); just helps orientation
     ctx.save();
     ctx.globalAlpha = 0.22;
     ctx.strokeStyle = "rgba(52,211,153,.9)";
@@ -636,11 +551,78 @@
     ctx.restore();
   }
 
+  function drawItem(item){
+    const isSel = (item.id === selectedId);
+
+    ctx.save();
+    ctx.translate(item.x, item.y);
+    ctx.rotate(item.angle);
+
+    ctx.lineWidth = isSel ? 3 : 2;
+    ctx.strokeStyle = isSel ? "rgba(96,165,250,.95)" : "rgba(255,255,255,.70)";
+    ctx.fillStyle = isSel ? "rgba(96,165,250,.14)" : "rgba(255,255,255,.06)";
+
+    if(item.type === 'circle' || item.type === 'circle_small'){
+      ctx.beginPath();
+      ctx.arc(0,0,item.r,0,Math.PI*2);
+      ctx.fill(); ctx.stroke();
+
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = "rgba(255,255,255,.25)";
+      ctx.beginPath(); ctx.arc(0,-item.r,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0,item.r,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-item.r,0,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(item.r,0,4,0,Math.PI*2); ctx.fill();
+
+    } else if(item.type === 'rect'){
+      ctx.beginPath();
+      ctx.rect(-item.w/2, -item.h/2, item.w, item.h);
+      ctx.fill(); ctx.stroke();
+
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = "rgba(255,255,255,.25)";
+      ctx.beginPath(); ctx.arc(0,-item.h/2,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(0,item.h/2,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-item.w/2,0,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(item.w/2,0,4,0,Math.PI*2); ctx.fill();
+
+    } else if(item.type === 'sector'){
+      const r = item.r;
+      const ang = Math.PI * 0.95;
+      ctx.beginPath();
+      ctx.moveTo(0,0);
+      ctx.arc(0,0,r, -ang/2, ang/2);
+      ctx.closePath();
+      ctx.fill(); ctx.stroke();
+
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = "rgba(255,255,255,.25)";
+      ctx.beginPath(); ctx.arc(0,r,4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(r*0.6,-r*0.2,4,0,Math.PI*2); ctx.fill();
+    }
+
+    // id badge
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "rgba(0,0,0,.35)";
+    ctx.strokeStyle = "rgba(255,255,255,.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(-18, -22, 36, 20, 6);
+    else ctx.rect(-18, -22, 36, 20);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "rgba(230,238,252,.90)";
+    ctx.font = "800 12px system-ui,-apple-system,Segoe UI,Roboto,Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(String(item.id), 0, -12);
+
+    ctx.restore();
+  }
+
   function draw(){
     const {w,h} = resizeForDPR();
     ctx.clearRect(0,0,w,h);
 
-    // background wash
     ctx.save();
     ctx.fillStyle = "rgba(0,0,0,.12)";
     ctx.fillRect(0,0,w,h);
@@ -650,7 +632,6 @@
     drawLinks();
     for(const it of items) drawItem(it);
 
-    // task title (no spoiler)
     ctx.save();
     ctx.fillStyle = "rgba(230,238,252,.92)";
     ctx.font = "900 16px system-ui,-apple-system,Segoe UI,Roboto,Arial";
@@ -658,39 +639,37 @@
     ctx.restore();
   }
 
-  // Selection helpers
-  function itemAt(p){
-    for(let i=items.length-1;i>=0;i--){
-      if(boundingHit(items[i], p)) return items[i];
+  function deleteById(id){
+    const idx = items.findIndex(x=>x.id===id);
+    if(idx === -1) return;
+    const removed = items[idx].id;
+    items.splice(idx,1);
+    for(const it of items){
+      it.links = it.links.filter(x=>x!==removed);
     }
-    return null;
-  }
-
-  function select(id){
-    selectedId = id;
-    draw();
+    if(selectedId === removed){
+      selectedId = items.length ? items[items.length-1].id : null;
+    }
   }
 
   function deleteSelected(){
     if(selectedId == null) return;
-    const idx = items.findIndex(x=>x.id===selectedId);
-    if(idx === -1) return;
-    const removed = items[idx].id;
-    items.splice(idx,1);
-    // remove links referencing removed
-    for(const it of items){
-      it.links = it.links.filter(x=>x!==removed);
-    }
-    selectedId = items.length ? items[items.length-1].id : null;
+    deleteById(selectedId);
     statusEl.textContent = "Teil gelöscht.";
     draw();
   }
 
-  // Pointer events on canvas:
+  // Canvas interaction
   cv.addEventListener('pointerdown', (e) => {
     const pos = toPos(e);
 
-    // If paletteDragType is active and user releases on canvas area => spawn here (handled on pointerup)
+    // Place new item if placement active
+    if(placeType){
+      spawnAt(placeType, pos.x, pos.y);
+      clearPlacementMode("Teil platziert. Wähle einen neuen Baustein, um weiterzubauen.");
+      return;
+    }
+
     const hit = itemAt(pos);
     if(hit){
       selectedId = hit.id;
@@ -699,10 +678,10 @@
       dragOffset.y = pos.y - hit.y;
       cv.setPointerCapture?.(e.pointerId);
       draw();
-      return;
+    } else {
+      selectedId = null;
+      draw();
     }
-    selectedId = null;
-    draw();
   });
 
   cv.addEventListener('pointermove', (e) => {
@@ -714,35 +693,45 @@
     draw();
   });
 
-  cv.addEventListener('pointerup', (e) => {
-    // If user is dragging an existing item, try snap on release
+  cv.addEventListener('pointerup', () => {
     if(dragging){
       trySnap(dragging);
       dragging = null;
       draw();
-      return;
-    }
-
-    // If user was dragging from palette and released on canvas, spawn
-    if(paletteDragType){
-      spawn(paletteDragType);
-      paletteDragType = null;
     }
   });
 
   cv.addEventListener('pointercancel', () => {
     dragging = null;
-    paletteDragType = null;
   });
 
-  // Keyboard: rotate/delete
+  // Double click / double tap delete
+  cv.addEventListener('dblclick', (e) => {
+    const pos = toPos(e);
+    const hit = itemAt(pos);
+    if(hit){
+      deleteById(hit.id);
+      statusEl.textContent = "Teil per Doppelklick gelöscht.";
+      draw();
+    }
+  });
+
+  // Prevent context menu on right click (optional, cleaner for school devices)
+  cv.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Keyboard: rotate/delete/escape
   window.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      clearPlacementMode("Platziermodus beendet.");
+      return;
+    }
+
     if(selectedId == null) return;
     const it = items.find(x=>x.id===selectedId);
     if(!it) return;
 
     if(e.key.toLowerCase() === 'q'){
-      it.angle -= Math.PI/12; // 15°
+      it.angle -= Math.PI/12;
       draw();
     } else if(e.key.toLowerCase() === 'e'){
       it.angle += Math.PI/12;
@@ -756,7 +745,8 @@
   resetBtn.addEventListener('click', () => {
     items.splice(0, items.length);
     selectedId = null;
-    statusEl.textContent = "Alles gelöscht. Neue Bausteine ziehen.";
+    clearPlacementMode();
+    statusEl.textContent = "Alles gelöscht. Baustein wählen und ins Feld klicken.";
     draw();
   });
 
@@ -776,43 +766,14 @@
     draw();
   });
 
-  // ---------- Checking logic ----------
-  function countTypes(){
-    const c = {circle:0, rect:0, sector:0, circle_small:0};
-    for(const it of items){
-      if(it.type in c) c[it.type]++;
-    }
-    return c;
-  }
-
+  // Checking logic
   function isConnected(aId, bId){
     const a = items.find(x=>x.id===aId);
     if(!a) return false;
     return a.links.includes(bId);
   }
 
-  function allConnectedGraph(ids){
-    // BFS from first id
-    if(ids.length <= 1) return true;
-    const set = new Set(ids);
-    const q = [ids[0]];
-    const seen = new Set([ids[0]]);
-    while(q.length){
-      const cur = q.shift();
-      const it = items.find(x=>x.id===cur);
-      if(!it) continue;
-      for(const nb of it.links){
-        if(set.has(nb) && !seen.has(nb)){
-          seen.add(nb);
-          q.push(nb);
-        }
-      }
-    }
-    return seen.size === set.size;
-  }
-
   function checkCylinder(){
-    // Need: 2 circles (any size circles allowed, but prefer "circle" pieces) and 1 rect
     const circles = items.filter(it => it.type === 'circle');
     const rects = items.filter(it => it.type === 'rect');
 
@@ -820,7 +781,6 @@
       return {ok:false, msg:"Für den Zylinder brauchst du genau 2 Kreise und 1 Rechteck."};
     }
 
-    // Connectedness: rect must link to both circles (directly)
     const rect = rects[0];
     const ok1 = isConnected(rect.id, circles[0].id);
     const ok2 = isConnected(rect.id, circles[1].id);
@@ -828,12 +788,10 @@
       return {ok:false, msg:"Das Rechteck (Mantelfläche) muss an beide Kreise angedockt sein."};
     }
 
-    // Also ensure the two circles are not only linked to each other without rect (already covered)
     return {ok:true, msg:"Zylinder-Netz passt: Mantelrechteck ist mit beiden Kreisflächen verbunden."};
   }
 
   function checkCone(){
-    // Need: 1 sector + 1 circle_small (use the dedicated small circle)
     const sectors = items.filter(it => it.type === 'sector');
     const base = items.filter(it => it.type === 'circle_small');
 
@@ -841,7 +799,6 @@
       return {ok:false, msg:"Für den Kegel brauchst du genau 1 Kreissektor und 1 kleinen Kreis."};
     }
 
-    // Must be connected
     if(!isConnected(sectors[0].id, base[0].id)){
       return {ok:false, msg:"Der Kreissektor (Mantel) muss am Kreis (Grundfläche) angedockt sein."};
     }
@@ -864,27 +821,19 @@
   }
 
   checkBtn.addEventListener('click', () => {
-    let res;
-    if(currentTask.key === 'cyl'){
-      res = checkCylinder();
-    } else {
-      res = checkCone();
-    }
+    const res = (currentTask.key === 'cyl') ? checkCylinder() : checkCone();
 
     if(res.ok){
       addResult(true, res.msg + " Neue Aufgabe …", res.msg);
-      // next task
       currentTask = TASKS[Math.floor(Math.random()*TASKS.length)];
       taskPill.textContent = "Aufgabe: " + (currentTask.key === 'cyl' ? "Zylinder" : "Kegel");
-      // keep built net (optional). You can uncomment to auto-clear on success:
-      // items.splice(0, items.length); selectedId = null;
     } else {
       addResult(false, "—", res.msg);
     }
     draw();
   });
 
-  // Init pill + first draw
+  // Init
   taskPill.textContent = "Aufgabe: " + (currentTask.key === 'cyl' ? "Zylinder" : "Kegel");
   window.addEventListener('resize', draw);
   draw();
