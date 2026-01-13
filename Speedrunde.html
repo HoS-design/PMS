@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Speedrunde – Zeitformen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#0b1220;
+  --card:#121a33;
+  --text:#f3f6ff;
+  --muted:#b8c2ff;
+  --ok:#3ddc97;
+  --no:#ff6b6b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:linear-gradient(160deg,#0b1220,#070d1a);
+  color:var(--text);
+}
+header{
+  max-width:900px;
+  margin:0 auto;
+  padding:20px;
+  position:relative;
+}
+.meme{
+  position:absolute;
+  right:16px;
+  top:14px;
+  width:110px;
+  image-rendering:pixelated;
+  transform:rotate(4deg);
+}
+.badge{
+  display:inline-block;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.08);
+  margin-bottom:10px;
+}
+main{
+  max-width:900px;
+  margin:0 auto;
+  padding:16px;
+}
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:16px;
+}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{
+  padding:10px 16px;
+  border-radius:14px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  background:#2a3cff;
+  color:white;
+}
+.btn.secondary{background:rgba(255,255,255,.12)}
+.option{
+  padding:10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(0,0,0,.2);
+  color:white;
+  cursor:pointer;
+  text-align:left;
+}
+.option.ok{background:rgba(61,220,151,.35)}
+.option.no{background:rgba(255,107,107,.35)}
+#question{font-size:1.15rem;margin:14px 0 12px}
+#answers{display:grid;gap:8px}
+#resultBox{
+  display:none;
+  margin-top:14px;
+  padding:12px;
+  border-radius:14px;
+  border:1px dashed rgba(255,255,255,.25);
+}
+.mini{
+  display:none;
+  margin-top:16px;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.2);
+}
+.miniBox{
+  margin:10px 0;
+  padding:16px;
+  min-height:110px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.25);
+  cursor:pointer;
+  user-select:none;
+}
+.miniBox.wait{background:rgba(0,0,0,.35)}
+.miniBox.go{background:rgba(255,0,0,.45)}
+.small{color:var(--muted);font-size:.95rem}
+</style>
+</head>
+
+<body>
+<header>
+  <img src="chatistthisreal.png"
+       onerror="this.onerror=null;this.src='chatisthisreal.png';"
+       alt="Chat is this real?"
+       class="meme">
+  <span class="badge">⚡ Speedrunde • Zeitformen • HoS • 60 Sekunden</span>
+  <h1>Wie schnell bist du? 🏁</h1>
+  <p>60 Sekunden. Klick dich durch – schnell & fair 😄</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="row">
+      <button class="btn" id="startBtn" type="button">Start 🚀</button>
+      <div>Punkte: <b id="score">0</b></div>
+      <div>Zeit: <b id="time">60</b>s</div>
+      <span class="small">(keine direkten Wiederholungen)</span>
+    </div>
+
+    <div id="question"></div>
+    <div id="answers"></div>
+
+    <div id="resultBox"></div>
+
+    <!-- Reaktionsspiel -->
+    <section class="mini" id="miniGame" aria-label="Bonus-Spiel">
+      <h3>🎮 Bonus-Spiel: Reaktion</h3>
+      <div class="miniBox" id="rtBox" tabindex="0" role="button" aria-label="Reaktionsfeld">
+        <span id="rtText">Start drücken und warten… sobald es ROT ist: klicken!</span>
+      </div>
+      <div class="row">
+        <button class="btn" id="rtStart" type="button">Start 🎯</button>
+        <button class="btn secondary" id="rtBack" type="button">Zurück ↩️</button>
+      </div>
+      <div class="small">Wenn du zu früh klickst → „Zu früh!“ 😅</div>
+    </section>
+  </div>
+</main>
+
+<script>
+/* ================== DOM / STATE ================== */
+const startBtn = document.getElementById("startBtn");
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const scoreEl = document.getElementById("score");
+const timeEl = document.getElementById("time");
+const resultBox = document.getElementById("resultBox");
+
+/* Mini-Game */
+const miniGame = document.getElementById("miniGame");
+const rtBox = document.getElementById("rtBox");
+const rtText = document.getElementById("rtText");
+const rtStart = document.getElementById("rtStart");
+const rtBack = document.getElementById("rtBack");
+
+let running = false;
+let score = 0;
+let time = 60;
+let timer = null;
+let current = null;
+
+const timeformOptions = ["Präsens","Präteritum","Perfekt","Plusquamperfekt","Futur I","Futur II"];
+
+/* ================== FRAGENPOOL (GROß) ================== */
+const pool = [
+  // ---- pick: Zeitform wählen ----
+  // Präsens
+  {type:"pick", text:"Ich gehe morgen spazieren.", answer:"Präsens"},
+  {type:"pick", text:"Wir lernen jetzt für den Test.", answer:"Präsens"},
+  {type:"pick", text:"Jeden Montag spiele ich Fußball.", answer:"Präsens"},
+  {type:"pick", text:"Im Winter schneit es oft.", answer:"Präsens"},
+  {type:"pick", text:"Heute Abend sehe ich einen Film.", answer:"Präsens"},
+  {type:"pick", text:"Nächste Woche schreibe ich eine Schularbeit.", answer:"Präsens"},
+  {type:"pick", text:"Die Erde dreht sich um die Sonne.", answer:"Präsens"},
+  {type:"pick", text:"Ich komme gleich!", answer:"Präsens"},
+  {type:"pick", text:"Wir treffen uns um 18 Uhr.", answer:"Präsens"},
+  {type:"pick", text:"Jetzt regnet es.", answer:"Präsens"},
+
+  // Präteritum
+  {type:"pick", text:"Ich ging nach Hause.", answer:"Präteritum"},
+  {type:"pick", text:"Er war gestern sehr müde.", answer:"Präteritum"},
+  {type:"pick", text:"Wir hatten keine Zeit.", answer:"Präteritum"},
+  {type:"pick", text:"Sie schrieb einen Brief.", answer:"Präteritum"},
+  {type:"pick", text:"Der Hund bellte die ganze Nacht.", answer:"Präteritum"},
+  {type:"pick", text:"Wir spielten im Park.", answer:"Präteritum"},
+  {type:"pick", text:"Es gab ein Problem.", answer:"Präteritum"},
+  {type:"pick", text:"Ich wusste das schon.", answer:"Präteritum"},
+  {type:"pick", text:"Sie las das Buch in einem Zug.", answer:"Präteritum"},
+  {type:"pick", text:"Ich fand den Schlüssel nicht.", answer:"Präteritum"},
+
+  // Perfekt
+  {type:"pick", text:"Ich habe gegessen.", answer:"Perfekt"},
+  {type:"pick", text:"Wir sind gelaufen.", answer:"Perfekt"},
+  {type:"pick", text:"Sie hat den Film gesehen.", answer:"Perfekt"},
+  {type:"pick", text:"Ich bin zu spät gekommen.", answer:"Perfekt"},
+  {type:"pick", text:"Wir haben lange gewartet.", answer:"Perfekt"},
+  {type:"pick", text:"Er hat seine Jacke vergessen.", answer:"Perfekt"},
+  {type:"pick", text:"Ich habe die Aufgabe verstanden.", answer:"Perfekt"},
+  {type:"pick", text:"Sie ist schnell eingeschlafen.", answer:"Perfekt"},
+  {type:"pick", text:"Ich bin nach Hause gegangen.", answer:"Perfekt"},
+  {type:"pick", text:"Wir sind umgezogen.", answer:"Perfekt"},
+
+  // Plusquamperfekt
+  {type:"pick", text:"Ich hatte gegessen, bevor ich ging.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Wir waren schon gegangen, als er ankam.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Nachdem wir gegessen hatten, gingen wir raus.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Ich hatte den Bus verpasst, deshalb kam ich zu spät.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Er war eingeschlafen, bevor der Film zu Ende war.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Er war schon losgefahren, als ich anrief.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Sie hatte ihre Schlüssel verloren und rief mich an.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Wir hatten schon begonnen, als du gekommen bist.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Ich hatte das Heft zu Hause vergessen.", answer:"Plusquamperfekt"},
+  {type:"pick", text:"Wir hatten gewonnen, bevor der Schiri abpfiff.", answer:"Plusquamperfekt"},
+
+  // Futur I
+  {type:"pick", text:"Ich werde lernen.", answer:"Futur I"},
+  {type:"pick", text:"Wir werden das schaffen.", answer:"Futur I"},
+  {type:"pick", text:"Er wird jetzt zu Hause sein.", answer:"Futur I"},
+  {type:"pick", text:"Es wird gleich regnen.", answer:"Futur I"},
+  {type:"pick", text:"Wir werden später telefonieren.", answer:"Futur I"},
+  {type:"pick", text:"Ich werde dir helfen.", answer:"Futur I"},
+  {type:"pick", text:"Du wirst das schon können.", answer:"Futur I"},
+  {type:"pick", text:"Das wird schon passen.", answer:"Futur I"},
+  {type:"pick", text:"Wir werden nächstes Jahr nach Berlin fahren.", answer:"Futur I"},
+  {type:"pick", text:"Bald wirst du lachen.", answer:"Futur I"},
+
+  // Futur II
+  {type:"pick", text:"Ich werde gelernt haben.", answer:"Futur II"},
+  {type:"pick", text:"Bis morgen wirst du das erledigt haben.", answer:"Futur II"},
+  {type:"pick", text:"Er wird wohl schon gegangen sein.", answer:"Futur II"},
+  {type:"pick", text:"In einer Stunde werde ich die Aufgabe gelöst haben.", answer:"Futur II"},
+  {type:"pick", text:"Bis 18 Uhr werden wir alles vorbereitet haben.", answer:"Futur II"},
+  {type:"pick", text:"Wenn du ankommst, werde ich schon gekocht haben.", answer:"Futur II"},
+  {type:"pick", text:"Er wird die Nachricht bereits gelesen haben.", answer:"Futur II"},
+  {type:"pick", text:"Um diese Zeit morgen wirst du längst angekommen sein.", answer:"Futur II"},
+  {type:"pick", text:"Bis nächste Woche werden wir den Stoff wiederholt haben.", answer:"Futur II"},
+  {type:"pick", text:"Sie wird das bestimmt vergessen haben.", answer:"Futur II"},
+
+  // ---- tf: Richtig/Falsch ----
+  {type:"tf", text:"Ich hatte gegessen → Perfekt", correct:false},
+  {type:"tf", text:"Ich habe gegessen → Perfekt", correct:true},
+  {type:"tf", text:"Wir sind gelaufen → Perfekt", correct:true},
+  {type:"tf", text:"Ich ging nach Hause → Präteritum", correct:true},
+  {type:"tf", text:"Er wird wohl schon gegangen sein → Futur II", correct:true},
+  {type:"tf", text:"Ich werde lernen → Futur II", correct:false},
+  {type:"tf", text:"Bis morgen wirst du das erledigt haben → Futur II", correct:true},
+  {type:"tf", text:"Nächste Woche schreibe ich eine Schularbeit → Futur I", correct:false},
+  {type:"tf", text:"Er war müde → Präteritum", correct:true},
+  {type:"tf", text:"Wir hatten gewonnen → Plusquamperfekt", correct:true},
+  {type:"tf", text:"Ich bin gekommen → Präteritum", correct:false},
+  {type:"tf", text:"Ich werde dir helfen → Futur I", correct:true},
+
+  // ---- use: Verwendung ----
+  {type:"use", text:"Er wird jetzt zu Hause sein.", choices:["Zukunft","Vermutung (Gegenwart)","Vorvergangenheit"], answer:"Vermutung (Gegenwart)"},
+  {type:"use", text:"Er wird wohl schon gegangen sein.", choices:["Zukunft","Vermutung (Vergangenheit)","Gewohnheit"], answer:"Vermutung (Vergangenheit)"},
+  {type:"use", text:"Ich gehe morgen zum Arzt.", choices:["Plan/Zukunft","Vermutung","Vorvergangenheit"], answer:"Plan/Zukunft"},
+  {type:"use", text:"Ich habe gegessen.", choices:["gesprochenes Deutsch","Vorvergangenheit","Zukunft"], answer:"gesprochenes Deutsch"},
+  {type:"use", text:"Ich ging nach Hause.", choices:["Erzählzeit","Vermutung","Zukunft"], answer:"Erzählzeit"},
+  {type:"use", text:"Ich hatte gegessen, bevor ich ging.", choices:["Vorvergangenheit","Zukunft","Gegenwart"], answer:"Vorvergangenheit"},
+  {type:"use", text:"In einer Stunde werde ich die Aufgabe gelöst haben.", choices:["abgeschlossen bis dann","Gewohnheit","Gegenwart"], answer:"abgeschlossen bis dann"},
+  {type:"use", text:"Ich werde morgen früher aufstehen.", choices:["Plan/Zukunft","Erzählzeit","Vorvergangenheit"], answer:"Plan/Zukunft"}
+];
+
+/* ================== HELFER ================== */
+function shuffleInPlace(arr){
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+/* ====== Deck-System: keine direkten Wiederholungen ====== */
+let deck = [];
+function refillDeck(){
+  deck = shuffleInPlace([...Array(pool.length).keys()]);
+}
+function pickQuestion(){
+  if(deck.length === 0) refillDeck();
+  const idx = deck.pop();
+  return pool[idx];
+}
+
+/* ================== QUIZ-LOGIK ================== */
+function mkBtn(text){
+  const b = document.createElement("button");
+  b.className = "option";
+  b.type = "button";
+  b.textContent = text;
+  b.onclick = () => choose(text, b);
+  answersEl.appendChild(b);
+}
+
+function renderQuestion(){
+  current = pickQuestion();
+  answersEl.innerHTML = "";
+
+  if(current.type === "tf"){
+    questionEl.innerHTML = "⚡ <b>Richtig oder falsch?</b><br>" + current.text;
+    ["Richtig","Falsch"].forEach(mkBtn);
+  }
+  else if(current.type === "use"){
+    questionEl.innerHTML = "🎯 <b>Wofür wird’s verwendet?</b><br>" + current.text;
+    // leicht mischen
+    const choices = shuffleInPlace([...current.choices]);
+    choices.forEach(mkBtn);
+  }
+  else {
+    questionEl.textContent = current.text;
+    const opts = shuffleInPlace([...timeformOptions]);
+    opts.forEach(mkBtn);
+  }
+}
+
+function choose(val, btn){
+  if(!running) return;
+
+  const allBtns = Array.from(answersEl.querySelectorAll("button"));
+  allBtns.forEach(b => b.disabled = true);
+
+  const correctVal = (current.type === "tf")
+    ? (current.correct ? "Richtig" : "Falsch")
+    : current.answer;
+
+  if(val === correctVal){
+    score++;
+    scoreEl.textContent = score;
+    btn.classList.add("ok");
+  } else {
+    btn.classList.add("no");
+    const right = allBtns.find(b => b.textContent === correctVal);
+    if(right) right.classList.add("ok");
+  }
+
+  setTimeout(() => {
+    if(running) renderQuestion();
+  }, 320);
+}
+
+function start(){
+  score = 0;
+  time = 60;
+  scoreEl.textContent = "0";
+  timeEl.textContent = "60";
+  resultBox.style.display = "none";
+  miniGame.style.display = "none";
+
+  running = true;
+  refillDeck();      // Start immer mit frischem Mix
+  renderQuestion();
+
+  clearInterval(timer);
+  timer = setInterval(() => {
+    time--;
+    timeEl.textContent = String(time);
+    if(time <= 0) finish();
+  }, 1000);
+}
+
+function finish(){
+  running = false;
+  clearInterval(timer);
+
+  questionEl.textContent = "";
+  answersEl.innerHTML = "";
+
+  resultBox.style.display = "block";
+  resultBox.innerHTML = `
+    <b>Time’s up!</b><br>
+    Score: <b>${score}</b><br><br>
+    <button class="btn" id="bonusBtn" type="button">🎮 Bonus-Spiel starten</button>
+  `;
+
+  const bonusBtn = document.getElementById("bonusBtn");
+  bonusBtn.addEventListener("click", () => {
+    miniGame.style.display = "block";
+    rtBox.focus();
+  });
+}
+
+/* ================== MINI-GAME (REAKTION) ================== */
+let rtTimer = null;
+let goAt = 0;
+let rtState = "idle"; // idle | waiting | go | done
+
+function startRT(){
+  clearTimeout(rtTimer);
+  rtState = "waiting";
+  rtBox.className = "miniBox wait";
+  rtText.textContent = "Warte… NICHT klicken 🙈";
+
+  rtTimer = setTimeout(() => {
+    rtState = "go";
+    rtBox.className = "miniBox go";
+    rtText.textContent = "JETZT! 🔴";
+    goAt = performance.now();
+  }, 900 + Math.random() * 2400);
+}
+
+function clickRT(){
+  if(rtState === "waiting"){
+    clearTimeout(rtTimer);
+    rtState = "done";
+    rtBox.className = "miniBox wait";
+    rtText.textContent = "Zu früh! 😅 Nochmal!";
+    return;
+  }
+  if(rtState === "go"){
+    const ms = Math.round(performance.now() - goAt);
+    rtState = "done";
+    rtBox.className = "miniBox";
+    rtText.textContent = ms + " ms ⚡";
+  }
+}
+
+startBtn.addEventListener("click", start);
+rtStart.addEventListener("click", startRT);
+rtBack.addEventListener("click", () => miniGame.style.display = "none");
+rtBox.addEventListener("click", clickRT);
+rtBox.addEventListener("keydown", (e) => {
+  if(e.key === "Enter" || e.key === " "){
+    e.preventDefault();
+    clickRT();
+  }
+});
+</script>
+
+</body>
+</html>
