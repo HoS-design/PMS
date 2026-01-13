@@ -173,9 +173,9 @@
 
 <script type="module">
   // Robust ES-module imports (works reliably on GitHub Pages)
-  import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
-  import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
-  import { DragControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/DragControls.js";
+import * as THREE from "./lib/three.module.js";
+import { OrbitControls } from "./lib/OrbitControls.js";
+import { DragControls } from "./lib/DragControls.js";
 
   const showErr = (e) => {
     const box = document.getElementById('err');
