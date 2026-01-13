@@ -3,288 +3,107 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Baue den Körper – 3D Aufgaben (Volumen & Oberfläche) • HoS</title>
-
-  <!-- Three.js (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/DragControls.js"></script>
+  <title>KörperWerkstatt 3D • HoS</title>
 
   <style>
     :root{
       --ink:#1f2937; --muted:#6b7280; --line:#d1d5db; --soft:#f8fafc;
-      --card:#ffffff; --accent:#2563eb; --good:#10b981; --warn:#f59e0b; --bad:#ef4444;
+      --card:#ffffff; --accent:#2563eb; --good:#10b981; --bad:#ef4444;
       --shadow:0 10px 30px rgba(0,0,0,.08); --radius:18px;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--ink); background:linear-gradient(180deg,#fff, #f7fafc);
-    }
-    header{
-      padding:18px 16px 10px; max-width:1200px; margin:0 auto;
-      display:flex; gap:14px; align-items:center; flex-wrap:wrap;
-    }
-    header .meme{
-      width:78px;height:78px;object-fit:cover;border-radius:16px;
-      border:1px solid var(--line); box-shadow:var(--shadow); background:#fff;
-    }
-    header .titlewrap{flex:1; min-width:240px}
-    header h1{margin:0;font-size:22px;line-height:1.2}
-    header p{margin:6px 0 0;color:var(--muted);font-size:13px}
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:7px 10px; border:1px solid var(--line); border-radius:999px;
-      background:#fff; font-size:12px; color:var(--muted);
-    }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff,#f7fafc)}
+    header{padding:18px 16px 10px;max-width:1200px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .meme{width:78px;height:78px;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
+    .titlewrap{flex:1;min-width:240px}
+    h1{margin:0;font-size:22px;line-height:1.2}
+    p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .badge{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px;color:var(--muted)}
     .badge b{color:var(--accent)}
-    .wrap{
-      max-width:1200px; margin:0 auto; padding:0 16px 18px;
-      display:grid; grid-template-columns: 410px 1fr; gap:14px;
-    }
-    @media (max-width: 980px){ .wrap{grid-template-columns:1fr} }
-    .panel{
-      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
-      box-shadow:var(--shadow); overflow:hidden;
-    }
-    .panel .hd{
-      padding:14px 14px 10px; border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg,#fff, #fbfdff);
-    }
-    .panel .hd h2{
-      margin:0;font-size:14px;letter-spacing:.2px;
-      display:flex;align-items:center;justify-content:space-between;gap:8px;
-    }
-    .panel .bd{padding:14px}
-    .row{display:grid;grid-template-columns: 1fr 1fr;gap:10px}
-    .row3{display:grid;grid-template-columns: 1fr 1fr 1fr;gap:10px}
+    .linkbtn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:900}
+    .wrap{max-width:1200px;margin:0 auto;padding:0 16px 18px;display:grid;grid-template-columns:410px 1fr;gap:14px}
+    @media (max-width:980px){.wrap{grid-template-columns:1fr}}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .hd{padding:14px 14px 10px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff)}
+    .hd h2{margin:0;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .bd{padding:14px}
     label{font-size:12px;color:var(--muted);display:block;margin:8px 0 6px}
-    select,input[type="number"],input[type="password"],input[type="text"]{
-      width:100%; padding:10px 10px; border:1px solid var(--line);
-      border-radius:12px; outline:none; background:#fff; color:var(--ink); font-size:14px;
-    }
+    select,input[type="number"],input[type="text"]{width:100%;padding:10px 10px;border:1px solid var(--line);border-radius:12px;outline:none;background:#fff;color:var(--ink);font-size:14px}
     input[type="checkbox"]{transform:translateY(1px)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{
-      border:1px solid var(--line); background:#fff; padding:10px 12px; border-radius:12px;
-      cursor:pointer; font-weight:800; font-size:13px; color:var(--ink);
-      box-shadow:0 6px 18px rgba(0,0,0,.06);
-    }
-    button.primary{ background:var(--accent); color:#fff; border-color:transparent; }
-    button.good{ background:var(--good); color:#fff; border-color:transparent; }
-    button.bad{ background:var(--bad); color:#fff; border-color:transparent; }
-    button:active{transform:translateY(1px)}
-    .hint{
-      margin-top:10px; padding:10px 12px; border-radius:14px; background:var(--soft);
-      border:1px dashed var(--line); color:var(--muted); font-size:12px; line-height:1.35;
-    }
-    .kv{
-      display:grid; grid-template-columns: 120px 1fr; gap:8px 10px;
-      font-size:12px; color:var(--muted); margin-top:10px;
-    }
+    button{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:900;font-size:13px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    button.primary{background:var(--accent);color:#fff;border-color:transparent}
+    button.good{background:var(--good);color:#fff;border-color:transparent}
+    button.bad{background:var(--bad);color:#fff;border-color:transparent}
+    .hint{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--soft);border:1px dashed var(--line);color:var(--muted);font-size:12px;line-height:1.35}
+    .kv{display:grid;grid-template-columns:120px 1fr;gap:8px 10px;font-size:12px;color:var(--muted);margin-top:10px}
     .kv b{color:var(--ink)}
-    .canvasWrap{ position:relative; min-height:520px; height: calc(100vh - 170px); }
-    @media (max-width: 980px){ .canvasWrap{height: 62vh;} }
-    #view{ width:100%; height:100%; display:block; border-radius:var(--radius); overflow:hidden; }
-    .overlay{
-      position:absolute; left:12px; top:12px; display:flex; gap:8px; flex-wrap:wrap; pointer-events:none;
-    }
-    .chip{
-      pointer-events:none; background:rgba(255,255,255,.92);
-      border:1px solid rgba(209,213,219,.9); border-radius:999px;
-      padding:7px 10px; font-size:12px; color:var(--muted);
-      box-shadow:0 8px 22px rgba(0,0,0,.08); backdrop-filter: blur(6px);
-    }
+    .canvasWrap{position:relative;min-height:520px;height:calc(100vh - 170px)}
+    @media (max-width:980px){.canvasWrap{height:62vh}}
+    #view{width:100%;height:100%}
+    .overlay{position:absolute;left:12px;top:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+    .chip{pointer-events:none;background:rgba(255,255,255,.92);border:1px solid rgba(209,213,219,.9);border-radius:999px;padding:7px 10px;font-size:12px;color:var(--muted);box-shadow:0 8px 22px rgba(0,0,0,.08);backdrop-filter:blur(6px)}
     .chip b{color:var(--ink)}
-    .footerbar{
-      padding:10px 16px 18px; max-width:1200px; margin:0 auto;
-      color:var(--muted); font-size:12px;
-    }
-    .linkbtn{
-      text-decoration:none; display:inline-flex;align-items:center;gap:8px;
-      padding:10px 12px;border-radius:12px; border:1px solid var(--line);
-      background:#fff; color:var(--ink); font-weight:900;
-    }
 
-    .modebar{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      margin-top:10px; padding:10px 12px; border:1px solid var(--line);
-      border-radius:14px; background:#fff;
-    }
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      padding:8px 10px; border:1px solid var(--line); border-radius:999px;
-      cursor:pointer; user-select:none; font-size:12px; color:var(--muted); font-weight:900;
-    }
-    .pill input{display:none}
-    .pill.active{ border-color:transparent; background:rgba(37,99,235,.12); color:var(--ink); }
-
-    .taskBox{
-      margin-top:10px; padding:12px 12px; border-radius:14px;
-      border:1px solid var(--line); background:linear-gradient(180deg,#fff, #fbfdff);
-    }
-    .taskTop{display:flex; justify-content:space-between; gap:10px; align-items:flex-start;}
+    .modebar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;user-select:none;font-size:12px;color:var(--muted);font-weight:900}
+    .pill.active{border-color:transparent;background:rgba(37,99,235,.12);color:var(--ink)}
+    .taskBox{margin-top:10px;padding:12px 12px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff)}
     .taskTitle{font-size:12px;color:var(--muted);font-weight:1000;letter-spacing:.2px}
-    .taskText{margin:6px 0 0; font-size:14px; font-weight:1000; line-height:1.25}
-    .taskMeta{margin:6px 0 0; color:var(--muted); font-size:12px; line-height:1.35}
-    .status{
-      margin-top:10px; padding:10px 12px; border-radius:14px;
-      border:1px dashed var(--line); background:var(--soft);
-      color:var(--muted); font-size:12px; line-height:1.35; min-height:44px;
-    }
-    .status.ok{border-color:rgba(16,185,129,.55); background:rgba(16,185,129,.08); color:#064e3b}
-    .status.no{border-color:rgba(239,68,68,.45); background:rgba(239,68,68,.06); color:#7f1d1d}
-    .tiny{font-size:11px;color:var(--muted)}
-    .teacherBox{
-      margin-top:10px; padding:12px 12px; border-radius:14px;
-      border:1px solid var(--line); background:#fff;
-    }
-    .teacherHead{display:flex; align-items:center; justify-content:space-between; gap:10px}
-    .teacherHead .tag{font-size:12px; color:var(--muted); font-weight:1000}
-    .teacherLocked{opacity:.75}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
-    .solBox{
-      margin-top:10px; padding:10px 12px; border-radius:14px;
-      border:1px dashed var(--line); background:var(--soft);
-      font-size:12px; color:var(--muted); line-height:1.35;
-      display:none;
-    }
+    .taskText{margin:6px 0 0;font-size:14px;font-weight:1000;line-height:1.25}
+    .status{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px dashed var(--line);background:var(--soft);color:var(--muted);font-size:12px;line-height:1.35;min-height:44px}
+    .status.ok{border-color:rgba(16,185,129,.55);background:rgba(16,185,129,.08);color:#064e3b}
+    .status.no{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.06);color:#7f1d1d}
+
+    /* Error overlay */
+    #err{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);z-index:9999;padding:18px}
+    #err h3{margin:0 0 8px}
+    #err pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:1000px}
   </style>
 </head>
 
 <body>
+<div id="err">
+  <h3>⚠️ Die 3D-App konnte nicht starten.</h3>
+  <p>Unten steht die genaue Fehlermeldung (hilft beim Debuggen):</p>
+  <pre id="errText"></pre>
+</div>
+
 <header>
-  <img class="meme" src="chatistthisreal.png"
-       onerror="this.onerror=null;this.src='chatisthisreal.png';"
-       alt="Chat is this real?">
-
+  <img class="meme" src="chatistthisreal.png" onerror="this.onerror=null;this.src='chatisthisreal.png';" alt="Chat is this real?">
   <div class="titlewrap">
-    <span class="badge">🧱 Baue den Körper • 3D • <b>HoS</b> • Volumen & Oberfläche</span>
-    <h1>Baue den Körper – 3D</h1>
-    <p>Im Aufgabenmodus: Körper bauen + <b>Volumen</b> & <b>Oberfläche</b> ausrechnen → erst dann <b>Prüfen</b>.</p>
+    <span class="badge">🧱 KörperWerkstatt 3D • <b>HoS</b> • Aufgabenmodus</span>
+    <h1>KörperWerkstatt 3D</h1>
+    <p>Klick: auswählen • Ziehen: verschieben • Aufgabenmodus: bauen → Prüfen</p>
   </div>
-
   <a class="linkbtn" href="index.html">🏠 Startseite</a>
 </header>
 
 <main class="wrap">
   <section class="panel">
-    <div class="hd">
-      <h2>Aufgaben & Eingaben <span style="color:var(--muted);font-weight:800">für SuS</span></h2>
-    </div>
+    <div class="hd"><h2>Steuerung <span style="color:var(--muted);font-weight:800">SuS</span></h2></div>
     <div class="bd">
-
-      <!-- Mode -->
       <div class="modebar">
-        <span class="tiny"><b>Modus:</b></span>
-
-        <label class="pill active" id="pillFree">
-          <input type="radio" name="mode" value="free" checked>
-          🧩 Freies Bauen
-        </label>
-
-        <label class="pill" id="pillTask">
-          <input type="radio" name="mode" value="task">
-          📝 Aufgabenmodus
-        </label>
-
-        <span class="tiny" style="margin-left:auto">
-          Toleranz: <b><span id="tolLabel">—</span></b>
-        </span>
+        <span style="font-size:12px;color:var(--muted);font-weight:900">Modus:</span>
+        <span class="pill active" id="pillFree">🧩 Freies Bauen</span>
+        <span class="pill" id="pillTask">📝 Aufgabenmodus</span>
       </div>
 
-      <!-- Task box -->
       <div class="taskBox" id="taskBox" style="display:none">
-        <div class="taskTop">
-          <div>
-            <div class="taskTitle">Aufgabe</div>
-            <div class="taskText" id="taskText">—</div>
-            <div class="taskMeta" id="taskMeta">—</div>
-          </div>
-          <div style="text-align:right">
-            <div class="taskTitle">Fortschritt</div>
-            <div class="taskText"><span id="taskIdx">0</span>/<span id="taskTotal">0</span></div>
-            <div class="taskMeta">Punkte: <b id="score">0</b></div>
-          </div>
-        </div>
+        <div class="taskTitle">Aufgabe</div>
+        <div class="taskText" id="taskText">Klicke „Neue Aufgabe“.</div>
 
-        <div class="row" style="margin-top:10px">
-          <div>
-            <label for="ansV">Volumen V (Einheiten³)</label>
-            <input id="ansV" type="text" inputmode="decimal" placeholder="z.B. 31.4" />
-          </div>
-          <div>
-            <label for="ansA">Oberfläche O (Einheiten²)</label>
-            <input id="ansA" type="text" inputmode="decimal" placeholder="z.B. 62.8" />
-          </div>
-        </div>
-
-        <div class="btnbar" style="margin-top:12px">
+        <div class="btnbar">
           <button class="primary" id="newTask">🎲 Neue Aufgabe</button>
-          <button id="resetTask">🧼 Reset (Szene leeren)</button>
+          <button id="resetTask">🧼 Reset</button>
           <button class="good" id="checkTask">✅ Prüfen</button>
         </div>
 
-        <div class="status" id="status">
-          Starte mit „Neue Aufgabe“. Baue dann den Körper (links Maße einstellen → Hinzufügen) und rechne V & O aus.
-        </div>
-
-        <div class="solBox" id="solBox"></div>
-
-        <!-- Teacher -->
-        <div class="teacherBox teacherLocked" id="teacherBox">
-          <div class="teacherHead">
-            <div class="tag">🔒 Lehrerbereich</div>
-            <div class="tiny">PIN: <span class="mono">9999</span></div>
-          </div>
-
-          <div class="row" style="margin-top:10px">
-            <div>
-              <label for="pin">PIN eingeben</label>
-              <input id="pin" type="password" inputmode="numeric" placeholder="••••" />
-            </div>
-            <div class="btnbar" style="margin-top:26px">
-              <button id="unlock">Entsperren</button>
-            </div>
-          </div>
-
-          <div id="teacherControls" style="display:none">
-            <div class="row3">
-              <div>
-                <label for="dimTol">Maßtoleranz (±)</label>
-                <input id="dimTol" type="number" step="0.01" min="0.01" value="0.15" />
-              </div>
-              <div>
-                <label for="valTolPct">V/O Toleranz (%)</label>
-                <input id="valTolPct" type="number" step="0.5" min="0.5" value="2" />
-              </div>
-              <div>
-                <label for="piMode">π-Modus</label>
-                <select id="piMode">
-                  <option value="math">π (genau, Rechner)</option>
-                  <option value="314">π ≈ 3.14</option>
-                  <option value="227">π ≈ 22/7</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="btnbar">
-              <button id="toggleSolutions">🧾 Lösungen ein/aus</button>
-              <button class="bad" id="lock">🔒 Sperren</button>
-            </div>
-
-            <div class="hint">
-              Lehrerbereich: Du kannst Toleranzen & π-Modus einstellen und optional Lösungen anzeigen (nur nach Prüfen sinnvoll).
-            </div>
-          </div>
-        </div>
+        <div class="status" id="status">Tipp: Stelle Maße links ein → „Hinzufügen“.</div>
       </div>
 
-      <!-- Builder -->
-      <div style="height:10px"></div>
-      <div class="hd" style="margin:14px -14px 0; border-top:1px solid var(--line)">
-        <h2>Werkzeugkasten <span style="color:var(--muted);font-weight:800">Körper hinzufügen</span></h2>
-      </div>
+      <div class="hd" style="margin:14px -14px 0;border-top:1px solid var(--line)"><h2>Werkzeugkasten <span style="color:var(--muted);font-weight:800">Körper</span></h2></div>
 
       <label for="shape">Körper</label>
       <select id="shape">
@@ -296,18 +115,18 @@
 
       <div class="row">
         <div>
-          <label for="a" id="labelA">Breite (a)</label>
+          <label id="labelA" for="a">Breite (a)</label>
           <input id="a" type="number" min="0.2" step="0.1" value="2.0">
         </div>
         <div>
-          <label for="b" id="labelB">Tiefe (b)</label>
+          <label id="labelB" for="b">Tiefe (b)</label>
           <input id="b" type="number" min="0.2" step="0.1" value="2.0">
         </div>
       </div>
 
       <div class="row">
         <div>
-          <label for="h" id="labelH">Höhe (h)</label>
+          <label id="labelH" for="h">Höhe (h)</label>
           <input id="h" type="number" min="0.2" step="0.1" value="2.0">
         </div>
         <div>
@@ -318,822 +137,328 @@
 
       <div class="row">
         <div>
-          <label for="snap"><input id="snap" type="checkbox" checked> Snapping (Raster)</label>
+          <label><input id="snap" type="checkbox" checked> Snapping</label>
         </div>
         <div>
-          <label for="grid">Rastergröße</label>
+          <label for="grid">Raster</label>
           <input id="grid" type="number" min="0.25" step="0.25" value="0.5">
         </div>
       </div>
 
       <div class="btnbar">
         <button class="primary" id="add">➕ Hinzufügen</button>
-        <button id="duplicate">📎 Duplizieren</button>
         <button class="bad" id="remove">🗑️ Löschen</button>
       </div>
 
-      <div class="hd" style="margin:14px -14px 0; border-top:1px solid var(--line)">
-        <h2>Manipulation <span style="color:var(--muted);font-weight:800">für Auswahl</span></h2>
-      </div>
-
-      <div class="btnbar">
-        <button class="good" id="rotL">↺ Dreh −15°</button>
-        <button class="good" id="rotR">↻ Dreh +15°</button>
-        <button id="rotX">🧊 X kippen</button>
-        <button id="rotZ">🧊 Z kippen</button>
-        <button id="resetRot">🎯 Rotation reset</button>
-      </div>
-
-      <div class="hint" id="hintBox">
-        <b>Tipps:</b><br>
-        • Kamera drehen: ziehen (Orbit) • Zoom: Mausrad/Pinch<br>
-        • Körper bewegen: ziehen (Drag) • Auswählen: anklicken (gelber Rand)<br>
-        • Aufgabenmodus: bauen + rechnen → <b>Prüfen</b>
+      <div class="hint">
+        Wenn Buttons „tot“ sind: Öffne DevTools → Console. Mit dieser Version siehst du den Fehler auch als Overlay.
       </div>
 
       <div class="kv" id="info">
-        <div>Auswahl</div><div><b>—</b></div>
-        <div>Position</div><div><b>—</b></div>
-        <div>Rotation</div><div><b>—</b></div>
-        <div>Objekte</div><div><b>0</b></div>
+        <div>Auswahl</div><div><b id="iSel">—</b></div>
+        <div>Objekte</div><div><b id="iCount">0</b></div>
       </div>
-
     </div>
   </section>
 
   <section class="panel canvasWrap">
     <div class="overlay">
-      <div class="chip">🎛️ <b>Orbit</b>: Szene drehen</div>
-      <div class="chip">🖱️ <b>Drag</b>: Körper ziehen</div>
+      <div class="chip">🎛️ <b>Orbit</b>: drehen</div>
+      <div class="chip">🖱️ <b>Drag</b>: ziehen</div>
       <div class="chip">🟨 <b>Klick</b>: auswählen</div>
     </div>
     <div id="view"></div>
   </section>
 </main>
 
-<div class="footerbar">
-  HoS • Aufgaben: Körper bauen + Volumen/Oberfläche berechnen. Lehrer-PIN: <span class="mono">9999</span>
-</div>
+<script type="module">
+  // Robust ES-module imports (works reliably on GitHub Pages)
+  import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+  import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+  import { DragControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/DragControls.js";
 
-<script>
-(() => {
-  // ---------- Three.js Setup ----------
-  const mount = document.getElementById('view');
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xffffff);
+  const showErr = (e) => {
+    const box = document.getElementById('err');
+    const pre = document.getElementById('errText');
+    pre.textContent = (e && (e.stack || e.message)) ? (e.stack || e.message) : String(e);
+    box.style.display = 'block';
+    console.error(e);
+  };
 
-  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
-  camera.position.set(8, 7, 10);
+  try{
+    // UI refs
+    const mount = document.getElementById("view");
+    const elShape = document.getElementById("shape");
+    const elA = document.getElementById("a");
+    const elB = document.getElementById("b");
+    const elH = document.getElementById("h");
+    const elSeg = document.getElementById("seg");
+    const elSnap = document.getElementById("snap");
+    const elGrid = document.getElementById("grid");
 
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  mount.appendChild(renderer.domElement);
+    const labelA = document.getElementById("labelA");
+    const labelB = document.getElementById("labelB");
+    const labelH = document.getElementById("labelH");
 
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.06;
-  controls.target.set(0, 1.2, 0);
+    const btnAdd = document.getElementById("add");
+    const btnRemove = document.getElementById("remove");
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa4b2, 0.9));
-  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-  dir.position.set(8, 12, 6);
-  scene.add(dir);
+    const pillFree = document.getElementById("pillFree");
+    const pillTask = document.getElementById("pillTask");
+    const taskBox = document.getElementById("taskBox");
+    const taskText = document.getElementById("taskText");
+    const statusEl = document.getElementById("status");
+    const btnNewTask = document.getElementById("newTask");
+    const btnResetTask = document.getElementById("resetTask");
+    const btnCheckTask = document.getElementById("checkTask");
 
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(80, 80),
-    new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.95, metalness: 0.0 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  scene.add(floor);
+    const iSel = document.getElementById("iSel");
+    const iCount = document.getElementById("iCount");
 
-  const gridHelper = new THREE.GridHelper(80, 80, 0xd1d5db, 0xe5e7eb);
-  gridHelper.position.y = 0.001;
-  scene.add(gridHelper);
+    // Three.js
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
 
-  // ---------- UI refs ----------
-  const elShape = document.getElementById('shape');
-  const elA = document.getElementById('a');
-  const elB = document.getElementById('b');
-  const elH = document.getElementById('h');
-  const elSeg = document.getElementById('seg');
-  const elSnap = document.getElementById('snap');
-  const elGrid = document.getElementById('grid');
+    const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200);
+    camera.position.set(8, 7, 10);
 
-  const labelA = document.getElementById('labelA');
-  const labelB = document.getElementById('labelB');
-  const labelH = document.getElementById('labelH');
+    const renderer = new THREE.WebGLRenderer({ antialias:true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    mount.appendChild(renderer.domElement);
 
-  const btnAdd = document.getElementById('add');
-  const btnDup = document.getElementById('duplicate');
-  const btnRemove = document.getElementById('remove');
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 1.2, 0);
 
-  const btnRotL = document.getElementById('rotL');
-  const btnRotR = document.getElementById('rotR');
-  const btnRotX = document.getElementById('rotX');
-  const btnRotZ = document.getElementById('rotZ');
-  const btnResetRot = document.getElementById('resetRot');
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa4b2, 0.9));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir.position.set(8, 12, 6);
+    scene.add(dir);
 
-  const info = document.getElementById('info');
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(80, 80),
+      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.95, metalness: 0.0 })
+    );
+    floor.rotation.x = -Math.PI/2;
+    scene.add(floor);
 
-  // Mode/task UI
-  const pillFree = document.getElementById('pillFree');
-  const pillTask = document.getElementById('pillTask');
-  const taskBox = document.getElementById('taskBox');
-  const taskText = document.getElementById('taskText');
-  const taskMeta = document.getElementById('taskMeta');
-  const statusEl = document.getElementById('status');
-  const btnNewTask = document.getElementById('newTask');
-  const btnResetTask = document.getElementById('resetTask');
-  const btnCheckTask = document.getElementById('checkTask');
-  const taskIdxEl = document.getElementById('taskIdx');
-  const taskTotalEl = document.getElementById('taskTotal');
-  const scoreEl = document.getElementById('score');
-  const tolLabel = document.getElementById('tolLabel');
+    const gridHelper = new THREE.GridHelper(80, 80, 0xd1d5db, 0xe5e7eb);
+    gridHelper.position.y = 0.001;
+    scene.add(gridHelper);
 
-  const ansV = document.getElementById('ansV');
-  const ansA = document.getElementById('ansA');
+    // State
+    const objects = [];
+    let selected = null;
+    const matNormal = new THREE.MeshNormalMaterial();
+    const edgeMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
 
-  // Teacher UI
-  const teacherBox = document.getElementById('teacherBox');
-  const pinInput = document.getElementById('pin');
-  const btnUnlock = document.getElementById('unlock');
-  const teacherControls = document.getElementById('teacherControls');
-  const dimTolInput = document.getElementById('dimTol');
-  const valTolPctInput = document.getElementById('valTolPct');
-  const piModeSel = document.getElementById('piMode');
-  const btnToggleSolutions = document.getElementById('toggleSolutions');
-  const btnLock = document.getElementById('lock');
-  const solBox = document.getElementById('solBox');
+    function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+    function roundTo(v, step){ return Math.round(v/step)*step; }
 
-  // ---------- Helpers ----------
-  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const roundTo = (v, step) => Math.round(v / step) * step;
-  const fmt = (n) => (Math.round(n * 100) / 100).toFixed(2);
+    function setStatus(t){ statusEl.textContent = t; }
 
-  function parseNumberSmart(s){
-    if (typeof s !== "string") return NaN;
-    // allow comma decimals
-    const t = s.trim().replace(/\s+/g,'').replace(',', '.');
-    // allow inputs like "31,4" or "31.4"
-    const v = Number(t);
-    return Number.isFinite(v) ? v : NaN;
-  }
-
-  function setBuilderUIForShape(shape){
-    elA.disabled = false; elB.disabled = false; elH.disabled = false; elSeg.disabled = false;
-
-    if (shape === 'box'){
-      labelA.textContent = "Breite (a)";
-      labelB.textContent = "Tiefe (b)";
-      labelH.textContent = "Höhe (h)";
-      elSeg.disabled = true;
-    } else if (shape === 'cylinder'){
-      labelA.textContent = "Radius (r)";
-      labelB.textContent = "—";
-      labelH.textContent = "Höhe (h)";
-      elB.disabled = true;
-      elSeg.disabled = false;
-    } else if (shape === 'cone'){
-      labelA.textContent = "Radius (r)";
-      labelB.textContent = "—";
-      labelH.textContent = "Höhe (h)";
-      elB.disabled = true;
-      elSeg.disabled = false;
-    } else if (shape === 'sphere'){
-      labelA.textContent = "Radius (r)";
-      labelB.textContent = "—";
-      labelH.textContent = "—";
-      elB.disabled = true;
-      elH.disabled = true;
-      elSeg.disabled = false;
-    }
-  }
-  elShape.addEventListener('change', () => setBuilderUIForShape(elShape.value));
-  setBuilderUIForShape(elShape.value);
-
-  // ---------- Objects ----------
-  const objects = [];
-  let selected = null;
-
-  const matNormal = new THREE.MeshNormalMaterial();
-  const edgeMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
-
-  function makeEdges(mesh){
-    const eGeo = new THREE.EdgesGeometry(mesh.geometry, 20);
-    const e = new THREE.LineSegments(eGeo, edgeMat);
-    e.visible = false;
-    mesh.add(e);
-    mesh.userData.edges = e;
-  }
-
-  function setSelected(obj){
-    if (selected && selected.userData.edges) selected.userData.edges.visible = false;
-    selected = obj;
-    if (selected && selected.userData.edges) selected.userData.edges.visible = true;
-    updateInfo();
-  }
-
-  function addObject(mesh){
-    mesh.position.set(0, 1.2, 0);
-    mesh.userData.kind = 'body';
-    makeEdges(mesh);
-    scene.add(mesh);
-    objects.push(mesh);
-    refreshDragControls();
-    setSelected(mesh);
-    updateInfo();
-  }
-
-  function createMeshFromUI(){
-    const shape = elShape.value;
-    const a = clamp(parseFloat(elA.value || "2.0"), 0.1, 30);
-    const b = clamp(parseFloat(elB.value || "2.0"), 0.1, 30);
-    const h = clamp(parseFloat(elH.value || "2.0"), 0.1, 30);
-    const seg = clamp(parseInt(elSeg.value || "24", 10), 6, 96);
-
-    let geo;
-    if (shape === 'box'){
-      geo = new THREE.BoxGeometry(a, h, b);
-    } else if (shape === 'cylinder'){
-      geo = new THREE.CylinderGeometry(a, a, h, seg);
-    } else if (shape === 'cone'){
-      geo = new THREE.CylinderGeometry(0, a, h, seg);
-    } else if (shape === 'sphere'){
-      geo = new THREE.SphereGeometry(a, seg, Math.floor(seg * 0.65));
-    }
-
-    const mesh = new THREE.Mesh(geo, matNormal);
-    mesh.userData.shape = shape;
-    return mesh;
-  }
-
-  btnAdd.addEventListener('click', () => addObject(createMeshFromUI()));
-
-  btnDup.addEventListener('click', () => {
-    if (!selected) return;
-    const clone = selected.clone();
-    clone.position.copy(selected.position).add(new THREE.Vector3(0.6, 0, 0.6));
-    clone.rotation.copy(selected.rotation);
-    if (!clone.userData.edges) makeEdges(clone);
-    addObject(clone);
-  });
-
-  function removeSelected(){
-    if (!selected) return;
-    const idx = objects.indexOf(selected);
-    if (idx >= 0) objects.splice(idx, 1);
-    scene.remove(selected);
-    selected = null;
-    refreshDragControls();
-    updateInfo();
-  }
-  btnRemove.addEventListener('click', removeSelected);
-
-  // Rotation buttons
-  function rotY(deg){
-    if (!selected) return;
-    selected.rotation.y += THREE.MathUtils.degToRad(deg);
-    updateInfo();
-  }
-  btnRotL.addEventListener('click', () => rotY(-15));
-  btnRotR.addEventListener('click', () => rotY(15));
-  btnRotX.addEventListener('click', () => { if(selected){ selected.rotation.x += THREE.MathUtils.degToRad(15); updateInfo(); }});
-  btnRotZ.addEventListener('click', () => { if(selected){ selected.rotation.z += THREE.MathUtils.degToRad(15); updateInfo(); }});
-  btnResetRot.addEventListener('click', () => { if(selected){ selected.rotation.set(0, selected.rotation.y, 0); updateInfo(); }});
-
-  // Selection (raycast)
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
-
-  function pick(event){
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    raycaster.setFromCamera(mouse, camera);
-    const hits = raycaster.intersectObjects(objects, true);
-    if (hits.length){
-      let obj = hits[0].object;
-      while (obj && !objects.includes(obj) && obj.parent) obj = obj.parent;
-      if (objects.includes(obj)) setSelected(obj);
-    } else {
-      setSelected(null);
-    }
-  }
-  renderer.domElement.addEventListener('pointerdown', (e) => pick(e));
-
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Delete' || e.key === 'Backspace') removeSelected();
-  });
-
-  // DragControls
-  let dragControls = null;
-  function refreshDragControls(){
-    if (dragControls){
-      dragControls.deactivate();
-      dragControls.dispose();
-      dragControls = null;
-    }
-    dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
-
-    dragControls.addEventListener('dragstart', () => { controls.enabled = false; });
-    dragControls.addEventListener('drag', (ev) => {
-      const obj = ev.object;
-      obj.position.y = Math.max(obj.position.y, 0.01);
-      if (elSnap.checked){
-        const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
-        obj.position.x = roundTo(obj.position.x, step);
-        obj.position.z = roundTo(obj.position.z, step);
-      }
-      setSelected(obj);
-      updateInfo();
-    });
-    dragControls.addEventListener('dragend', () => { controls.enabled = true; });
-  }
-
-  // Resize
-  function resize(){
-    const w = mount.clientWidth;
-    const h = mount.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', resize);
-
-  // Info panel
-  function prettyName(mesh){
-    const shape = mesh?.userData?.shape || "";
-    if (shape === "box") return "Quader";
-    if (shape === "cylinder") return "Zylinder";
-    if (shape === "cone") return "Kegel";
-    if (shape === "sphere") return "Kugel";
-    return "Körper";
-  }
-  function updateInfo(){
-    const rows = info.querySelectorAll('div');
-    const selName = selected ? prettyName(selected) : "—";
-    const pos = selected ? `${fmt(selected.position.x)}, ${fmt(selected.position.y)}, ${fmt(selected.position.z)}` : "—";
-    const rot = selected ? `${fmt(THREE.MathUtils.radToDeg(selected.rotation.x))}°, ${fmt(THREE.MathUtils.radToDeg(selected.rotation.y))}°, ${fmt(THREE.MathUtils.radToDeg(selected.rotation.z))}°` : "—";
-    rows[1].innerHTML = `<b>${selName}</b>`;
-    rows[3].innerHTML = `<b>${pos}</b>`;
-    rows[5].innerHTML = `<b>${rot}</b>`;
-    rows[7].innerHTML = `<b>${objects.length}</b>`;
-  }
-
-  // ---------- Teacher / tolerances / pi ----------
-  const PIN = "9999";
-
-  let teacherUnlocked = false;
-  let showSolutions = false;
-
-  // defaults
-  let dimTol = 0.15;      // absolute tolerance on dimensions
-  let valTolPct = 2.0;    // percent tolerance for V & O
-  let piMode = "math";    // math | 314 | 227
-
-  function loadTeacherSettings(){
-    try{
-      const raw = localStorage.getItem("hos3d_teacher_settings_v1");
-      if (!raw) return;
-      const s = JSON.parse(raw);
-      if (typeof s.dimTol === "number") dimTol = clamp(s.dimTol, 0.01, 5);
-      if (typeof s.valTolPct === "number") valTolPct = clamp(s.valTolPct, 0.5, 20);
-      if (typeof s.piMode === "string") piMode = s.piMode;
-      if (typeof s.showSolutions === "boolean") showSolutions = s.showSolutions;
-    } catch(_){}
-  }
-  function saveTeacherSettings(){
-    try{
-      localStorage.setItem("hos3d_teacher_settings_v1", JSON.stringify({
-        dimTol, valTolPct, piMode, showSolutions
-      }));
-    } catch(_){}
-  }
-
-  function getPI(){
-    if (piMode === "314") return 3.14;
-    if (piMode === "227") return 22/7;
-    return Math.PI;
-  }
-
-  function updateTolLabel(){
-    tolLabel.textContent = `Maße ±${dimTol.toFixed(2)} | V/O ±${valTolPct.toFixed(1)}%`;
-  }
-
-  function setTeacherUI(){
-    teacherBox.classList.toggle("teacherLocked", !teacherUnlocked);
-    teacherControls.style.display = teacherUnlocked ? "block" : "none";
-    dimTolInput.value = dimTol;
-    valTolPctInput.value = valTolPct;
-    piModeSel.value = piMode;
-  }
-
-  btnUnlock.addEventListener("click", () => {
-    if (pinInput.value.trim() === PIN){
-      teacherUnlocked = true;
-      setTeacherUI();
-      setStatus("Lehrerbereich entsperrt. Einstellungen gelten ab jetzt.", "ok");
-      pinInput.value = "";
-    } else {
-      setStatus("Falscher PIN.", "no");
-    }
-  });
-
-  btnLock.addEventListener("click", () => {
-    teacherUnlocked = false;
-    setTeacherUI();
-    setStatus("Lehrerbereich gesperrt.", "neutral");
-  });
-
-  btnToggleSolutions.addEventListener("click", () => {
-    showSolutions = !showSolutions;
-    saveTeacherSettings();
-    setStatus(showSolutions ? "Lösungen sind aktiv (werden nach dem Prüfen eingeblendet)." : "Lösungen sind aus.", "neutral");
-  });
-
-  dimTolInput.addEventListener("change", () => {
-    if (!teacherUnlocked) return;
-    dimTol = clamp(parseFloat(dimTolInput.value || "0.15"), 0.01, 5);
-    saveTeacherSettings();
-    updateTolLabel();
-  });
-  valTolPctInput.addEventListener("change", () => {
-    if (!teacherUnlocked) return;
-    valTolPct = clamp(parseFloat(valTolPctInput.value || "2"), 0.5, 20);
-    saveTeacherSettings();
-    updateTolLabel();
-  });
-  piModeSel.addEventListener("change", () => {
-    if (!teacherUnlocked) return;
-    piMode = piModeSel.value;
-    saveTeacherSettings();
-    setStatus(`π-Modus gesetzt: ${piMode === "math" ? "π (genau)" : (piMode === "314" ? "3.14" : "22/7")}`, "neutral");
-  });
-
-  // ---------- Aufgabenmodus ----------
-  let mode = "free";
-  let currentTask = null;
-  let remaining = [];
-  let solvedCount = 0;
-  let score = 0;
-
-  function setMode(next){
-    mode = next;
-    pillFree.classList.toggle("active", mode === "free");
-    pillTask.classList.toggle("active", mode === "task");
-    taskBox.style.display = (mode === "task") ? "block" : "none";
-    solBox.style.display = "none";
-
-    if (mode === "task"){
-      if (remaining.length === 0 && solvedCount === 0 && score === 0){
-        remaining = shuffle(taskBank);
-      }
-      setStatus("Klicke „Neue Aufgabe“. Dann: bauen + rechnen (V und O) → „Prüfen“.", "neutral");
-    } else {
-      setStatus("Freies Bauen: Du kannst beliebige Körper erstellen.", "neutral");
-    }
-  }
-
-  pillFree.addEventListener('click', () => setMode("free"));
-  pillTask.addEventListener('click', () => setMode("task"));
-
-  function setStatus(text, kind){
-    statusEl.className = "status";
-    if (kind === "ok") statusEl.classList.add("ok");
-    if (kind === "no") statusEl.classList.add("no");
-    statusEl.textContent = text;
-  }
-
-  function shuffle(arr){
-    const a = arr.slice();
-    for (let i=a.length-1; i>0; i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  function clearSceneBodies(){
-    while (objects.length){
-      const m = objects.pop();
-      scene.remove(m);
-    }
-    selected = null;
-    refreshDragControls();
-    updateInfo();
-  }
-
-  function closeEnoughAbs(a, b, tol){ return Math.abs(a - b) <= tol; }
-  function closeEnoughPct(ans, sol, pct){
-    if (!Number.isFinite(ans) || !Number.isFinite(sol)) return false;
-    const tol = Math.max(1e-9, Math.abs(sol) * (pct/100));
-    return Math.abs(ans - sol) <= tol;
-  }
-
-  function readDims(mesh){
-    const shape = mesh?.userData?.shape;
-    const p = mesh?.geometry?.parameters || {};
-    if (shape === "box"){
-      return { type:"box", a:p.width, b:p.depth, h:p.height };
-    }
-    if (shape === "cylinder"){
-      return { type:"cylinder", r:p.radiusTop, h:p.height };
-    }
-    if (shape === "cone"){
-      return { type:"cone", r:p.radiusBottom, h:p.height };
-    }
-    if (shape === "sphere"){
-      return { type:"sphere", r:p.radius };
-    }
-    return null;
-  }
-
-  function bestMatchForTask(task){
-    const candidates = objects
-      .map(m => ({ m, d: readDims(m) }))
-      .filter(x => x.d && x.d.type === task.type);
-
-    let best = null;
-    let bestErr = Infinity;
-
-    for (const c of candidates){
-      const d = c.d;
-      let ok = false;
-      let err = 0;
-
-      if (task.type === "box"){
-        ok = closeEnoughAbs(d.a, task.target.a, dimTol)
-          && closeEnoughAbs(d.b, task.target.b, dimTol)
-          && closeEnoughAbs(d.h, task.target.h, dimTol);
-        err = Math.abs(d.a-task.target.a) + Math.abs(d.b-task.target.b) + Math.abs(d.h-task.target.h);
-      } else if (task.type === "cylinder"){
-        ok = closeEnoughAbs(d.r, task.target.r, dimTol)
-          && closeEnoughAbs(d.h, task.target.h, dimTol);
-        err = Math.abs(d.r-task.target.r) + Math.abs(d.h-task.target.h);
-      } else if (task.type === "cone"){
-        ok = closeEnoughAbs(d.r, task.target.r, dimTol)
-          && closeEnoughAbs(d.h, task.target.h, dimTol);
-        err = Math.abs(d.r-task.target.r) + Math.abs(d.h-task.target.h);
-      } else if (task.type === "sphere"){
-        ok = closeEnoughAbs(d.r, task.target.r, dimTol);
-        err = Math.abs(d.r-task.target.r);
-      }
-
-      if (!ok) continue;
-      if (err < bestErr){
-        bestErr = err;
-        best = c.m;
+    function updateBuilderLabels(){
+      const s = elShape.value;
+      if (s === "box"){
+        labelA.textContent = "Breite (a)";
+        labelB.textContent = "Tiefe (b)";
+        labelH.textContent = "Höhe (h)";
+        elB.disabled = false; elH.disabled = false; elSeg.disabled = true;
+      } else if (s === "cylinder"){
+        labelA.textContent = "Radius (r)";
+        labelB.textContent = "—";
+        labelH.textContent = "Höhe (h)";
+        elB.disabled = true; elH.disabled = false; elSeg.disabled = false;
+      } else if (s === "cone"){
+        labelA.textContent = "Radius (r)";
+        labelB.textContent = "—";
+        labelH.textContent = "Höhe (h)";
+        elB.disabled = true; elH.disabled = false; elSeg.disabled = false;
+      } else if (s === "sphere"){
+        labelA.textContent = "Radius (r)";
+        labelB.textContent = "—";
+        labelH.textContent = "—";
+        elB.disabled = true; elH.disabled = true; elSeg.disabled = false;
       }
     }
-    return best;
-  }
+    elShape.addEventListener("change", updateBuilderLabels);
+    updateBuilderLabels();
 
-  // --- Formeln ---
-  function computeVO(task){
-    const pi = getPI();
-
-    if (task.type === "box"){
-      const {a,b,h} = task.target;
-      const V = a*b*h;
-      const O = 2*(a*b + a*h + b*h);
-      return { V, O, formulaV:"V = a·b·h", formulaO:"O = 2(ab + ah + bh)" };
-    }
-    if (task.type === "cylinder"){
-      const {r,h} = task.target;
-      const V = pi*r*r*h;
-      const O = 2*pi*r*r + 2*pi*r*h;
-      return { V, O, formulaV:"V = π·r²·h", formulaO:"O = 2πr² + 2πrh" };
-    }
-    if (task.type === "cone"){
-      const {r,h} = task.target;
-      const s = Math.sqrt(r*r + h*h); // Mantellinie
-      const V = (1/3)*pi*r*r*h;
-      const O = pi*r*r + pi*r*s;
-      return { V, O, formulaV:"V = (1/3)·π·r²·h", formulaO:"O = πr² + πrs (s=√(r²+h²))", s };
-    }
-    if (task.type === "sphere"){
-      const {r} = task.target;
-      const V = (4/3)*pi*r*r*r;
-      const O = 4*pi*r*r;
-      return { V, O, formulaV:"V = (4/3)·π·r³", formulaO:"O = 4πr²" };
-    }
-    return { V:NaN, O:NaN, formulaV:"—", formulaO:"—" };
-  }
-
-  function applyTaskToBuilder(task){
-    elShape.value = task.type;
-    setBuilderUIForShape(task.type);
-
-    if (task.type === "box"){
-      elA.value = task.target.a;
-      elB.value = task.target.b;
-      elH.value = task.target.h;
-    } else if (task.type === "cylinder"){
-      elA.value = task.target.r;
-      elH.value = task.target.h;
-    } else if (task.type === "cone"){
-      elA.value = task.target.r;
-      elH.value = task.target.h;
-    } else if (task.type === "sphere"){
-      elA.value = task.target.r;
-    }
-  }
-
-  function describeTask(task){
-    if (task.type === "box") return `Quader a=${task.target.a}, b=${task.target.b}, h=${task.target.h}`;
-    if (task.type === "cylinder") return `Zylinder r=${task.target.r}, h=${task.target.h}`;
-    if (task.type === "cone") return `Kegel r=${task.target.r}, h=${task.target.h}`;
-    if (task.type === "sphere") return `Kugel r=${task.target.r}`;
-    return "—";
-  }
-
-  // Aufgabenbank: bewusst überschaubar, aber gemischt (mit Dezimalen)
-  const taskBank = [
-    { id:"cyl_1", type:"cylinder", text:"Baue einen Zylinder (r=2, h=5) und berechne V und O.", meta:"Erst bauen, dann rechnen.", target:{ r:2, h:5 } },
-    { id:"cyl_2", type:"cylinder", text:"Baue einen Zylinder (r=1.5, h=3) und berechne V und O.", meta:"Achte auf Dezimalzahlen.", target:{ r:1.5, h:3 } },
-    { id:"cyl_3", type:"cylinder", text:"Baue einen Zylinder (r=3, h=2) und berechne V und O.", meta:"Kurzer, dicker Zylinder.", target:{ r:3, h:2 } },
-
-    { id:"cone_1", type:"cone", text:"Baue einen Kegel (r=2, h=4) und berechne V und O.", meta:"Du brauchst s=√(r²+h²) für die Oberfläche.", target:{ r:2, h:4 } },
-    { id:"cone_2", type:"cone", text:"Baue einen Kegel (r=1, h=3.5) und berechne V und O.", meta:"Mantellinie nicht vergessen.", target:{ r:1, h:3.5 } },
-    { id:"cone_3", type:"cone", text:"Baue einen Kegel (r=2.5, h=2) und berechne V und O.", meta:"Flacher Kegel.", target:{ r:2.5, h:2 } },
-
-    { id:"box_1", type:"box", text:"Baue einen Quader (a=2, b=4, h=1) und berechne V und O.", meta:"Quader ist ohne π.", target:{ a:2, b:4, h:1 } },
-    { id:"box_2", type:"box", text:"Baue einen Quader (a=3, b=2, h=5) und berechne V und O.", meta:"Prüfe alle Flächen.", target:{ a:3, b:2, h:5 } },
-    { id:"box_3", type:"box", text:"Baue einen Quader (a=1.5, b=1.5, h=3) und berechne V und O.", meta:"Quadratische Grundfläche.", target:{ a:1.5, b:1.5, h:3 } },
-
-    { id:"sphere_1", type:"sphere", text:"Baue eine Kugel (r=2) und berechne V und O.", meta:"Kugel: V mit r³.", target:{ r:2 } },
-    { id:"sphere_2", type:"sphere", text:"Baue eine Kugel (r=1.25) und berechne V und O.", meta:"Dezimalradius.", target:{ r:1.25 } },
-    { id:"sphere_3", type:"sphere", text:"Baue eine Kugel (r=3) und berechne V und O.", meta:"Große Kugel.", target:{ r:3 } },
-
-    { id:"mix_1", type:"cylinder", text:"Baue einen Zylinder (r=2.25, h=2.25) und berechne V und O.", meta:"r und h sind gleich.", target:{ r:2.25, h:2.25 } },
-    { id:"mix_2", type:"cone", text:"Baue einen Kegel (r=3, h=6) und berechne V und O.", meta:"Sehr hoher Kegel.", target:{ r:3, h:6 } },
-    { id:"mix_3", type:"box", text:"Baue einen Quader (a=4, b=1.5, h=2) und berechne V und O.", meta:"Schmaler Quader.", target:{ a:4, b:1.5, h:2 } },
-  ];
-
-  taskTotalEl.textContent = taskBank.length;
-
-  function updateTaskUI(task){
-    if (!task){
-      taskText.textContent = "—";
-      taskMeta.textContent = "—";
-    } else {
-      taskText.textContent = task.text;
-      taskMeta.textContent = task.meta;
-    }
-    taskIdxEl.textContent = String(solvedCount);
-    scoreEl.textContent = String(score);
-  }
-
-  function newTask(){
-    solBox.style.display = "none";
-    solBox.innerHTML = "";
-    ansV.value = "";
-    ansA.value = "";
-
-    if (remaining.length === 0){
-      setStatus(`Fertig! 🎉 Alle Aufgaben gelöst. Punkte: ${score}.`, "ok");
-      currentTask = null;
-      updateTaskUI(null);
-      return;
+    function makeEdges(mesh){
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 20), edgeMat);
+      e.visible = false;
+      mesh.add(e);
+      mesh.userData.edges = e;
     }
 
-    currentTask = remaining.shift();
-    updateTaskUI(currentTask);
-    clearSceneBodies();
-    applyTaskToBuilder(currentTask);
-
-    setStatus("Baue den Körper (links) und berechne V & O. Dann auf „Prüfen“.", "neutral");
-  }
-
-  function showSolution(task){
-    const {V,O,formulaV,formulaO,s} = computeVO(task);
-    const pi = getPI();
-    const piTxt = (piMode === "math") ? "π" : (piMode === "314" ? "3.14" : "22/7");
-
-    const extra = (task.type === "cone")
-      ? `<br>Zusatz: s = √(r²+h²) = ${fmt(s)}`
-      : "";
-
-    solBox.innerHTML =
-      `<b>Lösung (Lehrer):</b><br>
-       Körper: ${describeTask(task)}<br>
-       π-Modus: <span class="mono">${piTxt}</span><br>
-       ${formulaV} → V = <b>${fmt(V)}</b><br>
-       ${formulaO} → O = <b>${fmt(O)}</b>${extra}`;
-    solBox.style.display = "block";
-  }
-
-  function checkTask(){
-    solBox.style.display = "none";
-    solBox.innerHTML = "";
-
-    if (!currentTask){
-      setStatus("Keine aktive Aufgabe. Klicke zuerst „Neue Aufgabe“.", "no");
-      return;
-    }
-    if (objects.length === 0){
-      setStatus("Du hast noch keinen Körper hinzugefügt. Stelle Maße ein → „Hinzufügen“.", "no");
-      return;
+    function setSelected(obj){
+      if (selected?.userData?.edges) selected.userData.edges.visible = false;
+      selected = obj;
+      if (selected?.userData?.edges) selected.userData.edges.visible = true;
+      iSel.textContent = selected ? selected.userData.label : "—";
     }
 
-    const match = bestMatchForTask(currentTask);
-    if (!match){
-      setStatus("Körper noch nicht richtig ❌ Prüfe die Maße (r / a / b / h).", "no");
-      if (showSolutions && teacherUnlocked) showSolution(currentTask);
-      return;
+    function refreshCounter(){
+      iCount.textContent = String(objects.length);
     }
 
-    const vAns = parseNumberSmart(ansV.value);
-    const aAns = parseNumberSmart(ansA.value);
-    if (!Number.isFinite(vAns) || !Number.isFinite(aAns)){
-      setSelected(match);
-      setStatus("Körper passt ✅ Jetzt bitte Volumen und Oberfläche als Zahl eingeben (z.B. 31.4).", "no");
-      if (showSolutions && teacherUnlocked) showSolution(currentTask);
-      return;
+    let dragControls = null;
+    function refreshDragControls(){
+      if (dragControls){
+        dragControls.deactivate();
+        dragControls.dispose();
+      }
+      dragControls = new DragControls(objects, camera, renderer.domElement);
+
+      dragControls.addEventListener("dragstart", () => controls.enabled = false);
+      dragControls.addEventListener("dragend", () => controls.enabled = true);
+      dragControls.addEventListener("drag", (ev) => {
+        const obj = ev.object;
+        obj.position.y = Math.max(obj.position.y, 0.01);
+        if (elSnap.checked){
+          const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
+          obj.position.x = roundTo(obj.position.x, step);
+          obj.position.z = roundTo(obj.position.z, step);
+        }
+        setSelected(obj);
+      });
     }
 
-    const sol = computeVO(currentTask);
-    const vOk = closeEnoughPct(vAns, sol.V, valTolPct);
-    const aOk = closeEnoughPct(aAns, sol.O, valTolPct);
+    function createMeshFromUI(){
+      const shape = elShape.value;
+      const a = clamp(parseFloat(elA.value || "2.0"), 0.1, 30);
+      const b = clamp(parseFloat(elB.value || "2.0"), 0.1, 30);
+      const h = clamp(parseFloat(elH.value || "2.0"), 0.1, 30);
+      const seg = clamp(parseInt(elSeg.value || "24", 10), 6, 96);
 
-    setSelected(match);
-
-    if (vOk && aOk){
-      solvedCount += 1;
-      score += 2; // 1 Punkt fürs Bauen + 1 fürs Rechnen? -> hier: 2 Gesamt für beides korrekt
-      taskIdxEl.textContent = String(solvedCount);
-      scoreEl.textContent = String(score);
-
-      setStatus("Alles richtig ✅ Körper + V + O stimmen. Nächste Aufgabe: „Neue Aufgabe“.", "ok");
-      currentTask = null;
-    } else {
-      // gezieltes Feedback ohne Lösung zu verraten
-      if (!vOk && !aOk){
-        setStatus("Körper passt ✅ aber V und O sind noch nicht richtig ❌ (Tipp: r² / r³ / Mantellinie s beim Kegel).", "no");
-      } else if (!vOk){
-        setStatus("Körper passt ✅ Oberfläche passt ✅ aber Volumen ist noch nicht richtig ❌", "no");
+      let geo, label;
+      if (shape === "box"){
+        geo = new THREE.BoxGeometry(a, h, b);
+        label = `Quader`;
+      } else if (shape === "cylinder"){
+        geo = new THREE.CylinderGeometry(a, a, h, seg);
+        label = `Zylinder`;
+      } else if (shape === "cone"){
+        geo = new THREE.CylinderGeometry(0, a, h, seg);
+        label = `Kegel`;
       } else {
-        setStatus("Körper passt ✅ Volumen passt ✅ aber Oberfläche ist noch nicht richtig ❌", "no");
+        geo = new THREE.SphereGeometry(a, seg, Math.floor(seg * 0.65));
+        label = `Kugel`;
       }
+
+      const mesh = new THREE.Mesh(geo, matNormal);
+      mesh.userData.shape = shape;
+      mesh.userData.label = label;
+      return mesh;
     }
 
-    if (showSolutions && teacherUnlocked && currentTask){
-      showSolution(currentTask);
+    function addObject(mesh){
+      mesh.position.set(0, 1.2, 0);
+      makeEdges(mesh);
+      scene.add(mesh);
+      objects.push(mesh);
+      refreshDragControls();
+      setSelected(mesh);
+      refreshCounter();
     }
-  }
 
-  btnNewTask.addEventListener('click', () => {
-    if (mode !== "task") setMode("task");
-    if (remaining.length === 0 && solvedCount === 0 && score === 0){
-      remaining = shuffle(taskBank);
+    btnAdd.addEventListener("click", () => addObject(createMeshFromUI()));
+
+    btnRemove.addEventListener("click", () => {
+      if (!selected) return;
+      const idx = objects.indexOf(selected);
+      if (idx >= 0) objects.splice(idx, 1);
+      scene.remove(selected);
+      selected = null;
+      refreshDragControls();
+      refreshCounter();
+      iSel.textContent = "—";
+    });
+
+    // Picking
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    renderer.domElement.addEventListener("pointerdown", (e) => {
+      const r = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(objects, true);
+      if (hits.length){
+        let obj = hits[0].object;
+        while (obj && !objects.includes(obj) && obj.parent) obj = obj.parent;
+        if (objects.includes(obj)) setSelected(obj);
+      }
+    });
+
+    // Mode: free vs task
+    let mode = "free";
+    function setMode(next){
+      mode = next;
+      pillFree.classList.toggle("active", mode === "free");
+      pillTask.classList.toggle("active", mode === "task");
+      taskBox.style.display = (mode === "task") ? "block" : "none";
     }
-    newTask();
-  });
+    pillFree.addEventListener("click", () => setMode("free"));
+    pillTask.addEventListener("click", () => setMode("task"));
 
-  btnResetTask.addEventListener('click', () => {
-    clearSceneBodies();
-    ansV.value = ""; ansA.value = "";
-    solBox.style.display = "none"; solBox.innerHTML = "";
-    setStatus("Szene geleert. Baue den Körper neu und rechne V & O.", "neutral");
-  });
+    // Very simple tasks (proof-of-life)
+    const tasks = [
+      { text: "Baue einen Zylinder (r=2, h=5).", shape:"cylinder", a:2, h:5 },
+      { text: "Baue einen Quader (a=2, b=4, h=1).", shape:"box", a:2, b:4, h:1 },
+      { text: "Baue einen Kegel (r=2, h=4).", shape:"cone", a:2, h:4 },
+      { text: "Baue eine Kugel (r=2).", shape:"sphere", a:2 }
+    ];
+    let currentTask = null;
 
-  btnCheckTask.addEventListener('click', checkTask);
+    btnNewTask.addEventListener("click", () => {
+      setMode("task");
+      currentTask = tasks[Math.floor(Math.random()*tasks.length)];
+      taskText.textContent = currentTask.text;
+      setStatus("Baue den Körper, dann „Prüfen“.");
+    });
 
-  // ---------- Init + settings load ----------
-  loadTeacherSettings();
-  // Apply loaded settings
-  dimTol = clamp(dimTol, 0.01, 5);
-  valTolPct = clamp(valTolPct, 0.5, 20);
-  piMode = (piMode === "314" || piMode === "227" || piMode === "math") ? piMode : "math";
-  dimTolInput.value = dimTol;
-  valTolPctInput.value = valTolPct;
-  piModeSel.value = piMode;
-  updateTolLabel();
-  setTeacherUI();
+    btnResetTask.addEventListener("click", () => {
+      // clear all
+      for (const m of objects) scene.remove(m);
+      objects.length = 0;
+      selected = null;
+      refreshDragControls();
+      refreshCounter();
+      iSel.textContent = "—";
+      setStatus("Szene geleert.");
+    });
 
-  // ---------- Start state ----------
-  function resizeAndStart(){
+    btnCheckTask.addEventListener("click", () => {
+      if (!currentTask){ setStatus("Keine Aufgabe aktiv. Klicke „Neue Aufgabe“."); return; }
+      const ok = objects.some(m => m.userData.shape === currentTask.shape);
+      setStatus(ok ? "✅ Körper passt (Form). (Maß-Check kann ich wieder ergänzen.)" : "❌ Noch nicht. Baue den geforderten Körper.");
+    });
+
+    // Resize + animate
+    function resize(){
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
     resize();
-    refreshDragControls();
-    updateInfo();
+
+    // starter object so you see it's alive
     addObject(createMeshFromUI());
-    setStatus("Freies Bauen: Du kannst beliebige Körper erstellen. Aufgabenmodus: bauen + rechnen → Prüfen.", "neutral");
-    remaining = shuffle(taskBank);
+
+    function animate(){
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+  }catch(e){
+    showErr(e);
   }
-
-  // ---------- Animation ----------
-  function animate(){
-    requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-  }
-
-  // ---------- Mode default ----------
-  setMode("free");
-  resizeAndStart();
-  animate();
-
-})();
 </script>
 </body>
 </html>
