@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>3D Märchen-Generator · HoS</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --ink:#e7eefc;
+      --muted:#b8c2dd;
+      --line: rgba(255,255,255,.14);
+      --a:#7c3aed;   /* Held */
+      --b:#22c55e;   /* Ort */
+      --c:#f59e0b;   /* Zauber/Helfer */
+      --d:#3b82f6;   /* Prüfung */
+      --e:#f43f5e;   /* Moral/Ende */
+      --f:#a3e635;   /* Bösewicht */
+      --w:#f59e0b;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius2: 28px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--ink);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(124,58,237,.25), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(34,197,94,.18), transparent 55%),
+        radial-gradient(1000px 700px at 50% 110%, rgba(245,158,11,.10), transparent 55%),
+        var(--bg);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 16px 28px;}
+    header{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px;}
+    .leftHead{display:flex;gap:14px;align-items:center;min-width:260px;}
+    .meme{
+      width:58px;height:58px;border-radius:14px;object-fit:cover;
+      border:1px solid var(--line);box-shadow: var(--shadow);
+      background: rgba(255,255,255,.04);
+    }
+    .titleBlock h1{margin:0;font-size:18px;letter-spacing:.2px;line-height:1.1;}
+    .titleBlock p{margin:6px 0 0;color:var(--muted);font-size:13px;max-width:720px;}
+    .badgeRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .badge{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.06);font-size:12px;color:var(--muted);
+      display:inline-flex;align-items:center;gap:8px;user-select:none;
+    }
+    .badge b{color:var(--b)}
+    .btn{
+      appearance:none;border:1px solid var(--line);background: rgba(255,255,255,.06);
+      color:var(--ink);padding:10px 12px;border-radius:14px;cursor:pointer;
+      box-shadow: 0 12px 35px rgba(0,0,0,.22);
+      display:inline-flex;align-items:center;gap:10px;user-select:none;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      font-size:13px;white-space:nowrap;
+    }
+    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22);}
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn.primary{
+      border-color: rgba(124,58,237,.35);
+      background: linear-gradient(180deg, rgba(124,58,237,.24), rgba(124,58,237,.10));
+    }
+    .btn.good{
+      border-color: rgba(34,197,94,.35);
+      background: linear-gradient(180deg, rgba(34,197,94,.20), rgba(34,197,94,.08));
+    }
+    .btn.warn{
+      border-color: rgba(245,158,11,.40);
+      background: linear-gradient(180deg, rgba(245,158,11,.18), rgba(245,158,11,.08));
+    }
+
+    .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:14px;align-items:start;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);border-radius: var(--radius2);
+      box-shadow: var(--shadow);overflow:hidden;position:relative;
+    }
+    .cardHeader{
+      padding:14px 14px 12px;border-bottom:1px solid var(--line);
+      display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;
+    }
+    .cardHeader h2{margin:0;font-size:14px;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;}
+    .cardHeader .help{font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .kbd{
+      font-family:var(--mono);font-size:11px;padding:4px 6px;border-radius:10px;
+      border:1px solid var(--line);background: rgba(0,0,0,.18);color:var(--ink);
+    }
+
+    .stage{
+      position:relative;height:520px;
+      background:
+        radial-gradient(800px 420px at 30% 25%, rgba(124,58,237,.18), transparent 60%),
+        radial-gradient(700px 400px at 75% 30%, rgba(34,197,94,.14), transparent 58%),
+        rgba(0,0,0,.14);
+    }
+    @media (max-width: 980px){ .stage{height:480px;} }
+    canvas{display:block;width:100%;height:100%}
+
+    .hintOverlay{
+      position:absolute;left:14px;right:14px;bottom:12px;
+      display:flex;gap:10px;justify-content:space-between;align-items:flex-end;
+      pointer-events:none;flex-wrap:wrap;
+    }
+    .hintBox{
+      padding:10px 12px;border-radius:16px;border:1px solid var(--line);
+      background: rgba(0,0,0,.20);color:var(--muted);font-size:12px;
+      backdrop-filter: blur(8px);max-width:760px;
+    }
+    .legend{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;}
+    .chip{
+      display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;
+      border:1px solid var(--line);background: rgba(255,255,255,.06);
+      font-size:12px;color:var(--muted);white-space:nowrap;
+    }
+    .dot{width:9px;height:9px;border-radius:50%;background: rgba(255,255,255,.55);box-shadow: 0 0 0 3px rgba(255,255,255,.08);}
+    .dot.a{ background: rgba(124,58,237,.9); box-shadow: 0 0 0 3px rgba(124,58,237,.18);}
+    .dot.b{ background: rgba(34,197,94,.9); box-shadow: 0 0 0 3px rgba(34,197,94,.18);}
+    .dot.c{ background: rgba(245,158,11,.95); box-shadow: 0 0 0 3px rgba(245,158,11,.18);}
+    .dot.d{ background: rgba(59,130,246,.92); box-shadow: 0 0 0 3px rgba(59,130,246,.18);}
+    .dot.e{ background: rgba(244,63,94,.92); box-shadow: 0 0 0 3px rgba(244,63,94,.18);}
+    .dot.f{ background: rgba(163,230,53,.92); box-shadow: 0 0 0 3px rgba(163,230,53,.18);}
+
+    .side{padding:14px;display:flex;flex-direction:column;gap:12px;}
+    .prompt{
+      padding:14px;border-radius:18px;border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+    .prompt h3{margin:0 0 8px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.25px;}
+    .prompt .big{font-size:16px;line-height:1.45;margin:0;}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    .small{font-size:12px;color:var(--muted);line-height:1.5;}
+    .list{display:flex;flex-direction:column;gap:10px;}
+    .item{
+      display:flex;gap:10px;align-items:flex-start;justify-content:space-between;
+      padding:12px;border-radius:16px;border:1px solid var(--line);background: rgba(255,255,255,.05);
+    }
+    .item .k{min-width:120px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.25px;padding-top:2px;}
+    .item .v{flex:1;font-size:13px;line-height:1.35;}
+    .lock{
+      display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);
+      background: rgba(0,0,0,.14);border-radius:999px;padding:7px 9px;cursor:pointer;
+      user-select:none;font-size:12px;color:var(--muted);
+    }
+    .lock[data-on="1"]{
+      border-color: rgba(34,197,94,.35);
+      color: rgba(210,255,227,.92);
+      background: rgba(34,197,94,.10);
+    }
+    .toast{
+      position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+      padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background: rgba(0,0,0,.35);color:var(--ink);font-size:13px;
+      box-shadow: var(--shadow);opacity:0;pointer-events:none;
+      transition: opacity .18s ease, transform .18s ease;z-index:50;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
+    footer{margin-top:14px;color:rgba(255,255,255,.45);font-size:12px;text-align:center;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="leftHead">
+        <img src="chatistthisreal.png"
+             onerror="this.onerror=null;this.src='chatisthisreal.png';"
+             alt="Chat is this real?"
+             class="meme">
+        <div class="titleBlock">
+          <div class="badgeRow">
+            <span class="badge">🧚 3D Märchen-Generator • <b>HoS</b> • mit Bösewicht</span>
+          </div>
+          <h1>Es war einmal… (aber heute würfeln wir’s) ✨</h1>
+          <p>Klicke einen Würfel an (nur diese Kategorie würfeln) oder drücke <span class="kbd">R</span> für alles. Locks fixieren Kategorien. OrbitControls: Drag zum Drehen.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="btn" id="homeBtn" title="Zur Startseite">🏠 Startseite</button>
+        <button class="btn primary" id="rollAllBtn">🎲 Alles würfeln <span class="kbd">R</span></button>
+        <button class="btn good" id="copyBtn">📋 Kopieren <span class="kbd">C</span></button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHeader">
+          <h2>3D Bühne</h2>
+          <div class="help">
+            <span><span class="kbd">Klick</span> Würfel = Kategorie würfeln</span>
+            <span><span class="kbd">Drag</span> = OrbitControls</span>
+            <span><span class="kbd">L</span> = alle Locks toggeln</span>
+          </div>
+        </div>
+
+        <div class="stage" id="stage">
+          <canvas id="c"></canvas>
+
+          <div class="hintOverlay">
+            <div class="hintBox">
+              <b style="color:var(--ink)">Märchen-Regel:</b>
+              Nutze typische Elemente: „Es war einmal…“, Zauber/Helfer, <b>Bösewicht</b>, Prüfung, Belohnung oder Strafe, klare Moral.
+              Optional: die <b>Zahl 3</b> (3 Versuche/3 Aufgaben/3 Helfer).
+            </div>
+            <div class="legend">
+              <span class="chip"><span class="dot a"></span> Held:in</span>
+              <span class="chip"><span class="dot b"></span> Ort</span>
+              <span class="chip"><span class="dot c"></span> Zauber/Helfer</span>
+              <span class="chip"><span class="dot f"></span> Bösewicht</span>
+              <span class="chip"><span class="dot d"></span> Prüfung</span>
+              <span class="chip"><span class="dot e"></span> Moral/Ende</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="cardHeader">
+          <h2>Dein Märchenauftrag</h2>
+          <div class="help"><span class="kbd">C</span> kopiert den Auftrag</div>
+        </div>
+
+        <div class="side">
+          <div class="prompt">
+            <h3>Schreibauftrag</h3>
+            <p class="big" id="promptText">Drücke <b>R</b> oder klicke einen Würfel an. 😄</p>
+            <p class="small" id="bonusText" style="margin:10px 0 0;"></p>
+          </div>
+
+          <div class="row">
+            <button class="btn warn" id="bonusBtn">✨ Märchen-Challenge</button>
+            <button class="btn" id="resetLocksBtn">🔓 Alle Locks lösen</button>
+          </div>
+
+          <div class="list" id="list"></div>
+
+          <div class="small">
+            <b>Mini-Check (Märchen):</b><br>
+            • Anfang: „Es war einmal…“ oder gleichwertig.<br>
+            • Bösewicht treibt die Handlung an.<br>
+            • Mindestens 1 Zauber/Helfer.<br>
+            • 1 Prüfung + Lösung.<br>
+            • Ende: Belohnung/Strafe + Moral.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>HoS • 3D Märchen-Generator • ES-Module (three.module.js + OrbitControls.js)</footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module">
+    // Robust ES-module imports (works reliably on GitHub Pages)
+    import * as THREE from "./lib/three.module.js";
+    import { OrbitControls } from "./lib/OrbitControls.js";
+    // DragControls wären hier nicht nötig (wir klicken nur), aber du könntest sie später nutzen:
+    // import { DragControls } from "./lib/DragControls.js";
+
+    // ---------- Märchen-Pools ----------
+    const POOLS = {
+      held: [
+        "ein jüngstes Kind, das niemand ernst nimmt",
+        "eine neugierige Müllerstochter mit klarem Herz",
+        "ein armer Holzfällerbub mit großem Mut",
+        "eine Prinzessin, die lieber fragt als befiehlt",
+        "ein Lehrling, der zu schnell verspricht",
+        "ein schlauer Kater (der sprechen kann)",
+        "ein schüchterner Riese, der niemandem schaden will",
+        "ein bescheidener Hirte, der etwas Wertvolles findet",
+        "eine Bäckerin, die heimlich Wünsche sammelt",
+        "ein König, der eine wichtige Lektion lernen muss"
+      ],
+      ort: [
+        "im dunklen Wald hinter drei Hügeln",
+        "in einem Schloss mit 100 Türen",
+        "in einem Dorf, das jede Nacht schweigt",
+        "an einem Brunnen, der Antworten flüstert",
+        "auf einem Berg, den nur der Wind kennt",
+        "in einer Hütte aus Lebkuchen (aber anders als erwartet)",
+        "an einer Brücke, die nur bei Mondschein erscheint",
+        "in einer Bibliothek, in der die Märchen lebendig sind",
+        "in einem Garten, der niemals welkt",
+        "in einer Höhle, die wie ein Sternenhimmel glänzt"
+      ],
+      zauber: [
+        "eine alte Frau, die drei Rätsel stellt",
+        "ein sprechender Vogel, der nur die Wahrheit sagt",
+        "ein Ring, der einmal pro Tag hilft",
+        "eine Spindel, die Schicksal spinnt",
+        "ein Spiegel, der verborgene Absichten zeigt",
+        "ein Schlüssel, der nur für Mutige passt",
+        "drei goldene Haare, die Wünsche erfüllen",
+        "ein Beutel, der nie leer wird – aber einen Preis hat",
+        "eine Kerze, die Lügen sichtbar macht",
+        "ein unscheinbarer Stock, der im Notfall erwacht"
+      ],
+      boesewicht: [
+        "eine Hexe, die mit süßen Worten täuscht",
+        "ein Wolf, der höflicher ist als er wirkt",
+        "ein neidischer Bruder / eine neidische Schwester",
+        "ein gieriger König, der niemals genug hat",
+        "ein Zauberer, der Lob wie Luft braucht",
+        "eine Stiefmutter, die alles kontrollieren will",
+        "ein Troll unter der Brücke, der Rätsel liebt",
+        "ein Rabe, der Unglück prophezeit (und es auslöst)",
+        "ein Geist, der nur Ruhe will – aber falsch verstanden wird",
+        "ein Händler, der falsche Versprechen verkauft"
+      ],
+      pruefung: [
+        "eine Aufgabe, die dreimal wiederholt werden muss",
+        "eine Versuchung: Abkürzung nehmen oder ehrlich bleiben",
+        "ein Versprechen, das beinahe gebrochen wird",
+        "ein Fluch, der nur durch Mitgefühl endet",
+        "ein Wettstreit gegen den Bösewicht",
+        "ein Rätsel an einem Tor ohne Schloss",
+        "eine Rettung in letzter Minute",
+        "eine falsche Spur, die zur Wahrheit führt",
+        "ein Tauschhandel, der unfair beginnt",
+        "eine Prüfung des Herzens: Mut oder Eitelkeit?"
+      ],
+      moral: [
+        "Am Ende wird klar: Ehrlichkeit wiegt mehr als Gold.",
+        "Am Ende lernt jemand: Wer teilt, gewinnt doppelt.",
+        "Am Ende zeigt sich: Hochmut kommt vor dem Fall.",
+        "Am Ende gilt: Mut ist leiser als Prahlerei.",
+        "Am Ende wird belohnt: Wer zuhört, versteht den Zauber.",
+        "Am Ende endet es so: Gier macht blind, Güte macht frei.",
+        "Am Ende erkennt man: Kleine Taten verändern große Dinge.",
+        "Am Ende wird bestraft: Wer lügt, verstrickt sich selbst.",
+        "Am Ende bleibt: Freundlichkeit öffnet Türen, die Gewalt verschließt.",
+        "Am Ende merkt man: Manchmal ist das „Böse“ nur einsam."
+      ]
+    };
+
+    const BONUS = [
+      "Baue die Zahl 3 ein: 3 Aufgaben ODER 3 Versuche ODER 3 Helfer.",
+      "Nutze 2 typische Märchensätze (z.B. „Da geschah es…“, „Doch kaum…“).",
+      "Schreibe einen Dialog mit einem sprechenden Tier.",
+      "Lass den Zaubergegenstand zuerst helfen – und später fast schaden.",
+      "Baue eine klare Prüfung ein: Mut, Ehrlichkeit oder Mitgefühl.",
+      "Verwende mindestens 5 starke Verben (nicht: machen/gehen/sein).",
+      "Gib dem Bösewicht einen nachvollziehbaren Grund (1–2 Sätze).",
+      "Ende mit einem Spruch: „Und wenn sie nicht gestorben sind…“ (oder modern variiert)."
+    ];
+
+    const KEYS = ["held","ort","zauber","boesewicht","pruefung","moral"];
+    const LABEL = {
+      held: "Held:in",
+      ort: "Ort",
+      zauber: "Zauber/Helfer",
+      boesewicht: "Bösewicht",
+      pruefung: "Prüfung",
+      moral: "Moral/Ende"
+    };
+
+    // ---------- State ----------
+    const state = {
+      pick: { held:null, ort:null, zauber:null, boesewicht:null, pruefung:null, moral:null },
+      locked: { held:false, ort:false, zauber:false, boesewicht:false, pruefung:false, moral:false },
+      bonusOn: false
+    };
+
+    // ---------- Helpers ----------
+    const $ = (q)=>document.querySelector(q);
+    const toastEl = $("#toast");
+
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(()=>toastEl.classList.remove("show"), 1300);
+    }
+    const randFrom = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+
+    function rollKey(k){
+      if(state.locked[k] && state.pick[k]) return state.pick[k];
+      const v = randFrom(POOLS[k]);
+      state.pick[k] = v;
+      return v;
+    }
+    function rollAll(){
+      KEYS.forEach(k=>rollKey(k));
+      updateUI();
+      animateRollAll();
+    }
+    function promptString(){
+      const p = state.pick;
+      if(!p.held || !p.ort || !p.zauber || !p.boesewicht || !p.pruefung || !p.moral) return "";
+      return `Es war einmal ${p.held} ${p.ort}. Dort begegnet die Held:in ${p.zauber}. Doch ${p.boesewicht} stellt sich in den Weg. Dann folgt ${p.pruefung}. Schreibe das Märchen so, dass es zu diesem Ende passt: ${p.moral}`;
+    }
+
+    function updateUI(){
+      const s = promptString();
+      $("#promptText").innerHTML = s ? s : `Drücke <b>R</b> oder klicke einen Würfel an. 😄`;
+
+      const bonusEl = $("#bonusText");
+      if(state.bonusOn && s){
+        bonusEl.innerHTML = `<b style="color:var(--w)">Challenge:</b> ${randFrom(BONUS)}`;
+      }else bonusEl.textContent = "";
+
+      const list = $("#list");
+      list.innerHTML = "";
+      KEYS.forEach(k=>{
+        const item = document.createElement("div");
+        item.className = "item";
+
+        const left = document.createElement("div");
+        left.className = "k";
+        left.textContent = LABEL[k];
+
+        const mid = document.createElement("div");
+        mid.className = "v";
+        mid.textContent = state.pick[k] || "— noch nicht gewürfelt —";
+
+        const lock = document.createElement("div");
+        lock.className = "lock";
+        lock.dataset.key = k;
+        lock.dataset.on = state.locked[k] ? "1" : "0";
+        lock.innerHTML = state.locked[k] ? "🔒 Lock" : "🔓 Lock";
+
+        lock.addEventListener("click", ()=>{
+          state.locked[k] = !state.locked[k];
+          updateUI();
+          syncCubeLockVisual(k);
+        });
+
+        item.appendChild(left);
+        item.appendChild(mid);
+        item.appendChild(lock);
+        list.appendChild(item);
+      });
+    }
+
+    async function copyPrompt(){
+      const s = promptString();
+      if(!s){ toast("Erst würfeln 🙂"); return; }
+      const bonus = ($("#bonusText").textContent || "").trim();
+      const out = bonus ? `${s}\n\nChallenge: ${bonus.replace(/^Challenge:\s*/i,"")}` : s;
+      try{
+        await navigator.clipboard.writeText(out);
+        toast("Kopiert ✅");
+      }catch(e){
+        const ta = document.createElement("textarea");
+        ta.value = out;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toast("Kopiert ✅");
+      }
+    }
+
+    // ---------- Buttons ----------
+    $("#homeBtn").addEventListener("click", ()=>{ window.location.href = "index.html"; });
+    $("#rollAllBtn").addEventListener("click", rollAll);
+    $("#copyBtn").addEventListener("click", copyPrompt);
+    $("#bonusBtn").addEventListener("click", ()=>{
+      state.bonusOn = !state.bonusOn;
+      toast(state.bonusOn ? "Challenge an ✨" : "Challenge aus");
+      updateUI();
+    });
+    $("#resetLocksBtn").addEventListener("click", ()=>{
+      KEYS.forEach(k=>state.locked[k]=false);
+      toast("Locks gelöst 🔓");
+      updateUI();
+      KEYS.forEach(syncCubeLockVisual);
+    });
+
+    window.addEventListener("keydown", (e)=>{
+      const k = e.key.toLowerCase();
+      if(k==="r") rollAll();
+      if(k==="c") copyPrompt();
+      if(k==="l"){
+        const anyUnlocked = KEYS.some(x=>!state.locked[x]);
+        KEYS.forEach(x=> state.locked[x] = anyUnlocked ? true : false);
+        toast(anyUnlocked ? "Alle gelockt 🔒" : "Alle ungelockt 🔓");
+        updateUI();
+        KEYS.forEach(syncCubeLockVisual);
+      }
+    });
+
+    // ---------- Three.js Scene (ES Modules + OrbitControls) ----------
+    const canvas = $("#c");
+    const stage = $("#stage");
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(0, 3.4, 10.8);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = false;
+    controls.minDistance = 7.5;
+    controls.maxDistance = 14.5;
+    controls.target.set(0, 0.05, 0);
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.95);
+    dir.position.set(5, 7, 3);
+    scene.add(dir);
+    const rim = new THREE.DirectionalLight(0xffffff, 0.45);
+    rim.position.set(-6, 2, -6);
+    scene.add(rim);
+
+    // Floor
+    const floor = new THREE.Mesh(
+      new THREE.CircleGeometry(7.2, 64),
+      new THREE.MeshStandardMaterial({ color: 0x0b1220, metalness: 0.05, roughness: 0.95, transparent:true, opacity:0.35 })
+    );
+    floor.rotation.x = -Math.PI/2;
+    floor.position.y = -1.25;
+    scene.add(floor);
+
+    // Cube textures (CanvasTexture works the same with modules)
+    function roundRect(ctx, x, y, w, h, r){
+      const rr = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+rr, y);
+      ctx.arcTo(x+w, y, x+w, y+h, rr);
+      ctx.arcTo(x+w, y+h, x, y+h, rr);
+      ctx.arcTo(x, y+h, x, y, rr);
+      ctx.arcTo(x, y, x+w, y, rr);
+      ctx.closePath();
+    }
+    function makeLabelTexture(text){
+      const c = document.createElement("canvas");
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext("2d");
+      ctx.clearRect(0,0,c.width,c.height);
+
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      roundRect(ctx, 70, 170, 372, 172, 36);
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(255,255,255,0.20)";
+      ctx.lineWidth = 6;
+      roundRect(ctx, 70, 170, 372, 172, 36);
+      ctx.stroke();
+
+      ctx.fillStyle = "#e7eefc";
+      ctx.font = "700 58px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, 256, 252);
+
+      ctx.fillStyle = "rgba(231,238,252,0.65)";
+      ctx.font = "500 26px ui-monospace, Menlo, Consolas, monospace";
+      ctx.fillText("CLICK", 256, 318);
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.anisotropy = 8;
+      return tex;
+    }
+
+    const COLORS = {
+      held: 0x7c3aed,
+      ort: 0x22c55e,
+      zauber: 0xf59e0b,
+      boesewicht: 0xa3e635,
+      pruefung: 0x3b82f6,
+      moral: 0xf43f5e
+    };
+
+    const cubeGeo = new THREE.BoxGeometry(1.45, 1.45, 1.45);
+    const cubes = {};
+    const cubeOrder = ["held","ort","zauber","boesewicht","pruefung","moral"];
+    const positions = [
+      [-2.6, 0.75, 0.0], [0.0, 0.75, 0.0], [2.6, 0.75, 0.0],
+      [-2.6, -0.55, -0.5], [0.0, -0.55, -0.5], [2.6, -0.55, -0.5]
+    ];
+
+    cubeOrder.forEach((k, i)=>{
+      const tex = makeLabelTexture(LABEL[k]);
+      const baseColor = COLORS[k];
+
+      const mats = [];
+      for(let f=0; f<6; f++){
+        const isLabelFace = (f===4);
+        if(isLabelFace){
+          mats.push(new THREE.MeshStandardMaterial({ map: tex, metalness: 0.15, roughness: 0.55 }));
+        }else{
+          mats.push(new THREE.MeshStandardMaterial({
+            color: baseColor, metalness: 0.35, roughness: 0.35, transparent:true, opacity: 0.92
+          }));
+        }
+      }
+
+      const mesh = new THREE.Mesh(cubeGeo, mats);
+      mesh.position.set(...positions[i]);
+      mesh.userData.key = k;
+      mesh.rotation.set(Math.random()*0.6, Math.random()*0.8, Math.random()*0.4);
+
+      const wf = new THREE.LineSegments(
+        new THREE.WireframeGeometry(cubeGeo),
+        new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.18 })
+      );
+      wf.scale.set(1.01,1.01,1.01);
+      mesh.add(wf);
+
+      scene.add(mesh);
+      cubes[k] = mesh;
+    });
+
+    function syncCubeLockVisual(k){
+      const m = cubes[k];
+      if(!m) return;
+      const on = state.locked[k];
+      m.userData.locked = on;
+
+      m.children.forEach(ch=>{
+        if(ch.material && ch.material.opacity !== undefined){
+          ch.material.opacity = on ? 0.12 : 0.18;
+        }
+      });
+
+      m.material.forEach((mat)=>{
+        if(mat.map) return;
+        mat.opacity = on ? 0.55 : 0.92;
+        mat.roughness = on ? 0.65 : 0.35;
+      });
+    }
+
+    // Resize
+    function resize(){
+      const r = stage.getBoundingClientRect();
+      renderer.setSize(r.width, r.height, false);
+      camera.aspect = r.width / r.height;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    // Raycaster click (OrbitControls friendly: ignore clicks that were drags)
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let down = null;
+
+    stage.addEventListener("pointerdown", (e)=>{
+      down = { x:e.clientX, y:e.clientY };
+    });
+
+    stage.addEventListener("pointerup", (e)=>{
+      if(!down) return;
+      const dx = Math.abs(e.clientX - down.x);
+      const dy = Math.abs(e.clientY - down.y);
+      down = null;
+      if(dx > 6 || dy > 6) return; // was a drag, not a click
+
+      const rect = renderer.domElement.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      mouse.x = x * 2 - 1;
+      mouse.y = -(y * 2 - 1);
+
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(Object.values(cubes), true);
+      if(!hits.length) return;
+
+      let obj = hits[0].object;
+      while(obj && !obj.userData.key) obj = obj.parent;
+      if(!obj) return;
+
+      const key = obj.userData.key;
+      if(state.locked[key] && state.pick[key]){
+        toast(`${LABEL[key]} ist gelockt 🔒`);
+        bump(obj, 0.35);
+        return;
+      }
+      rollKey(key);
+      updateUI();
+      animateRollOne(key);
+      toast(`${LABEL[key]} gewürfelt 🎲`);
+    });
+
+    function bump(mesh, strength=0.5){
+      mesh.userData.bump = (mesh.userData.bump || 0) + strength;
+    }
+    function animateRollOne(key){
+      const m = cubes[key];
+      if(!m) return;
+      m.userData.spin = 1.15;
+      bump(m, 0.55);
+    }
+    function animateRollAll(){
+      cubeOrder.forEach((k, idx)=>{
+        if(state.locked[k] && state.pick[k]) return;
+        const m = cubes[k];
+        if(!m) return;
+        m.userData.spin = 1.0 + idx*0.05;
+        bump(m, 0.45);
+      });
+      toast("Alles gewürfelt 🎲");
+    }
+
+    // Init
+    rollAll();
+    updateUI();
+
+    // Animation loop
+    const clock = new THREE.Clock();
+
+    function tick(){
+      const t = clock.getElapsedTime();
+      const dt = Math.min(0.033, clock.getDelta());
+
+      controls.update();
+
+      cubeOrder.forEach((k, i)=>{
+        const m = cubes[k];
+        if(!m) return;
+
+        const locked = !!m.userData.locked;
+        const floatAmp = locked ? 0.06 : 0.13;
+        const floatSpd = locked ? 0.85 : 1.15;
+
+        m.position.y = positions[i][1] + Math.sin(t*floatSpd + i*0.8)*floatAmp;
+
+        const base = locked ? 0.25 : 0.55;
+        m.rotation.y += dt * base * (0.7 + i*0.07);
+        m.rotation.x += dt * base * (0.45 + i*0.05);
+
+        if(m.userData.spin && m.userData.spin > 0){
+          const s = m.userData.spin;
+          m.rotation.y += dt * 7.0 * s;
+          m.rotation.x += dt * 6.0 * s;
+          m.userData.spin = Math.max(0, s - dt*1.6);
+        }
+        if(m.userData.bump && m.userData.bump > 0){
+          const b = m.userData.bump;
+          m.position.y += b * 0.08;
+          m.userData.bump = Math.max(0, b - dt*2.4);
+        }
+      });
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+    tick();
+  </script>
+</body>
+</html>
