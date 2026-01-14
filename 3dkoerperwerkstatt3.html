@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>KörperWerkstatt 3D Komposit • HoS</title>
-
   <style>
     :root{
       --ink:#1f2937; --muted:#6b7280; --line:#d1d5db; --soft:#f8fafc;
@@ -28,7 +27,7 @@
     .hd h2{margin:0;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
     .bd{padding:14px}
     label{font-size:12px;color:var(--muted);display:block;margin:8px 0 6px}
-    select,input[type="number"],input[type="text"]{width:100%;padding:10px 10px;border:1px solid var(--line);border-radius:12px;outline:none;background:#fff;color:var(--ink);font-size:14px}
+    select,input[type="number"]{width:100%;padding:10px 10px;border:1px solid var(--line);border-radius:12px;outline:none;background:#fff;color:var(--ink);font-size:14px}
     input[type="checkbox"]{transform:translateY(1px)}
     .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -45,7 +44,6 @@
     .overlay{position:absolute;left:12px;top:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
     .chip{pointer-events:none;background:rgba(255,255,255,.92);border:1px solid rgba(209,213,219,.9);border-radius:999px;padding:7px 10px;font-size:12px;color:var(--muted);box-shadow:0 8px 22px rgba(0,0,0,.08);backdrop-filter:blur(6px)}
     .chip b{color:var(--ink)}
-
     .modebar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fff}
     .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;user-select:none;font-size:12px;color:var(--muted);font-weight:900}
     .pill.active{border-color:transparent;background:rgba(37,99,235,.12);color:var(--ink)}
@@ -55,12 +53,9 @@
     .status{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px dashed var(--line);background:var(--soft);color:var(--muted);font-size:12px;line-height:1.35;min-height:44px}
     .status.ok{border-color:rgba(16,185,129,.55);background:rgba(16,185,129,.08);color:#064e3b}
     .status.no{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.06);color:#7f1d1d}
-
     .solBox{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:#fff;display:none}
     .solBox pre{margin:0;white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px;color:var(--ink)}
     .mini{font-size:11px;color:var(--muted);margin-top:6px}
-
-    /* Error overlay */
     #err{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);z-index:9999;padding:18px}
     #err h3{margin:0 0 8px}
     #err pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:1000px}
@@ -79,7 +74,7 @@
   <div class="titlewrap">
     <span class="badge">🧱 KörperWerkstatt 3D Komposit • <b>HoS</b> • Snapping & Berechnung</span>
     <h1>KörperWerkstatt 3D – zusammengesetzte Körper</h1>
-    <p>Klick: auswählen • Ziehen: verschieben • Snap: Oberflächen • Aufgaben: bauen → rechnen</p>
+    <p>Aufgaben ohne ständige Wiederholung (Shuffle-Bag) • Leicht/Experte</p>
   </div>
   <a class="linkbtn" href="index.html">🏠 Startseite</a>
 </header>
@@ -107,12 +102,14 @@
         </div>
 
         <div class="modebar" style="margin-top:10px">
-          <span style="font-size:12px;color:var(--muted);font-weight:900">Aufgabenmodus:</span>
+          <span style="font-size:12px;color:var(--muted);font-weight:900">Schwierigkeit:</span>
           <span class="pill active" id="pillEasy">🙂 Leicht</span>
           <span class="pill" id="pillExpert">🧠 Experte</span>
+          <span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:900">Rest im Pool:</span>
+          <span class="pill" id="poolLeft" style="cursor:default">—</span>
         </div>
 
-        <div class="status" id="status">Tipp: Bauteile hinzufügen → beim Ziehen „snappen“ sie an passende Flächen.</div>
+        <div class="status" id="status">Tipp: Im Expertenmodus kommen deutlich mehr Varianten (auch 3-teilig).</div>
 
         <div class="solBox" id="solBox">
           <pre id="solText">—</pre>
@@ -168,8 +165,8 @@
       </div>
 
       <div class="hint">
-        Snapping-Regel: Es wird nur an <b>passende</b> Oberflächen gesnappt (Kreis↔Kreis gleicher Radius; Rechteck↔Rechteck gleiche Maße).
-        So können die SuS sauber zusammensetzen und Oberfläche/Volumen stimmt.
+        Snapping-Regel: Nur <b>passende</b> Oberflächen (Kreis↔Kreis gleicher Radius; Rechteck↔Rechteck gleiche Maße).
+        Aufgaben sind so gebaut, dass das Snapping „mathematisch sinnvoll“ ist.
       </div>
 
       <div class="kv" id="info">
@@ -242,6 +239,7 @@ try{
 
   const pillEasy = document.getElementById("pillEasy");
   const pillExpert = document.getElementById("pillExpert");
+  const poolLeft = document.getElementById("poolLeft");
 
   const iSel = document.getElementById("iSel");
   const iCount = document.getElementById("iCount");
@@ -428,11 +426,11 @@ try{
     const swapped = (Math.abs(au-bv)<=0.02 && Math.abs(av-bu)<=0.02);
     return direct || swapped;
   }
-
   function normalsOpposite(n1,n2){ return n1.dot(n2) <= -0.98; }
 
   function trySnap(moving){
     if(!elSnap.checked) return;
+
     const mFaces = getFaces(moving);
     let best = null;
 
@@ -450,6 +448,7 @@ try{
       }
     }
     if(!best) return;
+
     const delta = new THREE.Vector3().subVectors(best.ofc.center, best.mf.center);
     moving.position.add(delta);
 
@@ -582,6 +581,7 @@ try{
     taskBox.style.display = (mode === "task") ? "block" : "none";
     solBox.style.display = "none";
     btnToggleSol.textContent = "👁️ Lösung anzeigen";
+    updatePoolChip();
   }
   pillFree.addEventListener("click", () => setMode("free"));
   pillTask.addEventListener("click", () => setMode("task"));
@@ -592,110 +592,244 @@ try{
     btnToggleSol.textContent = open ? "👁️ Lösung anzeigen" : "🙈 Lösung ausblenden";
   });
 
-  let difficulty = "easy";
-  function setDifficulty(d){
-    difficulty = d;
-    pillEasy?.classList.toggle("active", d === "easy");
-    pillExpert?.classList.toggle("active", d === "expert");
-    if(mode === "task"){
-      setStatus(d === "easy"
-        ? "Leicht-Modus: nur Zylinder+Kegel oder Quader+Pyramide."
-        : "Experten-Modus: gemischte Aufgaben.");
-    }
-  }
-  pillEasy?.addEventListener("click", () => setDifficulty("easy"));
-  pillExpert?.addEventListener("click", () => setDifficulty("expert"));
-  setDifficulty("easy");
-
-  const TASKS = [
-    {
-      name:"Zylinder mit Kegel (wie ein Turm)",
-      text:"Baue einen zusammengesetzten Körper aus einem Zylinder und einem Kegel: r=2, h(Zyl)=5, h(Kegel)=3. Setze den Kegel oben auf den Zylinder (gleicher Radius!).",
-      parts:[ {shape:"cylinder", r:2, h:5}, {shape:"cone", r:2, h:3} ],
+  // ---------- Task factory + pools ----------
+  function taskCylCone(r, hCyl, hCone){
+    return {
+      name:`Zylinder+Kegel r=${r} | hZ=${hCyl} | hK=${hCone}`,
+      text:`Baue einen Zylinder (r=${r}, h=${hCyl}) und setze oben einen Kegel (r=${r}, h=${hCone}) drauf. (Kreisfläche muss exakt snappen.)`,
+      parts:[ {shape:"cylinder", r, h:hCyl}, {shape:"cone", r, h:hCone} ],
       wantContacts:1,
       solution(){
-        const r=2, h1=5, h2=3;
-        const Vz = Math.PI*r*r*h1;
-        const Vk = (Math.PI*r*r*h2)/3;
-        const s = Math.sqrt(r*r + h2*h2);
-        const Oz = 2*Math.PI*r*(h1 + r);
+        const Vz = Math.PI*r*r*hCyl;
+        const Vk = (Math.PI*r*r*hCone)/3;
+        const s = Math.sqrt(r*r + hCone*hCone);
+        const Oz = 2*Math.PI*r*(hCyl + r);
         const Ok = Math.PI*r*(r + s);
-        const Acontact = Math.PI*r*r;
+        const A = Math.PI*r*r;
         const V = Vz + Vk;
-        const O = (Oz + Ok) - 2*Acontact;
+        const O = (Oz + Ok) - 2*A;
         return [
           "Volumen:",
-          `V(Zylinder) = π·r²·h = π·${r}²·${h1} = ${fmt1(Vz)}`,
-          `V(Kegel)    = 1/3·π·r²·h = 1/3·π·${r}²·${h2} = ${fmt1(Vk)}`,
+          `V(Zylinder) = π·r²·h = π·${r}²·${hCyl} = ${fmt1(Vz)}`,
+          `V(Kegel)    = 1/3·π·r²·h = 1/3·π·${r}²·${hCone} = ${fmt1(Vk)}`,
           `V(gesamt)   = ${fmt1(Vz)} + ${fmt1(Vk)} = ${fmt1(V)}`,
           "",
           "Oberfläche:",
-          `O(Zylinder) = 2·π·r·(h+r) = 2·π·${r}·(${h1}+${r}) = ${fmt1(Oz)}`,
-          `s(Kegel)    = √(r²+h²) = √(${r}²+${h2}²) = ${fmt1(s)}`,
+          `O(Zylinder) = 2·π·r·(h+r) = 2·π·${r}·(${hCyl}+${r}) = ${fmt1(Oz)}`,
+          `s(Kegel)    = √(r²+h²) = √(${r}²+${hCone}²) = ${fmt1(s)}`,
           `O(Kegel)    = π·r·(r+s) = π·${r}·(${r}+${fmt1(s)}) = ${fmt1(Ok)}`,
-          `Kontaktfläche (Kreis) A = π·r² = π·${r}² = ${fmt1(Acontact)}`,
-          `O(gesamt)   = (OZ + OK) − 2·A = (${fmt1(Oz)} + ${fmt1(Ok)}) − 2·${fmt1(Acontact)} = ${fmt1(O)}`
+          `Kontakt A   = π·r² = π·${r}² = ${fmt1(A)}`,
+          `O(gesamt)   = (OZ + OK) − 2·A = (${fmt1(Oz)} + ${fmt1(Ok)}) − 2·${fmt1(A)} = ${fmt1(O)}`
         ].join("\n");
       }
-    },
-    {
-      name:"Quader + Pyramide (Dach)",
-      text:"Baue einen Quader a=4, b=4, h=3 und setze darauf eine Pyramide mit Grundkante a=4 und Höhe h=3 (Quadrat passt genau).",
-      parts:[ {shape:"box", a:4, b:4, h:3}, {shape:"pyramid", a:4, h:3} ],
+    };
+  }
+
+  function taskBoxPyr(a, hBox, hPyr){
+    return {
+      name:`Quader+Pyramide a=${a} | hQ=${hBox} | hP=${hPyr}`,
+      text:`Baue einen Quader (a=${a}, b=${a}, h=${hBox}) und setze darauf eine Pyramide (Grundkante a=${a}, h=${hPyr}). (Quadrat muss snappen.)`,
+      parts:[ {shape:"box", a, b:a, h:hBox}, {shape:"pyramid", a, h:hPyr} ],
       wantContacts:1,
       solution(){
-        const a=4,hq=3,hp=3;
-        const Vq=a*a*hq;
-        const Vp=(a*a*hp)/3;
-        const Oq=2*(a*a + a*hq + a*hq);
-        const s=Math.sqrt((a/2)*(a/2)+hp*hp);
-        const Op=a*a + 2*a*s;
-        const A=a*a;
-        const V=Vq+Vp;
-        const O=(Oq+Op) - 2*A;
+        const Vq = a*a*hBox;
+        const Vp = (a*a*hPyr)/3;
+        const Oq = 2*(a*a + a*hBox + a*hBox);
+        const s = Math.sqrt((a/2)*(a/2) + hPyr*hPyr);
+        const Op = (a*a) + 2*a*s;
+        const A = a*a;
+        const V = Vq + Vp;
+        const O = (Oq + Op) - 2*A;
         return [
           "Volumen:",
-          `V(Quader)   = a·b·h = ${a}·${a}·${hq} = ${fmt1(Vq)}`,
-          `V(Pyramide) = 1/3·a²·h = 1/3·${a}²·${hp} = ${fmt1(Vp)}`,
+          `V(Quader)   = a·b·h = ${a}·${a}·${hBox} = ${fmt1(Vq)}`,
+          `V(Pyramide) = 1/3·a²·h = 1/3·${a}²·${hPyr} = ${fmt1(Vp)}`,
           `V(gesamt)   = ${fmt1(Vq)} + ${fmt1(Vp)} = ${fmt1(V)}`,
           "",
           "Oberfläche:",
-          `O(Quader)   = 2(ab+ah+bh) = 2(${a}·${a}+${a}·${hq}+${a}·${hq}) = ${fmt1(Oq)}`,
-          `s(Pyramide) = √((a/2)² + h²) = √((${a}/2)² + ${hp}²) = ${fmt1(s)}`,
+          `O(Quader)   = 2(ab+ah+bh) = 2(${a}·${a}+${a}·${hBox}+${a}·${hBox}) = ${fmt1(Oq)}`,
+          `s(Pyramide) = √((a/2)² + h²) = √((${a}/2)² + ${hPyr}²) = ${fmt1(s)}`,
           `O(Pyramide) = a² + 2·a·s = ${a}² + 2·${a}·${fmt1(s)} = ${fmt1(Op)}`,
-          `Kontaktfläche A = a² = ${a}² = ${fmt1(A)}`,
+          `Kontakt A   = a² = ${a}² = ${fmt1(A)}`,
           `O(gesamt)   = (OQ + OP) − 2·A = (${fmt1(Oq)} + ${fmt1(Op)}) − 2·${fmt1(A)} = ${fmt1(O)}`
         ].join("\n");
       }
-    },
-    {
-      name:"Würfel + Würfel (zusammengesetzter Block)",
-      text:"Baue zwei Würfel mit Kantenlänge 3 und snap sie an einer ganzen Seitenfläche zusammen (wie ein Doppelwürfel).",
-      parts:[ {shape:"box", a:3, b:3, h:3}, {shape:"box", a:3, b:3, h:3} ],
+    };
+  }
+
+  function taskCylCyl(r, h1, h2){
+    return {
+      name:`Zylinder+Zylinder r=${r} | h1=${h1} | h2=${h2}`,
+      text:`Baue zwei Zylinder mit gleichem Radius r=${r}: h₁=${h1} und h₂=${h2}. Snap sie übereinander.`,
+      parts:[ {shape:"cylinder", r, h:h1}, {shape:"cylinder", r, h:h2} ],
       wantContacts:1,
       solution(){
-        const a=3;
-        const V1=a*a*a;
-        const O1=6*a*a;
-        const A=a*a;
-        const V=2*V1;
-        const O=(2*O1) - 2*A;
+        const V1 = Math.PI*r*r*h1, V2 = Math.PI*r*r*h2;
+        const O1 = 2*Math.PI*r*(h1 + r), O2 = 2*Math.PI*r*(h2 + r);
+        const A = Math.PI*r*r;
+        const V = V1+V2;
+        const O = (O1+O2) - 2*A;
         return [
           "Volumen:",
-          `V(Würfel)   = a³ = ${a}³ = ${fmt1(V1)}`,
-          `V(gesamt)   = 2·${fmt1(V1)} = ${fmt1(V)}`,
+          `V₁ = π·${r}²·${h1} = ${fmt1(V1)}`,
+          `V₂ = π·${r}²·${h2} = ${fmt1(V2)}`,
+          `V(gesamt) = ${fmt1(V1)} + ${fmt1(V2)} = ${fmt1(V)}`,
           "",
           "Oberfläche:",
-          `O(Würfel)   = 6·a² = 6·${a}² = ${fmt1(O1)}`,
-          `Kontaktfläche A = a² = ${a}² = ${fmt1(A)}`,
-          `O(gesamt)   = 2·O(Würfel) − 2·A = 2·${fmt1(O1)} − 2·${fmt1(A)} = ${fmt1(O)}`
+          `O₁ = ${fmt1(O1)}`,
+          `O₂ = ${fmt1(O2)}`,
+          `Kontakt A = π·${r}² = ${fmt1(A)}`,
+          `O(gesamt) = (O₁+O₂) − 2·A = ${fmt1(O)}`
         ].join("\n");
       }
+    };
+  }
+
+  function taskCylCylCone(r, h1, h2, hCone){
+    return {
+      name:`Zyl+Zyl+Kegel r=${r} | ${h1}/${h2}/${hCone}`,
+      text:`Baue zwei Zylinder (r=${r}, h=${h1}) und (r=${r}, h=${h2}) und setze oben einen Kegel (r=${r}, h=${hCone}) drauf. Alles kreisförmig snappen.`,
+      parts:[ {shape:"cylinder", r, h:h1}, {shape:"cylinder", r, h:h2}, {shape:"cone", r, h:hCone} ],
+      wantContacts:2,
+      solution(){
+        const V1 = Math.PI*r*r*h1, V2 = Math.PI*r*r*h2, Vk = (Math.PI*r*r*hCone)/3;
+        const O1 = 2*Math.PI*r*(h1 + r), O2 = 2*Math.PI*r*(h2 + r);
+        const s = Math.sqrt(r*r + hCone*hCone);
+        const Ok = Math.PI*r*(r + s);
+        const A = Math.PI*r*r;
+        const V = V1+V2+Vk;
+        const O = (O1+O2+Ok) - 4*A;
+        return [
+          "Volumen:",
+          `V₁ = ${fmt1(V1)}`,
+          `V₂ = ${fmt1(V2)}`,
+          `V(Kegel)= ${fmt1(Vk)}`,
+          `V(gesamt)= ${fmt1(V)} (Summe)`,
+          "",
+          "Oberfläche:",
+          `O₁ = ${fmt1(O1)}`,
+          `O₂ = ${fmt1(O2)}`,
+          `s(Kegel)= ${fmt1(s)}`,
+          `O(Kegel)= ${fmt1(Ok)}`,
+          `Kontakt A = ${fmt1(A)} (2×)`,
+          `O(gesamt)= ${fmt1(O)}`
+        ].join("\n");
+      }
+    };
+  }
+
+  function buildPools(){
+    const easy = [];
+    const expert = [];
+
+    const rSet = [1,1.5,2,2.5,3];
+    const hZSet = [3,4,5,6];
+    const hKSet = [2,3,4,5];
+    for(const r of rSet){
+      for(const hz of hZSet){
+        for(const hk of hKSet){
+          if(easy.length >= 18) break;
+          easy.push(taskCylCone(r, hz, hk));
+        }
+        if(easy.length >= 18) break;
+      }
+      if(easy.length >= 18) break;
     }
-  ];
 
-  let currentTask = null;
+    const aSet = [3,4,5,6];
+    const hQSet = [2,3,4,5];
+    const hPSet = [2,3,4,5];
+    for(const a of aSet){
+      for(const hq of hQSet){
+        for(const hp of hPSet){
+          if(easy.length >= 36) break;
+          easy.push(taskBoxPyr(a, hq, hp));
+        }
+        if(easy.length >= 36) break;
+      }
+      if(easy.length >= 36) break;
+    }
 
+    expert.push(...easy);
+
+    for(const r of [1,1.5,2,2.5,3]){
+      for(const h1 of [2,3,4,5,6]){
+        for(const h2 of [2,3,4,5,6]){
+          if(h1===h2) continue;
+          expert.push(taskCylCyl(r, h1, h2));
+          if(expert.length >= 90) break;
+        }
+        if(expert.length >= 90) break;
+      }
+      if(expert.length >= 90) break;
+    }
+
+    for(const r of [1.5,2,2.5,3]){
+      expert.push(taskCylCylCone(r, 3, 4, 3));
+      expert.push(taskCylCylCone(r, 2, 5, 4));
+      expert.push(taskCylCylCone(r, 4, 4, 2));
+    }
+
+    const uniq = (arr)=>{
+      const seen = new Set();
+      const out = [];
+      for(const t of arr){
+        if(seen.has(t.name)) continue;
+        seen.add(t.name);
+        out.push(t);
+      }
+      return out;
+    };
+
+    return {easy: uniq(easy).slice(0, 36), expert: uniq(expert).slice(0, 110)};
+  }
+
+  const POOLS = buildPools();
+
+  // Shuffle-bag (no repeat until exhausted)
+  let difficulty = "easy";
+  let bagEasy = [];
+  let bagExpert = [];
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function refillBagIfNeeded(force=false){
+    if(difficulty==="easy"){
+      if(force || bagEasy.length===0) bagEasy = shuffle([...POOLS.easy]);
+    } else {
+      if(force || bagExpert.length===0) bagExpert = shuffle([...POOLS.expert]);
+    }
+  }
+  function takeNextTask(){
+    refillBagIfNeeded(false);
+    return (difficulty==="easy") ? bagEasy.pop() : bagExpert.pop();
+  }
+  function updatePoolChip(){
+    const left = (difficulty==="easy") ? bagEasy.length : bagExpert.length;
+    poolLeft.textContent = String(left);
+  }
+
+  function setDifficulty(d){
+    difficulty = d;
+    pillEasy.classList.toggle("active", d === "easy");
+    pillExpert.classList.toggle("active", d === "expert");
+    refillBagIfNeeded(true);
+    updatePoolChip();
+    if(mode==="task"){
+      setStatus(d==="easy"
+        ? "Leicht-Modus: nur Zylinder+Kegel oder Quader+Pyramide (viele Varianten)."
+        : "Experten-Modus: viele Varianten (auch 3-teilig) – kaum Wiederholungen.");
+    }
+  }
+  pillEasy.addEventListener("click", () => setDifficulty("easy"));
+  pillExpert.addEventListener("click", () => setDifficulty("expert"));
+
+  // check helpers
   function partsSignature(obj){
     const s = obj.userData.shape;
     const p = obj.userData.params || {};
@@ -737,18 +871,19 @@ try{
     return contact;
   }
 
+  // Buttons
+  let currentTask = null;
+
   btnNewTask.addEventListener("click", () => {
     setMode("task");
-    const pool = (difficulty === "easy")
-      ? TASKS.filter(t => t.name.startsWith("Zylinder mit Kegel") || t.name.startsWith("Quader + Pyramide"))
-      : TASKS;
-
-    currentTask = pool[Math.floor(Math.random()*pool.length)];
-    taskText.textContent = currentTask.text;
-    solText.textContent = currentTask.solution();
+    const t = takeNextTask();
+    currentTask = t;
+    updatePoolChip();
+    taskText.textContent = t.text;
+    solText.textContent = t.solution();
     solBox.style.display = "none";
     btnToggleSol.textContent = "👁️ Lösung anzeigen";
-    setStatus("Bauen → dann „Prüfen“. Achte auf Snapping-Regeln (passende Flächen).");
+    setStatus(`Bauen → dann „Prüfen“. (Aufgabe: ${t.name})`);
   });
 
   btnResetTask.addEventListener("click", () => {
@@ -767,14 +902,11 @@ try{
       setStatus("Keine Aufgabe aktiv. Klicke „Neue Aufgabe“.", false);
       return;
     }
-
     const okParts = multisetMatch(currentTask.parts, objects);
     const contacts = countContacts();
     const okContacts = (currentTask.wantContacts===0) ? true : (contacts >= currentTask.wantContacts);
 
     const built = calcComposite();
-    const Vb = round1(built.V);
-    const Ob = round1(built.O);
 
     let expectedV=0, expectedO=0;
     for(const prt of currentTask.parts){
@@ -797,21 +929,20 @@ try{
         expectedO += (prt.a*prt.a) + 2*prt.a*sLen;
       }
     }
-    if(currentTask.wantContacts > 0){
-      let contactArea = 0;
-      for(let i=0;i<objects.length;i++){
-        for(let j=i+1;j<objects.length;j++){
-          contactArea += contactAreaBetween(objects[i], objects[j]);
-        }
+    // subtract actual contact areas (robust)
+    let contactArea = 0;
+    for(let i=0;i<objects.length;i++){
+      for(let j=i+1;j<objects.length;j++){
+        contactArea += contactAreaBetween(objects[i], objects[j]);
       }
-      expectedO -= 2*contactArea;
     }
+    expectedO -= 2*contactArea;
 
-    const Ve = round1(expectedV);
-    const Oe = round1(expectedO);
+    const Vb = round1(built.V), Ob = round1(built.O);
+    const Ve = round1(expectedV), Oe = round1(expectedO);
 
-    const okV = Math.abs(Vb - Ve) <= 0.2;
-    const okO = Math.abs(Ob - Oe) <= 0.2;
+    const okV = Math.abs(Vb - Ve) <= 0.3;
+    const okO = Math.abs(Ob - Oe) <= 0.3;
 
     if(okParts && okContacts && okV && okO){
       setStatus(`✅ Passt! Deine Werte: V=${fmt1(built.V)}, O=${fmt1(built.O)}.`, true);
@@ -823,6 +954,11 @@ try{
       setStatus(`❌ Noch nicht ganz: ${probs.join(" ")}`, false);
     }
   });
+
+  // init
+  setDifficulty("easy");
+  refillBagIfNeeded(true);
+  updatePoolChip();
 
   addObject(createMeshFromUI());
 
