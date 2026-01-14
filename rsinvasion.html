@@ -132,7 +132,7 @@
     <div class="bottom">
       <div class="card">
         <div class="title">
-          <h1>Schieße das falsche Wort → Lücke → durchfliegen (Dobl · Graz · Herr Holzer)</h1>
+          <h1>Schieße das falsche Wort → Lücke → durchfliegen </h1>
           <div class="pill" style="padding:8px 10px; font-size:12px;">
             <span class="kbd">←</span>/<span class="kbd">→</span> oder <span class="kbd">A</span>/<span class="kbd">D</span>
             · <span class="kbd">SPACE</span> schießen
@@ -477,7 +477,7 @@
 
       layoutBarrier(0,0);
       failsThisSentence = 0;
-      ui.hint.innerHTML = `Fehlerart: <b>${task.type}</b> · Extra für <b>Dobl</b> & <b>Graz</b> 😄`;
+      ui.hint.innerHTML = `Fehlerart: <b>${task.type}</b> · <b></b>  <b></b> 😄`;
       updateUI();
       flash("Neuer Satz!", true);
     }
@@ -1034,7 +1034,7 @@
       ui.overlay.querySelector("h2").textContent = "Bereit? 😄";
       ui.overlay.querySelector("p").innerHTML =
         `Dieses Spiel nutzt ein <b>Deck</b> aus <b>${deck.length}</b> Sätzen (keine Wiederholung).<br>
-         Extra für <b>Dobl</b> & <b>Graz</b> – inkl. <b>Herr Holzer</b>-Sätzen.`;
+         Extra für häufige Fehler in Sätzen.`;
       flash("Reset.", true);
       ui.deckLeft.textContent = String(deck.length);
       updateUI();
