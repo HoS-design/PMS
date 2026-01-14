@@ -722,6 +722,9 @@ try{
     const easy = [];
     const expert = [];
 
+    // ----------------
+    // LEICHT
+    // ----------------
     const rSet = [1,1.5,2,2.5,3];
     const hZSet = [3,4,5,6];
     const hKSet = [2,3,4,5];
@@ -750,24 +753,146 @@ try{
       if(easy.length >= 36) break;
     }
 
-    expert.push(...easy);
+    // ----------------
+    // EXPERTE
+    // Regel: NIE gleiche Körper miteinander,
+    // ABER gemischte Kombinationen sind erlaubt:
+    //  - Zylinder + Kegel
+    //  - Quader + Pyramide
+    //  - Zylinder + Quader
+    //  - Zylinder + Pyramide
+    //  - Kegel + Quader
+    // ----------------
 
-    for(const r of [1,1.5,2,2.5,3]){
-      for(const h1 of [2,3,4,5,6]){
-        for(const h2 of [2,3,4,5,6]){
-          if(h1===h2) continue;
-          expert.push(taskCylCyl(r, h1, h2));
-          if(expert.length >= 90) break;
+    // Hilfs-Tasks
+    function taskCylBox(r, hCyl, aBox, hBox){
+      return {
+        name:`Zylinder+Quader r=${r} | a=${aBox}`,
+        text:`Setze einen Zylinder (r=${r}, h=${hCyl}) mittig auf einen Quader (a=${aBox}, b=${aBox}, h=${hBox}). Kreis muss in das Quadrat passen.`,
+        parts:[
+          {shape:"cylinder", r, h:hCyl},
+          {shape:"box", a:aBox, b:aBox, h:hBox}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vz = Math.PI*r*r*hCyl;
+          const Vq = aBox*aBox*hBox;
+          const Oz = 2*Math.PI*r*(hCyl + r);
+          const Oq = 2*(aBox*aBox + aBox*hBox + aBox*hBox);
+          const A = Math.PI*r*r;
+          const V = Vz + Vq;
+          const O = (Oz + Oq) - 2*A;
+          return [
+            "Volumen:",
+            `V(Zylinder) = ${fmt1(Vz)}`,
+            `V(Quader)   = ${fmt1(Vq)}`,
+            `V(gesamt)   = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Zylinder) = ${fmt1(Oz)}`,
+            `O(Quader)   = ${fmt1(Oq)}`,
+            `Kontakt A   = π·r² = ${fmt1(A)}`,
+            `O(gesamt)   = ${fmt1(O)}`
+          ].join("\n");
         }
-        if(expert.length >= 90) break;
-      }
-      if(expert.length >= 90) break;
+      };
     }
 
+    function taskCylPyr(r, hCyl, a, hP){
+      return {
+        name:`Zylinder+Pyramide r=${r} | a=${a}`,
+        text:`Setze einen Zylinder (r=${r}, h=${hCyl}) mittig auf eine Pyramide (a=${a}, h=${hP}).`,
+        parts:[
+          {shape:"cylinder", r, h:hCyl},
+          {shape:"pyramid", a, h:hP}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vz = Math.PI*r*r*hCyl;
+          const Vp = (a*a*hP)/3;
+          const Oz = 2*Math.PI*r*(hCyl + r);
+          const s = Math.sqrt((a/2)*(a/2) + hP*hP);
+          const Op = a*a + 2*a*s;
+          const A = Math.PI*r*r;
+          const V = Vz + Vp;
+          const O = (Oz + Op) - 2*A;
+          return [
+            "Volumen:",
+            `V(Zylinder) = ${fmt1(Vz)}`,
+            `V(Pyramide) = ${fmt1(Vp)}`,
+            `V(gesamt)   = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Zylinder) = ${fmt1(Oz)}`,
+            `O(Pyramide) = ${fmt1(Op)}`,
+            `Kontakt A   = π·r² = ${fmt1(A)}`,
+            `O(gesamt)   = ${fmt1(O)}`
+          ].join("\n");
+        }
+      };
+    }
+
+    function taskConeBox(r, hCone, aBox, hBox){
+      return {
+        name:`Kegel+Quader r=${r} | a=${aBox}`,
+        text:`Setze einen Kegel (r=${r}, h=${hCone}) auf einen Quader (a=${aBox}, b=${aBox}, h=${hBox}).`,
+        parts:[
+          {shape:"cone", r, h:hCone},
+          {shape:"box", a:aBox, b:aBox, h:hBox}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vk = (Math.PI*r*r*hCone)/3;
+          const Vq = aBox*aBox*hBox;
+          const s = Math.sqrt(r*r + hCone*hCone);
+          const Ok = Math.PI*r*(r + s);
+          const Oq = 2*(aBox*aBox + aBox*hBox + aBox*hBox);
+          const A = Math.PI*r*r;
+          const V = Vk + Vq;
+          const O = (Ok + Oq) - 2*A;
+          return [
+            "Volumen:",
+            `V(Kegel)  = ${fmt1(Vk)}`,
+            `V(Quader) = ${fmt1(Vq)}`,
+            `V(gesamt) = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Kegel)  = ${fmt1(Ok)}`,
+            `O(Quader) = ${fmt1(Oq)}`,
+            `Kontakt A = π·r² = ${fmt1(A)}`,
+            `O(gesamt) = ${fmt1(O)}`
+          ].join("\n");
+        }
+      };
+    }
+
+    // Experten-Pool füllen
     for(const r of [1.5,2,2.5,3]){
-      expert.push(taskCylCylCone(r, 3, 4, 3));
-      expert.push(taskCylCylCone(r, 2, 5, 4));
-      expert.push(taskCylCylCone(r, 4, 4, 2));
+      for(const a of [4,5,6,7]){
+        if(r*2 < a){
+          expert.push(taskCylBox(r, 4, a, 3));
+          expert.push(taskConeBox(r, 3, a, 3));
+          expert.push(taskCylPyr(r, 4, a, 4));
+        }
+        if(expert.length >= 120) break;
+      }
+      if(expert.length >= 120) break;
+    }
+
+    // Klassiker beibehalten (Zylinder+Kegel, Quader+Pyramide)
+    for(const r of [1.5,2,2.5,3]){
+      for(const hz of [4,5,6]){
+        for(const hk of [2,3,4]){
+          expert.push(taskCylCone(r, hz, hk));
+        }
+      }
+    }
+    for(const a of [4,5,6,7]){
+      for(const hq of [3,4,5]){
+        for(const hp of [3,4,5]){
+          expert.push(taskBoxPyr(a, hq, hp));
+        }
+      }
     }
 
     const uniq = (arr)=>{
@@ -781,7 +906,10 @@ try{
       return out;
     };
 
-    return {easy: uniq(easy).slice(0, 36), expert: uniq(expert).slice(0, 110)};
+    return {
+      easy: uniq(easy).slice(0,36),
+      expert: uniq(expert).slice(0,150)
+    };
   }
 
   const POOLS = buildPools();
