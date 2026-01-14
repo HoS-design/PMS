@@ -106,6 +106,12 @@
           <button id="toggleSol">👁️ Lösung anzeigen</button>
         </div>
 
+        <div class="modebar" style="margin-top:10px">
+          <span style="font-size:12px;color:var(--muted);font-weight:900">Aufgabenmodus:</span>
+          <span class="pill active" id="pillEasy">🙂 Leicht</span>
+          <span class="pill" id="pillExpert">🧠 Experte</span>
+        </div>
+
         <div class="status" id="status">Tipp: Bauteile hinzufügen → beim Ziehen „snappen“ sie an passende Flächen.</div>
 
         <div class="solBox" id="solBox">
@@ -199,19 +205,13 @@ const showErr = (e) => {
 };
 
 try{
-  // ---------- Helpers ----------
-  const EPS = 1e-3;
-  const SNAP_DIST = 0.22;         // wie nah Flächen sein müssen
-  const PARAM_TOL = 0.08;         // Toleranz bei Maßvergleich (in Aufgaben)
+  const SNAP_DIST = 0.22;
   const round1 = (x) => Math.round(x*10)/10;
   const fmt1 = (x) => (Math.round(x*10)/10).toFixed(1);
-
   const clamp = (v, lo, hi)=>Math.max(lo, Math.min(hi, v));
   const roundTo = (v, step)=>Math.round(v/step)*step;
-
   const approx = (a,b,t=1e-2)=>Math.abs(a-b)<=t;
 
-  // ---------- UI refs ----------
   const mount = document.getElementById("view");
   const elShape = document.getElementById("shape");
   const elA = document.getElementById("a");
@@ -239,6 +239,9 @@ try{
   const btnToggleSol = document.getElementById("toggleSol");
   const solBox = document.getElementById("solBox");
   const solText = document.getElementById("solText");
+
+  const pillEasy = document.getElementById("pillEasy");
+  const pillExpert = document.getElementById("pillExpert");
 
   const iSel = document.getElementById("iSel");
   const iCount = document.getElementById("iCount");
@@ -268,7 +271,7 @@ try{
       labelB.textContent = "—";
       labelH.textContent = "Höhe (h)";
       elB.disabled = true; elH.disabled = false; elSeg.disabled = false;
-    } else { // pyramid
+    } else {
       labelA.textContent = "Grundkante (a)";
       labelB.textContent = "—";
       labelH.textContent = "Höhe (h)";
@@ -278,7 +281,6 @@ try{
   elShape.addEventListener("change", updateBuilderLabels);
   updateBuilderLabels();
 
-  // ---------- Three.js ----------
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
@@ -309,7 +311,6 @@ try{
   gridHelper.position.y = 0.001;
   scene.add(gridHelper);
 
-  // ---------- State ----------
   const objects = [];
   let selected = null;
 
@@ -330,7 +331,6 @@ try{
   }
   function refreshCounter(){ iCount.textContent = String(objects.length); }
 
-  // ---------- Geometry + metadata ----------
   function createMeshFromUI(){
     const shape = elShape.value;
     const a = clamp(parseFloat(elA.value || "2.0"), 0.2, 30);
@@ -351,16 +351,11 @@ try{
       geo = new THREE.CylinderGeometry(0, a, h, seg);
       label = `Kegel`;
       params = { r:a, h, seg };
-    } else { // pyramid (square)
-      // square pyramid: build from cone-like lathe? We'll use custom geometry.
-      // Base on y=-h/2, apex y=+h/2.
+    } else {
       const half = a/2;
       const vertices = new Float32Array([
-        // base square (two triangles)
         -half,-h/2,-half,   half,-h/2,-half,   half,-h/2, half,
         -half,-h/2,-half,   half,-h/2, half,  -half,-h/2, half,
-
-        // sides (4 triangles to apex)
         -half,-h/2,-half,    half,-h/2,-half,   0,h/2,0,
          half,-h/2,-half,    half,-h/2, half,   0,h/2,0,
          half,-h/2, half,   -half,-h/2, half,   0,h/2,0,
@@ -377,12 +372,10 @@ try{
     mesh.userData.shape = shape;
     mesh.userData.label = label;
     mesh.userData.params = params;
-    mesh.userData.id = crypto.randomUUID?.() || (Math.random().toString(16).slice(2));
     return mesh;
   }
 
   function addObject(mesh){
-    // spawn a little above ground, slight random offset
     mesh.position.set((Math.random()*0.4-0.2), 1.2, (Math.random()*0.4-0.2));
     makeEdges(mesh);
     scene.add(mesh);
@@ -393,10 +386,6 @@ try{
     updateCalcChip();
   }
 
-  // ---------- Face descriptors for snapping ----------
-  // We'll support snapping only on planar faces.
-  // For each object, produce a list of faces: {name, normal, center, type, dims, area}
-  // type: "rect" or "circle"
   function getFaces(obj){
     const s = obj.userData.shape;
     const p = obj.userData.params || {};
@@ -405,7 +394,6 @@ try{
 
     if(s === "box"){
       const a = p.a, b = p.b, h = p.h;
-      // axes: x width a, z depth b, y height h
       faces.push({name:"top",    normal:new THREE.Vector3(0,1,0),  center:new THREE.Vector3(pos.x, pos.y + h/2, pos.z), type:"rect", dims:{u:a, v:b}, area:a*b});
       faces.push({name:"bottom", normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"rect", dims:{u:a, v:b}, area:a*b});
       faces.push({name:"right",  normal:new THREE.Vector3(1,0,0),  center:new THREE.Vector3(pos.x + a/2, pos.y, pos.z), type:"rect", dims:{u:h, v:b}, area:h*b});
@@ -422,86 +410,58 @@ try{
 
     if(s === "cone"){
       const r = p.r, h = p.h;
-      // only base is planar + snap-able
       faces.push({name:"base",   normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"circle", dims:{r}, area:Math.PI*r*r});
-      // no top face
     }
 
     if(s === "pyramid"){
       const a = p.a, h = p.h;
       faces.push({name:"base", normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"rect", dims:{u:a, v:a}, area:a*a});
     }
-
     return faces;
   }
 
   function facesCompatible(fA, fB){
     if(fA.type !== fB.type) return false;
-    if(fA.type === "circle"){
-      return Math.abs(fA.dims.r - fB.dims.r) <= 0.02; // streng für r
-    }
-    // rect
+    if(fA.type === "circle") return Math.abs(fA.dims.r - fB.dims.r) <= 0.02;
     const au=fA.dims.u, av=fA.dims.v, bu=fB.dims.u, bv=fB.dims.v;
-    // allow swapped orientation (u/v)
     const direct = (Math.abs(au-bu)<=0.02 && Math.abs(av-bv)<=0.02);
     const swapped = (Math.abs(au-bv)<=0.02 && Math.abs(av-bu)<=0.02);
     return direct || swapped;
   }
 
-  function normalsOpposite(n1,n2){
-    // need almost opposite direction
-    return n1.dot(n2) <= -0.98;
-  }
+  function normalsOpposite(n1,n2){ return n1.dot(n2) <= -0.98; }
 
-  // Snap moving object to fixed object if any face pair qualifies
   function trySnap(moving){
     if(!elSnap.checked) return;
-
     const mFaces = getFaces(moving);
     let best = null;
 
     for(const other of objects){
       if(other === moving) continue;
-
       const oFaces = getFaces(other);
       for(const mf of mFaces){
         for(const ofc of oFaces){
           if(!normalsOpposite(mf.normal, ofc.normal)) continue;
           if(!facesCompatible(mf, ofc)) continue;
-
           const d = mf.center.distanceTo(ofc.center);
           if(d > SNAP_DIST) continue;
-
-          // prefer smallest distance
-          if(!best || d < best.d){
-            best = {d, mf, ofc, other};
-          }
+          if(!best || d < best.d) best = {d, mf, ofc};
         }
       }
     }
-
     if(!best) return;
-
-    // Compute translation required to align face centers
     const delta = new THREE.Vector3().subVectors(best.ofc.center, best.mf.center);
-
-    // Apply delta
     moving.position.add(delta);
 
-    // After snap, for stability, optionally grid-round x/z in free mode
     if(mode === "free"){
       const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
       moving.position.x = roundTo(moving.position.x, step);
       moving.position.z = roundTo(moving.position.z, step);
     }
-
-    // keep above ground
     moving.position.y = Math.max(moving.position.y, 0.01);
-
     setSelected(moving);
   }
 
-  // ---------- Drag Controls ----------
   let dragControls = null;
   function refreshDragControls(){
     if (dragControls){
@@ -509,7 +469,6 @@ try{
       dragControls.dispose();
     }
     dragControls = new DragControls(objects, camera, renderer.domElement);
-
     dragControls.addEventListener("dragstart", () => controls.enabled = false);
     dragControls.addEventListener("dragend", (ev) => {
       controls.enabled = true;
@@ -519,8 +478,6 @@ try{
     dragControls.addEventListener("drag", (ev) => {
       const obj = ev.object;
       obj.position.y = Math.max(obj.position.y, 0.01);
-
-      // while dragging: light raster for x/z in free mode (makes snapping easier)
       if(mode === "free"){
         const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
         obj.position.x = roundTo(obj.position.x, step);
@@ -530,9 +487,7 @@ try{
     });
   }
 
-  // ---------- Add/remove ----------
   btnAdd.addEventListener("click", () => addObject(createMeshFromUI()));
-
   btnRemove.addEventListener("click", () => {
     if (!selected) return;
     const idx = objects.indexOf(selected);
@@ -545,7 +500,6 @@ try{
     updateCalcChip();
   });
 
-  // ---------- Picking ----------
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   renderer.domElement.addEventListener("pointerdown", (e) => {
@@ -561,56 +515,40 @@ try{
     }
   });
 
-  // ---------- Composite calculation ----------
   function volumeOf(obj){
     const s = obj.userData.shape;
     const p = obj.userData.params;
-    if(s==="box"){
-      return p.a * p.b * p.h;
-    }
-    if(s==="cylinder"){
-      return Math.PI * p.r * p.r * p.h;
-    }
-    if(s==="cone"){
-      return (Math.PI * p.r * p.r * p.h) / 3;
-    }
-    if(s==="pyramid"){
-      return (p.a * p.a * p.h) / 3;
-    }
+    if(s==="box") return p.a * p.b * p.h;
+    if(s==="cylinder") return Math.PI * p.r * p.r * p.h;
+    if(s==="cone") return (Math.PI * p.r * p.r * p.h) / 3;
+    if(s==="pyramid") return (p.a * p.a * p.h) / 3;
     return 0;
   }
   function surfaceOf(obj){
     const s = obj.userData.shape;
     const p = obj.userData.params;
-    if(s==="box"){
-      return 2*(p.a*p.b + p.a*p.h + p.b*p.h);
-    }
-    if(s==="cylinder"){
-      return 2*Math.PI*p.r*(p.h + p.r);
-    }
+    if(s==="box") return 2*(p.a*p.b + p.a*p.h + p.b*p.h);
+    if(s==="cylinder") return 2*Math.PI*p.r*(p.h + p.r);
     if(s==="cone"){
       const sLen = Math.sqrt(p.r*p.r + p.h*p.h);
       return Math.PI*p.r*(p.r + sLen);
     }
     if(s==="pyramid"){
-      const sLen = Math.sqrt((p.a/2)*(p.a/2) + p.h*p.h); // Seitenhöhe
+      const sLen = Math.sqrt((p.a/2)*(p.a/2) + p.h*p.h);
       return (p.a*p.a) + 2*p.a*sLen;
     }
     return 0;
   }
 
   function contactAreaBetween(a,b){
-    // Detect exact face-to-face contacts (full matching face), return summed contact area(s).
     const fa = getFaces(a);
     const fb = getFaces(b);
     let sum = 0;
-
     for(const A of fa){
       for(const B of fb){
         if(!normalsOpposite(A.normal, B.normal)) continue;
         if(!facesCompatible(A,B)) continue;
-        if(A.center.distanceTo(B.center) > 0.03) continue; // must coincide tightly
-        // Full-face contact: add area (should be equal)
+        if(A.center.distanceTo(B.center) > 0.03) continue;
         sum += Math.min(A.area, B.area);
       }
     }
@@ -618,13 +556,8 @@ try{
   }
 
   function calcComposite(){
-    let V = 0;
-    let O = 0;
-    for(const o of objects){
-      V += volumeOf(o);
-      O += surfaceOf(o);
-    }
-    // subtract internal contact twice
+    let V = 0, O = 0;
+    for(const o of objects){ V += volumeOf(o); O += surfaceOf(o); }
     let contact = 0;
     for(let i=0;i<objects.length;i++){
       for(let j=i+1;j<objects.length;j++){
@@ -636,15 +569,11 @@ try{
   }
 
   function updateCalcChip(){
-    if(objects.length===0){
-      iCalc.textContent = "—";
-      return;
-    }
+    if(objects.length===0){ iCalc.textContent = "—"; return; }
     const {V,O} = calcComposite();
     iCalc.textContent = `V=${fmt1(V)} • O=${fmt1(O)}`;
   }
 
-  // ---------- Mode free vs task ----------
   let mode = "free";
   function setMode(next){
     mode = next;
@@ -663,17 +592,26 @@ try{
     btnToggleSol.textContent = open ? "👁️ Lösung anzeigen" : "🙈 Lösung ausblenden";
   });
 
-  // ---------- Tasks ----------
-  // Each task defines parts and intended contacts (for plausibility), plus solution generator.
-  // Contacts are "face rules" (circle r match, rect dims match) already enforced by snap.
+  let difficulty = "easy";
+  function setDifficulty(d){
+    difficulty = d;
+    pillEasy?.classList.toggle("active", d === "easy");
+    pillExpert?.classList.toggle("active", d === "expert");
+    if(mode === "task"){
+      setStatus(d === "easy"
+        ? "Leicht-Modus: nur Zylinder+Kegel oder Quader+Pyramide."
+        : "Experten-Modus: gemischte Aufgaben.");
+    }
+  }
+  pillEasy?.addEventListener("click", () => setDifficulty("easy"));
+  pillExpert?.addEventListener("click", () => setDifficulty("expert"));
+  setDifficulty("easy");
+
   const TASKS = [
     {
       name:"Zylinder mit Kegel (wie ein Turm)",
       text:"Baue einen zusammengesetzten Körper aus einem Zylinder und einem Kegel: r=2, h(Zyl)=5, h(Kegel)=3. Setze den Kegel oben auf den Zylinder (gleicher Radius!).",
-      parts:[
-        {shape:"cylinder", r:2, h:5},
-        {shape:"cone", r:2, h:3}
-      ],
+      parts:[ {shape:"cylinder", r:2, h:5}, {shape:"cone", r:2, h:3} ],
       wantContacts:1,
       solution(){
         const r=2, h1=5, h2=3;
@@ -701,68 +639,9 @@ try{
       }
     },
     {
-      name:"Quader + Zylinder (Zylinder steht auf Quader)",
-      text:"Baue einen Quader a=4, b=4, h=2 und darauf einen Zylinder r=2, h=4. (Kreis passt genau auf die quadratische Fläche.)",
-      parts:[
-        {shape:"box", a:4, b:4, h:2},
-        {shape:"cylinder", r:2, h:4}
-      ],
-      wantContacts:0, // Snap ist hier nicht Kreis↔Quadrat, daher Aufgabenlogik akzeptiert ohne Kontakt; SuS können optisch zentrieren.
-      solution(){
-        const a=4,b=4,hq=2,r=2,hz=4;
-        const Vq=a*b*hq;
-        const Vz=Math.PI*r*r*hz;
-        const Oq=2*(a*b + a*hq + b*hq);
-        const Oz=2*Math.PI*r*(hz+r);
-        const V=Vq+Vz;
-        const O=Oq+Oz; // keine definierte Kontaktfläche (Kreis↔Quadrat) -> wir rechnen als "aufgesetzt" ohne Abzug
-        return [
-          "Volumen:",
-          `V(Quader)   = a·b·h = ${a}·${b}·${hq} = ${fmt1(Vq)}`,
-          `V(Zylinder) = π·r²·h = π·${r}²·${hz} = ${fmt1(Vz)}`,
-          `V(gesamt)   = ${fmt1(Vq)} + ${fmt1(Vz)} = ${fmt1(V)}`,
-          "",
-          "Oberfläche (hier ohne Kontakt-Abzug, weil Kreis≠Quadrat):",
-          `O(Quader)   = 2(ab+ah+bh) = 2(${a}·${b}+${a}·${hq}+${b}·${hq}) = ${fmt1(Oq)}`,
-          `O(Zylinder) = 2·π·r·(h+r) = 2·π·${r}·(${hz}+${r}) = ${fmt1(Oz)}`,
-          `O(gesamt)   = ${fmt1(Oq)} + ${fmt1(Oz)} = ${fmt1(O)}`
-        ].join("\n");
-      }
-    },
-    {
-      name:"Würfel + Würfel (zusammengesetzter Block)",
-      text:"Baue zwei Würfel mit Kantenlänge 3 und snap sie an einer ganzen Seitenfläche zusammen (wie ein Doppelwürfel).",
-      parts:[
-        {shape:"box", a:3, b:3, h:3},
-        {shape:"box", a:3, b:3, h:3}
-      ],
-      wantContacts:1,
-      solution(){
-        const a=3;
-        const V1=a*a*a;
-        const O1=6*a*a;
-        const A=a*a;
-        const V=2*V1;
-        const O=(2*O1) - 2*A;
-        return [
-          "Volumen:",
-          `V(Würfel)   = a³ = ${a}³ = ${fmt1(V1)}`,
-          `V(gesamt)   = 2·${fmt1(V1)} = ${fmt1(V)}`,
-          "",
-          "Oberfläche:",
-          `O(Würfel)   = 6·a² = 6·${a}² = ${fmt1(O1)}`,
-          `Kontaktfläche A = a² = ${a}² = ${fmt1(A)}`,
-          `O(gesamt)   = 2·O(Würfel) − 2·A = 2·${fmt1(O1)} − 2·${fmt1(A)} = ${fmt1(O)}`
-        ].join("\n");
-      }
-    },
-    {
       name:"Quader + Pyramide (Dach)",
       text:"Baue einen Quader a=4, b=4, h=3 und setze darauf eine Pyramide mit Grundkante a=4 und Höhe h=3 (Quadrat passt genau).",
-      parts:[
-        {shape:"box", a:4, b:4, h:3},
-        {shape:"pyramid", a:4, h:3}
-      ],
+      parts:[ {shape:"box", a:4, b:4, h:3}, {shape:"pyramid", a:4, h:3} ],
       wantContacts:1,
       solution(){
         const a=4,hq=3,hp=3;
@@ -788,6 +667,30 @@ try{
           `O(gesamt)   = (OQ + OP) − 2·A = (${fmt1(Oq)} + ${fmt1(Op)}) − 2·${fmt1(A)} = ${fmt1(O)}`
         ].join("\n");
       }
+    },
+    {
+      name:"Würfel + Würfel (zusammengesetzter Block)",
+      text:"Baue zwei Würfel mit Kantenlänge 3 und snap sie an einer ganzen Seitenfläche zusammen (wie ein Doppelwürfel).",
+      parts:[ {shape:"box", a:3, b:3, h:3}, {shape:"box", a:3, b:3, h:3} ],
+      wantContacts:1,
+      solution(){
+        const a=3;
+        const V1=a*a*a;
+        const O1=6*a*a;
+        const A=a*a;
+        const V=2*V1;
+        const O=(2*O1) - 2*A;
+        return [
+          "Volumen:",
+          `V(Würfel)   = a³ = ${a}³ = ${fmt1(V1)}`,
+          `V(gesamt)   = 2·${fmt1(V1)} = ${fmt1(V)}`,
+          "",
+          "Oberfläche:",
+          `O(Würfel)   = 6·a² = 6·${a}² = ${fmt1(O1)}`,
+          `Kontaktfläche A = a² = ${a}² = ${fmt1(A)}`,
+          `O(gesamt)   = 2·O(Würfel) − 2·A = 2·${fmt1(O1)} − 2·${fmt1(A)} = ${fmt1(O)}`
+        ].join("\n");
+      }
     }
   ];
 
@@ -802,7 +705,6 @@ try{
     if(s==="pyramid") return `pyr:${round1(p.a)}:${round1(p.h)}`;
     return "x";
   }
-
   function taskPartSignature(part){
     if(part.shape==="box") return `box:${round1(part.a)}:${round1(part.b)}:${round1(part.h)}`;
     if(part.shape==="cylinder") return `cyl:${round1(part.r)}:${round1(part.h)}`;
@@ -810,7 +712,6 @@ try{
     if(part.shape==="pyramid") return `pyr:${round1(part.a)}:${round1(part.h)}`;
     return "x";
   }
-
   function multisetMatch(want, have){
     const m = new Map();
     for(const w of want){
@@ -821,12 +722,11 @@ try{
       const k = partsSignature(h);
       m.set(k, (m.get(k)||0)-1);
     }
-    for(const [k,v] of m.entries()){
+    for(const [,v] of m.entries()){
       if(v!==0) return false;
     }
     return true;
   }
-
   function countContacts(){
     let contact = 0;
     for(let i=0;i<objects.length;i++){
@@ -839,7 +739,11 @@ try{
 
   btnNewTask.addEventListener("click", () => {
     setMode("task");
-    currentTask = TASKS[Math.floor(Math.random()*TASKS.length)];
+    const pool = (difficulty === "easy")
+      ? TASKS.filter(t => t.name.startsWith("Zylinder mit Kegel") || t.name.startsWith("Quader + Pyramide"))
+      : TASKS;
+
+    currentTask = pool[Math.floor(Math.random()*pool.length)];
     taskText.textContent = currentTask.text;
     solText.textContent = currentTask.solution();
     solBox.style.display = "none";
@@ -864,24 +768,15 @@ try{
       return;
     }
 
-    // 1) Bauteile stimmen?
     const okParts = multisetMatch(currentTask.parts, objects);
-
-    // 2) Kontakte (nur dort, wo wir echte Face-Kontakte erwarten)
     const contacts = countContacts();
     const okContacts = (currentTask.wantContacts===0) ? true : (contacts >= currentTask.wantContacts);
 
-    // 3) Werte berechnen
     const built = calcComposite();
     const Vb = round1(built.V);
     const Ob = round1(built.O);
 
-    // Zielwerte aus Lösung: wir parsen die letzte Zeile nicht, sondern rechnen hier nochmal exakt aus parts + Kontakte,
-    // weil Aufgaben klein sind:
-    // -> Wir approximieren "expected" durch: Bauteile nach Task-Formeln + (falls wantContacts>0) Kontakt-Abzüge durch tatsächliche Kontakte.
-    // In der Praxis: Wenn Teile korrekt gesnappt sind, passt das.
     let expectedV=0, expectedO=0;
-    // Build dummy computations from task parts
     for(const prt of currentTask.parts){
       if(prt.shape==="box"){
         expectedV += prt.a*prt.b*prt.h;
@@ -902,7 +797,6 @@ try{
         expectedO += (prt.a*prt.a) + 2*prt.a*sLen;
       }
     }
-    // subtract contact areas from actual build if we expect at least one contact
     if(currentTask.wantContacts > 0){
       let contactArea = 0;
       for(let i=0;i<objects.length;i++){
@@ -930,10 +824,8 @@ try{
     }
   });
 
-  // ---------- start objects ----------
-  addObject(createMeshFromUI()); // proof of life
+  addObject(createMeshFromUI());
 
-  // ---------- Resize + animate ----------
   function resize(){
     const w = mount.clientWidth;
     const h = mount.clientHeight;
