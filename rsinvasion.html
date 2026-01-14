@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HoS · Satz-Invaders Neon (Deck: 150 Sätze, keine Wiederholung)</title>
+  <title>HoS · Satz-Invaders</title>
   <style>
     :root{
       --ink:#e7eefc; --muted:#b8c2dd; --line:rgba(255,255,255,.14);
-      --shadow:0 20px 70px rgba(0,0,0,.45);
-      --accent:#66ccff; --accent2:#7c3aed; --good:#9affc8; --bad:#ff7b7b;
+      --shadow:0 24px 80px rgba(0,0,0,.50);
+      --accent:#66ccff; --accent2:#7c3aed; --accent3:#22c55e;
+      --good:#9affc8; --bad:#ff7b7b;
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
@@ -121,7 +122,7 @@
         <span>Lives: <b id="lives">3</b></span>
         <span>Level: <b id="level">1</b></span>
         <span>Fails: <b id="fails">0</b></span>
-        <span>Deck: <b id="deckLeft">150</b> übrig</span>
+        <span>Deck: <b id="deckLeft">–</b> übrig</span>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="btn" id="resetBtn">🔁 Neustart</button>
@@ -131,7 +132,7 @@
     <div class="bottom">
       <div class="card">
         <div class="title">
-          <h1>Schieße das falsche Wort → Lücke → durchfliegen (keine Satz-Wiederholung)</h1>
+          <h1>Schieße das falsche Wort → Lücke → durchfliegen (Dobl · Graz · Herr Holzer)</h1>
           <div class="pill" style="padding:8px 10px; font-size:12px;">
             <span class="kbd">←</span>/<span class="kbd">→</span> oder <span class="kbd">A</span>/<span class="kbd">D</span>
             · <span class="kbd">SPACE</span> schießen
@@ -148,8 +149,8 @@
   <div class="overlay" id="overlay">
     <div class="panel">
       <div class="panelHead">
-        <span class="badge">HoS · Deutsch · Rechtschreibung & Groß/Klein & Grammatik</span>
-        <span class="badge">Deck-System ✅ keine Wiederholung</span>
+        <span class="badge">HoS · Deutsch </span>
+        <span class="badge">Neon-Optik ✨ · Deck-System ✅</span>
       </div>
       <h2>Bereit? 😄</h2>
       <p>
@@ -158,7 +159,7 @@
       </p>
       <div class="grid2">
         <div class="note">
-          <b>Fehlerarten (Mix)</b><br>
+          <b>Fehlerarten</b><br>
           Groß/Klein · dass/das · seit/seid · ie/i · ß/ss · Doppelkonsonant · Dehnungs-h · typische SuS-Fehler
         </div>
         <div class="note">
@@ -177,182 +178,136 @@
 
   <script>
     // ==========================================================
-    // 1) Deck: 150 fertige "Fehl-Sätze" + falschToken + Fehlerart
-    //    -> keine Wiederholung, bis Deck leer ist
+    // Lokale Sätze (mehr!) + Klassiker
     // ==========================================================
     const DECK = [
-      // dass/das
+      // --- Lokal (Dobl/Graz/Herr Holzer) ---
+      {type:"dass/das", s:"Herr Holzer sagt, das wir heute schneller starten.", wrong:"das"},
+      {type:"dass/das", s:"Herr Holzer meint, das ihr das schon könnt.", wrong:"das"},
+      {type:"dass/das", s:"In Dobl merkt man, das der Bus manchmal spät ist.", wrong:"das"},
+      {type:"dass/das", s:"In Graz hört man, das die Straßenbahn oft voll ist.", wrong:"das"},
+      {type:"dass/das", s:"Gut, das wir in Dobl so schnell arbeiten.", wrong:"das"},
+      {type:"dass/das", s:"Schön, das ihr in Graz so motiviert seid.", wrong:"das"},
+
+      {type:"seit/seid", s:"Wir üben seid dem Morgen für die Schularbeit.", wrong:"seid"},
+      {type:"seit/seid", s:"Seid der Pause sind alle konzentrierter.", wrong:"Seid"},
+      {type:"seit/seid", s:"Herr Holzer wartet seid zehn Minuten auf Ruhe.", wrong:"seid"},
+      {type:"seit/seid", s:"Seid letzter Woche reden wir über Märchen.", wrong:"Seid"},
+
+      {type:"Groß/Klein", s:"In graz regnet es manchmal plötzlich.", wrong:"graz"},
+      {type:"Groß/Klein", s:"Wir fahren morgen nach graz zur Exkursion.", wrong:"graz"},
+      {type:"Groß/Klein", s:"In Dobl ist der herbst oft nebelig.", wrong:"herbst"},
+      {type:"Groß/Klein", s:"Der schulhof in Dobl ist heute rutschig.", wrong:"schulhof"},
+      {type:"Groß/Klein", s:"Herr Holzer erklärt die Regel im unterricht.", wrong:"unterricht"},
+      {type:"Groß/Klein", s:"Bitte arbeitet Vorsichtig mit den Geräten.", wrong:"Vorsichtig"},
+      {type:"Groß/Klein", s:"Im test schreibt ihr Besonders sauber.", wrong:"Besonders"},
+      {type:"Groß/Klein", s:"Nach der Stunde gehen wir Gemeinsam zur Tür.", wrong:"Gemeinsam"},
+
+      {type:"ie/i", s:"Herr Holzer giebt uns noch einen Versuch.", wrong:"giebt"},
+      {type:"ie/i", s:"Der Direktor giebt in Graz eine Ansage.", wrong:"giebt"},
+      {type:"ie/i", s:"Jemand giebt im Bus nach Graz seinen Sitzplatz frei.", wrong:"giebt"},
+
+      {type:"Rechtschreibung", s:"Die Maschiene im Werkraum in Dobl ist kaputt.", wrong:"Maschiene"},
+      {type:"Rechtschreibung", s:"Wir treffen uns vieleicht nach der Stunde in Graz.", wrong:"vieleicht"},
+      {type:"Rechtschreibung", s:"Herr Holzer ist entäuscht, wenn niemand mitarbeitet.", wrong:"entäuscht"},
+      {type:"Rechtschreibung", s:"Bitte schreibt die Beispiele seperat in euer Heft.", wrong:"seperat"},
+      {type:"Rechtschreibung", s:"In Graz passiert das nähmlich ständig im Verkehr.", wrong:"nähmlich"},
+      {type:"Rechtschreibung", s:"Die Aufgabe ist ausergewöhnlich schwer, sagt Herr Holzer.", wrong:"ausergewöhnlich"},
+      {type:"Rechtschreibung", s:"Ich bin vieleicht zu spät nach Dobl zurück gekommen.", wrong:"vieleicht"},
+
+      {type:"ß/ss", s:"Ich weiss, dass Dobl in der Steiermark liegt.", wrong:"weiss"},
+      {type:"ß/ss", s:"In Graz ist es grossartig, wenn die Sonne scheint.", wrong:"grossartig"},
+      {type:"ß/ss", s:"Das heisst, wir treffen uns vor dem Raum.", wrong:"heisst"},
+
+      {type:"Doppelkonsonant", s:"Herr Holzer findet die Aufgabe interesant.", wrong:"interesant"},
+      {type:"Doppelkonsonant", s:"Wir sameln Argumente für die Diskussion.", wrong:"sameln"},
+      {type:"Doppelkonsonant", s:"Im Klassenzimmer ist es zimlich laut.", wrong:"zimlich"},
+      {type:"Doppelkonsonant", s:"In Graz ist es heute witerhin kalt.", wrong:"witerhin"},
+
+      {type:"Dehnungs-h", s:"Herr Holzer empfielt euch dieses Buch.", wrong:"empfielt"},
+
+      // --- Klassiker / Mix ---
       {type:"dass/das", s:"Ich glaube, das du heute früher kommst.", wrong:"das"},
       {type:"dass/das", s:"Schön, das ihr heute Zeit habt.", wrong:"das"},
-      {type:"dass/das", s:"Er sagt, das er später anruft.", wrong:"das"},
-      {type:"dass/das", s:"Gut, das wir darüber sprechen.", wrong:"das"},
-      {type:"dass/das", s:"Ich hoffe, das alles klappt.", wrong:"das"},
-      {type:"dass/das", s:"Sie merkt, das du nervös bist.", wrong:"das"},
-      {type:"dass/das", s:"Es stimmt, das du recht hast.", wrong:"das"},
-      {type:"dass/das", s:"Komisch, das niemand fragt.", wrong:"das"},
-
-      // seit/seid
       {type:"seit/seid", s:"Ich warte seid gestern auf deine Antwort.", wrong:"seid"},
-      {type:"seit/seid", s:"Wir kennen uns seid zwei Jahren.", wrong:"seid"},
-      {type:"seit/seid", s:"Seid Montag regnet es fast jeden Tag.", wrong:"Seid"},
-      {type:"seit/seid", s:"Ich wohne seid 2019 in Wien.", wrong:"seid"},
-      {type:"seit/seid", s:"Er trainiert seid Wochen für das Turnier.", wrong:"seid"},
-      {type:"seit/seid", s:"Wir lernen seid der Früh in der Schule.", wrong:"seid"},
-
-      // Groß/Klein (Nomen klein)
       {type:"Groß/Klein", s:"Im winter tragen viele Menschen warme Jacken.", wrong:"winter"},
-      {type:"Groß/Klein", s:"Die maschine steht heute in der Werkstatt.", wrong:"maschine"},
       {type:"Groß/Klein", s:"Am montag schreibe ich eine Schularbeit.", wrong:"montag"},
-      {type:"Groß/Klein", s:"Im april beginnt oft das schöne Wetter.", wrong:"april"},
-      {type:"Groß/Klein", s:"Der hund läuft über die Wiese.", wrong:"hund"},
-      {type:"Groß/Klein", s:"Das mädchen lacht laut.", wrong:"mädchen"},
-      {type:"Groß/Klein", s:"Der lehrer erklärt die Aufgabe.", wrong:"lehrer"},
-      {type:"Groß/Klein", s:"Im sommer fahren wir ans Meer.", wrong:"sommer"},
-      {type:"Groß/Klein", s:"Der schüler schreibt sehr ordentlich.", wrong:"schüler"},
-      {type:"Groß/Klein", s:"Die stadt ist heute voller Menschen.", wrong:"stadt"},
-
-      // Groß/Klein (Adverb groß)
-      {type:"Groß/Klein", s:"Wir sind Morgen um acht Uhr fertig.", wrong:"Morgen"},
-      {type:"Groß/Klein", s:"Gestern ging ich Schnell nach Hause, weil es regnete.", wrong:"Schnell"},
-      {type:"Groß/Klein", s:"Bitte stelle die Tasse Vorsichtig auf den Tisch.", wrong:"Vorsichtig"},
-      {type:"Groß/Klein", s:"Heute bin ich Besonders motiviert.", wrong:"Besonders"},
-      {type:"Groß/Klein", s:"Er arbeitet Sehr konzentriert.", wrong:"Sehr"},
-
-      // ie/i
       {type:"ie/i", s:"Er giebt mir jeden Tag eine neue Aufgabe.", wrong:"giebt"},
-      {type:"ie/i", s:"Sie schiebt das Fahrrad, weil es kaputt ist, aber er giebt Tipps.", wrong:"giebt"},
-      {type:"ie/i", s:"Der Lehrer giebt uns eine zweite Chance.", wrong:"giebt"},
-      {type:"ie/i", s:"Jemand giebt immer einen Kommentar ab.", wrong:"giebt"},
-
-      // typische Rechtschreibung
-      {type:"Rechtschreibung", s:"Die Maschiene ist sehr laut, aber zuverlässig.", wrong:"Maschiene"},
       {type:"Rechtschreibung", s:"Ich habe dich vieleicht falsch verstanden.", wrong:"vieleicht"},
-      {type:"Rechtschreibung", s:"Er war entäuscht von dem Ergebnis.", wrong:"entäuscht"},
-      {type:"Rechtschreibung", s:"Sie will das Problem wiederspiegeln, aber es gelingt nicht.", wrong:"wiederspiegeln"},
-      {type:"Rechtschreibung", s:"Bitte schreibe die Wörter seperat auf.", wrong:"seperat"},
-      {type:"Rechtschreibung", s:"Er interesiert sich sehr für Geschichte.", wrong:"interesiert"},
-      {type:"Rechtschreibung", s:"Das ist ein ausergewöhnlicher Tag.", wrong:"ausergewöhnlicher"},
-      {type:"Rechtschreibung", s:"Ich habe das nicht so gemeind.", wrong:"gemeind"},
-      {type:"Rechtschreibung", s:"Sie hat das Paket entgegengenommen und sofort ausgepackt.", wrong:"entgegengenommen"}, // Trick? -> hier korrekt, aber wir wollen falsch: "entgegen genommen"
-      // ersetzen wir durch echte falsche Variante:
-      {type:"Rechtschreibung", s:"Sie hat das Paket entgegen genommen und sofort ausgepackt.", wrong:"entgegen"},
-
-      // ß/ss
-      {type:"ß/ss", s:"Er ass das Eis sehr langsam.", wrong:"ass"},
-      {type:"ß/ss", s:"Das heisst nicht, das du recht hast.", wrong:"heisst"},
-      {type:"ß/ss", s:"Ich weiss nicht, ob das stimmt.", wrong:"weiss"},
-      {type:"ß/ss", s:"Sie grüsst ihre Nachbarn freundlich.", wrong:"grüsst"}, // korrekt wäre "grüßt"
-      {type:"ß/ss", s:"Sie grusst ihre Nachbarn freundlich.", wrong:"grusst"}, // besser: falsch ohne Umlaut, aber ok
-      {type:"ß/ss", s:"Er mußt heute länger bleiben.", wrong:"mußt"}, // müsste "musst"
       {type:"ß/ss", s:"Du musst nicht so gross schreiben.", wrong:"gross"},
-
-      // Doppelkonsonant / Dehnungs-h / sonstige Klassiker
-      {type:"Doppelkonsonant", s:"Wir sameln Ideen für den Text.", wrong:"sameln"},
       {type:"Doppelkonsonant", s:"Ich bin gespant auf die Lösung.", wrong:"gespant"},
-      {type:"Doppelkonsonant", s:"Er kommt bestimmt gleich.", wrong:"kommt"}, // korrekt; raus
-      // ersetzen:
-      {type:"Doppelkonsonant", s:"Er komt bestimmt gleich.", wrong:"komt"},
-      {type:"Doppelkonsonant", s:"Sie findet die Aufgabe interesant.", wrong:"interesant"},
-      {type:"Doppelkonsonant", s:"Wir warten villeicht noch fünf Minuten.", wrong:"villeicht"},
-      {type:"Doppelkonsonant", s:"Das ist eine interesannte Idee.", wrong:"interesannte"},
-
-      {type:"Dehnungs-h", s:"Er empfielt dir die Übung.", wrong:"empfielt"},
-      {type:"Dehnungs-h", s:"Sie sieht die Gefahr und flieht, aber er fleht um Hilfe.", wrong:"fleht"}, // korrekt; raus
       {type:"Dehnungs-h", s:"Sie sieht die Gefahr und fliht sofort.", wrong:"fliht"},
-
-      // seid/seit + dass/das Kombinationen vermeiden: immer genau 1 Fehler
-      {type:"seit/seid", s:"Seid kurzem lerne ich jeden Tag Vokabeln.", wrong:"Seid"},
-      {type:"dass/das", s:"Ich finde, das Lernen manchmal anstrengend ist.", wrong:"das"},
-      {type:"Groß/Klein", s:"Wir treffen uns im herbst im Park.", wrong:"herbst"},
-      {type:"Rechtschreibung", s:"Das passiert nähmlich sehr oft.", wrong:"nähmlich"},
-      {type:"Rechtschreibung", s:"Ich habe mich vertan, das war peinlich.", wrong:"vertan"}, // korrekt; raus
-      {type:"Rechtschreibung", s:"Ich habe mich vertan, das war peinlich.", wrong:"das"}, // dann dass/das – aber Satz braucht dass? eigentlich "das" als Demonstrativ ok. Also raus.
-      // ersetzen:
-      {type:"Rechtschreibung", s:"Ich habe mich vertan, das war echt peinlich.", wrong:"vertan"}, // wieder korrekt; raus
-      {type:"Rechtschreibung", s:"Ich habe mich vertan, das war echt peinlich.", wrong:"peinlich"}, // korrekt; raus
-      // besser ersetzen:
-      {type:"Rechtschreibung", s:"Ich habe mich vertan, das war echt peinlich.", wrong:"vertan"}, // entfernen komplett
     ];
 
-    // DECK oben enthält ein paar "schlechte" Einträge (Kommentar), die wir jetzt sauber filtern:
     function normalizeDeck(raw){
-      // entferne offensichtlich "Platzhalter/kommentierte" Einträge, indem wir nur Items behalten,
-      // deren wrong wirklich im Satz vorkommt (als Wort/Teilwort). So bleibt das Spiel stabil.
       return raw.filter(x => x && x.s && x.wrong && x.s.includes(x.wrong));
     }
+    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
 
-    // Wir ergänzen hier programmgesteuert zusätzliche Sätze, damit wir sicher >150 kommen,
-    // ohne alles manuell schreiben zu müssen:
+    // Generator: viele Varianten, lokal eingefärbt
     function generateMore(){
       const out = [];
-
-      // Vorlagen (korrekt) + falsches Token
       const gen = [
         {type:"dass/das", correct:"Ich weiß, dass du das kannst.", from:"dass", to:"das"},
         {type:"dass/das", correct:"Es freut mich, dass du da bist.", from:"dass", to:"das"},
-        {type:"dass/das", correct:"Er hofft, dass alles gut wird.", from:"dass", to:"das"},
         {type:"seit/seid", correct:"Ich lerne seit drei Stunden.", from:"seit", to:"seid"},
         {type:"seit/seid", correct:"Seit Tagen ist es kalt.", from:"Seit", to:"Seid"},
         {type:"Groß/Klein", correct:"Im Winter ist es früh dunkel.", from:"Winter", to:"winter"},
         {type:"Groß/Klein", correct:"Der Montag ist stressig.", from:"Montag", to:"montag"},
         {type:"Groß/Klein", correct:"Bitte lies den Text sorgfältig.", from:"sorgfältig", to:"Sorgfältig"},
         {type:"ie/i", correct:"Er gibt ihr das Heft zurück.", from:"gibt", to:"giebt"},
-        {type:"Rechtschreibung", correct:"Ich verstehe das nicht.", from:"verstehe", to:"ferstehe"},
         {type:"Rechtschreibung", correct:"Das ist wirklich interessant.", from:"interessant", to:"interesant"},
-        {type:"Rechtschreibung", correct:"Wir brauchen eine Alternative.", from:"Alternative", to:"Alternatieve"},
+        {type:"Rechtschreibung", correct:"Das ist nämlich wichtig.", from:"nämlich", to:"nähmlich"},
+        {type:"Rechtschreibung", correct:"Bitte schreibe die Wörter separat auf.", from:"separat", to:"seperat"},
         {type:"ß/ss", correct:"Ich weiß nicht, ob das stimmt.", from:"weiß", to:"weiss"},
         {type:"ß/ss", correct:"Das heißt, wir beginnen später.", from:"heißt", to:"heisst"},
         {type:"Doppelkonsonant", correct:"Wir sammeln viele Beispiele.", from:"sammeln", to:"sameln"},
         {type:"Doppelkonsonant", correct:"Das ist eine spannende Frage.", from:"spannende", to:"spanende"},
         {type:"Dehnungs-h", correct:"Er empfiehlt dir das Buch.", from:"empfiehlt", to:"empfielt"},
-        {type:"Rechtschreibung", correct:"Das ist nämlich wichtig.", from:"nämlich", to:"nähmlich"},
-        {type:"Rechtschreibung", correct:"Ich bin überrascht.", from:"überrascht", to:"überascht"},
-        {type:"Rechtschreibung", correct:"Sie hat sich bemüht.", from:"bemüht", to:"bemühtet"} // absichtlich falsch
       ];
 
-      const subjects = ["Der Schüler", "Die Schülerin", "Der Lehrer", "Die Lehrerin", "Mein Freund", "Meine Freundin", "Unser Team", "Die Klasse"];
-      const verbs = ["meint", "sagt", "denkt", "glaubt", "findet", "behauptet", "merkt"];
-      const tails = ["im Unterricht.", "heute.", "gerade.", "in der Pause.", "nach der Stunde.", "bei der Aufgabe.", "im Test."];
+      const subjects = [
+        "Herr Holzer",
+        "Die Klasse",
+        "Ein Schüler aus Dobl",
+        "Eine Schülerin aus Graz",
+        "Die Gruppe",
+        "Unser Team",
+        "Wir alle"
+      ];
+      const verbs = ["meint", "sagt", "denkt", "glaubt", "findet", "behauptet", "merkt", "schreibt"];
+      const tails = [
+        "in Dobl.",
+        "in Graz.",
+        "im Unterricht.",
+        "heute.",
+        "gerade.",
+        "nach der Stunde.",
+        "vor der Schularbeit.",
+        "in der Pause."
+      ];
 
-      // Kombiniere Vorlagen in Varianten
-      for(let i=0;i<110;i++){
+      for(let i=0;i<220;i++){
         const b = gen[i % gen.length];
         const subj = subjects[i % subjects.length];
         const v = verbs[(i*3) % verbs.length];
         const tail = tails[(i*5) % tails.length];
 
-        // Satz bauen, dann falschen Token einsetzen
-        let correct = `${subj} ${v}, ${b.correct.replace(/\.$/, "")} ${tail}`;
-        // ersetze nur erstes Vorkommen (Word boundary)
+        let correct = `${subj} ${v}, ${b.correct.replace(/\\.$/, "")} ${tail}`;
         const re = new RegExp(`\\b${escapeRegExp(b.from)}\\b`);
         const wrongS = correct.replace(re, b.to);
-        const wrongTok = b.to;
-
-        out.push({type:b.type, s: wrongS, wrong: wrongTok});
+        out.push({type:b.type, s: wrongS, wrong: b.to});
       }
-
       return out;
     }
 
-    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
-
-    // Build final deck (>=150)
+    // Final deck
     let deck = normalizeDeck(DECK).concat(generateMore());
-
-    // Deduplicate by sentence string (just in case)
     const seen = new Set();
-    deck = deck.filter(x => {
-      if(seen.has(x.s)) return false;
-      seen.add(x.s);
-      return true;
-    });
-
-    // Ensure at least 150
-    // (In practice we’ll have >150 after generateMore)
-    const DECK_SIZE = deck.length;
+    deck = deck.filter(x => { if(seen.has(x.s)) return false; seen.add(x.s); return true; });
 
     // ==========================================================
-    // 2) Helpers + UI
+    // UI / helpers
     // ==========================================================
     const $ = (q)=>document.querySelector(q);
     const canvas = $("#game");
@@ -394,13 +349,9 @@
 
     function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 
-    // deterministic-ish RNG for consistent feel
+    // RNG
     let rngSeed = Math.random()*1e9;
-    function rand(){
-      rngSeed = (rngSeed * 1664525 + 1013904223) % 4294967296;
-      return rngSeed / 4294967296;
-    }
-
+    function rand(){ rngSeed = (rngSeed * 1664525 + 1013904223) % 4294967296; return rngSeed / 4294967296; }
     function shuffle(arr){
       for(let i=arr.length-1;i>0;i--){
         const j = Math.floor(rand()*(i+1));
@@ -410,55 +361,50 @@
     }
 
     // ==========================================================
-    // 3) Game State
+    // Game state
     // ==========================================================
     let practice = false;
-    let score = 0;
-    let lives = 3;
-    let level = 1;
-    let failsThisSentence = 0;
-    let solvedCount = 0;
+    let score = 0, lives = 3, level = 1, failsThisSentence = 0, solvedCount = 0;
 
-    // the deck pointer
     let deckIndex = 0;
     let deckOrder = [];
 
     let keys = { left:false, right:false, up:false, space:false };
     let bullets = [];
     let particles = [];
-    let stars = [];
+    let starsFar = [];
+    let starsNear = [];
+    let trails = [];
+
+    // screenshake
+    let shakeT = 0;
+    let shakeAmp = 0;
 
     const ship = {
       x: innerWidth/2,
       y: innerHeight - 92,
-      w: 74,
-      h: 32,
+      w: 76,
+      h: 34,
       vx: 0,
-      speed: 720,
-      boost: 580
+      speed: 740,
+      boost: 600
     };
 
-    const BASE_WORD_FONT = 46;
+    const BASE_WORD_FONT = 48;
 
     const barrierCfg = {
       y0: 120,
-      baseVy: 52,
+      baseVy: 54,
       padX: 22,
       wordPad: 18,
-      wordHeight: 74,
-      maxW: 1280
+      wordHeight: 78,
+      maxW: 1320
     };
 
     let barrier = null;
 
-    function tokenize(s){
-      return s.split(/\s+/).filter(Boolean);
-    }
-
-    function stripPunct(s){
-      return s.replace(/[.,!?;:()"„“»«]/g, "");
-    }
-
+    function tokenize(s){ return s.split(/\\s+/).filter(Boolean); }
+    function stripPunct(s){ return s.replace(/[.,!?;:()"„“»«]/g, ""); }
     function measureWord(w, fontPx){
       ctx.font = `900 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
       return ctx.measureText(w).width;
@@ -472,7 +418,6 @@
 
     function nextCard(){
       if(deckIndex >= deckOrder.length){
-        // deck empty -> reshuffle (but we tell them)
         flash("Deck leer → neue Runde gemischt!", true);
         initDeck();
       }
@@ -486,7 +431,6 @@
       const task = nextCard();
       const tokens = tokenize(task.s);
 
-      // find wrong token index (first match, punctuation-stripped)
       let wrongIndex = tokens.findIndex(t => stripPunct(t) === task.wrong);
       if(wrongIndex < 0) wrongIndex = Math.max(0, Math.floor(tokens.length/2));
 
@@ -497,12 +441,10 @@
         x:0, y:0, w:0, h: barrierCfg.wordHeight
       }));
 
-      // scaling
-      const baseFont = BASE_WORD_FONT;
       let total = barrierCfg.padX*2 - barrierCfg.wordPad;
       for(const w of words){
-        const mw = measureWord(w.text, baseFont);
-        w.w = mw + 30;
+        const mw = measureWord(w.text, BASE_WORD_FONT);
+        w.w = mw + 32;
         total += w.w + barrierCfg.wordPad;
       }
       const maxW = Math.min(innerWidth - 40, barrierCfg.maxW);
@@ -525,19 +467,17 @@
         gapX: null,
         gapW: null,
         wrongRemoved: false,
-        // movement (sway + bob)
         phase: rand()*Math.PI*2,
-        swayAmp: clamp(22 + level*4, 22, 70),
+        swayAmp: clamp(26 + level*4, 26, 80),
         swaySpeed: 0.55 + level*0.06,
-        bobAmp: clamp(6 + level*0.8, 6, 16),
+        bobAmp: clamp(8 + level*0.8, 8, 18),
         bobSpeed: 0.85,
         _ox: 0, _oy: 0
       };
 
       layoutBarrier(0,0);
-
       failsThisSentence = 0;
-      ui.hint.innerHTML = `Fehlerart: <b>${task.type}</b> · Genau <b>1 Wort</b> ist falsch.`;
+      ui.hint.innerHTML = `Fehlerart: <b>${task.type}</b> · Extra für <b>Dobl</b> & <b>Graz</b> 😄`;
       updateUI();
       flash("Neuer Satz!", true);
     }
@@ -565,46 +505,46 @@
       ui.lives.textContent = String(lives);
       ui.level.textContent = String(level);
       ui.fails.textContent = String(failsThisSentence);
-
       const pct = Math.round(((solvedCount % 30) / 30) * 100);
       ui.progress.style.width = pct + "%";
     }
 
     // ==========================================================
-    // 4) Visual polish: stars + particles
+    // Visuals
     // ==========================================================
     function initStars(){
-      stars = [];
-      const n = Math.round(clamp(innerWidth/9, 90, 180));
-      for(let i=0;i<n;i++){
-        stars.push({
-          x: rand()*innerWidth,
-          y: rand()*innerHeight,
-          r: rand()*1.4 + 0.3,
-          v: rand()*22 + 12,
-          a: rand()*0.25 + 0.05
-        });
+      starsFar = [];
+      starsNear = [];
+      const nFar = Math.round(clamp(innerWidth/10, 90, 170));
+      const nNear = Math.round(clamp(innerWidth/20, 50, 110));
+      for(let i=0;i<nFar;i++){
+        starsFar.push({ x: rand()*innerWidth, y: rand()*innerHeight, r: rand()*1.2+0.2, v: rand()*18+8, a: rand()*0.18+0.04 });
+      }
+      for(let i=0;i<nNear;i++){
+        starsNear.push({ x: rand()*innerWidth, y: rand()*innerHeight, r: rand()*1.8+0.6, v: rand()*40+25, a: rand()*0.24+0.10 });
       }
     }
     initStars();
     addEventListener("resize", initStars);
 
     function spawnParticles(x,y, good=true){
-      for(let i=0;i<14;i++){
+      for(let i=0;i<18;i++){
         particles.push({
           x, y,
-          vx: (rand()-0.5)*260,
-          vy: (rand()-0.5)*260,
-          life: 0.55 + rand()*0.25,
-          max: 0.55 + rand()*0.25,
+          vx: (rand()-0.5)*320,
+          vy: (rand()-0.5)*320,
+          life: 0.55 + rand()*0.28,
+          max: 0.55 + rand()*0.28,
           good
         });
       }
     }
 
-    // ==========================================================
-    // 5) Drawing
-    // ==========================================================
+    function addTrail(x,y){
+      trails.push({ x, y, life: 0.30, max: 0.30 });
+      if(trails.length > 80) trails.shift();
+    }
+
     function rr(x,y,w,h,r){
       const rad = Math.min(r, w/2, h/2);
       ctx.beginPath();
@@ -616,62 +556,142 @@
       ctx.closePath();
     }
 
-    function drawBackground(dt){
+    function applyShake(dt){
+      if(shakeT > 0){
+        shakeT -= dt;
+        const a = Math.max(0, shakeT);
+        const s = shakeAmp * a;
+        const ox = (rand()-0.5)*2*s;
+        const oy = (rand()-0.5)*2*s;
+        ctx.translate(ox, oy);
+      }
+    }
+
+    function drawBackground(dt, t){
       const g = ctx.createLinearGradient(0,0,0,innerHeight);
       g.addColorStop(0, "rgba(7,10,18,1)");
       g.addColorStop(1, "rgba(4,7,12,1)");
       ctx.fillStyle = g;
       ctx.fillRect(0,0,innerWidth,innerHeight);
 
-      for(const s of stars){
+      // neon grid (subtle)
+      ctx.save();
+      ctx.globalAlpha = 0.10;
+      ctx.strokeStyle = "rgba(102,204,255,1)";
+      ctx.lineWidth = 1;
+      const gridY0 = innerHeight*0.60;
+      const step = 42;
+      const wob = Math.sin(t*0.8)*2;
+      for(let y=gridY0; y<innerHeight+step; y+=step){
+        ctx.beginPath();
+        ctx.moveTo(0, y + wob);
+        ctx.lineTo(innerWidth, y + wob);
+        ctx.stroke();
+      }
+      for(let x=0; x<innerWidth+step; x+=step){
+        ctx.beginPath();
+        ctx.moveTo(x + Math.sin(t*0.6)*2, gridY0);
+        ctx.lineTo(x + Math.sin(t*0.6)*2, innerHeight);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // far stars
+      for(const s of starsFar){
         s.y += s.v * dt;
         if(s.y > innerHeight + 10){ s.y = -10; s.x = rand()*innerWidth; }
         ctx.fillStyle = `rgba(231,238,252,${s.a})`;
         ctx.fillRect(s.x, s.y, s.r, s.r);
       }
 
+      // nebula blobs
       ctx.save();
       ctx.globalAlpha = 0.18;
       ctx.fillStyle = "rgba(124,58,237,1)";
-      ctx.beginPath(); ctx.ellipse(innerWidth*0.18, innerHeight*0.24, 220, 160, 0, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(innerWidth*0.18, innerHeight*0.24, 240, 170, 0, 0, Math.PI*2); ctx.fill();
       ctx.fillStyle = "rgba(102,204,255,1)";
-      ctx.beginPath(); ctx.ellipse(innerWidth*0.82, innerHeight*0.18, 250, 180, 0.2, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(innerWidth*0.82, innerHeight*0.18, 270, 190, 0.2, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(34,197,94,1)";
+      ctx.beginPath(); ctx.ellipse(innerWidth*0.55, innerHeight*0.86, 260, 210, -0.1, 0, Math.PI*2); ctx.fill();
       ctx.restore();
+
+      // near stars
+      for(const s of starsNear){
+        s.y += s.v * dt;
+        if(s.y > innerHeight + 12){ s.y = -12; s.x = rand()*innerWidth; }
+        ctx.fillStyle = `rgba(231,238,252,${s.a})`;
+        ctx.fillRect(s.x, s.y, s.r, s.r);
+      }
+
+      // vignette
+      ctx.save();
+      const vg = ctx.createRadialGradient(innerWidth/2, innerHeight/2, Math.min(innerWidth, innerHeight)*0.15,
+                                          innerWidth/2, innerHeight/2, Math.min(innerWidth, innerHeight)*0.75);
+      vg.addColorStop(0, "rgba(0,0,0,0)");
+      vg.addColorStop(1, "rgba(0,0,0,.45)");
+      ctx.fillStyle = vg;
+      ctx.fillRect(0,0,innerWidth,innerHeight);
+      ctx.restore();
+    }
+
+    function drawTrails(){
+      for(let i=trails.length-1;i>=0;i--){
+        const tr = trails[i];
+        tr.life -= 1/60;
+        const a = Math.max(0, tr.life / tr.max);
+        ctx.save();
+        ctx.globalAlpha = 0.45 * a;
+        ctx.fillStyle = "rgba(102,204,255,1)";
+        ctx.beginPath();
+        ctx.ellipse(tr.x, tr.y, 16*a, 28*a, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+        if(tr.life <= 0) trails.splice(i,1);
+      }
     }
 
     function drawShip(){
       const x = ship.x - ship.w/2;
       const y = ship.y - ship.h/2;
 
+      // engine glow
       ctx.save();
-      ctx.globalAlpha = 0.55;
-      ctx.fillStyle = "rgba(102,204,255,1)";
+      ctx.globalAlpha = 0.70;
+      const eg = ctx.createRadialGradient(ship.x, ship.y+28, 2, ship.x, ship.y+28, 34);
+      eg.addColorStop(0, "rgba(102,204,255,.90)");
+      eg.addColorStop(1, "rgba(102,204,255,0)");
+      ctx.fillStyle = eg;
       ctx.beginPath();
-      ctx.ellipse(ship.x, ship.y + 26, 18, 26, 0, 0, Math.PI*2);
+      ctx.ellipse(ship.x, ship.y + 28, 26, 34, 0, 0, Math.PI*2);
       ctx.fill();
       ctx.restore();
 
+      // soft plate
       ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,.45)";
-      ctx.shadowBlur = 22;
-      ctx.fillStyle = "rgba(255,255,255,.10)";
-      rr(x-10, y-10, ship.w+20, ship.h+26, 18);
+      ctx.shadowColor = "rgba(0,0,0,.55)";
+      ctx.shadowBlur = 26;
+      ctx.fillStyle = "rgba(255,255,255,.08)";
+      rr(x-12, y-12, ship.w+24, ship.h+30, 18);
       ctx.fill();
       ctx.restore();
 
+      // body gradient
       const grad = ctx.createLinearGradient(x, y, x+ship.w, y+ship.h);
-      grad.addColorStop(0, "rgba(124,58,237,.95)");
-      grad.addColorStop(1, "rgba(102,204,255,.85)");
+      grad.addColorStop(0, "rgba(124,58,237,.96)");
+      grad.addColorStop(0.55, "rgba(102,204,255,.90)");
+      grad.addColorStop(1, "rgba(34,197,94,.70)");
       ctx.fillStyle = grad;
       rr(x, y, ship.w, ship.h, 14);
       ctx.fill();
 
-      ctx.fillStyle = "rgba(231,238,252,.85)";
-      rr(ship.x-10, y-24, 20, 26, 11);
+      // nozzle
+      ctx.fillStyle = "rgba(231,238,252,.90)";
+      rr(ship.x-10, y-26, 20, 28, 11);
       ctx.fill();
 
-      ctx.fillStyle = "rgba(0,0,0,.32)";
-      rr(ship.x-22, y+7, 44, 14, 10);
+      // cockpit
+      ctx.fillStyle = "rgba(0,0,0,.30)";
+      rr(ship.x-24, y+8, 48, 14, 10);
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,.18)";
       ctx.lineWidth = 2;
@@ -712,7 +732,7 @@
         p.vy *= 0.92;
 
         ctx.save();
-        ctx.globalAlpha = 0.65 * a;
+        ctx.globalAlpha = 0.70 * a;
         ctx.fillStyle = p.good ? "rgba(154,255,200,1)" : "rgba(255,123,123,1)";
         ctx.fillRect(p.x, p.y, 3, 3);
         ctx.restore();
@@ -730,14 +750,21 @@
       const plateY = barrier.y - plateH/2 + barrier._oy;
 
       ctx.save();
-      ctx.shadowColor = "rgba(102,204,255,.22)";
-      ctx.shadowBlur = 28;
-      ctx.fillStyle = "rgba(0,0,0,.40)";
+      ctx.shadowColor = "rgba(102,204,255,.28)";
+      ctx.shadowBlur = 34;
+      ctx.fillStyle = "rgba(0,0,0,.42)";
       ctx.strokeStyle = "rgba(255,255,255,.14)";
       ctx.lineWidth = 2;
       rr(plateX, plateY, plateW, plateH, 22);
       ctx.fill();
       ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = "rgba(255,255,255,1)";
+      rr(plateX+10, plateY+8, plateW-20, plateH*0.28, 18);
+      ctx.fill();
       ctx.restore();
 
       const fontPx = Math.round(BASE_WORD_FONT * barrier.scale);
@@ -750,8 +777,8 @@
 
         ctx.save();
         ctx.shadowColor = "rgba(124,58,237,.22)";
-        ctx.shadowBlur = 16;
-        ctx.fillStyle = "rgba(0,0,0,.56)";
+        ctx.shadowBlur = 18;
+        ctx.fillStyle = "rgba(0,0,0,.58)";
         ctx.strokeStyle = "rgba(255,255,255,.22)";
         ctx.lineWidth = 3;
         rr(w.x, w.y - w.h/2, w.w, w.h, 16);
@@ -765,7 +792,7 @@
 
       if(barrier.wrongRemoved && barrier.gapX != null){
         ctx.save();
-        ctx.strokeStyle = "rgba(102,204,255,.45)";
+        ctx.strokeStyle = "rgba(102,204,255,.55)";
         ctx.setLineDash([10,8]);
         ctx.lineWidth = 3;
         rr(barrier.gapX, barrier.words[0].y - (barrierCfg.wordHeight*barrier.scale)/2, barrier.gapW, barrierCfg.wordHeight*barrier.scale, 16);
@@ -775,9 +802,12 @@
       }
     }
 
+    // hint pulse
     let hintPulse = { on:false, t:0, x:0, w:0 };
-    function drawHintPulse(){
+    function drawHintPulse(dt){
       if(!hintPulse.on || !barrier) return;
+      hintPulse.t += dt / 0.55;
+      if(hintPulse.t >= 1){ hintPulse.on = false; return; }
       const a = Math.max(0, Math.sin(hintPulse.t * Math.PI));
       const y = barrier.words[0].y - (barrierCfg.wordHeight*barrier.scale)/2;
       const h = barrierCfg.wordHeight*barrier.scale;
@@ -786,27 +816,36 @@
       ctx.globalAlpha = 0.45 * a;
       ctx.strokeStyle = "rgba(102,204,255,.95)";
       ctx.lineWidth = 10;
-      ctx.shadowColor = "rgba(102,204,255,.55)";
-      ctx.shadowBlur = 22;
+      ctx.shadowColor = "rgba(102,204,255,.60)";
+      ctx.shadowBlur = 24;
       rr(hintPulse.x, y, hintPulse.w, h, 16);
       ctx.stroke();
       ctx.restore();
     }
 
-    function draw(dt){
-      drawBackground(dt);
+    function draw(dt, t){
+      ctx.save();
+      applyShake(dt);
+      drawBackground(dt, t);
+      drawTrails();
       drawBarrier();
-      drawHintPulse();
       drawBullets();
       drawParticles(dt);
       drawShip();
+      drawHintPulse(dt);
+      ctx.restore();
     }
 
     // ==========================================================
-    // 6) Gameplay
+    // Gameplay
     // ==========================================================
     function shoot(){
-      bullets.push({ x: ship.x, y: ship.y - 34, vy: 1380, len: 36, a: 1 });
+      bullets.push({ x: ship.x, y: ship.y - 34, vy: 1450, len: 38, a: 1 });
+    }
+
+    function shake(amount=1){
+      shakeT = 0.20;
+      shakeAmp = amount * 4;
     }
 
     function checkBulletHits(){
@@ -815,8 +854,8 @@
       for(let i=bullets.length-1;i>=0;i--){
         const b = bullets[i];
 
-        const bandTop = barrier.y - 110;
-        const bandBot = barrier.y + 110;
+        const bandTop = barrier.y - 120;
+        const bandBot = barrier.y + 120;
         if(b.y < bandTop || b.y > bandBot) continue;
 
         for(const w of barrier.words){
@@ -835,11 +874,13 @@
               failsThisSentence = 0;
               flash("✅ Falsches Wort entfernt → LÜCKE!", true);
               spawnParticles(b.x, b.y, true);
+              shake(0.9);
             }else{
               failsThisSentence += 1;
               if(!practice) score = Math.max(0, score - 6);
               flash("❌ Falsches Wort!", false);
               spawnParticles(b.x, b.y, false);
+              shake(0.6);
             }
             updateUI();
             return;
@@ -866,6 +907,7 @@
       lives -= 1;
       flash("💥 Crash! Nicht in der Lücke.", false);
       spawnParticles(ship.x, ship.y, false);
+      shake(1.2);
       updateUI();
 
       if(lives <= 0){
@@ -881,6 +923,7 @@
       score += 32 + Math.min(40, level*4);
       flash("🚀 Durch die Lücke! +Bonus", true);
       spawnParticles(ship.x, ship.y-40, true);
+      shake(0.5);
 
       level += 1;
       updateUI();
@@ -907,7 +950,7 @@
     }
 
     // ==========================================================
-    // 7) Loop
+    // Loop
     // ==========================================================
     let running = false;
     let last = performance.now();
@@ -916,8 +959,8 @@
       if(!running) return;
       const dt = Math.min(0.033, (now - last)/1000);
       last = now;
+      const t = now/1000;
 
-      // ship control
       let ax = 0;
       if(keys.left) ax -= 1;
       if(keys.right) ax += 1;
@@ -929,7 +972,8 @@
       else ship.y += 270 * dt;
       ship.y = clamp(ship.y, innerHeight - 155, innerHeight - 80);
 
-      // bullets
+      addTrail(ship.x, ship.y + 24);
+
       for(let i=bullets.length-1;i>=0;i--){
         const b = bullets[i];
         b.y -= b.vy * dt;
@@ -937,11 +981,9 @@
         if(b.y < -80 || b.a <= 0) bullets.splice(i,1);
       }
 
-      // moving barrier
       if(barrier){
         barrier.y += barrier.vy * dt;
 
-        const t = now/1000;
         const ox = Math.sin(t*barrier.swaySpeed + barrier.phase) * barrier.swayAmp;
         const oy = Math.sin(t*barrier.bobSpeed + barrier.phase*1.7) * barrier.bobAmp;
 
@@ -955,26 +997,15 @@
         }
       }
 
-      // hint pulse
-      if(hintPulse.on){
-        hintPulse.t += dt / 0.55;
-        if(hintPulse.t >= 1) hintPulse.on = false;
-      }
-
       checkBulletHits();
-      draw(dt);
+      draw(dt, t);
       requestAnimationFrame(tick);
     }
 
     function startGame(isPractice){
       practice = isPractice;
-      score = 0;
-      lives = 3;
-      level = 1;
-      failsThisSentence = 0;
-      solvedCount = 0;
-      bullets = [];
-      particles = [];
+      score = 0; lives = 3; level = 1; failsThisSentence = 0; solvedCount = 0;
+      bullets = []; particles = []; trails = [];
       ship.x = innerWidth/2;
       ship.y = innerHeight - 92;
 
@@ -1002,15 +1033,16 @@
       ui.overlay.style.display = "grid";
       ui.overlay.querySelector("h2").textContent = "Bereit? 😄";
       ui.overlay.querySelector("p").innerHTML =
-        `Dieses Spiel nutzt ein <b>Deck</b> aus <b>${DECK_SIZE}</b> Sätzen (keine Wiederholung).<br>
-         Schieße das <b>falsche Wort</b> heraus → Lücke → durchfliegen.`;
+        `Dieses Spiel nutzt ein <b>Deck</b> aus <b>${deck.length}</b> Sätzen (keine Wiederholung).<br>
+         Extra für <b>Dobl</b> & <b>Graz</b> – inkl. <b>Herr Holzer</b>-Sätzen.`;
       flash("Reset.", true);
+      ui.deckLeft.textContent = String(deck.length);
       updateUI();
-      draw(0.016);
+      draw(0.016, performance.now()/1000);
     }
 
     // ==========================================================
-    // 8) Input + Buttons
+    // Input + Buttons
     // ==========================================================
     addEventListener("keydown", (e)=>{
       const k = e.key.toLowerCase();
@@ -1039,9 +1071,9 @@
       if(k===" ") keys.space = false;
     });
 
-    ui.resetBtn.addEventListener("click", reset);
-    ui.startBtn.addEventListener("click", ()=>startGame(false));
-    ui.practiceBtn.addEventListener("click", ()=>startGame(true));
+    document.querySelector("#resetBtn").addEventListener("click", reset);
+    document.querySelector("#startBtn").addEventListener("click", ()=>startGame(false));
+    document.querySelector("#practiceBtn").addEventListener("click", ()=>startGame(true));
 
     // init
     reset();
