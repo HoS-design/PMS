@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>HoS · 3D Wasserpistole (Impact + Hint nach 2 Fehlern)</title>
+  <title>HoS 路 Wasser Rechtschreib-Shooter (Ansatz 2: Wort-Targets)</title>
   <style>
     :root{
       --ink:#e7eefc; --muted:#b8c2dd; --line: rgba(255,255,255,.14);
@@ -125,17 +125,17 @@
   <div class="hud">
     <div class="topbar">
       <div class="pill">
-        <span>🔫 Wasserpistole (3D)</span>
+        <span>馃敨 Wasserpistole (Ansatz 2)</span>
         <span>Munition: <b id="ammo">12</b>/<span id="ammoMax">12</span> <span class="kbd">R</span></span>
         <span>Score: <b id="score">0</b></span>
         <span>Streak: <b id="streak">0</b></span>
         <span>Fails: <b id="fails">0</b></span>
         <span>Level: <b id="level">1</b></span>
-        <span id="bossTag" style="display:none;color:rgba(245,158,11,.95)">👑 BOSS</span>
+        <span id="bossTag" style="display:none;color:rgba(245,158,11,.95)">馃憫 BOSS</span>
       </div>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn" id="homeBtn">🏠 Startseite</button>
-        <button class="btn" id="resetBtn">🔁 Neustart</button>
+        <button class="btn" id="homeBtn">馃彔 Startseite</button>
+        <button class="btn" id="resetBtn">馃攣 Neustart</button>
       </div>
     </div>
 
@@ -144,12 +144,12 @@
     <div class="bottom">
       <div class="card">
         <div class="title">
-          <h1 id="missionTitle">Auftrag: Schieße das fehlerhafte Wort aus dem Satz heraus</h1>
+          <h1 id="missionTitle">Auftrag: Schie脽e das fehlerhafte Wort (als eigenes Target) ab</h1>
           <div class="pill" style="padding:8px 10px; font-size:12px;">
-            WASD · Maus · Klick schießen · Wasserstrahl · Impact · Hint nach 2 Fehlversuchen
+            WASD 路 Maus 路 Klick schie脽en 路 W枚rter sind gro脽e Targets 路 Hint nach 2 Fehlversuchen
           </div>
         </div>
-        <p class="sentence" id="sentence">—</p>
+        <p class="sentence" id="sentence">鈥?/p>
         <p class="hint" id="hint">Tipp: Genau <b>1 Wort</b> ist falsch. (Hint nach 2 Fehlversuchen)</p>
         <div class="bar"><div class="fill" id="progress"></div></div>
       </div>
@@ -159,33 +159,33 @@
   <div class="overlay" id="overlay">
     <div class="panel">
       <div class="panelHead">
-        <span class="badge">HoS · 3D Spiel · Deutsch</span>
-        <span class="badge">Laptop Mode ✅</span>
+        <span class="badge">HoS 路 3D Spiel 路 Deutsch</span>
+        <span class="badge">Wort-Targets 鉁?(lesbar!)</span>
       </div>
-      <h2>Jetzt wirklich ein Deutsch-Spiel 😄</h2>
+      <h2>Wort-Targets statt Mini-Satz 馃槃</h2>
       <p>
-        Das falsche Wort hat <b>keine Markierung</b> – du musst lesen.
-        Nach <b>2 Fehlversuchen</b> kommt ein kurzer Hint (Glow-Puls am richtigen Wort).
+        Unten steht der Satz gro脽. Im Raum schweben <b>einzelne W枚rter als gro脽e Ziele</b>.
+        Triff das falsch geschriebene Wort. Nach <b>2 Fehlversuchen</b> kommt ein kurzer Hint (Glow).
       </p>
       <div class="grid2">
         <div class="note">
           <b>Steuerung</b><br>
-          • <span class="kbd">Klick</span> schießen<br>
-          • <span class="kbd">W</span> vorwärts / <span class="kbd">S</span> rückwärts<br>
-          • Maus schauen (Pointer Lock)<br>
-          • <span class="kbd">R</span> nachladen<br>
-          • <span class="kbd">ESC</span> Maus frei
+          鈥?<span class="kbd">Klick</span> schie脽en<br>
+          鈥?<span class="kbd">W</span>/<span class="kbd">A</span>/<span class="kbd">S</span>/<span class="kbd">D</span> bewegen<br>
+          鈥?Maus schauen (Pointer Lock)<br>
+          鈥?<span class="kbd">R</span> nachladen<br>
+          鈥?<span class="kbd">ESC</span> Maus frei
         </div>
         <div class="note">
           <b>Punkte</b><br>
-          ✅ richtig: +10 + Streak-Bonus<br>
-          ❌ falsch: −5 (außer Übungsmodus) + Streak reset<br>
-          🔎 Hint: nach 2 Fehlversuchen (kurz)
+          鉁?richtig: +10 + Streak-Bonus<br>
+          鉂?falsch: 鈭? (au脽er 脺bungsmodus) + Streak reset<br>
+          馃攷 Hint: nach 2 Fehlversuchen (kurz)
         </div>
       </div>
       <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
-        <button class="btn" id="startBtn">▶ Start</button>
-        <button class="btn" id="practiceBtn">🧪 Übungsmodus (ohne Abzug)</button>
+        <button class="btn" id="startBtn">鈻?Start</button>
+        <button class="btn" id="practiceBtn">馃И 脺bungsmodus (ohne Abzug)</button>
       </div>
     </div>
   </div>
@@ -195,17 +195,15 @@
   <script type="module">
     import * as THREE from "./lib/three.module.js";
 
-    // -----------------------------
-    // Aufgaben
-    // -----------------------------
+    // Aufgaben (erweiterbar)
     const TASKS = [
-      { sentence: "Die Maschiene ist sehr laut, aber zuverlässig.", wrong: "Maschiene" },
+      { sentence: "Die Maschiene ist sehr laut, aber zuverl盲ssig.", wrong: "Maschiene" },
       { sentence: "Er giebt mir jeden Tag eine neue Aufgabe.", wrong: "giebt" },
-      { sentence: "Ich glaube, das du heute früher kommst.", wrong: "das" },
+      { sentence: "Ich glaube, das du heute fr眉her kommst.", wrong: "das" },
       { sentence: "Im winter tragen viele Menschen warme Jacken.", wrong: "winter" },
       { sentence: "Ich habe dich vieleicht falsch verstanden.", wrong: "vieleicht" },
       { sentence: "Das ist das Beste, was ich je gesehen habe, seid gestern.", wrong: "seid" },
-      { sentence: "Er war entäuscht von dem Ergebnis.", wrong: "entäuscht" },
+      { sentence: "Er war ent盲uscht von dem Ergebnis.", wrong: "ent盲uscht" },
       { sentence: "Die maschine steht heute in der Werkstatt.", wrong: "maschine" },
       { sentence: "Sie hat das Problem wiederspiegeln wollen, aber es gelang nicht.", wrong: "wiederspiegeln" },
       { sentence: "Wir sind Morgen um acht Uhr fertig.", wrong: "Morgen" },
@@ -227,9 +225,7 @@
     }
     shuffle(TASKS); shuffle(BOSS_TASKS);
 
-    // -----------------------------
     // State + UI
-    // -----------------------------
     const state = {
       idx: 0, score: 0, streak: 0,
       ammoMax: 12, ammo: 12,
@@ -275,8 +271,8 @@
 
       bossTag.style.display = state.bossActive ? "inline" : "none";
       missionTitle.textContent = state.bossActive
-        ? `👑 Bossrunde: ${state.bossHitsRemaining} Fehler übrig`
-        : "Auftrag: Schieße das fehlerhafte Wort aus dem Satz heraus";
+        ? `馃憫 Bossrunde: ${state.bossHitsRemaining} Fehler 眉brig`
+        : "Auftrag: Schie脽e das fehlerhafte Wort (als eigenes Target) ab";
     }
 
     $("#homeBtn").addEventListener("click", ()=>{ window.location.href = "index.html"; });
@@ -289,9 +285,7 @@
     $("#startBtn").addEventListener("click", ()=>{ state.practice=false; startGame(); });
     $("#practiceBtn").addEventListener("click", ()=>{ state.practice=true; startGame(); });
 
-    // -----------------------------
     // Three.js
-    // -----------------------------
     const canvas = $("#c");
     const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
     renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1));
@@ -301,9 +295,9 @@
     renderer.toneMappingExposure = 1.45;
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x0b1220, 8, 85);
+    scene.fog = new THREE.Fog(0x0b1220, 10, 95);
 
-    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 400);
+    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.1, 500);
     camera.position.set(0, 1.7, 6.0);
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.55));
@@ -348,15 +342,13 @@
     }
 
     const ground = new THREE.Mesh(
-      new THREE.PlaneGeometry(280,280),
+      new THREE.PlaneGeometry(320,320),
       new THREE.MeshStandardMaterial({ map: makeGridTex(), color:0xffffff, roughness:0.95, metalness:0.0 })
     );
     ground.rotation.x = -Math.PI/2;
     scene.add(ground);
 
-    // -----------------------------
     // Gun
-    // -----------------------------
     const gun = new THREE.Group();
     camera.add(gun);
     scene.add(camera);
@@ -403,9 +395,7 @@
     }
     makeGun();
 
-    // -----------------------------
     // Pointer lock + movement
-    // -----------------------------
     let yaw = 0, pitch = 0;
     const vel = new THREE.Vector3();
     const moveDir = new THREE.Vector3();
@@ -441,7 +431,7 @@
       if(k==="r"){
         state.ammo = state.ammoMax;
         uiUpdate();
-        flashMsg("🔄 Nachgeladen", true);
+        flashMsg("馃攧 Nachgeladen", true);
       }
     });
 
@@ -472,20 +462,9 @@
       camera.updateProjectionMatrix();
     });
 
-    // -----------------------------
-    // Sentence strip
-    // -----------------------------
-    const sentenceGroup = new THREE.Group();
-    scene.add(sentenceGroup);
-
-    const stripBase = new THREE.Vector3(0, 2.35, -4.0);
-    const stripMotion = { phase: Math.random()*Math.PI*2, speed: 0.45, ampX: 0.75, ampY: 0.18 };
-
-    const plate = new THREE.Mesh(
-      new THREE.PlaneGeometry(12, 1.25),
-      new THREE.MeshStandardMaterial({ color: 0x000000, roughness: 1.0, transparent:true, opacity:0.28 })
-    );
-    sentenceGroup.add(plate);
+    // Wort-Targets
+    const targetsGroup = new THREE.Group();
+    scene.add(targetsGroup);
 
     function roundRect(ctx, x, y, w, h, r){
       const rr = Math.min(r, w/2, h/2);
@@ -498,55 +477,39 @@
       ctx.closePath();
     }
 
-    function makeWordCanvas(text){
+    function makeWordCanvas(text, isWrong=false){
       const c = document.createElement("canvas");
       const ctx = c.getContext("2d");
 
-      const fontPx = 86;
-      ctx.font = `800 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
+      const fontPx = 120;
+      ctx.font = `900 ${fontPx}px system-ui, -apple-system, Segoe UI, Roboto, Arial`;
 
-      const padX = 52;
+      const padX = 70;
       const w = Math.ceil(ctx.measureText(text).width) + padX*2;
 
-      c.width  = Math.min(1200, Math.max(520, w));
-      c.height = 240;
+      c.width  = Math.min(1500, Math.max(700, w));
+      c.height = 320;
 
       ctx.clearRect(0,0,c.width,c.height);
 
-      ctx.fillStyle = "rgba(0,0,0,0.52)";
-      roundRect(ctx, 16, 34, c.width-32, c.height-68, 52);
+      ctx.fillStyle = "rgba(0,0,0,0.58)";
+      roundRect(ctx, 18, 44, c.width-36, c.height-88, 62);
       ctx.fill();
 
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = "rgba(255,255,255,0.25)";
-      roundRect(ctx, 16, 34, c.width-32, c.height-68, 52);
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = isWrong ? "rgba(245,158,11,0.45)" : "rgba(255,255,255,0.25)";
+      roundRect(ctx, 18, 44, c.width-36, c.height-88, 62);
       ctx.stroke();
 
-      ctx.fillStyle = "rgba(231,238,252,0.98)";
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "rgba(102,204,255,0.15)";
+      roundRect(ctx, 28, 54, c.width-56, c.height-108, 56);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(231,238,252,0.99)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(text, c.width/2, c.height/2);
-
-      return c;
-    }
-
-    function makePlaceholderCanvas(widthPx){
-      const c = document.createElement("canvas");
-      c.width = widthPx;
-      c.height = 240;
-      const ctx = c.getContext("2d");
-      ctx.clearRect(0,0,c.width,c.height);
-
-      ctx.strokeStyle = "rgba(255,255,255,0.22)";
-      ctx.lineWidth = 10;
-      ctx.setLineDash([20, 16]);
-      roundRect(ctx, 20, 40, c.width-40, c.height-80, 52);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = "rgba(255,255,255,0.06)";
-      roundRect(ctx, 20, 40, c.width-40, c.height-80, 52);
-      ctx.fill();
 
       return c;
     }
@@ -556,96 +519,74 @@
       tex.colorSpace = THREE.SRGBColorSpace;
       tex.anisotropy = 8;
       tex.needsUpdate = true;
+
       const mat = new THREE.MeshBasicMaterial({ map: tex, transparent:true, opacity });
       const aspect = c.width / c.height;
 
-      const h = 0.80;
+      const h = 1.35;
       const w = h * aspect;
       const geo = new THREE.PlaneGeometry(w, h);
-      const mesh = new THREE.Mesh(geo, mat);
-
-      mesh.userData.w = w;
-      mesh.userData._canvasW = c.width;
-      return mesh;
-    }
-
-    function clearSentence(){
-      const keep = new Set([plate]);
-      for(const child of [...sentenceGroup.children]){
-        if(keep.has(child)) continue;
-        sentenceGroup.remove(child);
-        if(child.material?.map) child.material.map.dispose();
-        if(child.material) child.material.dispose();
-        if(child.geometry) child.geometry.dispose();
-      }
+      return new THREE.Mesh(geo, mat);
     }
 
     function tokenize(sentence){
       return sentence.split(" ").filter(Boolean);
     }
 
-    const MAX_WORD_WORLD_W = 3.4;
+    function clearTargets(){
+      for(const child of [...targetsGroup.children]){
+        targetsGroup.remove(child);
+        if(child.material?.map) child.material.map.dispose();
+        if(child.material) child.material.dispose();
+        if(child.geometry) child.geometry.dispose();
+      }
+    }
 
-    function buildSentenceStrip(sentence, wrongOrWrongs){
-      clearSentence();
+    function spawnTargetsFor(sentence, wrongOrWrongs){
+      clearTargets();
 
       const tokens = tokenize(sentence);
       const wrongs = Array.isArray(wrongOrWrongs) ? wrongOrWrongs : [wrongOrWrongs];
 
-      const wordMeshes = [];
-      for(const tok of tokens){
+      const L = Math.min(6, state.level);
+      const spread = 2.1 + L*0.15;
+      const heightSpread = 0.65 + L*0.04;
+
+      const baseZ = -6.4;
+      const baseY = 2.35;
+
+      const used = new Map();
+
+      tokens.forEach((tok, i)=>{
         const isWrong = wrongs.some(w => tok.includes(w));
-        const c = makeWordCanvas(tok);
+        const c = makeWordCanvas(tok, isWrong);
         const m = canvasToPlane(c, 1.0);
+
         m.userData.text = tok;
         m.userData.isWrong = isWrong;
         m.userData.alive = true;
         m.userData.kind = "word";
+        m.userData.phase = Math.random()*Math.PI*2;
 
-        if(m.userData.w > MAX_WORD_WORLD_W){
-          const s = MAX_WORD_WORLD_W / m.userData.w;
-          m.scale.x *= s;
-          m.userData.w = MAX_WORD_WORLD_W;
-        }
-        wordMeshes.push(m);
-      }
+        const a = (i/(Math.max(1,tokens.length-1))) * Math.PI;
+        const x0 = Math.cos(a - Math.PI/2) * spread + (Math.random()-0.5)*0.8;
+        const y0 = baseY + (Math.random()-0.5)*heightSpread;
+        const z0 = baseZ + Math.sin(a) * 0.9 + (Math.random()-0.5)*0.6;
 
-      const gap = 0.16;
-      let totalW = -gap;
-      for(const w of wordMeshes) totalW += w.userData.w + gap;
+        const key = `${Math.round(x0*2)}_${Math.round(y0*2)}`;
+        const bump = used.has(key) ? (used.get(key)+1) : 0;
+        used.set(key, bump);
 
-      let x = -totalW/2;
-      for(const w of wordMeshes){
-        w.position.set(x + w.userData.w/2, 0, 0);
-        x += w.userData.w + gap;
-        sentenceGroup.add(w);
-      }
+        m.position.set(x0 + bump*0.55, y0 + bump*0.28, z0 - bump*0.25);
 
-      plate.geometry.dispose();
-      plate.geometry = new THREE.PlaneGeometry(Math.max(7.8, totalW + 0.9), 1.10);
-      plate.position.set(0, 0, -0.03);
-
-      sentenceGroup.position.copy(stripBase);
-      sentenceGroup.visible = true;
+        targetsGroup.add(m);
+      });
     }
 
-    function createPlaceholderFor(wordMesh){
-      const wpx = wordMesh.userData._canvasW || 700;
-      const c = makePlaceholderCanvas(wpx);
-      const ph = canvasToPlane(c, 0.88);
-      ph.userData.kind = "placeholder";
-      ph.userData.w = wordMesh.userData.w;
-      ph.position.copy(wordMesh.position);
-      return ph;
-    }
-
-    // -----------------------------
     // Effects
-    // -----------------------------
     const beams = [];
     const impacts = [];
     const hintPulses = [];
-    let stripKick = 0;
     let recoil = 0;
 
     const beamMat = new THREE.MeshBasicMaterial({
@@ -686,7 +627,7 @@
     }
 
     function spawnImpact(worldPos){
-      const geo = new THREE.PlaneGeometry(0.60, 0.60);
+      const geo = new THREE.PlaneGeometry(0.65, 0.65);
       const mat = new THREE.MeshBasicMaterial({
         color: 0xe0fbff,
         transparent: true,
@@ -705,15 +646,8 @@
 
     function spawnHintPulseFor(wordMesh){
       if(!wordMesh) return;
-
-      wordMesh.updateMatrixWorld(true);
-      const pos = new THREE.Vector3();
-      const quat = new THREE.Quaternion();
-      const scl = new THREE.Vector3();
-      wordMesh.matrixWorld.decompose(pos, quat, scl);
-
-      const w = wordMesh.geometry.parameters.width * scl.x * 1.10;
-      const h = wordMesh.geometry.parameters.height * scl.y * 1.18;
+      const w = wordMesh.geometry.parameters.width * 1.12;
+      const h = wordMesh.geometry.parameters.height * 1.22;
       const geo = new THREE.PlaneGeometry(w, h);
       const mat = new THREE.MeshBasicMaterial({
         color: 0x66ccff,
@@ -722,41 +656,30 @@
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
-
       const glow = new THREE.Mesh(geo, mat);
-      glow.position.copy(pos);
+      glow.position.copy(wordMesh.position);
       glow.quaternion.copy(camera.quaternion);
       glow.userData.life = 0.70;
       glow.userData.max = 0.70;
-
       scene.add(glow);
       hintPulses.push(glow);
     }
 
-    // -----------------------------
-    // Flying word effect
-    // -----------------------------
     const flyingWords = [];
     function spawnFlyingWordFrom(mesh){
       const w = new THREE.Mesh(mesh.geometry.clone(), mesh.material.clone());
       w.material.opacity = 1.0;
       w.material.transparent = true;
 
-      mesh.updateMatrixWorld(true);
-      const pos = new THREE.Vector3();
-      const quat = new THREE.Quaternion();
-      const scl = new THREE.Vector3();
-      mesh.matrixWorld.decompose(pos, quat, scl);
-
-      w.position.copy(pos);
-      w.quaternion.copy(quat);
-      w.scale.copy(scl);
+      w.position.copy(mesh.position);
+      w.quaternion.copy(mesh.quaternion);
+      w.scale.copy(mesh.scale);
 
       const camDir = camera.getWorldDirection(new THREE.Vector3()).normalize();
-      const v = camDir.clone().multiplyScalar(-8.0);
-      v.y += 2.4;
-      v.x += (Math.random()-0.5)*1.6;
-      v.z += (Math.random()-0.5)*1.6;
+      const v = camDir.clone().multiplyScalar(-8.5);
+      v.y += 2.8;
+      v.x += (Math.random()-0.5)*1.8;
+      v.z += (Math.random()-0.5)*1.8;
 
       w.userData.v = v;
       w.userData.life = 1.05;
@@ -765,9 +688,7 @@
       flyingWords.push(w);
     }
 
-    // -----------------------------
     // Task spawning
-    // -----------------------------
     function spawnNormal(i){
       state.bossActive = false;
       state.bossHitsRemaining = 0;
@@ -779,10 +700,10 @@
 
       state.level = 1 + Math.floor(state.done / 6);
       hintEl.innerHTML = state.practice
-        ? `Übungsmodus: keine Minuspunkte. Hint nach <b>2 Fehlversuchen</b>.`
-        : `✅ richtig +10 (+Streak), ❌ falsch −5. Hint nach <b>2 Fehlversuchen</b>.`;
+        ? `脺bungsmodus: keine Minuspunkte. Hint nach <b>2 Fehlversuchen</b>.`
+        : `鉁?richtig +10 (+Streak), 鉂?falsch 鈭?. Hint nach <b>2 Fehlversuchen</b>.`;
 
-      buildSentenceStrip(t.sentence, t.wrong);
+      spawnTargetsFor(t.sentence, t.wrong);
       uiUpdate();
       flashMsg("Neuer Satz!", true);
     }
@@ -796,22 +717,17 @@
 
       sentenceEl.textContent = boss.sentence;
       hintEl.innerHTML = state.practice
-        ? `👑 Boss: 2 Fehler. Hint nach <b>2 Fehlversuchen</b>.`
-        : `👑 Boss: 2 Fehler. Beide treffen → <b>+30</b>. Hint nach <b>2 Fehlversuchen</b>.`;
+        ? `馃憫 Boss: 2 Fehler. Hint nach <b>2 Fehlversuchen</b>.`
+        : `馃憫 Boss: 2 Fehler. Beide treffen 鈫?<b>+30</b>. Hint nach <b>2 Fehlversuchen</b>.`;
 
       state.level = Math.max(state.level, 4);
-      buildSentenceStrip(boss.sentence, boss.wrongs);
+      spawnTargetsFor(boss.sentence, boss.wrongs);
       uiUpdate();
-      flashMsg("👑 Bossrunde!", true);
+      flashMsg("馃憫 Bossrunde!", true);
     }
 
-    // -----------------------------
-    // Hint logic
-    // -----------------------------
-    const raycaster = new THREE.Raycaster();
-
     function getWrongWordMeshes(){
-      return sentenceGroup.children.filter(o => o.userData?.kind === "word" && o.userData.alive && o.userData.isWrong);
+      return targetsGroup.children.filter(o => o.userData?.kind === "word" && o.userData.alive && o.userData.isWrong);
     }
 
     function maybeShowHint(){
@@ -819,20 +735,19 @@
         const wrongs = getWrongWordMeshes();
         if(wrongs.length){
           wrongs.forEach(w => spawnHintPulseFor(w));
-          flashMsg("🔎 Hint!", true);
+          flashMsg("馃攷 Hint!", true);
         }
-        // every 2 fails => consume 2
         state.failsThisSentence = Math.max(0, state.failsThisSentence - 2);
         uiUpdate();
       }
     }
 
-    // -----------------------------
     // Shooting
-    // -----------------------------
+    const raycaster = new THREE.Raycaster();
+
     function shoot(){
       if(state.ammo <= 0){
-        flashMsg("💧 Leer! (R)", false);
+        flashMsg("馃挧 Leer! (R)", false);
         return;
       }
       state.ammo--;
@@ -843,34 +758,29 @@
       const origin = camera.getWorldPosition(new THREE.Vector3());
       const direction = camera.getWorldDirection(new THREE.Vector3()).normalize();
       raycaster.set(origin, direction);
-      raycaster.far = 400;
+      raycaster.far = 500;
 
-      const targets = sentenceGroup.children.filter(o => o.userData?.kind === "word" && o.userData.alive);
+      const targets = targetsGroup.children.filter(o => o.userData?.kind === "word" && o.userData.alive);
       const hits = raycaster.intersectObjects(targets, false);
 
       if(!hits.length){
         state.failsThisSentence += 1;
         uiUpdate();
-        flashMsg("💦 Daneben!", false);
+        flashMsg("馃挦 Daneben!", false);
         maybeShowHint();
         return;
       }
 
       const hit = hits[0].object;
 
-      // impact + kick/recoil always
       spawnImpact(hits[0].point.clone());
-      stripKick = Math.min(0.22, stripKick + 0.14);
       recoil = Math.min(0.18, recoil + 0.10);
 
       if(hit.userData.isWrong){
         spawnFlyingWordFrom(hit);
 
-        const ph = createPlaceholderFor(hit);
-        sentenceGroup.add(ph);
-
         hit.userData.alive = false;
-        sentenceGroup.remove(hit);
+        targetsGroup.remove(hit);
         if(hit.material?.map) hit.material.map.dispose();
         if(hit.material) hit.material.dispose();
         if(hit.geometry) hit.geometry.dispose();
@@ -884,13 +794,13 @@
         if(state.bossActive){
           state.bossHitsRemaining = Math.max(0, state.bossHitsRemaining - 1);
           uiUpdate();
-          flashMsg(`✅ Boss-Treffer! (${state.bossHitsRemaining})`, true);
+          flashMsg(`鉁?Boss-Treffer! (${state.bossHitsRemaining})`, true);
 
           if(state.bossHitsRemaining === 0 && !state.bossBonusAwarded){
             state.bossBonusAwarded = true;
             state.score += 30;
             uiUpdate();
-            flashMsg("👑 Boss besiegt! +30", true);
+            flashMsg("馃憫 Boss besiegt! +30", true);
             setTimeout(()=>endGame(true), 700);
           }
           return;
@@ -898,7 +808,7 @@
 
         state.done += 1;
         uiUpdate();
-        flashMsg("✅ Treffer!", true);
+        flashMsg("鉁?Treffer!", true);
 
         if(state.done >= state.total){
           setTimeout(()=>spawnBoss(), 620);
@@ -915,14 +825,12 @@
         }
 
         uiUpdate();
-        flashMsg("❌ Falsch!", false);
+        flashMsg("鉂?Falsch!", false);
         maybeShowHint();
       }
     }
 
-    // -----------------------------
     // Flow
-    // -----------------------------
     function hardReset(){
       state.idx = 0; state.score = 0; state.streak = 0;
       state.ammo = state.ammoMax;
@@ -950,15 +858,13 @@
       unlockPointer();
       state.paused = true;
       overlay.style.display = "grid";
-      overlay.querySelector("h2").textContent = wonBoss ? "Boss geschafft! 🏆" : "Fertig! 🎉";
+      overlay.querySelector("h2").textContent = wonBoss ? "Boss geschafft! 馃弳" : "Fertig! 馃帀";
       overlay.querySelector("p").innerHTML =
-        `Score: <b>${state.score}</b> · Streak: <b>${state.streak}</b><br>
-         Du kannst neu starten oder Übungsmodus wählen.`;
+        `Score: <b>${state.score}</b> 路 Streak: <b>${state.streak}</b><br>
+         Du kannst neu starten oder 脺bungsmodus w盲hlen.`;
     }
 
-    // -----------------------------
     // Update loop
-    // -----------------------------
     const clock = new THREE.Clock();
 
     function updateMovement(dt){
@@ -984,32 +890,9 @@
         camera.position.x += vel.x * dt;
         camera.position.z += vel.z * dt;
 
-        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -30, 30);
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -30, 30);
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -34, 34);
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, -34, 34);
         camera.position.y = 1.7;
-      }
-    }
-
-    function updateSentenceStrip(t, dt){
-      const L = Math.min(6, state.level);
-      stripMotion.speed = 0.35 + L*0.04;
-      stripMotion.ampX  = 0.55 + L*0.10;
-      stripMotion.ampY  = 0.12 + L*0.03;
-
-      sentenceGroup.position.x = stripBase.x + Math.sin(t*stripMotion.speed + stripMotion.phase) * stripMotion.ampX;
-      sentenceGroup.position.y = stripBase.y + Math.sin(t*stripMotion.speed*1.2 + stripMotion.phase*1.7) * stripMotion.ampY;
-      sentenceGroup.position.z = stripBase.z;
-
-      sentenceGroup.quaternion.copy(camera.quaternion);
-      const e = new THREE.Euler().setFromQuaternion(sentenceGroup.quaternion, "YXZ");
-      e.z = 0;
-      e.x *= 0.10;
-      sentenceGroup.quaternion.setFromEuler(e);
-
-      if(stripKick > 0){
-        sentenceGroup.position.x += (Math.random()-0.5) * stripKick * 0.40;
-        sentenceGroup.position.y += (Math.random()-0.5) * stripKick * 0.22;
-        stripKick = Math.max(0, stripKick - dt*2.8);
       }
     }
 
@@ -1022,6 +905,26 @@
       }
     }
 
+    function updateTargetsBillboardAndDrift(t, dt){
+      const L = Math.min(6, state.level);
+      const drift = 0.18 + L*0.02;
+      const wobble = 0.14 + L*0.01;
+
+      for(const w of targetsGroup.children){
+        w.quaternion.copy(camera.quaternion);
+
+        const ph = w.userData.phase || 0;
+        w.position.x += Math.sin(t*drift + ph) * wobble * dt;
+        w.position.y += Math.cos(t*drift*1.2 + ph*1.7) * (wobble*0.65) * dt;
+
+        const s = 1.0 + Math.sin(t*0.9 + ph) * 0.02;
+        w.scale.setScalar(s);
+
+        w.position.x = THREE.MathUtils.clamp(w.position.x, -6.2, 6.2);
+        w.position.y = THREE.MathUtils.clamp(w.position.y, 1.35, 3.45);
+      }
+    }
+
     function updateFlyingWords(dt){
       for(let i=flyingWords.length-1;i>=0;i--){
         const w = flyingWords[i];
@@ -1029,6 +932,7 @@
         w.position.addScaledVector(w.userData.v, dt);
         w.userData.v.y -= 7.5 * dt;
         w.material.opacity = Math.max(0, w.userData.life / 1.05);
+        w.quaternion.copy(camera.quaternion);
 
         if(w.userData.life <= 0){
           scene.remove(w);
@@ -1103,8 +1007,8 @@
       const t = clock.getElapsedTime();
 
       updateMovement(dt);
-      updateSentenceStrip(t, dt);
       updateGunRecoil(dt);
+      updateTargetsBillboardAndDrift(t, dt);
       updateFlyingWords(dt);
       updateBeams(dt);
       updateImpacts(dt);
@@ -1114,11 +1018,9 @@
       requestAnimationFrame(loop);
     }
 
-    // init
     hardReset();
     uiUpdate();
     loop();
   </script>
 </body>
 </html>
-

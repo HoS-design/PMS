@@ -1,0 +1,1115 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KörperWerkstatt 3D Komposit • HoS</title>
+  <style>
+    :root{
+      --ink:#1f2937; --muted:#6b7280; --line:#d1d5db; --soft:#f8fafc;
+      --card:#ffffff; --accent:#2563eb; --good:#10b981; --bad:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.08); --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff,#f7fafc)}
+    header{padding:18px 16px 10px;max-width:1250px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .meme{width:78px;height:78px;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
+    .titlewrap{flex:1;min-width:240px}
+    h1{margin:0;font-size:22px;line-height:1.2}
+    p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .badge{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px;color:var(--muted)}
+    .badge b{color:var(--accent)}
+    .linkbtn{text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);font-weight:900}
+    .wrap{max-width:1250px;margin:0 auto;padding:0 16px 18px;display:grid;grid-template-columns:430px 1fr;gap:14px}
+    @media (max-width:980px){.wrap{grid-template-columns:1fr}}
+    .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+    .hd{padding:14px 14px 10px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff)}
+    .hd h2{margin:0;font-size:14px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+    .bd{padding:14px}
+    label{font-size:12px;color:var(--muted);display:block;margin:8px 0 6px}
+    select,input[type="number"]{width:100%;padding:10px 10px;border:1px solid var(--line);border-radius:12px;outline:none;background:#fff;color:var(--ink);font-size:14px}
+    input[type="checkbox"]{transform:translateY(1px)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{border:1px solid var(--line);background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:900;font-size:13px;color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    button.primary{background:var(--accent);color:#fff;border-color:transparent}
+    button.good{background:var(--good);color:#fff;border-color:transparent}
+    button.bad{background:var(--bad);color:#fff;border-color:transparent}
+    .hint{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--soft);border:1px dashed var(--line);color:var(--muted);font-size:12px;line-height:1.35}
+    .kv{display:grid;grid-template-columns:140px 1fr;gap:8px 10px;font-size:12px;color:var(--muted);margin-top:10px}
+    .kv b{color:var(--ink)}
+    .canvasWrap{position:relative;min-height:520px;height:calc(100vh - 170px)}
+    @media (max-width:980px){.canvasWrap{height:62vh}}
+    #view{width:100%;height:100%}
+    .overlay{position:absolute;left:12px;top:12px;display:flex;gap:8px;flex-wrap:wrap;pointer-events:none}
+    .chip{pointer-events:none;background:rgba(255,255,255,.92);border:1px solid rgba(209,213,219,.9);border-radius:999px;padding:7px 10px;font-size:12px;color:var(--muted);box-shadow:0 8px 22px rgba(0,0,0,.08);backdrop-filter:blur(6px)}
+    .chip b{color:var(--ink)}
+    .modebar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+    .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:999px;cursor:pointer;user-select:none;font-size:12px;color:var(--muted);font-weight:900}
+    .pill.active{border-color:transparent;background:rgba(37,99,235,.12);color:var(--ink)}
+    .taskBox{margin-top:10px;padding:12px 12px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#fbfdff)}
+    .taskTitle{font-size:12px;color:var(--muted);font-weight:1000;letter-spacing:.2px}
+    .taskText{margin:6px 0 0;font-size:14px;font-weight:1000;line-height:1.25}
+    .status{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px dashed var(--line);background:var(--soft);color:var(--muted);font-size:12px;line-height:1.35;min-height:44px}
+    .status.ok{border-color:rgba(16,185,129,.55);background:rgba(16,185,129,.08);color:#064e3b}
+    .status.no{border-color:rgba(239,68,68,.45);background:rgba(239,68,68,.06);color:#7f1d1d}
+    .solBox{margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:#fff;display:none}
+    .solBox pre{margin:0;white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px;color:var(--ink)}
+    .mini{font-size:11px;color:var(--muted);margin-top:6px}
+    #err{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);z-index:9999;padding:18px}
+    #err h3{margin:0 0 8px}
+    #err pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:1000px}
+  </style>
+</head>
+
+<body>
+<div id="err">
+  <h3>⚠️ Die 3D-App konnte nicht starten.</h3>
+  <p>Unten steht die genaue Fehlermeldung (hilft beim Debuggen):</p>
+  <pre id="errText"></pre>
+</div>
+
+<header>
+  <img class="meme" src="chatistthisreal.png" onerror="this.onerror=null;this.src='chatisthisreal.png';" alt="Chat is this real?">
+  <div class="titlewrap">
+    <span class="badge">🧱 KörperWerkstatt 3D Komposit • <b>HoS</b> • Snapping & Berechnung</span>
+    <h1>KörperWerkstatt 3D – zusammengesetzte Körper</h1>
+    <p>Aufgaben ohne ständige Wiederholung (Shuffle-Bag) • Leicht/Experte</p>
+  </div>
+  <a class="linkbtn" href="index.html">🏠 Startseite</a>
+</header>
+
+<main class="wrap">
+  <section class="panel">
+    <div class="hd"><h2>Steuerung <span style="color:var(--muted);font-weight:800">SuS</span></h2></div>
+    <div class="bd">
+
+      <div class="modebar">
+        <span style="font-size:12px;color:var(--muted);font-weight:900">Modus:</span>
+        <span class="pill active" id="pillFree">🧩 Freies Bauen</span>
+        <span class="pill" id="pillTask">📝 Aufgabenmodus</span>
+      </div>
+
+      <div class="taskBox" id="taskBox" style="display:none">
+        <div class="taskTitle">Aufgabe</div>
+        <div class="taskText" id="taskText">Klicke „Neue Aufgabe“.</div>
+
+        <div class="btnbar">
+          <button class="primary" id="newTask">🎲 Neue Aufgabe</button>
+          <button id="resetTask">🧼 Reset</button>
+          <button class="good" id="checkTask">✅ Prüfen</button>
+          <button id="toggleSol">👁️ Lösung anzeigen</button>
+        </div>
+
+        <div class="modebar" style="margin-top:10px">
+          <span style="font-size:12px;color:var(--muted);font-weight:900">Schwierigkeit:</span>
+          <span class="pill active" id="pillEasy">🙂 Leicht</span>
+          <span class="pill" id="pillExpert">🧠 Experte</span>
+          <span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:900">Rest im Pool:</span>
+          <span class="pill" id="poolLeft" style="cursor:default">—</span>
+        </div>
+
+        <div class="status" id="status">Tipp: Im Expertenmodus kommen deutlich mehr Varianten (auch 3-teilig).</div>
+
+        <div class="solBox" id="solBox">
+          <pre id="solText">—</pre>
+          <div class="mini">Hinweis: Ergebnisse sind auf max. 1 Kommastelle gerundet.</div>
+        </div>
+      </div>
+
+      <div class="hd" style="margin:14px -14px 0;border-top:1px solid var(--line)"><h2>Werkzeugkasten <span style="color:var(--muted);font-weight:800">Körper</span></h2></div>
+
+      <label for="shape">Körper</label>
+      <select id="shape">
+        <option value="box">Quader / Würfel</option>
+        <option value="cylinder">Zylinder</option>
+        <option value="cone">Kegel</option>
+        <option value="pyramid">Pyramide (quadratisch)</option>
+      </select>
+
+      <div class="row">
+        <div>
+          <label id="labelA" for="a">Breite (a)</label>
+          <input id="a" type="number" min="0.2" step="0.1" value="2.0">
+        </div>
+        <div>
+          <label id="labelB" for="b">Tiefe (b)</label>
+          <input id="b" type="number" min="0.2" step="0.1" value="2.0">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label id="labelH" for="h">Höhe (h)</label>
+          <input id="h" type="number" min="0.2" step="0.1" value="2.0">
+        </div>
+        <div>
+          <label for="seg">Segmente (rund)</label>
+          <input id="seg" type="number" min="8" step="1" value="28">
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <label><input id="snap" type="checkbox" checked> Snapping aktiv</label>
+        </div>
+        <div>
+          <label for="grid">Raster (für Freiraum)</label>
+          <input id="grid" type="number" min="0.25" step="0.25" value="0.5">
+        </div>
+      </div>
+
+      <div class="btnbar">
+        <button class="primary" id="add">➕ Hinzufügen</button>
+        <button class="bad" id="remove">🗑️ Löschen</button>
+      </div>
+
+      <div class="hint">
+        Snapping-Regel: Nur <b>passende</b> Oberflächen (Kreis↔Kreis gleicher Radius; Rechteck↔Rechteck gleiche Maße).
+        Aufgaben sind so gebaut, dass das Snapping „mathematisch sinnvoll“ ist.
+      </div>
+
+      <div class="kv" id="info">
+        <div>Auswahl</div><div><b id="iSel">—</b></div>
+        <div>Objekte</div><div><b id="iCount">0</b></div>
+        <div>Berechnet (V/O)</div><div><b id="iCalc">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel canvasWrap">
+    <div class="overlay">
+      <div class="chip">🎛️ <b>Orbit</b>: drehen</div>
+      <div class="chip">🖱️ <b>Drag</b>: ziehen</div>
+      <div class="chip">🧲 <b>Snap</b>: Flächen</div>
+      <div class="chip">🟨 <b>Klick</b>: auswählen</div>
+    </div>
+    <div id="view"></div>
+  </section>
+</main>
+
+<script type="module">
+import * as THREE from "./lib/three.module.js";
+import { OrbitControls } from "./lib/OrbitControls.js";
+import { DragControls } from "./lib/DragControls.js";
+
+const showErr = (e) => {
+  const box = document.getElementById('err');
+  const pre = document.getElementById('errText');
+  pre.textContent = (e && (e.stack || e.message)) ? (e.stack || e.message) : String(e);
+  box.style.display = 'block';
+  console.error(e);
+};
+
+try{
+  const SNAP_DIST = 0.22;
+  const round1 = (x) => Math.round(x*10)/10;
+  const fmt1 = (x) => (Math.round(x*10)/10).toFixed(1);
+  const clamp = (v, lo, hi)=>Math.max(lo, Math.min(hi, v));
+  const roundTo = (v, step)=>Math.round(v/step)*step;
+  const approx = (a,b,t=1e-2)=>Math.abs(a-b)<=t;
+
+  const mount = document.getElementById("view");
+  const elShape = document.getElementById("shape");
+  const elA = document.getElementById("a");
+  const elB = document.getElementById("b");
+  const elH = document.getElementById("h");
+  const elSeg = document.getElementById("seg");
+  const elSnap = document.getElementById("snap");
+  const elGrid = document.getElementById("grid");
+
+  const labelA = document.getElementById("labelA");
+  const labelB = document.getElementById("labelB");
+  const labelH = document.getElementById("labelH");
+
+  const btnAdd = document.getElementById("add");
+  const btnRemove = document.getElementById("remove");
+
+  const pillFree = document.getElementById("pillFree");
+  const pillTask = document.getElementById("pillTask");
+  const taskBox = document.getElementById("taskBox");
+  const taskText = document.getElementById("taskText");
+  const statusEl = document.getElementById("status");
+  const btnNewTask = document.getElementById("newTask");
+  const btnResetTask = document.getElementById("resetTask");
+  const btnCheckTask = document.getElementById("checkTask");
+  const btnToggleSol = document.getElementById("toggleSol");
+  const solBox = document.getElementById("solBox");
+  const solText = document.getElementById("solText");
+
+  const pillEasy = document.getElementById("pillEasy");
+  const pillExpert = document.getElementById("pillExpert");
+  const poolLeft = document.getElementById("poolLeft");
+
+  const iSel = document.getElementById("iSel");
+  const iCount = document.getElementById("iCount");
+  const iCalc = document.getElementById("iCalc");
+
+  function setStatus(t, ok=null){
+    statusEl.textContent = t;
+    statusEl.classList.remove("ok","no");
+    if(ok===true) statusEl.classList.add("ok");
+    if(ok===false) statusEl.classList.add("no");
+  }
+
+  function updateBuilderLabels(){
+    const s = elShape.value;
+    if (s === "box"){
+      labelA.textContent = "Breite (a)";
+      labelB.textContent = "Tiefe (b)";
+      labelH.textContent = "Höhe (h)";
+      elB.disabled = false; elH.disabled = false; elSeg.disabled = true;
+    } else if (s === "cylinder"){
+      labelA.textContent = "Radius (r)";
+      labelB.textContent = "—";
+      labelH.textContent = "Höhe (h)";
+      elB.disabled = true; elH.disabled = false; elSeg.disabled = false;
+    } else if (s === "cone"){
+      labelA.textContent = "Radius (r)";
+      labelB.textContent = "—";
+      labelH.textContent = "Höhe (h)";
+      elB.disabled = true; elH.disabled = false; elSeg.disabled = false;
+    } else {
+      labelA.textContent = "Grundkante (a)";
+      labelB.textContent = "—";
+      labelH.textContent = "Höhe (h)";
+      elB.disabled = true; elH.disabled = false; elSeg.disabled = true;
+    }
+  }
+  elShape.addEventListener("change", updateBuilderLabels);
+  updateBuilderLabels();
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
+
+  const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 220);
+  camera.position.set(9, 7.5, 11);
+
+  const renderer = new THREE.WebGLRenderer({ antialias:true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  mount.appendChild(renderer.domElement);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.target.set(0, 1.2, 0);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa4b2, 0.95));
+  const dir = new THREE.DirectionalLight(0xffffff, 0.85);
+  dir.position.set(8, 14, 6);
+  scene.add(dir);
+
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(120, 120),
+    new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.95, metalness: 0.0 })
+  );
+  floor.rotation.x = -Math.PI/2;
+  scene.add(floor);
+
+  const gridHelper = new THREE.GridHelper(120, 120, 0xd1d5db, 0xe5e7eb);
+  gridHelper.position.y = 0.001;
+  scene.add(gridHelper);
+
+  const objects = [];
+  let selected = null;
+
+  const matNormal = new THREE.MeshNormalMaterial();
+  const edgeMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
+
+  function makeEdges(mesh){
+    const e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 25), edgeMat);
+    e.visible = false;
+    mesh.add(e);
+    mesh.userData.edges = e;
+  }
+  function setSelected(obj){
+    if (selected?.userData?.edges) selected.userData.edges.visible = false;
+    selected = obj;
+    if (selected?.userData?.edges) selected.userData.edges.visible = true;
+    iSel.textContent = selected ? selected.userData.label : "—";
+  }
+  function refreshCounter(){ iCount.textContent = String(objects.length); }
+
+  function createMeshFromUI(){
+    const shape = elShape.value;
+    const a = clamp(parseFloat(elA.value || "2.0"), 0.2, 30);
+    const b = clamp(parseFloat(elB.value || "2.0"), 0.2, 30);
+    const h = clamp(parseFloat(elH.value || "2.0"), 0.2, 30);
+    const seg = clamp(parseInt(elSeg.value || "28", 10), 8, 96);
+
+    let geo, label, params = {};
+    if (shape === "box"){
+      geo = new THREE.BoxGeometry(a, h, b);
+      label = (approx(a,b,0.01) && approx(a,h,0.01)) ? `Würfel` : `Quader`;
+      params = { a, b, h };
+    } else if (shape === "cylinder"){
+      geo = new THREE.CylinderGeometry(a, a, h, seg);
+      label = `Zylinder`;
+      params = { r:a, h, seg };
+    } else if (shape === "cone"){
+      geo = new THREE.CylinderGeometry(0, a, h, seg);
+      label = `Kegel`;
+      params = { r:a, h, seg };
+    } else {
+      const half = a/2;
+      const vertices = new Float32Array([
+        -half,-h/2,-half,   half,-h/2,-half,   half,-h/2, half,
+        -half,-h/2,-half,   half,-h/2, half,  -half,-h/2, half,
+        -half,-h/2,-half,    half,-h/2,-half,   0,h/2,0,
+         half,-h/2,-half,    half,-h/2, half,   0,h/2,0,
+         half,-h/2, half,   -half,-h/2, half,   0,h/2,0,
+        -half,-h/2, half,   -half,-h/2,-half,   0,h/2,0
+      ]);
+      geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+      geo.computeVertexNormals();
+      label = `Pyramide`;
+      params = { a, h };
+    }
+
+    const mesh = new THREE.Mesh(geo, matNormal);
+    mesh.userData.shape = shape;
+    mesh.userData.label = label;
+    mesh.userData.params = params;
+    return mesh;
+  }
+
+  function addObject(mesh){
+    mesh.position.set((Math.random()*0.4-0.2), 1.2, (Math.random()*0.4-0.2));
+    makeEdges(mesh);
+    scene.add(mesh);
+    objects.push(mesh);
+    refreshDragControls();
+    setSelected(mesh);
+    refreshCounter();
+    updateCalcChip();
+  }
+
+  function getFaces(obj){
+    const s = obj.userData.shape;
+    const p = obj.userData.params || {};
+    const faces = [];
+    const pos = obj.position;
+
+    if(s === "box"){
+      const a = p.a, b = p.b, h = p.h;
+      faces.push({name:"top",    normal:new THREE.Vector3(0,1,0),  center:new THREE.Vector3(pos.x, pos.y + h/2, pos.z), type:"rect", dims:{u:a, v:b}, area:a*b});
+      faces.push({name:"bottom", normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"rect", dims:{u:a, v:b}, area:a*b});
+      faces.push({name:"right",  normal:new THREE.Vector3(1,0,0),  center:new THREE.Vector3(pos.x + a/2, pos.y, pos.z), type:"rect", dims:{u:h, v:b}, area:h*b});
+      faces.push({name:"left",   normal:new THREE.Vector3(-1,0,0), center:new THREE.Vector3(pos.x - a/2, pos.y, pos.z), type:"rect", dims:{u:h, v:b}, area:h*b});
+      faces.push({name:"front",  normal:new THREE.Vector3(0,0,1),  center:new THREE.Vector3(pos.x, pos.y, pos.z + b/2), type:"rect", dims:{u:a, v:h}, area:a*h});
+      faces.push({name:"back",   normal:new THREE.Vector3(0,0,-1), center:new THREE.Vector3(pos.x, pos.y, pos.z - b/2), type:"rect", dims:{u:a, v:h}, area:a*h});
+    }
+
+    if(s === "cylinder"){
+      const r = p.r, h = p.h;
+      faces.push({name:"top",    normal:new THREE.Vector3(0,1,0),  center:new THREE.Vector3(pos.x, pos.y + h/2, pos.z), type:"circle", dims:{r}, area:Math.PI*r*r});
+      faces.push({name:"bottom", normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"circle", dims:{r}, area:Math.PI*r*r});
+    }
+
+    if(s === "cone"){
+      const r = p.r, h = p.h;
+      faces.push({name:"base",   normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"circle", dims:{r}, area:Math.PI*r*r});
+    }
+
+    if(s === "pyramid"){
+      const a = p.a, h = p.h;
+      faces.push({name:"base", normal:new THREE.Vector3(0,-1,0), center:new THREE.Vector3(pos.x, pos.y - h/2, pos.z), type:"rect", dims:{u:a, v:a}, area:a*a});
+    }
+    return faces;
+  }
+
+  function facesCompatible(fA, fB){
+    if(fA.type !== fB.type) return false;
+    if(fA.type === "circle") return Math.abs(fA.dims.r - fB.dims.r) <= 0.02;
+    const au=fA.dims.u, av=fA.dims.v, bu=fB.dims.u, bv=fB.dims.v;
+    const direct = (Math.abs(au-bu)<=0.02 && Math.abs(av-bv)<=0.02);
+    const swapped = (Math.abs(au-bv)<=0.02 && Math.abs(av-bu)<=0.02);
+    return direct || swapped;
+  }
+  function normalsOpposite(n1,n2){ return n1.dot(n2) <= -0.98; }
+
+  function trySnap(moving){
+    if(!elSnap.checked) return;
+
+    const mFaces = getFaces(moving);
+    let best = null;
+
+    for(const other of objects){
+      if(other === moving) continue;
+      const oFaces = getFaces(other);
+      for(const mf of mFaces){
+        for(const ofc of oFaces){
+          if(!normalsOpposite(mf.normal, ofc.normal)) continue;
+          if(!facesCompatible(mf, ofc)) continue;
+          const d = mf.center.distanceTo(ofc.center);
+          if(d > SNAP_DIST) continue;
+          if(!best || d < best.d) best = {d, mf, ofc};
+        }
+      }
+    }
+    if(!best) return;
+
+    const delta = new THREE.Vector3().subVectors(best.ofc.center, best.mf.center);
+    moving.position.add(delta);
+
+    if(mode === "free"){
+      const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
+      moving.position.x = roundTo(moving.position.x, step);
+      moving.position.z = roundTo(moving.position.z, step);
+    }
+    moving.position.y = Math.max(moving.position.y, 0.01);
+    setSelected(moving);
+  }
+
+  let dragControls = null;
+  function refreshDragControls(){
+    if (dragControls){
+      dragControls.deactivate();
+      dragControls.dispose();
+    }
+    dragControls = new DragControls(objects, camera, renderer.domElement);
+    dragControls.addEventListener("dragstart", () => controls.enabled = false);
+    dragControls.addEventListener("dragend", (ev) => {
+      controls.enabled = true;
+      trySnap(ev.object);
+      updateCalcChip();
+    });
+    dragControls.addEventListener("drag", (ev) => {
+      const obj = ev.object;
+      obj.position.y = Math.max(obj.position.y, 0.01);
+      if(mode === "free"){
+        const step = Math.max(0.05, parseFloat(elGrid.value || "0.5"));
+        obj.position.x = roundTo(obj.position.x, step);
+        obj.position.z = roundTo(obj.position.z, step);
+      }
+      setSelected(obj);
+    });
+  }
+
+  btnAdd.addEventListener("click", () => addObject(createMeshFromUI()));
+  btnRemove.addEventListener("click", () => {
+    if (!selected) return;
+    const idx = objects.indexOf(selected);
+    if (idx >= 0) objects.splice(idx, 1);
+    scene.remove(selected);
+    selected = null;
+    refreshDragControls();
+    refreshCounter();
+    iSel.textContent = "—";
+    updateCalcChip();
+  });
+
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  renderer.domElement.addEventListener("pointerdown", (e) => {
+    const r = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const hits = raycaster.intersectObjects(objects, true);
+    if (hits.length){
+      let obj = hits[0].object;
+      while (obj && !objects.includes(obj) && obj.parent) obj = obj.parent;
+      if (objects.includes(obj)) setSelected(obj);
+    }
+  });
+
+  function volumeOf(obj){
+    const s = obj.userData.shape;
+    const p = obj.userData.params;
+    if(s==="box") return p.a * p.b * p.h;
+    if(s==="cylinder") return Math.PI * p.r * p.r * p.h;
+    if(s==="cone") return (Math.PI * p.r * p.r * p.h) / 3;
+    if(s==="pyramid") return (p.a * p.a * p.h) / 3;
+    return 0;
+  }
+  function surfaceOf(obj){
+    const s = obj.userData.shape;
+    const p = obj.userData.params;
+    if(s==="box") return 2*(p.a*p.b + p.a*p.h + p.b*p.h);
+    if(s==="cylinder") return 2*Math.PI*p.r*(p.h + p.r);
+    if(s==="cone"){
+      const sLen = Math.sqrt(p.r*p.r + p.h*p.h);
+      return Math.PI*p.r*(p.r + sLen);
+    }
+    if(s==="pyramid"){
+      const sLen = Math.sqrt((p.a/2)*(p.a/2) + p.h*p.h);
+      return (p.a*p.a) + 2*p.a*sLen;
+    }
+    return 0;
+  }
+
+  function contactAreaBetween(a,b){
+    const fa = getFaces(a);
+    const fb = getFaces(b);
+    let sum = 0;
+    for(const A of fa){
+      for(const B of fb){
+        if(!normalsOpposite(A.normal, B.normal)) continue;
+        if(!facesCompatible(A,B)) continue;
+        if(A.center.distanceTo(B.center) > 0.03) continue;
+        sum += Math.min(A.area, B.area);
+      }
+    }
+    return sum;
+  }
+
+  function calcComposite(){
+    let V = 0, O = 0;
+    for(const o of objects){ V += volumeOf(o); O += surfaceOf(o); }
+    let contact = 0;
+    for(let i=0;i<objects.length;i++){
+      for(let j=i+1;j<objects.length;j++){
+        contact += contactAreaBetween(objects[i], objects[j]);
+      }
+    }
+    O = O - 2*contact;
+    return {V, O, contact};
+  }
+
+  function updateCalcChip(){
+    if(objects.length===0){ iCalc.textContent = "—"; return; }
+    const {V,O} = calcComposite();
+    iCalc.textContent = `V=${fmt1(V)} • O=${fmt1(O)}`;
+  }
+
+  let mode = "free";
+  function setMode(next){
+    mode = next;
+    pillFree.classList.toggle("active", mode === "free");
+    pillTask.classList.toggle("active", mode === "task");
+    taskBox.style.display = (mode === "task") ? "block" : "none";
+    solBox.style.display = "none";
+    btnToggleSol.textContent = "👁️ Lösung anzeigen";
+    updatePoolChip();
+  }
+  pillFree.addEventListener("click", () => setMode("free"));
+  pillTask.addEventListener("click", () => setMode("task"));
+
+  btnToggleSol.addEventListener("click", () => {
+    const open = solBox.style.display !== "none";
+    solBox.style.display = open ? "none" : "block";
+    btnToggleSol.textContent = open ? "👁️ Lösung anzeigen" : "🙈 Lösung ausblenden";
+  });
+
+  // ---------- Task factory + pools ----------
+  function taskCylCone(r, hCyl, hCone){
+    return {
+      name:`Zylinder+Kegel r=${r} | hZ=${hCyl} | hK=${hCone}`,
+      text:`Baue einen Zylinder (r=${r}, h=${hCyl}) und setze oben einen Kegel (r=${r}, h=${hCone}) drauf. (Kreisfläche muss exakt snappen.)`,
+      parts:[ {shape:"cylinder", r, h:hCyl}, {shape:"cone", r, h:hCone} ],
+      wantContacts:1,
+      solution(){
+        const Vz = Math.PI*r*r*hCyl;
+        const Vk = (Math.PI*r*r*hCone)/3;
+        const s = Math.sqrt(r*r + hCone*hCone);
+        const Oz = 2*Math.PI*r*(hCyl + r);
+        const Ok = Math.PI*r*(r + s);
+        const A = Math.PI*r*r;
+        const V = Vz + Vk;
+        const O = (Oz + Ok) - 2*A;
+        return [
+          "Volumen:",
+          `V(Zylinder) = π·r²·h = π·${r}²·${hCyl} = ${fmt1(Vz)}`,
+          `V(Kegel)    = 1/3·π·r²·h = 1/3·π·${r}²·${hCone} = ${fmt1(Vk)}`,
+          `V(gesamt)   = ${fmt1(Vz)} + ${fmt1(Vk)} = ${fmt1(V)}`,
+          "",
+          "Oberfläche:",
+          `O(Zylinder) = 2·π·r·(h+r) = 2·π·${r}·(${hCyl}+${r}) = ${fmt1(Oz)}`,
+          `s(Kegel)    = √(r²+h²) = √(${r}²+${hCone}²) = ${fmt1(s)}`,
+          `O(Kegel)    = π·r·(r+s) = π·${r}·(${r}+${fmt1(s)}) = ${fmt1(Ok)}`,
+          `Kontakt A   = π·r² = π·${r}² = ${fmt1(A)}`,
+          `O(gesamt)   = (OZ + OK) − 2·A = (${fmt1(Oz)} + ${fmt1(Ok)}) − 2·${fmt1(A)} = ${fmt1(O)}`
+        ].join("\n");
+      }
+    };
+  }
+
+  function taskBoxPyr(a, hBox, hPyr){
+    return {
+      name:`Quader+Pyramide a=${a} | hQ=${hBox} | hP=${hPyr}`,
+      text:`Baue einen Quader (a=${a}, b=${a}, h=${hBox}) und setze darauf eine Pyramide (Grundkante a=${a}, h=${hPyr}). (Quadrat muss snappen.)`,
+      parts:[ {shape:"box", a, b:a, h:hBox}, {shape:"pyramid", a, h:hPyr} ],
+      wantContacts:1,
+      solution(){
+        const Vq = a*a*hBox;
+        const Vp = (a*a*hPyr)/3;
+        const Oq = 2*(a*a + a*hBox + a*hBox);
+        const s = Math.sqrt((a/2)*(a/2) + hPyr*hPyr);
+        const Op = (a*a) + 2*a*s;
+        const A = a*a;
+        const V = Vq + Vp;
+        const O = (Oq + Op) - 2*A;
+        return [
+          "Volumen:",
+          `V(Quader)   = a·b·h = ${a}·${a}·${hBox} = ${fmt1(Vq)}`,
+          `V(Pyramide) = 1/3·a²·h = 1/3·${a}²·${hPyr} = ${fmt1(Vp)}`,
+          `V(gesamt)   = ${fmt1(Vq)} + ${fmt1(Vp)} = ${fmt1(V)}`,
+          "",
+          "Oberfläche:",
+          `O(Quader)   = 2(ab+ah+bh) = 2(${a}·${a}+${a}·${hBox}+${a}·${hBox}) = ${fmt1(Oq)}`,
+          `s(Pyramide) = √((a/2)² + h²) = √((${a}/2)² + ${hPyr}²) = ${fmt1(s)}`,
+          `O(Pyramide) = a² + 2·a·s = ${a}² + 2·${a}·${fmt1(s)} = ${fmt1(Op)}`,
+          `Kontakt A   = a² = ${a}² = ${fmt1(A)}`,
+          `O(gesamt)   = (OQ + OP) − 2·A = (${fmt1(Oq)} + ${fmt1(Op)}) − 2·${fmt1(A)} = ${fmt1(O)}`
+        ].join("\n");
+      }
+    };
+  }
+
+  function taskCylCyl(r, h1, h2){
+    return {
+      name:`Zylinder+Zylinder r=${r} | h1=${h1} | h2=${h2}`,
+      text:`Baue zwei Zylinder mit gleichem Radius r=${r}: h₁=${h1} und h₂=${h2}. Snap sie übereinander.`,
+      parts:[ {shape:"cylinder", r, h:h1}, {shape:"cylinder", r, h:h2} ],
+      wantContacts:1,
+      solution(){
+        const V1 = Math.PI*r*r*h1, V2 = Math.PI*r*r*h2;
+        const O1 = 2*Math.PI*r*(h1 + r), O2 = 2*Math.PI*r*(h2 + r);
+        const A = Math.PI*r*r;
+        const V = V1+V2;
+        const O = (O1+O2) - 2*A;
+        return [
+          "Volumen:",
+          `V₁ = π·${r}²·${h1} = ${fmt1(V1)}`,
+          `V₂ = π·${r}²·${h2} = ${fmt1(V2)}`,
+          `V(gesamt) = ${fmt1(V1)} + ${fmt1(V2)} = ${fmt1(V)}`,
+          "",
+          "Oberfläche:",
+          `O₁ = ${fmt1(O1)}`,
+          `O₂ = ${fmt1(O2)}`,
+          `Kontakt A = π·${r}² = ${fmt1(A)}`,
+          `O(gesamt) = (O₁+O₂) − 2·A = ${fmt1(O)}`
+        ].join("\n");
+      }
+    };
+  }
+
+  function taskCylCylCone(r, h1, h2, hCone){
+    return {
+      name:`Zyl+Zyl+Kegel r=${r} | ${h1}/${h2}/${hCone}`,
+      text:`Baue zwei Zylinder (r=${r}, h=${h1}) und (r=${r}, h=${h2}) und setze oben einen Kegel (r=${r}, h=${hCone}) drauf. Alles kreisförmig snappen.`,
+      parts:[ {shape:"cylinder", r, h:h1}, {shape:"cylinder", r, h:h2}, {shape:"cone", r, h:hCone} ],
+      wantContacts:2,
+      solution(){
+        const V1 = Math.PI*r*r*h1, V2 = Math.PI*r*r*h2, Vk = (Math.PI*r*r*hCone)/3;
+        const O1 = 2*Math.PI*r*(h1 + r), O2 = 2*Math.PI*r*(h2 + r);
+        const s = Math.sqrt(r*r + hCone*hCone);
+        const Ok = Math.PI*r*(r + s);
+        const A = Math.PI*r*r;
+        const V = V1+V2+Vk;
+        const O = (O1+O2+Ok) - 4*A;
+        return [
+          "Volumen:",
+          `V₁ = ${fmt1(V1)}`,
+          `V₂ = ${fmt1(V2)}`,
+          `V(Kegel)= ${fmt1(Vk)}`,
+          `V(gesamt)= ${fmt1(V)} (Summe)`,
+          "",
+          "Oberfläche:",
+          `O₁ = ${fmt1(O1)}`,
+          `O₂ = ${fmt1(O2)}`,
+          `s(Kegel)= ${fmt1(s)}`,
+          `O(Kegel)= ${fmt1(Ok)}`,
+          `Kontakt A = ${fmt1(A)} (2×)`,
+          `O(gesamt)= ${fmt1(O)}`
+        ].join("\n");
+      }
+    };
+  }
+
+  function buildPools(){
+    const easy = [];
+    const expert = [];
+
+    // ----------------
+    // LEICHT
+    // ----------------
+    const rSet = [1,1.5,2,2.5,3];
+    const hZSet = [3,4,5,6];
+    const hKSet = [2,3,4,5];
+    for(const r of rSet){
+      for(const hz of hZSet){
+        for(const hk of hKSet){
+          if(easy.length >= 18) break;
+          easy.push(taskCylCone(r, hz, hk));
+        }
+        if(easy.length >= 18) break;
+      }
+      if(easy.length >= 18) break;
+    }
+
+    const aSet = [3,4,5,6];
+    const hQSet = [2,3,4,5];
+    const hPSet = [2,3,4,5];
+    for(const a of aSet){
+      for(const hq of hQSet){
+        for(const hp of hPSet){
+          if(easy.length >= 36) break;
+          easy.push(taskBoxPyr(a, hq, hp));
+        }
+        if(easy.length >= 36) break;
+      }
+      if(easy.length >= 36) break;
+    }
+
+    // ----------------
+    // EXPERTE
+    // Regel: NIE gleiche Körper miteinander,
+    // ABER gemischte Kombinationen sind erlaubt:
+    //  - Zylinder + Kegel
+    //  - Quader + Pyramide
+    //  - Zylinder + Quader
+    //  - Zylinder + Pyramide
+    //  - Kegel + Quader
+    // ----------------
+
+    // Hilfs-Tasks
+    function taskCylBox(r, hCyl, aBox, hBox){
+      return {
+        name:`Zylinder+Quader r=${r} | a=${aBox}`,
+        text:`Setze einen Zylinder (r=${r}, h=${hCyl}) mittig auf einen Quader (a=${aBox}, b=${aBox}, h=${hBox}). Kreis muss in das Quadrat passen.`,
+        parts:[
+          {shape:"cylinder", r, h:hCyl},
+          {shape:"box", a:aBox, b:aBox, h:hBox}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vz = Math.PI*r*r*hCyl;
+          const Vq = aBox*aBox*hBox;
+          const Oz = 2*Math.PI*r*(hCyl + r);
+          const Oq = 2*(aBox*aBox + aBox*hBox + aBox*hBox);
+          const A = Math.PI*r*r;
+          const V = Vz + Vq;
+          const O = (Oz + Oq) - 2*A;
+          return [
+            "Volumen:",
+            `V(Zylinder) = ${fmt1(Vz)}`,
+            `V(Quader)   = ${fmt1(Vq)}`,
+            `V(gesamt)   = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Zylinder) = ${fmt1(Oz)}`,
+            `O(Quader)   = ${fmt1(Oq)}`,
+            `Kontakt A   = π·r² = ${fmt1(A)}`,
+            `O(gesamt)   = ${fmt1(O)}`
+          ].join("\n");
+        }
+      };
+    }
+
+    function taskCylPyr(r, hCyl, a, hP){
+      return {
+        name:`Zylinder+Pyramide r=${r} | a=${a}`,
+        text:`Setze einen Zylinder (r=${r}, h=${hCyl}) mittig auf eine Pyramide (a=${a}, h=${hP}).`,
+        parts:[
+          {shape:"cylinder", r, h:hCyl},
+          {shape:"pyramid", a, h:hP}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vz = Math.PI*r*r*hCyl;
+          const Vp = (a*a*hP)/3;
+          const Oz = 2*Math.PI*r*(hCyl + r);
+          const s = Math.sqrt((a/2)*(a/2) + hP*hP);
+          const Op = a*a + 2*a*s;
+          const A = Math.PI*r*r;
+          const V = Vz + Vp;
+          const O = (Oz + Op) - 2*A;
+          return [
+            "Volumen:",
+            `V(Zylinder) = ${fmt1(Vz)}`,
+            `V(Pyramide) = ${fmt1(Vp)}`,
+            `V(gesamt)   = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Zylinder) = ${fmt1(Oz)}`,
+            `O(Pyramide) = ${fmt1(Op)}`,
+            `Kontakt A   = π·r² = ${fmt1(A)}`,
+            `O(gesamt)   = ${fmt1(O)}`
+          ].join("\n");
+        }
+      };
+    }
+
+    function taskConeBox(r, hCone, aBox, hBox){
+      return {
+        name:`Kegel+Quader r=${r} | a=${aBox}`,
+        text:`Setze einen Kegel (r=${r}, h=${hCone}) auf einen Quader (a=${aBox}, b=${aBox}, h=${hBox}).`,
+        parts:[
+          {shape:"cone", r, h:hCone},
+          {shape:"box", a:aBox, b:aBox, h:hBox}
+        ],
+        wantContacts:1,
+        solution(){
+          const Vk = (Math.PI*r*r*hCone)/3;
+          const Vq = aBox*aBox*hBox;
+          const s = Math.sqrt(r*r + hCone*hCone);
+          const Ok = Math.PI*r*(r + s);
+          const Oq = 2*(aBox*aBox + aBox*hBox + aBox*hBox);
+          const A = Math.PI*r*r;
+          const V = Vk + Vq;
+          const O = (Ok + Oq) - 2*A;
+          return [
+            "Volumen:",
+            `V(Kegel)  = ${fmt1(Vk)}`,
+            `V(Quader) = ${fmt1(Vq)}`,
+            `V(gesamt) = ${fmt1(V)}`,
+            "",
+            "Oberfläche:",
+            `O(Kegel)  = ${fmt1(Ok)}`,
+            `O(Quader) = ${fmt1(Oq)}`,
+            `Kontakt A = π·r² = ${fmt1(A)}`,
+            `O(gesamt) = ${fmt1(O)}`
+          ].join("\n");
+        }
+      };
+    }
+
+    // Experten-Pool füllen
+    for(const r of [1.5,2,2.5,3]){
+      for(const a of [4,5,6,7]){
+        if(r*2 < a){
+          expert.push(taskCylBox(r, 4, a, 3));
+          expert.push(taskConeBox(r, 3, a, 3));
+          expert.push(taskCylPyr(r, 4, a, 4));
+        }
+        if(expert.length >= 120) break;
+      }
+      if(expert.length >= 120) break;
+    }
+
+    // Klassiker beibehalten (Zylinder+Kegel, Quader+Pyramide)
+    for(const r of [1.5,2,2.5,3]){
+      for(const hz of [4,5,6]){
+        for(const hk of [2,3,4]){
+          expert.push(taskCylCone(r, hz, hk));
+        }
+      }
+    }
+    for(const a of [4,5,6,7]){
+      for(const hq of [3,4,5]){
+        for(const hp of [3,4,5]){
+          expert.push(taskBoxPyr(a, hq, hp));
+        }
+      }
+    }
+
+    const uniq = (arr)=>{
+      const seen = new Set();
+      const out = [];
+      for(const t of arr){
+        if(seen.has(t.name)) continue;
+        seen.add(t.name);
+        out.push(t);
+      }
+      return out;
+    };
+
+    return {
+      easy: uniq(easy).slice(0,36),
+      expert: uniq(expert).slice(0,150)
+    };
+  }
+
+  const POOLS = buildPools();
+
+  // Shuffle-bag (no repeat until exhausted)
+  let difficulty = "easy";
+  let bagEasy = [];
+  let bagExpert = [];
+
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+  function refillBagIfNeeded(force=false){
+    if(difficulty==="easy"){
+      if(force || bagEasy.length===0) bagEasy = shuffle([...POOLS.easy]);
+    } else {
+      if(force || bagExpert.length===0) bagExpert = shuffle([...POOLS.expert]);
+    }
+  }
+  function takeNextTask(){
+    refillBagIfNeeded(false);
+    return (difficulty==="easy") ? bagEasy.pop() : bagExpert.pop();
+  }
+  function updatePoolChip(){
+    const left = (difficulty==="easy") ? bagEasy.length : bagExpert.length;
+    poolLeft.textContent = String(left);
+  }
+
+  function setDifficulty(d){
+    difficulty = d;
+    pillEasy.classList.toggle("active", d === "easy");
+    pillExpert.classList.toggle("active", d === "expert");
+    refillBagIfNeeded(true);
+    updatePoolChip();
+    if(mode==="task"){
+      setStatus(d==="easy"
+        ? "Leicht-Modus: nur Zylinder+Kegel oder Quader+Pyramide (viele Varianten)."
+        : "Experten-Modus: viele Varianten (auch 3-teilig) – kaum Wiederholungen.");
+    }
+  }
+  pillEasy.addEventListener("click", () => setDifficulty("easy"));
+  pillExpert.addEventListener("click", () => setDifficulty("expert"));
+
+  // check helpers
+  function partsSignature(obj){
+    const s = obj.userData.shape;
+    const p = obj.userData.params || {};
+    if(s==="box") return `box:${round1(p.a)}:${round1(p.b)}:${round1(p.h)}`;
+    if(s==="cylinder") return `cyl:${round1(p.r)}:${round1(p.h)}`;
+    if(s==="cone") return `cone:${round1(p.r)}:${round1(p.h)}`;
+    if(s==="pyramid") return `pyr:${round1(p.a)}:${round1(p.h)}`;
+    return "x";
+  }
+  function taskPartSignature(part){
+    if(part.shape==="box") return `box:${round1(part.a)}:${round1(part.b)}:${round1(part.h)}`;
+    if(part.shape==="cylinder") return `cyl:${round1(part.r)}:${round1(part.h)}`;
+    if(part.shape==="cone") return `cone:${round1(part.r)}:${round1(part.h)}`;
+    if(part.shape==="pyramid") return `pyr:${round1(part.a)}:${round1(part.h)}`;
+    return "x";
+  }
+  function multisetMatch(want, have){
+    const m = new Map();
+    for(const w of want){
+      const k = taskPartSignature(w);
+      m.set(k, (m.get(k)||0)+1);
+    }
+    for(const h of have){
+      const k = partsSignature(h);
+      m.set(k, (m.get(k)||0)-1);
+    }
+    for(const [,v] of m.entries()){
+      if(v!==0) return false;
+    }
+    return true;
+  }
+  function countContacts(){
+    let contact = 0;
+    for(let i=0;i<objects.length;i++){
+      for(let j=i+1;j<objects.length;j++){
+        contact += contactAreaBetween(objects[i], objects[j]) > 0 ? 1 : 0;
+      }
+    }
+    return contact;
+  }
+
+  // Buttons
+  let currentTask = null;
+
+  btnNewTask.addEventListener("click", () => {
+    setMode("task");
+    const t = takeNextTask();
+    currentTask = t;
+    updatePoolChip();
+    taskText.textContent = t.text;
+    solText.textContent = t.solution();
+    solBox.style.display = "none";
+    btnToggleSol.textContent = "👁️ Lösung anzeigen";
+    setStatus(`Bauen → dann „Prüfen“. (Aufgabe: ${t.name})`);
+  });
+
+  btnResetTask.addEventListener("click", () => {
+    for (const m of objects) scene.remove(m);
+    objects.length = 0;
+    selected = null;
+    refreshDragControls();
+    refreshCounter();
+    iSel.textContent = "—";
+    updateCalcChip();
+    setStatus("Szene geleert.");
+  });
+
+  btnCheckTask.addEventListener("click", () => {
+    if (!currentTask){
+      setStatus("Keine Aufgabe aktiv. Klicke „Neue Aufgabe“.", false);
+      return;
+    }
+    const okParts = multisetMatch(currentTask.parts, objects);
+    const contacts = countContacts();
+    const okContacts = (currentTask.wantContacts===0) ? true : (contacts >= currentTask.wantContacts);
+
+    const built = calcComposite();
+
+    let expectedV=0, expectedO=0;
+    for(const prt of currentTask.parts){
+      if(prt.shape==="box"){
+        expectedV += prt.a*prt.b*prt.h;
+        expectedO += 2*(prt.a*prt.b + prt.a*prt.h + prt.b*prt.h);
+      }
+      if(prt.shape==="cylinder"){
+        expectedV += Math.PI*prt.r*prt.r*prt.h;
+        expectedO += 2*Math.PI*prt.r*(prt.h + prt.r);
+      }
+      if(prt.shape==="cone"){
+        expectedV += (Math.PI*prt.r*prt.r*prt.h)/3;
+        const sLen = Math.sqrt(prt.r*prt.r + prt.h*prt.h);
+        expectedO += Math.PI*prt.r*(prt.r + sLen);
+      }
+      if(prt.shape==="pyramid"){
+        expectedV += (prt.a*prt.a*prt.h)/3;
+        const sLen = Math.sqrt((prt.a/2)*(prt.a/2) + prt.h*prt.h);
+        expectedO += (prt.a*prt.a) + 2*prt.a*sLen;
+      }
+    }
+    // subtract actual contact areas (robust)
+    let contactArea = 0;
+    for(let i=0;i<objects.length;i++){
+      for(let j=i+1;j<objects.length;j++){
+        contactArea += contactAreaBetween(objects[i], objects[j]);
+      }
+    }
+    expectedO -= 2*contactArea;
+
+    const Vb = round1(built.V), Ob = round1(built.O);
+    const Ve = round1(expectedV), Oe = round1(expectedO);
+
+    const okV = Math.abs(Vb - Ve) <= 0.3;
+    const okO = Math.abs(Ob - Oe) <= 0.3;
+
+    if(okParts && okContacts && okV && okO){
+      setStatus(`✅ Passt! Deine Werte: V=${fmt1(built.V)}, O=${fmt1(built.O)}.`, true);
+    } else {
+      const probs = [];
+      if(!okParts) probs.push("Bauteile/Maße stimmen nicht.");
+      if(!okContacts) probs.push("Zu wenig vollflächig gesnappt (Kontaktfläche fehlt).");
+      if(!okV || !okO) probs.push(`Werte weichen ab. (Dein V/O: ${fmt1(built.V)}/${fmt1(built.O)})`);
+      setStatus(`❌ Noch nicht ganz: ${probs.join(" ")}`, false);
+    }
+  });
+
+  // init
+  setDifficulty("easy");
+  refillBagIfNeeded(true);
+  updatePoolChip();
+
+  addObject(createMeshFromUI());
+
+  function resize(){
+    const w = mount.clientWidth;
+    const h = mount.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function animate(){
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+}catch(e){
+  showErr(e);
+}
+</script>
+</body>
+</html>
