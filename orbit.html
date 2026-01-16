@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rechtschreib-Shooter 2.0</title>
+    <title>Rechtschreib-Shooter Deluxe</title>
     <style>
         body { 
             margin: 0; 
@@ -11,7 +11,7 @@
             background-color: #000; 
             user-select: none; 
             font-family: 'Segoe UI', sans-serif; 
-            cursor: none; /* Mauszeiger weg für Immersion */
+            cursor: none; /* Mauszeiger verstecken für Spiel-Feeling */
         }
         
         #ui-layer {
@@ -119,28 +119,27 @@
         let fontGlobal;
         let isTransitioning = false; 
 
-        // Audio Kontext (für Sounds)
+        // Audio System
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         const statusText = document.getElementById('status');
         const scoreText = document.getElementById('score-display');
         const crosshairDiv = document.getElementById('crosshair');
 
-        // --- DEINE LEVEL LISTE ---
-        // Tipp: errorIndex beginnt bei 0. Leerzeichen mitzählen!
+        // --- DEINE NEUEN LEVEL ---
         const levels = [
-            // Einfache Einstiegs-Sätze
+            // Einstieg
             { text: "Der Pogel fliegt.", errorIndex: 4, correctChar: "V" },
-            { text: "Das Haus ist gros.", errorIndex: 13, correctChar: "ß" },
-            { text: "Er liest ein Buch.", errorIndex: -1, correctChar: "" }, // Pause / Kein Fehler (optional)
+            { text: "Das Haus ist gros.", errorIndex: 14, correctChar: "ß" },
+            { text: "Er liest ein Buch.", errorIndex: 1, correctChar: "e" }, // Pause
             
             // s-Laute & ß
-            { text: "Die Strase ist lang.", errorIndex: 4, correctChar: "ß" },
+            { text: "Die Strase ist lang.", errorIndex: 8, correctChar: "ß" },
             { text: "Er muss das wisen.", errorIndex: 12, correctChar: "ss" },
             { text: "Der Fluss fliest.", errorIndex: 10, correctChar: "ß" },
 
             // Dehnung (h / ie)
-            { text: "Er nam das Geld.", errorIndex: 3, correctChar: "ha" }, // "nahm" (Trick: wir tauschen 'a' gegen 'ah' oder 'na' gegen 'nah') -> Simpel: ersetze Buchstabe
+            { text: "Er nam das Geld.", errorIndex: 3, correctChar: "ha" }, 
             { text: "Viele Kiche kochen Brei.", errorIndex: 6, correctChar: "ö" },
             { text: "Die Binen summen.", errorIndex: 4, correctChar: "ie" },
 
@@ -187,7 +186,7 @@
 
             raycaster = new THREE.Raycaster();
 
-            // 3. Schrift laden (Lokal)
+            // 3. Schrift laden (LOKAL - Das funktioniert bei dir!)
             const loader = new FontLoader();
             loader.load('font.json', function (font) {
                 fontGlobal = font;
@@ -195,22 +194,22 @@
                 loadLevel(0);
             }, undefined, function (err) {
                 console.error(err);
-                statusText.innerHTML = "FEHLER: <br>Konnte 'font.json' nicht finden.";
+                statusText.innerHTML = "FEHLER:<br>Datei 'font.json' fehlt oder liegt falsch.";
                 statusText.style.color = "red";
             });
 
             // Events
-            window.addEventListener('mousedown', onShoot); // Maus gedrückt
+            window.addEventListener('mousedown', onShoot);
             window.addEventListener('resize', onWindowResize);
             document.addEventListener('mousemove', onMouseMove);
             
-            // Klick auf Seite startet Audio Context (Browser-Regel)
+            // Sound aktivieren beim ersten Klick
             document.body.addEventListener('click', () => {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             });
         }
 
-        // --- SOUND EFFEKTE ---
+        // --- SOUND GENERATOR (Keine Dateien nötig!) ---
         function playSound(type) {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
@@ -219,7 +218,7 @@
             gain.connect(audioCtx.destination);
 
             if (type === 'shoot') {
-                // Laser Sound
+                // Laser Pew
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
@@ -228,7 +227,7 @@
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.2);
             } else if (type === 'hit') {
-                // Erfolg Sound (Ding!)
+                // Ding!
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
                 gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
@@ -236,11 +235,11 @@
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.5);
             } else if (type === 'error') {
-                // Fehler Sound (Buzz)
+                // Buzz (Fehler)
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(150, audioCtx.currentTime);
                 osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.3);
@@ -264,8 +263,7 @@
         function loadLevel(index) {
             isTransitioning = false;
             
-            // --- GRÜNDLICHES AUFRÄUMEN ---
-            // 1. Liste durchgehen
+            // Sauberes Aufräumen
             letters.forEach(l => scene.remove(l));
             letters = []; 
 
@@ -282,7 +280,6 @@
         }
 
         function create3DText(textStr, levelData) {
-            // Automatische Zentrierung berechnen (grob)
             let xOffset = - (textStr.length * 0.7); 
 
             for (let i = 0; i < textStr.length; i++) {
@@ -292,7 +289,6 @@
                     continue;
                 }
 
-                // Normaler Text
                 const geo = new TextGeometry(char, {
                     font: fontGlobal,
                     size: 1.5,
@@ -343,10 +339,9 @@
         function onShoot() {
             if (!fontGlobal || isTransitioning) return;
 
-            // Audio Feedback
             playSound('shoot');
 
-            // Fadenkreuz Animation
+            // Visueller Rückstoß
             crosshairDiv.style.transform = "translate(-50%, -50%) scale(0.8)";
             setTimeout(() => crosshairDiv.style.transform = "translate(-50%, -50%) scale(1)", 100);
 
@@ -356,11 +351,11 @@
             if (intersects.length > 0) {
                 const hitMesh = intersects[0].object;
                 
-                // Lehrer-Hilfe
-                console.log("Treffer auf: '" + hitMesh.userData.originalChar + "' (Index: " + hitMesh.userData.index + ")");
+                // Info für dich in der Konsole
+                console.log("Treffer: " + hitMesh.userData.originalChar + " (Index: " + hitMesh.userData.index + ")");
 
                 if (hitMesh.userData.isError) {
-                    // --- TREFFER ---
+                    // TREFFER
                     playSound('hit');
                     score += 100;
                     scoreText.innerText = "Score: " + score;
@@ -371,7 +366,7 @@
                     isTransitioning = true; 
 
                     createExplosion(hitMesh.position);
-                    scene.remove(hitMesh); // Falschen Buchstaben entfernen
+                    scene.remove(hitMesh); 
 
                     const correctChar = levels[currentSentenceIndex].correctChar;
                     spawnCorrectLetter(hitMesh.position, correctChar);
@@ -386,7 +381,7 @@
                     }, 2500); 
 
                 } else {
-                    // --- DANEBEN ---
+                    // FEHLER
                     playSound('error');
                     score -= 20;
                     scoreText.innerText = "Score: " + score;
@@ -405,7 +400,6 @@
         }
 
         function spawnCorrectLetter(position, char) {
-            // Spezialfall: Wenn wir zwei Buchstaben einfügen (z.B. ss)
             const geo = new TextGeometry(char, {
                 font: fontGlobal,
                 size: 1.5,
@@ -444,8 +438,6 @@
             light.position.copy(pos);
             scene.add(light);
             setTimeout(() => scene.remove(light), 300);
-            
-            // Kleine Partikel könnte man hier auch noch hinzufügen
         }
 
         function onWindowResize() {
