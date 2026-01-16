@@ -1,0 +1,2487 @@
+<!-- ===================== BLOCK 1/6 ===================== -->
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HoS Lernapp – Recherchieren wie ein Profi (7. Schulstufe)</title>
+  <meta name="description" content="Digitale Grundbildung: Selbstständige Lernapp (ca. 2 UE) zu Recherchieren, Quellenbewertung, Wikipedia, Cloud." />
+  <style>
+    /* ===================== HoS Design System ===================== */
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.14);
+      --ink: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --muted2: rgba(255,255,255,.55);
+      --accent: #7dd3fc;   /* helles cyan */
+      --accent2:#a7f3d0;   /* mint */
+      --warn: #fbbf24;     /* amber */
+      --bad:  #fb7185;     /* rose */
+      --good: #34d399;     /* green */
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --radius: 18px;
+      --radius2: 24px;
+      --maxw: 1000px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(125,211,252,.18), transparent 55%),
+        radial-gradient(900px 600px at 90% 20%, rgba(167,243,208,.12), transparent 55%),
+        radial-gradient(900px 700px at 60% 95%, rgba(251,191,36,.10), transparent 60%),
+        linear-gradient(180deg, #050816 0%, #0b1220 70%, #070b18 100%);
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; }
+    .wrap{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 18px 16px 28px;
+    }
+
+    /* ===================== Top Bar ===================== */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,18,32,.92), rgba(11,18,32,.65));
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .topbar-inner{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 12px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 250px;
+    }
+    .logo{
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background:
+        radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
+        linear-gradient(135deg, rgba(125,211,252,.75), rgba(167,243,208,.50));
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: var(--shadow);
+      display:grid;
+      place-items:center;
+      font-weight: 800;
+      color: rgba(5,8,22,.95);
+      letter-spacing: .5px;
+    }
+    .brand h1{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      font-weight: 800;
+      line-height:1.2;
+    }
+    .brand .sub{
+      margin:2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      user-select:none;
+    }
+    .pill b{ color: var(--ink); }
+
+    .btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-weight: 750;
+      font-size: 13px;
+      cursor:pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.26); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn.secondary{
+      background: rgba(255,255,255,.05);
+      box-shadow:none;
+    }
+    .btn.accent{
+      border-color: rgba(125,211,252,.35);
+      background: linear-gradient(180deg, rgba(125,211,252,.22), rgba(255,255,255,.06));
+    }
+
+    /* ===================== Progress ===================== */
+    .progress{
+      width: 320px;
+      max-width: 55vw;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+      position:relative;
+    }
+    .bar{
+      height:100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(125,211,252,.95), rgba(167,243,208,.95));
+      box-shadow: 0 0 0 1px rgba(255,255,255,.10) inset;
+      transition: width .35s ease;
+    }
+    .progress small{
+      position:absolute;
+      inset: -18px 0 auto 0;
+      text-align:right;
+      font-size: 11px;
+      color: var(--muted2);
+      font-weight:700;
+      padding-right: 2px;
+    }
+
+    /* ===================== Cards / Layout ===================== */
+    .hero{
+      margin-top: 18px;
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-inner{
+      padding: 18px 18px 16px;
+      display:grid;
+      gap: 14px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      width: fit-content;
+      background: rgba(125,211,252,.12);
+      border: 1px solid rgba(125,211,252,.22);
+      color: rgba(255,255,255,.86);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing:.2px;
+    }
+    .hero h2{
+      margin:0;
+      font-size: 24px;
+      letter-spacing:.2px;
+      line-height:1.15;
+    }
+    .hero p{
+      margin:0;
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.45;
+      font-size: 14px;
+      max-width: 75ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      .brand{ min-width: auto; }
+      .progress{ width: 240px; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 12px 35px rgba(0,0,0,.22);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 10px;
+    }
+    .card .hd h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      font-weight: 900;
+    }
+    .card .hd .hint{
+      margin: 2px 0 0;
+      color: var(--muted2);
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .card .bd{
+      padding: 14px;
+    }
+
+    .klist{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-weight: 650;
+      line-height:1.55;
+      font-size: 14px;
+    }
+    .klist li{ margin: 6px 0; }
+
+    .divider{
+      height: 1px;
+      background: rgba(255,255,255,.10);
+      margin: 12px 0;
+    }
+
+    /* ===================== Module Screen ===================== */
+    .screen{
+      margin-top: 14px;
+      display:none;
+      animation: fadeIn .25s ease;
+    }
+    .screen.active{ display:block; }
+
+    @keyframes fadeIn{
+      from{ opacity:0; transform: translateY(6px); }
+      to{ opacity:1; transform: translateY(0px); }
+    }
+
+    .step-title{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .step-title h3{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .step-title .meta{
+      color: var(--muted2);
+      font-weight: 700;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+
+    .note{
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      border: 1px dashed rgba(255,255,255,.16);
+      padding: 12px;
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .q{
+      margin-top: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      padding: 12px;
+    }
+    .q p{
+      margin:0 0 10px;
+      font-weight: 850;
+      letter-spacing:.15px;
+      font-size: 14px;
+    }
+
+    .opt{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: var(--ink);
+      font-weight: 800;
+      font-size: 13px;
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .chip:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.26); }
+    .chip.selected{
+      border-color: rgba(125,211,252,.40);
+      background: rgba(125,211,252,.14);
+    }
+
+    .feedback{
+      margin-top: 10px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight: 650;
+      line-height: 1.5;
+      font-size: 13px;
+      display:none;
+    }
+    .feedback.show{ display:block; }
+    .feedback.good{ border-color: rgba(52,211,153,.30); background: rgba(52,211,153,.10); color: rgba(255,255,255,.86); }
+    .feedback.warn{ border-color: rgba(251,191,36,.30); background: rgba(251,191,36,.10); color: rgba(255,255,255,.86); }
+    .feedback.bad{  border-color: rgba(251,113,133,.30); background: rgba(251,113,133,.10); color: rgba(255,255,255,.86); }
+
+    .field{
+      display:grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    label{
+      font-size: 12px;
+      color: var(--muted2);
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    input[type="text"], textarea{
+      width:100%;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color: var(--ink);
+      padding: 10px 12px;
+      outline:none;
+      font-weight: 650;
+      font-size: 14px;
+    }
+    textarea{ min-height: 96px; resize: vertical; }
+
+    .footer-actions{
+      margin-top: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .mini{
+      font-size: 12px;
+      color: var(--muted2);
+      font-weight: 700;
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      max-width: min(720px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.88);
+      font-weight: 650;
+      font-size: 13px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display:none;
+      z-index: 100;
+    }
+    .toast.show{ display:block; }
+  </style>
+</head>
+
+<body>
+  <!-- ===================== Sticky Top Bar ===================== -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="logo" title="HoS">HoS</div>
+        <div>
+          <h1>Recherchieren wie ein Profi</h1>
+          <div class="sub">Digitale Grundbildung · 7. Schulstufe · Dezember</div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="pill">Modul: <b id="pillStep">Start</b></div>
+        <div class="progress" aria-label="Fortschritt">
+          <small id="progLabel">0%</small>
+          <div class="bar" id="progBar"></div>
+        </div>
+        <button class="btn secondary" id="btnReset" title="Setzt Eingaben & Fortschritt zurück">Reset</button>
+        <button class="btn accent" id="btnPrint" title="Druckansicht der Ergebnisse">Ergebnisse drucken</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <!-- ===================== HERO ===================== -->
+    <section class="hero">
+      <div class="hero-inner">
+        <span class="badge">🔎 Lernapp · 2 UE · selbstständig · HoS</span>
+        <h2>Internet-Recherche, die wirklich gut ist.</h2>
+        <p>
+          Du arbeitest diese Lernapp Schritt für Schritt durch. Es geht nicht darum, „die eine richtige Seite“ zu finden,
+          sondern darum, <b>klug zu suchen</b>, <b>Quellen zu bewerten</b>, Wikipedia sinnvoll zu nutzen und am Ende deine Ergebnisse
+          sauber zu dokumentieren.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== OVERVIEW + QUICK RULES ===================== -->
+    <section class="grid" id="overview">
+      <div class="card">
+        <div class="hd">
+          <div>
+            <h3>So funktioniert’s</h3>
+            <div class="hint">Arbeite in Reihenfolge. Du kannst später zurück.</div>
+          </div>
+          <div class="pill">⏱ ca. 90–100 Min</div>
+        </div>
+        <div class="bd">
+          <ul class="klist">
+            <li><b>6 Module</b> – kurze Inputs, dann Aufgaben</li>
+            <li>Du speicherst dir Ergebnisse in der App (lokal im Browser)</li>
+            <li>Am Ende gibt’s einen <b>Ergebnis-Block</b> zum Drucken / Abgeben</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="note">
+            <b>HoS-Regel:</b> Das erste Suchergebnis ist oft bequem – aber nicht automatisch gut.
+          </div>
+          <div class="footer-actions">
+            <span class="mini">Tipp: Öffne einen zweiten Tab für deine Recherche.</span>
+            <button class="btn accent" id="btnStart">Starten</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="hd">
+          <div>
+            <h3>Du lernst heute</h3>
+            <div class="hint">Checkliste für deinen Kopf</div>
+          </div>
+        </div>
+        <div class="bd">
+          <ul class="klist">
+            <li>Suchergebnisse verstehen</li>
+            <li>besser suchen (Operatoren & Keywords)</li>
+            <li>Quellen bewerten (Autor, Aktualität, Absicht)</li>
+            <li>Wikipedia als Startpunkt nutzen</li>
+            <li>Ergebnisse sauber dokumentieren</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="note">
+            <b>Ziel:</b> Du kannst am Ende erklären, <i>warum</i> deine Quelle gut ist.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screens (Module) kommen in Block 2–5 -->
+    <div id="screens"></div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<!-- ===================== BLOCK 1/6 END ===================== -->
+<!-- ===================== BLOCK 2/6 ===================== -->
+<script>
+/* =========================================================
+   HoS Lernapp – Recherchieren wie ein Profi (Block 2/6)
+   - Datenmodell + Screens (Modul 1–3)
+   - Rendering-Engine (Basis)
+   ========================================================= */
+
+(function(){
+  "use strict";
+
+  /* --------------------- Helpers --------------------- */
+  const $  = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+  const STORAGE_KEY = "hos_recherche_profi_v1";
+  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+
+  function toast(msg){
+    const t = $("#toast");
+    if(!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toast._tm);
+    toast._tm = setTimeout(()=>t.classList.remove("show"), 2200);
+  }
+
+  function safeText(s){
+    return (s ?? "").toString().replace(/[<>&]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]));
+  }
+
+  /* --------------------- State --------------------- */
+  const defaultState = {
+    stepIndex: -1, // -1 = Overview
+    answers: {
+      m1_choice: "",
+      m1_thought: "",
+      m2_q1: "",
+      m2_q2: "",
+      m3_best: ""
+    },
+    done: {
+      m1: false,
+      m2: false,
+      m3: false,
+      m4: false,
+      m5: false,
+      m6: false
+    },
+    startedAt: null
+  };
+
+  let state = loadState();
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return structuredClone(defaultState);
+      const parsed = JSON.parse(raw);
+      // merge fallback
+      return {
+        ...structuredClone(defaultState),
+        ...parsed,
+        answers: {...structuredClone(defaultState.answers), ...(parsed.answers||{})},
+        done:    {...structuredClone(defaultState.done),    ...(parsed.done||{})}
+      };
+    }catch(e){
+      return structuredClone(defaultState);
+    }
+  }
+
+  function saveState(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  function resetState(){
+    state = structuredClone(defaultState);
+    saveState();
+    toast("Reset durchgeführt.");
+    renderAll();
+    goOverview();
+  }
+
+  /* --------------------- Steps Definition --------------------- */
+  const steps = [
+    {
+      id: "m1",
+      title: "Modul 1 · Warm-up: Glaubst du das?",
+      time: "≈ 10 Min",
+      render: renderM1,
+      validate: () => !!state.answers.m1_choice
+    },
+    {
+      id: "m2",
+      title: "Modul 2 · Suchmaschinen verstehen",
+      time: "≈ 15 Min",
+      render: renderM2,
+      validate: () => !!state.answers.m2_q1 && !!state.answers.m2_q2
+    },
+    {
+      id: "m3",
+      title: "Modul 3 · Clever suchen statt scrollen",
+      time: "≈ 15 Min",
+      render: renderM3,
+      validate: () => !!state.answers.m3_best
+    },
+    // Module 4–6 kommen in Block 3–5
+    { id:"m4", title:"Modul 4 · Wikipedia: Startpunkt, nicht Ziel", time:"≈ 15 Min", render: ()=>"", validate: ()=>false },
+    { id:"m5", title:"Modul 5 · Cloudarbeit: gemeinsam & sauber",     time:"≈ 20 Min", render: ()=>"", validate: ()=>false },
+    { id:"m6", title:"Modul 6 · Abschluss: Ergebnis & Reflexion",      time:"≈ 10 Min", render: ()=>"", validate: ()=>false }
+  ];
+
+  /* --------------------- Rendering Shell --------------------- */
+  function updateTopbar(){
+    const idx = state.stepIndex;
+    const pill = $("#pillStep");
+    const bar = $("#progBar");
+    const lab = $("#progLabel");
+
+    const completed = steps.filter(s => state.done[s.id]).length;
+    const pct = Math.round((completed / steps.length) * 100);
+
+    if(pill) pill.textContent = idx < 0 ? "Start" : (steps[idx]?.id.toUpperCase() || "—");
+    if(bar) bar.style.width = pct + "%";
+    if(lab) lab.textContent = pct + "%";
+  }
+
+  function goOverview(){
+    state.stepIndex = -1;
+    saveState();
+    $("#overview").style.display = "";
+    $("#screens").innerHTML = "";
+    updateTopbar();
+  }
+
+  function goStep(i){
+    state.stepIndex = clamp(i, 0, steps.length-1);
+    saveState();
+    $("#overview").style.display = "none";
+    renderAll();
+    updateTopbar();
+    // focus title
+    const h = $(".screen.active h3");
+    if(h) h.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  function markDone(stepId){
+    state.done[stepId] = true;
+    saveState();
+    updateTopbar();
+  }
+
+  function renderAll(){
+    const screens = $("#screens");
+    if(!screens) return;
+
+    // render only current screen (clean, fast)
+    screens.innerHTML = "";
+    if(state.stepIndex < 0) return;
+
+    const s = steps[state.stepIndex];
+    const html = s.render();
+    screens.innerHTML = html;
+
+    // attach common nav handlers
+    const btnPrev = $("#btnPrev");
+    const btnNext = $("#btnNext");
+
+    if(btnPrev){
+      btnPrev.addEventListener("click", () => {
+        if(state.stepIndex === 0) return goOverview();
+        goStep(state.stepIndex - 1);
+      });
+    }
+    if(btnNext){
+      btnNext.addEventListener("click", () => {
+        const step = steps[state.stepIndex];
+        if(step.validate()){
+          markDone(step.id);
+          if(state.stepIndex < steps.length - 1) goStep(state.stepIndex + 1);
+          else toast("Du bist am Ende angekommen.");
+        }else{
+          toast("Bitte zuerst die Aufgabe(n) abschließen.");
+          const fb = $("#needs");
+          if(fb){
+            fb.classList.add("show","warn");
+            fb.textContent = "Noch nicht ganz: Bitte fülle die Pflichtfelder aus, bevor du weitergehst.";
+          }
+        }
+      });
+    }
+
+    // attach per-screen handlers
+    attachScreenHandlers(s.id);
+  }
+
+  /* --------------------- Screen Templates --------------------- */
+  function shell({title, time, bodyHTML, tipsHTML=""}){
+    return `
+      <section class="screen active" data-step="${safeText(title)}">
+        <div class="card">
+          <div class="hd">
+            <div>
+              <h3>${safeText(title)}</h3>
+              <div class="hint">Arbeite ruhig. Qualität vor Tempo.</div>
+            </div>
+            <div class="pill">⏱ ${safeText(time)}</div>
+          </div>
+          <div class="bd">
+            <div class="note">${tipsHTML || "<b>Merksatz:</b> Die erste Seite ist bequem – nicht automatisch gut."}</div>
+            ${bodyHTML}
+            <div class="feedback" id="needs"></div>
+            <div class="footer-actions">
+              <button class="btn secondary" id="btnPrev">← Zurück</button>
+              <button class="btn accent" id="btnNext">Weiter →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  /* --------------------- Module 1 --------------------- */
+  function renderM1(){
+    const chosen = state.answers.m1_choice;
+    const thought = state.answers.m1_thought || "";
+    const tips = `<b>Start:</b> Es geht hier nicht um richtig/falsch. Du sollst bewusst nachdenken, bevor du suchst.`;
+
+    const body = `
+      <div class="step-title">
+        <h3>Warm-up: Glaubst du das?</h3>
+        <div class="meta">Pflicht: Auswahl + 1 Satz</div>
+      </div>
+
+      <div class="q">
+        <p>Behauptung: „Alles, was im Internet steht, stimmt.“</p>
+        <div class="opt" role="group" aria-label="Antwort auswählen">
+          ${chip("Stimmt", chosen)}
+          ${chip("Stimmt eher", chosen)}
+          ${chip("Stimmt nicht", chosen)}
+          ${chip("Kommt darauf an", chosen)}
+        </div>
+        <div class="feedback ${chosen ? "show warn" : ""}" id="m1_fb">
+          ${chosen ? `Du hast gewählt: <b>${safeText(chosen)}</b>. Gute Wahl – jetzt begründe kurz.` : "Wähle eine Option."}
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="m1_thought">Begründung (1–2 Sätze): Warum hast du das gewählt?</label>
+        <textarea id="m1_thought" placeholder="Schreibe kurz deine Begründung...">${safeText(thought)}</textarea>
+      </div>
+
+      <div class="divider"></div>
+      <div class="note">
+        <b>Mini-Ziel:</b> Ab jetzt suchst du nicht nur „irgendwas“, sondern du prüfst Qualität.
+      </div>
+    `;
+
+    return shell({ title: steps[0].title, time: steps[0].time, tipsHTML: tips, bodyHTML: body });
+  }
+
+  function chip(label, chosen){
+    const sel = chosen === label ? "selected" : "";
+    return `<button type="button" class="chip ${sel}" data-chip="${safeText(label)}">${safeText(label)}</button>`;
+  }
+
+  /* --------------------- Module 2 --------------------- */
+  function renderM2(){
+    const a1 = state.answers.m2_q1 || "";
+    const a2 = state.answers.m2_q2 || "";
+    const tips = `<b>Merksatz:</b> Suchmaschinen zeigen dir Treffer – nicht automatisch Wahrheit.`;
+
+    const body = `
+      <div class="step-title">
+        <h3>Suchmaschinen verstehen</h3>
+        <div class="meta">Pflicht: 2 kurze Antworten</div>
+      </div>
+
+      <div class="note">
+        <b>Wichtig:</b> Die Reihenfolge der Suchergebnisse wird beeinflusst – z.B. durch Relevanzsignale, Popularität und manchmal Werbung.
+        Das heißt: <b>Platz 1</b> ist nicht automatisch <b>beste Quelle</b>.
+      </div>
+
+      <div class="q">
+        <p>1) Warum ist das erste Suchergebnis nicht immer das beste?</p>
+        <div class="field">
+          <input id="m2_q1" type="text" value="${safeText(a1)}" placeholder="z.B. weil Popularität/Werbung/Algorithmus..." />
+        </div>
+      </div>
+
+      <div class="q">
+        <p>2) Nenne 2 Dinge, die eine Quelle „gut“ wirken lassen.</p>
+        <div class="field">
+          <input id="m2_q2" type="text" value="${safeText(a2)}" placeholder="z.B. Autor erkennbar, aktuell, sachlich, seriöse Organisation..." />
+        </div>
+        <div class="feedback ${a2 ? "show good": ""}" id="m2_fb">
+          ${a2 ? "Nice – das brauchst du gleich bei der Quellenprüfung." : "Tipp: Denk an Autor, Datum, Absicht, Sprache, Impressum."}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="note">
+        <b>HoS-Check:</b> „Wer steckt dahinter?“ ist oft die wichtigste Frage.
+      </div>
+    `;
+
+    return shell({ title: steps[1].title, time: steps[1].time, tipsHTML: tips, bodyHTML: body });
+  }
+
+  /* --------------------- Module 3 --------------------- */
+  function renderM3(){
+    const best = state.answers.m3_best || "";
+    const tips = `<b>Merksatz:</b> Gute Keywords sparen Zeit. Stell dir vor, du „sprichst“ mit der Suchmaschine in Stichwörtern.`;
+
+    const body = `
+      <div class="step-title">
+        <h3>Clever suchen statt scrollen</h3>
+        <div class="meta">Pflicht: Auswahl</div>
+      </div>
+
+      <div class="note">
+        <b>Toolbox (kurz):</b><br>
+        • Nutze <b>Keywords</b> statt ganzer Sätze<br>
+        • Nutze <b>„Anführungszeichen“</b> für genaue Wortfolgen<br>
+        • Schließe Begriffe aus: <b>-</b> (z.B. jaguar -auto)<br>
+      </div>
+
+      <div class="q">
+        <p>Welche Suche führt eher zu brauchbaren Ergebnissen?</p>
+        <div class="opt">
+          <button type="button" class="chip ${best==="A"?"selected":""}" data-best="A">A) „Warum sind Handys schlecht“</button>
+          <button type="button" class="chip ${best==="B"?"selected":""}" data-best="B">B) „Handy Schule Vorteile Nachteile Studie“</button>
+        </div>
+        <div class="feedback ${best ? "show good" : ""}" id="m3_fb">
+          ${best ? (best==="B"
+            ? "Richtig gedacht: B ist konkreter (Thema + Perspektiven + „Studie“)."
+            : "A ist sehr allgemein. B wäre meist besser, weil die Begriffe gezielter sind.")
+          : "Wähle A oder B."}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q">
+        <p>Mini-Aufgabe: Formuliere <b>eine</b> gute Suchanfrage für dieses Thema:</p>
+        <div class="note"><b>Thema:</b> Sollten Handys in der Schule erlaubt sein?</div>
+        <div class="field">
+          <input id="m3_query" type="text" placeholder="z.B. Handy Schule Regeln Nutzen Risiken Studie" value="${safeText(state.answers.m3_query||"")}" />
+        </div>
+        <div class="feedback ${state.answers.m3_query ? "show warn" : ""}" id="m3_qfb">
+          ${state.answers.m3_query ? "Kurzer Check: Enthält deine Suche mehrere Perspektiven (Nutzen/Risiken)?" : "Optional, aber empfohlen: Schreib eine eigene Suchanfrage."}
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px">
+        <b>Mini-Ziel:</b> Du kannst gleich schneller zwei gute Quellen finden.
+      </div>
+    `;
+
+    return shell({ title: steps[2].title, time: steps[2].time, tipsHTML: tips, bodyHTML: body });
+  }
+
+  /* --------------------- Handlers per Screen --------------------- */
+  function attachScreenHandlers(stepId){
+    if(stepId === "m1"){
+      $$(".chip[data-chip]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const val = btn.getAttribute("data-chip");
+          state.answers.m1_choice = val;
+          saveState();
+          // update UI selection
+          $$(".chip[data-chip]").forEach(b=>b.classList.toggle("selected", b===btn));
+          const fb = $("#m1_fb");
+          if(fb){
+            fb.classList.add("show","warn");
+            fb.innerHTML = `Du hast gewählt: <b>${safeText(val)}</b>. Gute Wahl – jetzt begründe kurz.`;
+          }
+        });
+      });
+      const ta = $("#m1_thought");
+      if(ta){
+        ta.addEventListener("input", ()=>{
+          state.answers.m1_thought = ta.value.trim();
+          saveState();
+        });
+      }
+      // tighten validation: need choice + thought
+      steps[0].validate = () => !!state.answers.m1_choice && (state.answers.m1_thought||"").length >= 10;
+    }
+
+    if(stepId === "m2"){
+      const q1 = $("#m2_q1");
+      const q2 = $("#m2_q2");
+      if(q1) q1.addEventListener("input", ()=>{ state.answers.m2_q1 = q1.value.trim(); saveState(); });
+      if(q2) q2.addEventListener("input", ()=>{
+        state.answers.m2_q2 = q2.value.trim(); saveState();
+        const fb = $("#m2_fb");
+        if(fb){
+          fb.classList.add("show", state.answers.m2_q2 ? "good" : "warn");
+          fb.textContent = state.answers.m2_q2 ? "Nice – das brauchst du gleich bei der Quellenprüfung." : "Tipp: Denk an Autor, Datum, Absicht, Sprache, Impressum.";
+        }
+      });
+      steps[1].validate = () => (state.answers.m2_q1||"").length >= 6 && (state.answers.m2_q2||"").length >= 6;
+    }
+
+    if(stepId === "m3"){
+      $$(".chip[data-best]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          state.answers.m3_best = btn.getAttribute("data-best");
+          saveState();
+          $$(".chip[data-best]").forEach(b=>b.classList.toggle("selected", b===btn));
+          const fb = $("#m3_fb");
+          if(fb){
+            fb.classList.add("show","good");
+            fb.textContent = state.answers.m3_best==="B"
+              ? "Richtig gedacht: B ist konkreter (Thema + Perspektiven + „Studie“)."
+              : "A ist sehr allgemein. B wäre meist besser, weil die Begriffe gezielter sind.";
+          }
+        });
+      });
+
+      const q = $("#m3_query");
+      if(q){
+        q.addEventListener("input", ()=>{
+          state.answers.m3_query = q.value.trim();
+          saveState();
+          const fb = $("#m3_qfb");
+          if(fb){
+            fb.classList.toggle("show", !!state.answers.m3_query);
+            fb.classList.add("warn");
+            fb.textContent = state.answers.m3_query
+              ? "Kurzer Check: Enthält deine Suche mehrere Perspektiven (Nutzen/Risiken)?"
+              : "Optional, aber empfohlen: Schreib eine eigene Suchanfrage.";
+          }
+        });
+      }
+
+      steps[2].validate = () => !!state.answers.m3_best;
+    }
+  }
+
+  /* --------------------- Wire top buttons --------------------- */
+  function wireTopButtons(){
+    const start = $("#btnStart");
+    if(start){
+      start.addEventListener("click", ()=>{
+        if(!state.startedAt) state.startedAt = Date.now();
+        saveState();
+        goStep(0);
+      });
+    }
+    const reset = $("#btnReset");
+    if(reset) reset.addEventListener("click", resetState);
+
+    const print = $("#btnPrint");
+    if(print){
+      print.addEventListener("click", ()=>{
+        toast("Druckansicht kommt in Block 5 (Abschluss).");
+      });
+    }
+  }
+
+  /* --------------------- Init --------------------- */
+  function init(){
+    wireTopButtons();
+    updateTopbar();
+
+    // restore session position
+    if(state.stepIndex >= 0){
+      $("#overview").style.display = "none";
+      renderAll();
+      updateTopbar();
+    }else{
+      goOverview();
+    }
+  }
+
+  // run
+  document.addEventListener("DOMContentLoaded", init);
+
+  // expose for later blocks (print/export)
+  window.__HoSApp = {
+    getState: ()=>state,
+    setState: (s)=>{ state=s; saveState(); renderAll(); updateTopbar(); },
+    steps,
+    goStep,
+    goOverview,
+    saveState,
+    resetState,
+    toast
+  };
+})();
+</script>
+<!-- ===================== BLOCK 2/6 END ===================== -->
+<!-- ===================== BLOCK 3/6 ===================== -->
+<script>
+/* =========================================================
+   HoS Lernapp – Block 3/6
+   - Modul 4: Wikipedia richtig nutzen
+   - Modul 5: Cloudarbeit + Quellen-Sammlung
+   - Erweiterung: State-Felder + Validierungen + Render/Handler
+   ========================================================= */
+
+(function(){
+  "use strict";
+  const app = window.__HoSApp;
+  if(!app){ console.error("HoSApp not found. Block-Reihenfolge prüfen."); return; }
+
+  /* --------- kleine Helpers --------- */
+  const $  = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const safeText = (s)=> (s ?? "").toString().replace(/[<>&]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]));
+  const clamp = (n,min,max)=>Math.max(min,Math.min(max,n));
+
+  // state erweitern (falls alte LocalStorage-Version)
+  const st = app.getState();
+  st.answers = st.answers || {};
+  const ensure = (k, v) => { if(st.answers[k] === undefined) st.answers[k] = v; };
+
+  ensure("m4_wiki_topic", "");
+  ensure("m4_wiki_url", "");
+  ensure("m4_source_title", "");
+  ensure("m4_source_org", "");
+  ensure("m4_source_year", "");
+  ensure("m4_source_reason", "");
+
+  ensure("m5_doc_link", "");
+  ensure("m5_pair_mode", ""); // "solo" | "pair"
+  ensure("m5_sources", [
+    { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" },
+    { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" }
+  ]);
+
+  app.setState(st);
+
+  /* --------- Render Modul 4 --------- */
+  function renderM4(){
+    const s = app.getState();
+    const a = s.answers;
+
+    const tips = `<b>Merksatz:</b> Wikipedia ist <b>Startpunkt</b> – nicht Ziel. Nutze die <b>Einzelnachweise</b>.`;
+
+    const body = `
+      <div class="step-title">
+        <h3>Wikipedia: Startpunkt, nicht Ziel</h3>
+        <div class="meta">Pflicht: Thema + Wikipedia-Link + 1 Quelle</div>
+      </div>
+
+      <div class="note">
+        <b>So nutzt du Wikipedia richtig:</b><br>
+        1) Lies kurz den Überblick.<br>
+        2) Scrolle zu <b>Einzelnachweise / Quellen</b>.<br>
+        3) Öffne eine Quelle, die seriös wirkt (z.B. offizielle Organisation, Fachstelle, Studie).
+      </div>
+
+      <div class="q">
+        <p>1) Welches Thema recherchierst du heute?</p>
+        <div class="field">
+          <input id="m4_wiki_topic" type="text" value="${safeText(a.m4_wiki_topic)}" placeholder="z.B. Handyverbot Schule / Smartphone im Unterricht ..." />
+        </div>
+      </div>
+
+      <div class="q">
+        <p>2) Link zum passenden Wikipedia-Artikel (URL einfügen)</p>
+        <div class="field">
+          <input id="m4_wiki_url" type="text" value="${safeText(a.m4_wiki_url)}" placeholder="https://de.wikipedia.org/wiki/..." />
+        </div>
+        <div class="feedback ${a.m4_wiki_url ? "show warn": ""}" id="m4_wiki_fb">
+          ${a.m4_wiki_url ? "Check: Ist das wirklich Wikipedia? (de.wikipedia.org) – und passt der Artikel zum Thema?" : "Füge den Wikipedia-Link ein."}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q">
+        <p>3) Wähle <b>eine</b> Quelle aus den Wikipedia-Einzelnachweisen und prüfe sie kurz.</p>
+
+        <div class="field">
+          <label for="m4_source_title">Titel der Quelle</label>
+          <input id="m4_source_title" type="text" value="${safeText(a.m4_source_title)}" placeholder="Seitentitel / Bericht / Studie ..." />
+        </div>
+
+        <div class="field">
+          <label for="m4_source_org">Wer steckt dahinter? (Autor:in / Organisation)</label>
+          <input id="m4_source_org" type="text" value="${safeText(a.m4_source_org)}" placeholder="z.B. Bildungsministerium, Universität, Fachstelle ..." />
+        </div>
+
+        <div class="field">
+          <label for="m4_source_year">Aktualität (Jahr oder Datum)</label>
+          <input id="m4_source_year" type="text" value="${safeText(a.m4_source_year)}" placeholder="z.B. 2022 / 2023-10-05 ..." />
+        </div>
+
+        <div class="field">
+          <label for="m4_source_reason">Warum wirkt diese Quelle seriös? (1–2 Sätze)</label>
+          <textarea id="m4_source_reason" placeholder="z.B. sachliche Sprache, klare Autorenschaft, Fachinstitution, Daten/Belege...">${safeText(a.m4_source_reason)}</textarea>
+        </div>
+
+        <div class="feedback ${a.m4_source_reason ? "show good": ""}" id="m4_src_fb">
+          ${a.m4_source_reason ? "Top: Du begründest – genau das macht Recherche professionell." : "Tipp: Denk an Autor, Absicht, Sprache, Daten, Impressum."}
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px">
+        <b>HoS-Check:</b> Wenn du nicht sagen kannst, <i>wer</i> dahinter steckt, ist es selten eine Top-Quelle.
+      </div>
+    `;
+
+    return shell({ title: "Modul 4 · Wikipedia: Startpunkt, nicht Ziel", time: "≈ 15 Min", tipsHTML: tips, bodyHTML: body });
+  }
+
+  /* --------- Render Modul 5 --------- */
+  function renderM5(){
+    const s = app.getState();
+    const a = s.answers;
+    const tips = `<b>Merksatz:</b> Cloudarbeit ist dann gut, wenn jede Person einen <b>klaren Beitrag</b> liefert.`;
+
+    const rows = (a.m5_sources || []).map((src, i) => sourceRow(src, i)).join("");
+
+    const body = `
+      <div class="step-title">
+        <h3>Cloudarbeit: gemeinsam & sauber</h3>
+        <div class="meta">Pflicht: Arbeitsmodus + 2 Quellen</div>
+      </div>
+
+      <div class="note">
+        <b>Auftrag:</b> Du sammelst jetzt <b>2 brauchbare Quellen</b> (nicht dieselbe Website) und begründest kurz,
+        warum sie gut sind. Optional kannst du das in einem gemeinsamen Cloud-Dokument festhalten.
+      </div>
+
+      <div class="q">
+        <p>Arbeitsmodus</p>
+        <div class="opt">
+          <button type="button" class="chip ${a.m5_pair_mode==="solo"?"selected":""}" data-mode="solo">👤 Einzelarbeit</button>
+          <button type="button" class="chip ${a.m5_pair_mode==="pair"?"selected":""}" data-mode="pair">👥 Partnerarbeit</button>
+        </div>
+        <div class="feedback ${a.m5_pair_mode ? "show warn": ""}" id="m5_mode_fb">
+          ${a.m5_pair_mode ? "Gut. Jetzt Quellen sammeln – Qualität vor Quantität." : "Wähle Einzel- oder Partnerarbeit."}
+        </div>
+      </div>
+
+      <div class="q">
+        <p>Optional: Link zu eurem Cloud-Dokument (Google Docs / Microsoft 365)</p>
+        <div class="field">
+          <input id="m5_doc_link" type="text" value="${safeText(a.m5_doc_link)}" placeholder="https://... (optional)" />
+        </div>
+        <div class="feedback ${a.m5_doc_link ? "show warn": ""}" id="m5_doc_fb">
+          ${a.m5_doc_link ? "Achte darauf: Nur Link einfügen – keine privaten Daten." : "Optional. Du kannst auch nur hier in der App dokumentieren."}
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q">
+        <p>Quellen-Sammlung (2 Stück)</p>
+        <div class="note">
+          <b>Regeln:</b> (1) nicht dieselbe Website, (2) Autor/Organisation erkennbar, (3) möglichst aktuell.
+        </div>
+
+        ${rows}
+
+        <div class="feedback" id="m5_fb"></div>
+      </div>
+
+      <div class="note" style="margin-top:12px">
+        <b>Mini-Ziel:</b> Du kannst deine Quellen später in Referaten/Arbeiten sauber verwenden.
+      </div>
+    `;
+
+    return shell({ title: "Modul 5 · Cloudarbeit: gemeinsam & sauber", time: "≈ 20 Min", tipsHTML: tips, bodyHTML: body });
+  }
+
+  /* --------- UI Shell (wie in Block 2, nur lokal hier) --------- */
+  function shell({title, time, bodyHTML, tipsHTML=""}){
+    return `
+      <section class="screen active">
+        <div class="card">
+          <div class="hd">
+            <div>
+              <h3>${safeText(title)}</h3>
+              <div class="hint">Arbeite ruhig. Begründungen zählen.</div>
+            </div>
+            <div class="pill">⏱ ${safeText(time)}</div>
+          </div>
+          <div class="bd">
+            <div class="note">${tipsHTML || "<b>Merksatz:</b> Qualität vor Tempo."}</div>
+            ${bodyHTML}
+            <div class="feedback" id="needs"></div>
+            <div class="footer-actions">
+              <button class="btn secondary" id="btnPrev">← Zurück</button>
+              <button class="btn accent" id="btnNext">Weiter →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function sourceRow(src, i){
+    const n = i+1;
+    return `
+      <div class="card" style="margin-top:12px">
+        <div class="hd">
+          <div>
+            <h3>Quelle ${n}</h3>
+            <div class="hint">Pflichtfelder: Titel, URL, Wer, Jahr, Absicht, Warum gut</div>
+          </div>
+          <div class="pill">🔗</div>
+        </div>
+        <div class="bd">
+          <div class="field">
+            <label for="s${i}_title">Titel</label>
+            <input id="s${i}_title" type="text" value="${safeText(src.title)}" placeholder="Titel der Seite / Studie / Artikel ..." />
+          </div>
+
+          <div class="field">
+            <label for="s${i}_url">URL</label>
+            <input id="s${i}_url" type="text" value="${safeText(src.url)}" placeholder="https://..." />
+          </div>
+
+          <div class="field">
+            <label for="s${i}_authororg">Autor:in / Organisation</label>
+            <input id="s${i}_authororg" type="text" value="${safeText(src.authororg)}" placeholder="z.B. Universität / Behörde / Fachstelle ..." />
+          </div>
+
+          <div class="field">
+            <label for="s${i}_year">Jahr/Datum</label>
+            <input id="s${i}_year" type="text" value="${safeText(src.year)}" placeholder="z.B. 2023" />
+          </div>
+
+          <div class="field">
+            <label for="s${i}_intent">Absicht der Seite (informieren / überzeugen / verkaufen / ...)</label>
+            <input id="s${i}_intent" type="text" value="${safeText(src.intent)}" placeholder="z.B. informieren, Meinung, Werbung..." />
+          </div>
+
+          <div class="field">
+            <label for="s${i}_whygood">Warum ist das eine gute Quelle? (1–2 Sätze)</label>
+            <textarea id="s${i}_whygood" placeholder="Begründung...">${safeText(src.whygood)}</textarea>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* --------- Handler: Modul 4 --------- */
+  function attachM4(){
+    const s = app.getState();
+
+    const wtopic = $("#m4_wiki_topic");
+    const wurl   = $("#m4_wiki_url");
+    const stitle = $("#m4_source_title");
+    const sorg   = $("#m4_source_org");
+    const syear  = $("#m4_source_year");
+    const sreas  = $("#m4_source_reason");
+
+    const wire = (el, key, cb) => {
+      if(!el) return;
+      el.addEventListener("input", ()=>{
+        const st = app.getState();
+        st.answers[key] = el.value.trim();
+        app.setState(st);
+        if(cb) cb(st);
+      });
+    };
+
+    wire(wtopic, "m4_wiki_topic");
+    wire(wurl,   "m4_wiki_url", (st)=>{
+      const fb = $("#m4_wiki_fb");
+      if(fb){
+        fb.classList.add("show","warn");
+        fb.textContent = st.answers.m4_wiki_url
+          ? "Check: Ist das wirklich Wikipedia? (de.wikipedia.org) – und passt der Artikel zum Thema?"
+          : "Füge den Wikipedia-Link ein.";
+      }
+    });
+
+    wire(stitle, "m4_source_title");
+    wire(sorg,   "m4_source_org");
+    wire(syear,  "m4_source_year");
+    wire(sreas,  "m4_source_reason", (st)=>{
+      const fb = $("#m4_src_fb");
+      if(fb){
+        fb.classList.add("show", st.answers.m4_source_reason ? "good" : "warn");
+        fb.textContent = st.answers.m4_source_reason
+          ? "Top: Du begründest – genau das macht Recherche professionell."
+          : "Tipp: Denk an Autor, Absicht, Sprache, Daten, Impressum.";
+      }
+    });
+
+    // Validierung Modul 4
+    app.steps[3].validate = ()=>{
+      const a = app.getState().answers;
+      return (a.m4_wiki_topic||"").length >= 4 &&
+             (a.m4_wiki_url||"").startsWith("http") &&
+             (a.m4_source_title||"").length >= 4 &&
+             (a.m4_source_org||"").length >= 3 &&
+             (a.m4_source_year||"").length >= 2 &&
+             (a.m4_source_reason||"").length >= 12;
+    };
+  }
+
+  /* --------- Handler: Modul 5 --------- */
+  function attachM5(){
+    // mode chips
+    $$(".chip[data-mode]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const mode = btn.getAttribute("data-mode");
+        const st = app.getState();
+        st.answers.m5_pair_mode = mode;
+        app.setState(st);
+
+        $$(".chip[data-mode]").forEach(b=>b.classList.toggle("selected", b===btn));
+        const fb = $("#m5_mode_fb");
+        if(fb){
+          fb.classList.add("show","warn");
+          fb.textContent = "Gut. Jetzt Quellen sammeln – Qualität vor Quantität.";
+        }
+      });
+    });
+
+    const doc = $("#m5_doc_link");
+    if(doc){
+      doc.addEventListener("input", ()=>{
+        const st = app.getState();
+        st.answers.m5_doc_link = doc.value.trim();
+        app.setState(st);
+
+        const fb = $("#m5_doc_fb");
+        if(fb){
+          fb.classList.toggle("show", !!st.answers.m5_doc_link);
+          fb.classList.add("warn");
+          fb.textContent = st.answers.m5_doc_link
+            ? "Achte darauf: Nur Link einfügen – keine privaten Daten."
+            : "Optional. Du kannst auch nur hier in der App dokumentieren.";
+        }
+      });
+    }
+
+    // source fields
+    const st = app.getState();
+    const srcs = st.answers.m5_sources || [];
+    for(let i=0;i<srcs.length;i++){
+      wireSourceField(i, "title");
+      wireSourceField(i, "url");
+      wireSourceField(i, "authororg");
+      wireSourceField(i, "year");
+      wireSourceField(i, "intent");
+      wireSourceField(i, "whygood");
+    }
+
+    function wireSourceField(i, key){
+      const el = $("#s"+i+"_"+key);
+      if(!el) return;
+      el.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m5_sources = st2.answers.m5_sources || [];
+        st2.answers.m5_sources[i] = st2.answers.m5_sources[i] || { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" };
+        st2.answers.m5_sources[i][key] = el.value.trim();
+        app.setState(st2);
+        updateM5Feedback();
+      });
+    }
+
+    function hostOf(url){
+      try{
+        const u = new URL(url);
+        return u.hostname.replace(/^www\./,"").toLowerCase();
+      }catch(e){ return ""; }
+    }
+
+    function updateM5Feedback(){
+      const st3 = app.getState();
+      const a = st3.answers;
+      const fb = $("#m5_fb");
+      if(!fb) return;
+
+      const srcs = (a.m5_sources||[]);
+      const filled = srcs.map(s => ({
+        ok: (s.title||"").length>=3 && (s.url||"").startsWith("http") && (s.authororg||"").length>=3 && (s.year||"").length>=2 && (s.intent||"").length>=3 && (s.whygood||"").length>=10,
+        host: hostOf(s.url||"")
+      }));
+
+      const bothOk = filled.every(x=>x.ok);
+      const host1 = filled[0]?.host || "";
+      const host2 = filled[1]?.host || "";
+      const hostsDifferent = host1 && host2 && host1 !== host2;
+
+      if(!a.m5_pair_mode){
+        fb.className = "feedback show warn";
+        fb.textContent = "Bitte zuerst Arbeitsmodus wählen.";
+        return;
+      }
+
+      if(!bothOk){
+        fb.className = "feedback show warn";
+        fb.textContent = "Noch nicht fertig: Bei beiden Quellen müssen alle Pflichtfelder ausgefüllt sein.";
+        return;
+      }
+
+      if(!hostsDifferent){
+        fb.className = "feedback show warn";
+        fb.textContent = "Achtung: Beide Quellen scheinen von derselben Website zu sein. Bitte 2 unterschiedliche Websites nutzen.";
+        return;
+      }
+
+      fb.className = "feedback show good";
+      fb.textContent = "Super: 2 vollständige Quellen + unterschiedliche Websites. Du kannst weiter.";
+    }
+
+    // initial feedback
+    updateM5Feedback();
+
+    // Validierung Modul 5
+    app.steps[4].validate = ()=>{
+      const a = app.getState().answers;
+      if(!a.m5_pair_mode) return false;
+      const srcs = a.m5_sources || [];
+      if(srcs.length < 2) return false;
+
+      const ok = (s)=> (s.title||"").length>=3 && (s.url||"").startsWith("http") &&
+                      (s.authororg||"").length>=3 && (s.year||"").length>=2 &&
+                      (s.intent||"").length>=3 && (s.whygood||"").length>=10;
+
+      if(!ok(srcs[0]) || !ok(srcs[1])) return false;
+
+      // different host requirement
+      try{
+        const h1 = new URL(srcs[0].url).hostname.replace(/^www\./,"").toLowerCase();
+        const h2 = new URL(srcs[1].url).hostname.replace(/^www\./,"").toLowerCase();
+        return h1 && h2 && h1 !== h2;
+      }catch(e){
+        return false;
+      }
+    };
+  }
+
+  /* --------- Hook: Steps 4 & 5 Render/Handlers einhängen --------- */
+  app.steps[3].render = renderM4;
+  app.steps[4].render = renderM5;
+
+  // patch renderAll: wir hängen Handler ein, wenn Screen aktiv ist
+  const originalGoStep = app.goStep;
+  app.goStep = function(i){
+    originalGoStep(i);
+    // nach Rendern: Handler je Modul
+    const idx = clamp(app.getState().stepIndex, 0, app.steps.length-1);
+    const id = app.steps[idx].id;
+    if(id === "m4") attachM4();
+    if(id === "m5") attachM5();
+  };
+
+  // falls Nutzer gerade in m4/m5 ist und Block 3 nachgeladen wird
+  const idxNow = app.getState().stepIndex;
+  if(idxNow === 3){ attachM4(); }
+  if(idxNow === 4){ attachM5(); }
+
+})();
+</script>
+<!-- ===================== BLOCK 3/6 END ===================== -->
+<!-- ===================== BLOCK 4/6 ===================== -->
+<script>
+/* =========================================================
+   HoS Lernapp – Block 4/6
+   - Modul 6 (Abschluss): Selbstcheck + Reflexion + Ergebnis-Preview
+   - Druck/Export-Vorbereitung (UI)
+   ========================================================= */
+
+(function(){
+  "use strict";
+  const app = window.__HoSApp;
+  if(!app){ console.error("HoSApp not found. Block-Reihenfolge prüfen."); return; }
+
+  const $  = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const safeText = (s)=> (s ?? "").toString().replace(/[<>&]/g, m => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]));
+
+  // State erweitern (falls nötig)
+  const st = app.getState();
+  st.answers = st.answers || {};
+  const ensure = (k, v) => { if(st.answers[k] === undefined) st.answers[k] = v; };
+
+  ensure("m6_checks", {
+    search: false,
+    evaluate: false,
+    wiki: false,
+    cloud: false
+  });
+  ensure("m6_reflection", "");
+  ensure("m6_takeaway", "");
+  app.setState(st);
+
+  /* --------------------- Modul 6 Render --------------------- */
+  function renderM6(){
+    const s = app.getState();
+    const a = s.answers;
+    const c = a.m6_checks || {};
+    const tips = `<b>Finish:</b> Jetzt wird alles zusammengeführt. Am Ende kannst du dein Ergebnis drucken oder als Screenshot abgeben.`;
+
+    const summary = buildSummaryHTML(s);
+
+    const body = `
+      <div class="step-title">
+        <h3>Abschluss: Ergebnis & Reflexion</h3>
+        <div class="meta">Pflicht: 2 Häkchen + Reflexion</div>
+      </div>
+
+      <div class="note">
+        <b>Wichtig:</b> Professionelle Recherche zeigt sich daran, dass du erklären kannst, <i>warum</i> deine Quellen gut sind.
+      </div>
+
+      <div class="q">
+        <p>Selbstcheck (mindestens 2 Häkchen)</p>
+        <div class="field" style="gap:10px">
+          ${checkRow("m6_search", "Ich kann besser suchen (Keywords / Operatoren).", c.search)}
+          ${checkRow("m6_evaluate", "Ich kann Quellen bewerten (Wer? Wie aktuell? Welche Absicht?).", c.evaluate)}
+          ${checkRow("m6_wiki", "Ich nutze Wikipedia richtig (Startpunkt + Einzelnachweise).", c.wiki)}
+          ${checkRow("m6_cloud", "Ich kann Ergebnisse sinnvoll in der Cloud sammeln.", c.cloud)}
+        </div>
+        <div class="feedback ${countChecks(c)>=2 ? "show good" : ""}" id="m6_chk_fb">
+          ${countChecks(c)>=2 ? "Gut – du hast mindestens 2 Kompetenzen bewusst abgehakt." : "Setze mindestens 2 Häkchen."}
+        </div>
+      </div>
+
+      <div class="q">
+        <p>Reflexion (Pflicht): Was würdest du beim nächsten Referat anders machen als früher?</p>
+        <div class="field">
+          <textarea id="m6_reflection" placeholder="Schreibe 2–4 Sätze...">${safeText(a.m6_reflection)}</textarea>
+        </div>
+      </div>
+
+      <div class="q">
+        <p>Ein Satz für deinen Kopf (optional): Mein wichtigstes Learning heute ist …</p>
+        <div class="field">
+          <input id="m6_takeaway" type="text" value="${safeText(a.m6_takeaway)}" placeholder="z.B. Erst prüfen, dann glauben." />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="q">
+        <p>Ergebnis-Übersicht (Preview)</p>
+        <div class="note">
+          <b>Abgabe-Idee:</b> Drucken (PDF) oder Screenshot machen und in eure Lernplattform hochladen.
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div class="hd">
+            <div>
+              <h3>Dein Ergebnis</h3>
+              <div class="hint">Zusammenfassung deiner Eingaben</div>
+            </div>
+            <div class="pill">📄 Preview</div>
+          </div>
+          <div class="bd" id="m6_summary">
+            ${summary}
+          </div>
+        </div>
+
+        <div class="footer-actions" style="margin-top:12px">
+          <button class="btn secondary" id="btnCopySummary">Zusammenfassung kopieren</button>
+          <button class="btn accent" id="btnPrintNow">Drucken / PDF</button>
+        </div>
+
+        <div class="feedback" id="m6_copy_fb"></div>
+      </div>
+
+      <div class="note" style="margin-top:12px">
+        <b>HoS-Standard:</b> Eine Quelle ist dann gut, wenn du <b>Autor/Organisation</b>, <b>Aktualität</b> und <b>Absicht</b> klar benennen kannst.
+      </div>
+    `;
+
+    return shell({ title:"Modul 6 · Abschluss: Ergebnis & Reflexion", time:"≈ 10 Min", tipsHTML: tips, bodyHTML: body });
+  }
+
+  function shell({title, time, bodyHTML, tipsHTML=""}){
+    return `
+      <section class="screen active">
+        <div class="card">
+          <div class="hd">
+            <div>
+              <h3>${safeText(title)}</h3>
+              <div class="hint">Letzter Schritt. Danach ist deine Dokumentation fertig.</div>
+            </div>
+            <div class="pill">⏱ ${safeText(time)}</div>
+          </div>
+          <div class="bd">
+            <div class="note">${tipsHTML || "<b>Finish:</b> Du bist fast fertig."}</div>
+            ${bodyHTML}
+            <div class="feedback" id="needs"></div>
+            <div class="footer-actions">
+              <button class="btn secondary" id="btnPrev">← Zurück</button>
+              <button class="btn accent" id="btnNext">Fertig ✅</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function checkRow(id, text, checked){
+    return `
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; color: rgba(255,255,255,.86); font-weight:750">
+        <input type="checkbox" id="${id}" ${checked ? "checked" : ""} style="width:18px; height:18px; accent-color: rgba(125,211,252,.95)" />
+        <span>${safeText(text)}</span>
+      </label>
+    `;
+  }
+
+  function countChecks(c){
+    return ["search","evaluate","wiki","cloud"].reduce((n,k)=> n + (c?.[k] ? 1 : 0), 0);
+  }
+
+  function buildSummaryText(state){
+    const a = state.answers || {};
+    const lines = [];
+
+    lines.push("RECHERCHIEREN WIE EIN PROFI – ERGEBNIS");
+    lines.push("--------------------------------------");
+
+    // Modul 1
+    lines.push("Modul 1 (Warm-up)");
+    lines.push("• Aussage: „Alles im Internet stimmt“ – Auswahl: " + (a.m1_choice || "—"));
+    lines.push("• Begründung: " + (a.m1_thought || "—"));
+    lines.push("");
+
+    // Modul 2
+    lines.push("Modul 2 (Suchmaschinen)");
+    lines.push("• Warum Platz 1 nicht immer bestes Ergebnis: " + (a.m2_q1 || "—"));
+    lines.push("• 2 Merkmale guter Quellen: " + (a.m2_q2 || "—"));
+    lines.push("");
+
+    // Modul 3
+    lines.push("Modul 3 (Clever suchen)");
+    lines.push("• Bessere Suche (A/B): " + (a.m3_best ? (a.m3_best==="B" ? "B" : "A") : "—"));
+    lines.push("• Eigene Suchanfrage: " + (a.m3_query || "—"));
+    lines.push("");
+
+    // Modul 4
+    lines.push("Modul 4 (Wikipedia)");
+    lines.push("• Thema: " + (a.m4_wiki_topic || "—"));
+    lines.push("• Wikipedia-Link: " + (a.m4_wiki_url || "—"));
+    lines.push("• Quelle aus Einzelnachweisen:");
+    lines.push("  - Titel: " + (a.m4_source_title || "—"));
+    lines.push("  - Wer: " + (a.m4_source_org || "—"));
+    lines.push("  - Aktualität: " + (a.m4_source_year || "—"));
+    lines.push("  - Warum seriös: " + (a.m4_source_reason || "—"));
+    lines.push("");
+
+    // Modul 5
+    lines.push("Modul 5 (Quellen-Sammlung)");
+    lines.push("• Arbeitsmodus: " + (a.m5_pair_mode === "pair" ? "Partnerarbeit" : (a.m5_pair_mode==="solo" ? "Einzelarbeit" : "—")));
+    lines.push("• Cloud-Dokument (optional): " + (a.m5_doc_link || "—"));
+    const srcs = a.m5_sources || [];
+    srcs.forEach((s, i)=>{
+      lines.push(`• Quelle ${i+1}:`);
+      lines.push("  - Titel: " + (s.title || "—"));
+      lines.push("  - URL: " + (s.url || "—"));
+      lines.push("  - Wer: " + (s.authororg || "—"));
+      lines.push("  - Jahr: " + (s.year || "—"));
+      lines.push("  - Absicht: " + (s.intent || "—"));
+      lines.push("  - Warum gut: " + (s.whygood || "—"));
+    });
+    lines.push("");
+
+    // Modul 6
+    lines.push("Modul 6 (Reflexion)");
+    const c = a.m6_checks || {};
+    lines.push("• Selbstcheck: " + [
+      c.search ? "Suchen" : null,
+      c.evaluate ? "Bewerten" : null,
+      c.wiki ? "Wikipedia" : null,
+      c.cloud ? "Cloud" : null
+    ].filter(Boolean).join(", ") || "—");
+    lines.push("• Reflexion: " + (a.m6_reflection || "—"));
+    lines.push("• Wichtigstes Learning: " + (a.m6_takeaway || "—"));
+
+    return lines.join("\n");
+  }
+
+  function buildSummaryHTML(state){
+    const txt = buildSummaryText(state);
+    // HTML-schonend ausgeben
+    return `<pre style="margin:0; white-space:pre-wrap; font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; color: rgba(255,255,255,.86)">${safeText(txt)}</pre>`;
+  }
+
+  /* --------------------- Handlers Modul 6 --------------------- */
+  function attachM6(){
+    const st = app.getState();
+
+    function syncChecks(){
+      const st2 = app.getState();
+      st2.answers.m6_checks = st2.answers.m6_checks || {search:false,evaluate:false,wiki:false,cloud:false};
+
+      st2.answers.m6_checks.search   = !!$("#m6_search")?.checked;
+      st2.answers.m6_checks.evaluate = !!$("#m6_evaluate")?.checked;
+      st2.answers.m6_checks.wiki     = !!$("#m6_wiki")?.checked;
+      st2.answers.m6_checks.cloud    = !!$("#m6_cloud")?.checked;
+
+      app.setState(st2);
+
+      const fb = $("#m6_chk_fb");
+      if(fb){
+        const ok = countChecks(st2.answers.m6_checks) >= 2;
+        fb.className = "feedback " + (ok ? "show good" : "");
+        fb.textContent = ok ? "Gut – du hast mindestens 2 Kompetenzen bewusst abgehakt." : "Setze mindestens 2 Häkchen.";
+      }
+      refreshSummary();
+    }
+
+    ["m6_search","m6_evaluate","m6_wiki","m6_cloud"].forEach(id=>{
+      const el = $("#"+id);
+      if(el) el.addEventListener("change", syncChecks);
+    });
+
+    const refl = $("#m6_reflection");
+    if(refl){
+      refl.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m6_reflection = refl.value.trim();
+        app.setState(st2);
+        refreshSummary();
+      });
+    }
+
+    const take = $("#m6_takeaway");
+    if(take){
+      take.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m6_takeaway = take.value.trim();
+        app.setState(st2);
+        refreshSummary();
+      });
+    }
+
+    function refreshSummary(){
+      const box = $("#m6_summary");
+      if(box) box.innerHTML = buildSummaryHTML(app.getState());
+    }
+
+    const btnCopy = $("#btnCopySummary");
+    if(btnCopy){
+      btnCopy.addEventListener("click", async ()=>{
+        const text = buildSummaryText(app.getState());
+        const fb = $("#m6_copy_fb");
+        try{
+          await navigator.clipboard.writeText(text);
+          if(fb){
+            fb.className = "feedback show good";
+            fb.textContent = "Zusammenfassung kopiert ✅";
+          }
+        }catch(e){
+          if(fb){
+            fb.className = "feedback show warn";
+            fb.textContent = "Kopieren nicht möglich (Browser-Einstellung). Du kannst den Text trotzdem markieren und kopieren.";
+          }
+        }
+      });
+    }
+
+    const btnPrintNow = $("#btnPrintNow");
+    if(btnPrintNow){
+      btnPrintNow.addEventListener("click", ()=>{
+        window.__HoS_PRINT = buildSummaryText(app.getState());
+        window.print();
+      });
+    }
+
+    // Validierung Modul 6
+    app.steps[5].validate = ()=>{
+      const a = app.getState().answers || {};
+      const okChecks = countChecks(a.m6_checks) >= 2;
+      const okRefl = (a.m6_reflection || "").length >= 20;
+      return okChecks && okRefl;
+    };
+  }
+
+  /* --------------------- Render/Hook in Steps --------------------- */
+  app.steps[5].render = renderM6;
+
+  // Patch print button in topbar now that summary exists
+  const topPrint = document.getElementById("btnPrint");
+  if(topPrint){
+    topPrint.onclick = ()=>{
+      window.__HoS_PRINT = (function(){ return buildSummaryText(app.getState()); })();
+      window.print();
+    };
+  }
+
+  // Hook attach when entering m6
+  const originalGoStep = app.goStep;
+  app.goStep = function(i){
+    originalGoStep(i);
+    const idx = app.getState().stepIndex;
+    if(app.steps[idx]?.id === "m6") attachM6();
+  };
+
+  // If already on m6
+  if(app.getState().stepIndex === 5){
+    attachM6();
+  }
+
+})();
+</script>
+<!-- ===================== BLOCK 4/6 END ===================== -->
+<!-- ===================== BLOCK 5/6 ===================== -->
+<style>
+  /* ===================== Print Layout (HoS) ===================== */
+  @media print{
+    body{
+      background:#fff !important;
+      color:#111 !important;
+    }
+    .topbar, #overview, .toast{ display:none !important; }
+    .wrap{ max-width: 900px !important; padding: 0 !important; }
+    .screen, .card, .hero{ box-shadow:none !important; border: 0 !important; background:#fff !important; }
+    .card .hd, .card .bd{ padding: 0 !important; border:0 !important; }
+    .btn, .pill, .badge, .footer-actions{ display:none !important; }
+    pre{
+      color:#111 !important;
+      border: 1px solid #ddd !important;
+      padding: 12px !important;
+      border-radius: 10px !important;
+      white-space: pre-wrap !important;
+    }
+    h1,h2,h3{ color:#111 !important; }
+  }
+</style>
+
+<script>
+/* =========================================================
+   HoS Lernapp – Block 5/6
+   - Vollständige Navigation/Rendering-Patches
+   - Fix: doppelte goStep-Patches konsolidieren
+   - Qualität: Fortschritt/Done-Logik verbessern
+   - Hinweis: Block 6 schließt HTML sauber (</body></html>)
+   ========================================================= */
+
+(function(){
+  "use strict";
+  const app = window.__HoSApp;
+  if(!app){ console.error("HoSApp not found. Block-Reihenfolge prüfen."); return; }
+
+  const $ = (sel, root=document) => root.querySelector(sel);
+
+  // --- Robust: ersetze goStep mit einem zentralen Dispatcher ---
+  // In Block 2/3/4 wurde goStep jeweils gepatcht. Hier konsolidieren wir es sauber:
+  const baseGoStep = (function(){
+    // Wir können nicht "original" sicher rekonstruieren, aber current app.goStep ruft ohnehin renderAll.
+    // Daher bauen wir einen Wrapper, der nach jedem Sprung die passenden attach-Funktionen triggert,
+    // ohne den bestehenden Flow zu zerstören.
+    const current = app.goStep;
+    return function(i){
+      current(i);
+      const idx = app.getState().stepIndex;
+      const id = app.steps[idx]?.id;
+
+      // Attach-Dispatcher: prüft, ob es globale Attach-Funktionen gibt
+      if(window.__HoS_ATTACH && typeof window.__HoS_ATTACH[id] === "function"){
+        window.__HoS_ATTACH[id]();
+      }
+    };
+  })();
+
+  app.goStep = baseGoStep;
+
+  // --- Attach Registry anlegen (falls noch nicht existiert) ---
+  window.__HoS_ATTACH = window.__HoS_ATTACH || {};
+
+  // Wir registrieren hier "no-op" attachs für frühe Module (werden in Block 2 direkt gebunden),
+  // aber das Registry-System sorgt dafür, dass spätere Module zuverlässig attachen.
+  window.__HoS_ATTACH.m1 = window.__HoS_ATTACH.m1 || function(){};
+  window.__HoS_ATTACH.m2 = window.__HoS_ATTACH.m2 || function(){};
+  window.__HoS_ATTACH.m3 = window.__HoS_ATTACH.m3 || function(){};
+  // m4/m5/m6 Attach-Funktionen wurden in Block 3/4 direkt aufgerufen,
+  // wir übernehmen sie hier zusätzlich, indem wir sie "einsammeln", falls sie global verfügbar sind.
+
+  // Sammle Attach-Funktionen aus DOM-Markern (Fallback)
+  function attachByFallback(stepId){
+    // nichts – dient nur als Struktur.
+  }
+
+  // Falls Block 3/4 bereits eigene attach-Funktionen in Closures hat, können wir sie nicht direkt greifen.
+  // Deshalb setzen wir pro Modul einen sicheren "Re-Attach" über DOM:
+  // Wir lösen das pragmatisch: Beim Betreten eines Moduls prüfen wir auf typische Elemente und verdrahten neu.
+
+  window.__HoS_ATTACH.m4 = function(){
+    // Re-wire minimal: Inputs speichern (falls nicht schon)
+    const st = app.getState();
+    st.answers = st.answers || {};
+    const map = [
+      ["m4_wiki_topic","m4_wiki_topic"],
+      ["m4_wiki_url","m4_wiki_url"],
+      ["m4_source_title","m4_source_title"],
+      ["m4_source_org","m4_source_org"],
+      ["m4_source_year","m4_source_year"],
+      ["m4_source_reason","m4_source_reason"]
+    ];
+    map.forEach(([id,key])=>{
+      const el = document.getElementById(id);
+      if(el && !el.__hosBound){
+        el.__hosBound = true;
+        el.addEventListener("input", ()=>{
+          const st2 = app.getState();
+          st2.answers[key] = (el.value||"").trim();
+          app.setState(st2);
+        });
+      }
+    });
+  };
+
+  window.__HoS_ATTACH.m5 = function(){
+    // Mode chips
+    document.querySelectorAll(".chip[data-mode]").forEach(btn=>{
+      if(btn.__hosBound) return;
+      btn.__hosBound = true;
+      btn.addEventListener("click", ()=>{
+        const mode = btn.getAttribute("data-mode");
+        const st2 = app.getState();
+        st2.answers.m5_pair_mode = mode;
+        app.setState(st2);
+        document.querySelectorAll(".chip[data-mode]").forEach(b=>b.classList.toggle("selected", b===btn));
+      });
+    });
+
+    const doc = document.getElementById("m5_doc_link");
+    if(doc && !doc.__hosBound){
+      doc.__hosBound = true;
+      doc.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m5_doc_link = (doc.value||"").trim();
+        app.setState(st2);
+      });
+    }
+
+    // Sources
+    for(let i=0;i<2;i++){
+      ["title","url","authororg","year","intent","whygood"].forEach(key=>{
+        const el = document.getElementById(`s${i}_${key}`);
+        if(el && !el.__hosBound){
+          el.__hosBound = true;
+          el.addEventListener("input", ()=>{
+            const st2 = app.getState();
+            st2.answers.m5_sources = st2.answers.m5_sources || [
+              { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" },
+              { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" }
+            ];
+            st2.answers.m5_sources[i] = st2.answers.m5_sources[i] || { title:"", url:"", authororg:"", year:"", intent:"", whygood:"" };
+            st2.answers.m5_sources[i][key] = (el.value||"").trim();
+            app.setState(st2);
+          });
+        }
+      });
+    }
+  };
+
+  window.__HoS_ATTACH.m6 = function(){
+    // Checkboxes
+    ["m6_search","m6_evaluate","m6_wiki","m6_cloud"].forEach((id)=>{
+      const el = document.getElementById(id);
+      if(el && !el.__hosBound){
+        el.__hosBound = true;
+        el.addEventListener("change", ()=>{
+          const st2 = app.getState();
+          st2.answers.m6_checks = st2.answers.m6_checks || {search:false,evaluate:false,wiki:false,cloud:false};
+          st2.answers.m6_checks.search   = !!document.getElementById("m6_search")?.checked;
+          st2.answers.m6_checks.evaluate = !!document.getElementById("m6_evaluate")?.checked;
+          st2.answers.m6_checks.wiki     = !!document.getElementById("m6_wiki")?.checked;
+          st2.answers.m6_checks.cloud    = !!document.getElementById("m6_cloud")?.checked;
+          app.setState(st2);
+        });
+      }
+    });
+
+    // Text fields
+    const refl = document.getElementById("m6_reflection");
+    if(refl && !refl.__hosBound){
+      refl.__hosBound = true;
+      refl.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m6_reflection = (refl.value||"").trim();
+        app.setState(st2);
+      });
+    }
+
+    const take = document.getElementById("m6_takeaway");
+    if(take && !take.__hosBound){
+      take.__hosBound = true;
+      take.addEventListener("input", ()=>{
+        const st2 = app.getState();
+        st2.answers.m6_takeaway = (take.value||"").trim();
+        app.setState(st2);
+      });
+    }
+
+    // Copy/Print buttons (if present)
+    const btnPrintNow = document.getElementById("btnPrintNow");
+    if(btnPrintNow && !btnPrintNow.__hosBound){
+      btnPrintNow.__hosBound = true;
+      btnPrintNow.addEventListener("click", ()=>window.print());
+    }
+  };
+
+  // --- Verbesserte Done-Logik: setze done automatisch, wenn validate true und Nutzer weiter klickt ---
+  // (In Block 2 passiert das bereits; hier nur Robustheit bei späteren Patches.)
+  // Keine Änderung nötig.
+
+  // --- Falls Nutzer nach Block 5 gerade in einem Modul ist: attach ausführen ---
+  const idx = app.getState().stepIndex;
+  if(idx >= 0){
+    const id = app.steps[idx]?.id;
+    if(window.__HoS_ATTACH[id]) window.__HoS_ATTACH[id]();
+  }
+
+  // --- Kleine UX: Wenn Reset gedrückt wurde, zurück zur Übersicht ---
+  const reset = document.getElementById("btnReset");
+  if(reset && !reset.__hosBound2){
+    reset.__hosBound2 = true;
+    reset.addEventListener("click", ()=>{
+      // app.resetState() ruft goOverview ohnehin in Block 2, aber falls überschrieben:
+      setTimeout(()=>{ try{ app.goOverview(); }catch(e){} }, 50);
+    });
+  }
+
+  // --- Topbar Print: jetzt wirklich drucken ---
+  const topPrint = document.getElementById("btnPrint");
+  if(topPrint && !topPrint.__hosBound2){
+    topPrint.__hosBound2 = true;
+    topPrint.addEventListener("click", ()=>{
+      window.print();
+    });
+  }
+
+  // Info
+  app.toast("Block 5 aktiv: Drucklayout + Stabilitäts-Patch geladen.");
+})();
+</script>
+<!-- ===================== BLOCK 5/6 END ===================== -->
+<!-- ===================== ADDON BLOCK: SCHAUBILDER (EINBAUEN ZWISCHEN BLOCK 5 UND 6) ===================== -->
+
+<style>
+  /* HoS Diagramm Cards */
+  .diagram-card{
+    margin-top: 12px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10);
+    overflow:hidden;
+  }
+  .diagram-hd{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .diagram-hd h4{
+    margin:0;
+    font-size: 13px;
+    letter-spacing:.2px;
+    font-weight: 900;
+    color: rgba(255,255,255,.90);
+  }
+  .diagram-hd .mini{
+    margin:2px 0 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,.55);
+  }
+  .diagram-bd{
+    padding: 12px 14px 14px;
+  }
+  .diagram-bd svg{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+  .diagram-legend{
+    margin-top:10px;
+    color: rgba(255,255,255,.70);
+    font-weight: 650;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .diagram-legend b{ color: rgba(255,255,255,.90); }
+</style>
+
+<script>
+/* =========================================================
+   HoS Schaubilder Add-on
+   - injiziert SVG-Infografiken in M2, M4, M5 (und Ampel)
+   - keine Änderungen an bestehenden Blöcken nötig
+   ========================================================= */
+(function(){
+  "use strict";
+  const app = window.__HoSApp;
+  if(!app) return;
+
+  const $ = (sel, root=document) => root.querySelector(sel);
+
+  function addAfterFirstNote(stepId, html){
+    const screen = document.querySelector(".screen.active");
+    if(!screen) return;
+    if(screen.getAttribute("data-diagrams-added") === stepId) return;
+
+    const bd = screen.querySelector(".bd");
+    if(!bd) return;
+
+    const firstNote = bd.querySelector(".note");
+    if(!firstNote) return;
+
+    const wrap = document.createElement("div");
+    wrap.innerHTML = html.trim();
+
+    // Insert AFTER first note
+    firstNote.insertAdjacentElement("afterend", wrap.firstElementChild);
+    screen.setAttribute("data-diagrams-added", stepId);
+  }
+
+  /* --------------------- SVG Helpers --------------------- */
+  function box(x,y,w,h,r,label,sub){
+    return `
+      <g>
+        <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)"/>
+        <text x="${x+12}" y="${y+22}" fill="rgba(255,255,255,0.90)" font-size="13" font-weight="800">${label}</text>
+        ${sub ? `<text x="${x+12}" y="${y+42}" fill="rgba(255,255,255,0.65)" font-size="12" font-weight="650">${sub}</text>` : ""}
+      </g>
+    `;
+  }
+  function arrow(x1,y1,x2,y2){
+    return `
+      <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="rgba(255,255,255,0.28)" stroke-width="2"/>
+      <polygon points="${x2},${y2} ${x2-8},${y2-5} ${x2-8},${y2+5}" fill="rgba(255,255,255,0.28)"/>
+    `;
+  }
+
+  /* --------------------- Diagramm 1: Suchmaschine ≠ Wahrheit (M2) --------------------- */
+  function diagramSearchEngine(){
+    const svg = `
+      <svg viewBox="0 0 900 240" role="img" aria-label="Schaubild: Suchmaschine liefert Treffer, nicht Wahrheit">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0" stop-color="rgba(125,211,252,0.55)"/>
+            <stop offset="1" stop-color="rgba(167,243,208,0.45)"/>
+          </linearGradient>
+        </defs>
+
+        <rect x="0" y="0" width="900" height="240" rx="20" fill="rgba(0,0,0,0.14)" stroke="rgba(255,255,255,0.10)"/>
+        <rect x="14" y="14" width="872" height="60" rx="16" fill="url(#g1)" opacity="0.18"/>
+        <text x="28" y="44" fill="rgba(255,255,255,0.92)" font-size="14" font-weight="900">Suchmaschine: liefert Treffer – nicht automatisch Wahrheit</text>
+        <text x="28" y="64" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">Ranking entsteht aus vielen Signalen (Relevanz, Popularität, Aktualität …) und teils Werbung.</text>
+
+        ${box(28, 96, 170, 62, 16, "Suchanfrage", "Keywords / Operatoren")}
+        ${box(244, 96, 180, 62, 16, "Index", "gesammelte Seiten")}
+        ${box(470, 96, 180, 62, 16, "Algorithmus", "ordnet & bewertet")}
+        ${box(696, 96, 176, 62, 16, "Ergebnisliste", "Ranking + Snippets")}
+
+        ${arrow(198,127,244,127)}
+        ${arrow(424,127,470,127)}
+        ${arrow(650,127,696,127)}
+
+        <g>
+          <rect x="470" y="168" width="402" height="50" rx="16" fill="rgba(251,191,36,0.10)" stroke="rgba(251,191,36,0.22)"/>
+          <text x="486" y="196" fill="rgba(255,255,255,0.88)" font-size="13" font-weight="850">Merksatz:</text>
+          <text x="570" y="196" fill="rgba(255,255,255,0.72)" font-size="13" font-weight="700">Platz 1 ist oft bequem – nicht automatisch die beste Quelle.</text>
+        </g>
+      </svg>
+    `;
+    return card("Schaubild: Suchmaschine verstehen", "Warum Platz 1 nicht immer „beste Quelle“ heißt.", svg,
+      "Nutze das Diagramm als Check: <b>Treffer</b> ≠ <b>Wahrheit</b>. Du musst die Quelle danach prüfen."
+    );
+  }
+
+  /* --------------------- Diagramm 2: Quellen-Ampel (M2/M5) --------------------- */
+  function diagramSourceTrafficLight(){
+    const svg = `
+      <svg viewBox="0 0 900 260" role="img" aria-label="Schaubild: Quellenbewertung Ampel">
+        <rect x="0" y="0" width="900" height="260" rx="20" fill="rgba(0,0,0,0.14)" stroke="rgba(255,255,255,0.10)"/>
+
+        <text x="28" y="38" fill="rgba(255,255,255,0.92)" font-size="14" font-weight="900">Quellen-Ampel: schnell einschätzen</text>
+        <text x="28" y="58" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">Je mehr „Grün“, desto eher brauchbar. Bei „Rot“: sehr vorsichtig sein.</text>
+
+        <!-- Ampel -->
+        <g transform="translate(28,78)">
+          <rect x="0" y="0" width="120" height="162" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)"/>
+          <circle cx="60" cy="40" r="22" fill="rgba(52,211,153,0.35)" stroke="rgba(52,211,153,0.55)"/>
+          <circle cx="60" cy="81" r="22" fill="rgba(251,191,36,0.28)" stroke="rgba(251,191,36,0.45)"/>
+          <circle cx="60" cy="122" r="22" fill="rgba(251,113,133,0.28)" stroke="rgba(251,113,133,0.45)"/>
+          <text x="60" y="208" text-anchor="middle" fill="rgba(255,255,255,0.70)" font-size="12" font-weight="800">Ampel-Check</text>
+        </g>
+
+        <!-- Kriterien -->
+        <g transform="translate(170,84)">
+          ${critRow(0, "Wer?", "Autor/Organisation klar erkennbar")}
+          ${critRow(44, "Wann?", "Aktualität: Datum/Jahr sichtbar")}
+          ${critRow(88, "Warum?", "Absicht: informieren vs. überzeugen/werben")}
+          ${critRow(132, "Wie?", "Sprache sachlich + Belege/Daten")}
+        </g>
+
+        <g>
+          <rect x="28" y="230" width="844" height="20" rx="10" fill="rgba(125,211,252,0.14)" stroke="rgba(125,211,252,0.18)"/>
+          <text x="40" y="244" fill="rgba(255,255,255,0.78)" font-size="12" font-weight="750">
+            HoS-Regel: Wenn „Wer?“ fehlt, ist es selten eine Top-Quelle.
+          </text>
+        </g>
+      </svg>
+    `;
+    return card("Schaubild: Quellen bewerten (Ampel)", "4 Fragen, die du immer stellen solltest.", svg,
+      "Merke dir die Reihenfolge: <b>Wer?</b> → <b>Wann?</b> → <b>Warum?</b> → <b>Wie?</b>"
+    );
+  }
+
+  function critRow(y, head, text){
+    return `
+      <g transform="translate(0,${y})">
+        <rect x="0" y="0" width="690" height="36" rx="14" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/>
+        <text x="14" y="23" fill="rgba(255,255,255,0.90)" font-size="13" font-weight="900">${head}</text>
+        <text x="90" y="23" fill="rgba(255,255,255,0.70)" font-size="13" font-weight="700">${text}</text>
+      </g>
+    `;
+  }
+
+  /* --------------------- Diagramm 3: Wikipedia-Workflow (M4) --------------------- */
+  function diagramWikipediaFlow(){
+    const svg = `
+      <svg viewBox="0 0 900 260" role="img" aria-label="Schaubild: Wikipedia richtig nutzen">
+        <rect x="0" y="0" width="900" height="260" rx="20" fill="rgba(0,0,0,0.14)" stroke="rgba(255,255,255,0.10)"/>
+        <text x="28" y="38" fill="rgba(255,255,255,0.92)" font-size="14" font-weight="900">Wikipedia richtig nutzen</text>
+        <text x="28" y="58" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">Wikipedia ist Startpunkt: du gehst weiter zur Originalquelle.</text>
+
+        ${box(28, 86, 200, 62, 16, "Wikipedia-Artikel", "Überblick verstehen")}
+        ${box(262, 86, 220, 62, 16, "Einzelnachweise", "Quellen finden")}
+        ${box(516, 86, 220, 62, 16, "Originalquelle öffnen", "Autor/Datum prüfen")}
+        ${box(770, 86, 102, 62, 16, "Nutzen", "zitieren")}
+
+        ${arrow(228,117,262,117)}
+        ${arrow(482,117,516,117)}
+        ${arrow(736,117,770,117)}
+
+        <g>
+          <rect x="28" y="168" width="844" height="70" rx="18" fill="rgba(251,113,133,0.10)" stroke="rgba(251,113,133,0.20)"/>
+          <text x="44" y="198" fill="rgba(255,255,255,0.88)" font-size="13" font-weight="900">Wichtig:</text>
+          <text x="120" y="198" fill="rgba(255,255,255,0.72)" font-size="13" font-weight="750">Wikipedia selbst nicht zitieren → die Originalquelle zitieren.</text>
+          <text x="44" y="222" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">Wenn keine verlässliche Originalquelle vorhanden ist: lieber eine andere Quelle suchen.</text>
+        </g>
+      </svg>
+    `;
+    return card("Schaubild: Wikipedia-Workflow", "So wird aus Wikipedia eine gute Recherche.", svg,
+      "Du nutzt Wikipedia als <b>Wegweiser</b> – nicht als Endstation."
+    );
+  }
+
+  /* --------------------- Diagramm 4: Cloud-Zusammenarbeit (M5) --------------------- */
+  function diagramCloudCollab(){
+    const svg = `
+      <svg viewBox="0 0 900 260" role="img" aria-label="Schaubild: Cloud Zusammenarbeit">
+        <rect x="0" y="0" width="900" height="260" rx="20" fill="rgba(0,0,0,0.14)" stroke="rgba(255,255,255,0.10)"/>
+        <text x="28" y="38" fill="rgba(255,255,255,0.92)" font-size="14" font-weight="900">Cloudarbeit: viele Personen – eine Datei</text>
+        <text x="28" y="58" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">Wenn Rollen klar sind, entsteht kein Chaos.</text>
+
+        <!-- left people -->
+        <g transform="translate(28,86)">
+          ${person(0,0,"SuS A")}
+          ${person(0,62,"SuS B")}
+          ${person(0,124,"SuS C")}
+        </g>
+
+        <!-- central doc -->
+        <g transform="translate(340,92)">
+          <rect x="0" y="0" width="220" height="140" rx="18" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.18)"/>
+          <text x="16" y="28" fill="rgba(255,255,255,0.90)" font-size="13" font-weight="900">Gemeinsames Dokument</text>
+          <text x="16" y="50" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">• Quellen sammeln</text>
+          <text x="16" y="70" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">• Kommentare</text>
+          <text x="16" y="90" fill="rgba(255,255,255,0.62)" font-size="12" font-weight="650">• Versionen/Verlauf</text>
+
+          <rect x="16" y="108" width="188" height="22" rx="10" fill="rgba(167,243,208,0.16)" stroke="rgba(167,243,208,0.22)"/>
+          <text x="26" y="124" fill="rgba(255,255,255,0.74)" font-size="12" font-weight="800">Regel: Jede:r hat einen Beitrag</text>
+        </g>
+
+        <!-- arrows -->
+        ${arrow(160,117,340,145)}
+        ${arrow(160,179,340,162)}
+        ${arrow(160,241,340,188)}
+
+        <!-- right rules -->
+        <g transform="translate(600,92)">
+          <rect x="0" y="0" width="272" height="140" rx="18" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/>
+          <text x="16" y="28" fill="rgba(255,255,255,0.90)" font-size="13" font-weight="900">Saubere Zusammenarbeit</text>
+          <text x="16" y="54" fill="rgba(255,255,255,0.66)" font-size="12" font-weight="700">1) Klarer Titel</text>
+          <text x="16" y="76" fill="rgba(255,255,255,0.66)" font-size="12" font-weight="700">2) Quelle + Begründung</text>
+          <text x="16" y="98" fill="rgba(255,255,255,0.66)" font-size="12" font-weight="700">3) Keine privaten Daten</text>
+          <text x="16" y="120" fill="rgba(255,255,255,0.66)" font-size="12" font-weight="700">4) Verlauf nutzen (Versionen)</text>
+        </g>
+      </svg>
+    `;
+    return card("Schaubild: Cloud-Zusammenarbeit", "So bleibt Teamarbeit ruhig und produktiv.", svg,
+      "Cloud heißt nicht Chaos: Mit klaren Regeln wird’s schneller <b>und</b> sauber."
+    );
+  }
+
+  function person(x,y,label){
+    return `
+      <g transform="translate(${x},${y})">
+        <rect x="0" y="0" width="260" height="50" rx="16" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.10)"/>
+        <circle cx="26" cy="25" r="12" fill="rgba(125,211,252,0.22)" stroke="rgba(125,211,252,0.35)"/>
+        <rect x="46" y="16" width="190" height="18" rx="9" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+        <text x="56" y="29" fill="rgba(255,255,255,0.78)" font-size="12" font-weight="800">${label}</text>
+      </g>
+    `;
+  }
+
+  function card(title, subtitle, svg, legend){
+    return `
+      <div class="diagram-card" data-hos-diagram="1">
+        <div class="diagram-hd">
+          <div>
+            <h4>${title}</h4>
+            <div class="mini">${subtitle}</div>
+          </div>
+          <div class="pill">📌</div>
+        </div>
+        <div class="diagram-bd">
+          ${svg}
+          <div class="diagram-legend">${legend}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  /* --------------------- Injection Dispatcher --------------------- */
+  function injectForCurrentStep(){
+    const idx = app.getState().stepIndex;
+    const id = app.steps[idx]?.id;
+
+    if(id === "m2"){
+      // in M2: Suchmaschinen-Schaubild + Quellenampel
+      addAfterFirstNote("m2", diagramSearchEngine() + diagramSourceTrafficLight());
+    }
+
+    if(id === "m4"){
+      // in M4: Wikipedia-Workflow
+      addAfterFirstNote("m4", diagramWikipediaFlow());
+    }
+
+    if(id === "m5"){
+      // in M5: Cloud-Zusammenarbeit + Ampel (Erinnerung)
+      addAfterFirstNote("m5", diagramCloudCollab() + diagramSourceTrafficLight());
+    }
+  }
+
+  // Bei jedem goStep nach dem Rendern injizieren
+  const originalGoStep = app.goStep;
+  app.goStep = function(i){
+    originalGoStep(i);
+    // kurze Verzögerung, damit DOM sicher steht
+    setTimeout(injectForCurrentStep, 0);
+  };
+
+  // Wenn Nutzer gerade schon in einem Modul ist:
+  setTimeout(injectForCurrentStep, 0);
+
+  // kleine Rückmeldung
+  app.toast("Schaubilder aktiv ✅");
+})();
+</script>
+
+<!-- ===================== ADDON BLOCK END ===================== -->
+<!-- ===================== ADDON: chatisthisreal.png ===================== -->
+
+<style>
+  .hos-meme{
+    max-width: 160px;
+    margin: 14px auto 6px;
+    display:block;
+    opacity: .85;
+    filter: drop-shadow(0 8px 18px rgba(0,0,0,.35));
+  }
+  .hos-meme.small{
+    max-width: 120px;
+    margin-top: 18px;
+    opacity: .75;
+  }
+</style>
+
+<script>
+(function(){
+  const imgHTML = `
+    <img src="chatisthisreal.png"
+         alt="chat is this real?"
+         class="hos-meme"
+         onerror="this.style.display='none'">
+  `;
+
+  // 1) Im Hero-Bereich (Start)
+  const hero = document.querySelector(".hero-inner");
+  if(hero && !hero.querySelector(".hos-meme")){
+    hero.insertAdjacentHTML("afterbegin", imgHTML);
+  }
+
+  // 2) Im Abschluss (Modul 6)
+  const tryAddToM6 = () => {
+    const m6 = document.querySelector("#m6_summary");
+    if(m6 && !m6.querySelector(".hos-meme")){
+      m6.insertAdjacentHTML(
+        "afterend",
+        `<img src="chatisthisreal.png" alt="chat is this real?" class="hos-meme small">`
+      );
+    }
+  };
+
+  // sofort + nach Navigation
+  tryAddToM6();
+  const app = window.__HoSApp;
+  if(app){
+    const go = app.goStep;
+    app.goStep = function(i){
+      go(i);
+      setTimeout(tryAddToM6, 0);
+    };
+  }
+})();
+</script>
+
+<!-- ===================== ADDON END ===================== -->
+
+<!-- ===================== BLOCK 6/6 ===================== -->
+<!-- Abschluss: Footer + sauberes HTML-Ende -->
+
+<footer style="
+  margin-top: 32px;
+  padding: 18px 16px 28px;
+  text-align:center;
+  color: rgba(255,255,255,.55);
+  font-size: 12px;
+  font-weight: 650;
+">
+  <div style="max-width:1000px;margin:0 auto">
+    <div style="margin-bottom:8px">
+      <b style="color:rgba(255,255,255,.8)">Recherchieren wie ein Profi</b> · Digitale Grundbildung · 7. Schulstufe
+    </div>
+    <div>
+      HoS-Lernapp · selbstständig · ca. 2 Unterrichtseinheiten
+    </div>
+    <div style="margin-top:10px; opacity:.7">
+      Tipp für SuS: Qualität schlägt Geschwindigkeit. Prüfe Quellen, bevor du sie nutzt.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+<!-- ===================== BLOCK 6/6 END ===================== -->
