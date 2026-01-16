@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rechtschreib-Shooter 3D</title>
     <style>
-        body { margin: 0; overflow: hidden; background-color: #000; }
+        body { margin: 0; overflow: hidden; background-color: #000; user-select: none; }
         #info {
             position: absolute;
             top: 10px;
             width: 100%;
             text-align: center;
             color: white;
-            font-family: sans-serif;
-            pointer-events: none; /* Damit man durchklicken kann */
-            text-shadow: 1px 1px 2px black;
+            font-family: 'Segoe UI', sans-serif;
+            pointer-events: none;
+            text-shadow: 0 0 5px #00ffcc;
+            z-index: 10;
         }
         #crosshair {
             position: absolute;
@@ -22,11 +23,23 @@
             left: 50%;
             width: 20px;
             height: 20px;
-            background-color: transparent;
-            border: 2px solid red;
+            border: 2px solid rgba(255, 0, 0, 0.8);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
+            z-index: 10;
+        }
+        /* Kleiner Punkt in der Mitte des Fadenkreuzes */
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
@@ -34,171 +47,199 @@
 
     <div id="info">
         <h1>Orthographie-Orbit</h1>
-        <p>Klicke auf die falsch geschriebenen Buchstaben!</p>
-        <p>Score: <span id="score">0</span></p>
+        <p>Finde den Fehler! Klicke auf den falschen Buchstaben.</p>
+        <h2 id="score">Score: 0</h2>
     </div>
     <div id="crosshair"></div>
 
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
     <script type="module">
-        // Wir importieren direkt aus deinem lib-Ordner!
-        import * as THREE from './lib/three.module.js';
-        // Für 3D Text brauchen wir spezielle Loader, die sind nicht im Kern-Modul.
-        // Wir laden sie direkt von einem CDN, das funktioniert auch auf GitHub Pages.
-        import { FontLoader } from 'https://unpkg.com/three@0.150.0/examples/jsm/loaders/FontLoader.js';
-        import { TextGeometry } from 'https://unpkg.com/three@0.150.0/examples/jsm/geometries/TextGeometry.js';
+        import * as THREE from 'three';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
         let scene, camera, renderer, raycaster, mouse;
-        let letters = []; // Hier speichern wir alle anklickbaren Buchstaben
+        let letters = []; 
         let score = 0;
         const scoreElement = document.getElementById('score');
 
-        // --- DATEN (Beispiel) ---
-        // Wir definieren, welcher Index im String der Fehler ist.
-        const currentSentenceData = {
-            text: "Der Pogel fliegt hoch.",
-            errorIndex: 4, // Das 'P' bei Index 4 ist falsch (0-basiert: D=0, e=1, r=2, " "=3, P=4)
-            correction: "V"
-        };
-
+        // --- DEINE SÄTZE ---
+        const sentences = [
+            { text: "Der Pogel fliegt.", errorIndex: 4, correctChar: "V" },
+            { text: "Das Haus ist gros.", errorIndex: 13, correctChar: "ß" },
+            { text: "Ich esse gernen Eis.", errorIndex: 10, correctChar: "" }, // 'n' ist zu viel
+            { text: "Die Sonne scheint.", errorIndex: -1, correctChar: "" } // Kein Fehler (zum Testen)
+        ];
+        
+        // Aktueller Satz
+        let currentSentence = sentences[0]; 
 
         init();
         animate();
 
         function init() {
-            // 1. Szene & Kamera
+            // Szene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x111122); // Dunkelblaues Weltall
-            scene.fog = new THREE.Fog(0x111122, 20, 100); // Etwas Nebel für Tiefe
+            scene.background = new THREE.Color(0x050510); // Sehr dunkles Blau
+            scene.fog = new THREE.Fog(0x050510, 10, 50);
 
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 30;
+            // Kamera
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+            camera.position.set(0, 0, 20);
 
-            // 2. Renderer
+            // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // 3. Licht
-            const ambientLight = new THREE.AmbientLight(0x404040);
+            // Licht
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-            directionalLight.position.set(10, 10, 10).normalize();
-            scene.add(directionalLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(5, 10, 7);
+            scene.add(dirLight);
+            
+            // Punktlicht beim Text für Glanz
+            const pointLight = new THREE.PointLight(0x00ffcc, 1, 30);
+            pointLight.position.set(0, 0, 5);
+            scene.add(pointLight);
 
-            // 4. Raycaster (zum Schießen) vorbereiten
+            // Raycaster
             raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2(); // Mausposition ist immer 0,0 (Mitte)
+            mouse = new THREE.Vector2(0, 0); // Mitte des Bildschirms
 
-            // 5. Schriftart laden und Text erstellen
-            loadFontAndCreateText();
+            // Schrift laden
+            const loader = new FontLoader();
+            loader.load('font.json', function (font) {
+                createSentence3D(currentSentence.text, font);
+            }, undefined, function(err) {
+                console.error(err);
+                alert("Fehler: font.json nicht gefunden! Bitte lade die Datei hoch.");
+            });
 
-            // Event Listener für Klicks/Schüsse
-            window.addEventListener('click', onMouseClick);
+            // Events
+            window.addEventListener('click', shoot);
             window.addEventListener('resize', onWindowResize);
+            
+            // Mausbewegung für leichten Parallax-Effekt (optional)
+            document.addEventListener('mousemove', onMouseMove);
         }
 
-        function loadFontAndCreateText() {
-             const loader = new FontLoader();
-             // Hier muss deine font.json Datei liegen!
-             loader.load('font.json', function (font) {
-                 createText(currentSentenceData.text, font);
-             }, undefined, function (err) {
-                 console.error("Fehler beim Laden der Schriftart! Hast du font.json hochgeladen?", err);
-                 document.getElementById('info').innerHTML += "<br><span style='color:red'>FEHLER: font.json fehlt!</span>";
-             });
-        }
+        function createSentence3D(text, font) {
+            // Alte Buchstaben löschen
+            letters.forEach(l => scene.remove(l));
+            letters = [];
 
-        function createText(textString, font) {
-            // Wir müssen jeden Buchstaben einzeln erstellen, damit man sie einzeln abschießen kann.
-            let currentXOffset = -20; // Startposition links
+            let xOffset = 0;
+            // Wir berechnen erst die Gesamtbreite, um den Text zu zentrieren
+            // Das ist etwas komplexer, daher machen wir es simpel: 
+            // Wir schätzen den Startpunkt links.
+            xOffset = - (text.length * 0.8); 
 
-            for (let i = 0; i < textString.length; i++) {
-                const char = textString[i];
-                
-                // Leerezeichen überspringen wir bei der Geometrie, schieben aber den Cursor weiter
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
                 if (char === " ") {
-                    currentXOffset += 2;
+                    xOffset += 1;
                     continue;
                 }
 
-                const textGeo = new TextGeometry(char, {
+                const geometry = new TextGeometry(char, {
                     font: font,
-                    size: 3,
-                    height: 0.5, // Wie dick sind die Buchstaben (3D Tiefe)
-                    curveSegments: 12,
+                    size: 1.5,
+                    height: 0.4,
+                    curveSegments: 6,
+                    bevelEnabled: true,
+                    bevelThickness: 0.05,
+                    bevelSize: 0.05,
+                    bevelSegments: 3
                 });
 
-                // Material: Ein schönes leuchtendes Material
-                const textMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffcc, specular: 0x555555, shininess: 30 });
-                const textMesh = new THREE.Mesh(textGeo, textMaterial);
+                // Material: Sci-Fi Look
+                const material = new THREE.MeshStandardMaterial({ 
+                    color: 0x00aaff, 
+                    roughness: 0.3,
+                    metalness: 0.7,
+                    emissive: 0x001133
+                });
 
-                textMesh.position.x = currentXOffset;
-                textMesh.position.y = 0;
-                textMesh.position.z = 0;
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.set(xOffset, 0, 0);
+                
+                // Wir speichern Infos im Objekt
+                mesh.userData = { 
+                    char: char, 
+                    index: i,
+                    isError: (i === currentSentence.errorIndex)
+                };
 
-                // Wir speichern den Index des Buchstabens direkt im Mesh, um ihn später zu prüfen
-                textMesh.userData = { charIndex: i, char: char };
+                scene.add(mesh);
+                letters.push(mesh);
 
-                scene.add(textMesh);
-                letters.push(textMesh); // In unsere Liste für den Raycaster aufnehmen
-
-                // Breite des Buchstabens berechnen, um den nächsten zu platzieren
-                textGeo.computeBoundingBox();
-                const letterWidth = textGeo.boundingBox.max.x - textGeo.boundingBox.min.x;
-                currentXOffset += letterWidth + 0.5; // Kleiner Abstand zwischen Buchstaben
+                // Breite für nächsten Buchstaben
+                geometry.computeBoundingBox();
+                const width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+                xOffset += width + 0.3;
             }
         }
 
-        function onMouseClick(event) {
-            // Raycasting von der Kamera durch die Mitte des Bildschirms (0,0)
+        function shoot() {
             raycaster.setFromCamera(mouse, camera);
-
-            // Prüfen, ob wir Objekte aus unserer 'letters' Liste treffen
             const intersects = raycaster.intersectObjects(letters);
 
             if (intersects.length > 0) {
-                // Wir haben etwas getroffen! Das erste Objekt ist das vorderste.
-                const hitObject = intersects[0].object;
-                const hitIndex = hitObject.userData.charIndex;
+                const hitObj = intersects[0].object;
+                
+                if (hitObj.userData.isError) {
+                    // RICHTIG GETROFFEN (also den Fehler)
+                    score += 100;
+                    scoreElement.innerText = "Score: " + score;
+                    scoreElement.style.color = "#00ff00"; // Grün
+                    
+                    // Effekt: Rot werden und rotieren
+                    hitObj.material.color.set(0xff0000);
+                    hitObj.material.emissive.set(0xff0000);
+                    
+                    // Kleiner Sprung-Effekt
+                    hitObj.position.y += 0.5;
 
-                checkHit(hitObject, hitIndex);
+                    setTimeout(() => {
+                        scoreElement.style.color = "white";
+                        // Hier könnte man den nächsten Satz laden
+                        alert("Gut gemacht! Fehler eliminiert.");
+                    }, 500);
+
+                } else {
+                    // FALSCH (richtigen Buchstaben abgeschossen)
+                    score -= 50;
+                    scoreElement.innerText = "Score: " + score;
+                    scoreElement.style.color = "red";
+                    
+                    // Kurz rot blinken
+                    const oldColor = hitObj.material.color.getHex();
+                    hitObj.material.color.set(0xff0000);
+                    setTimeout(() => {
+                        hitObj.material.color.setHex(oldColor);
+                        scoreElement.style.color = "white";
+                    }, 300);
+                }
             }
         }
 
-        function checkHit(mesh, index) {
-            if (index === currentSentenceData.errorIndex) {
-                // TREFFER! Richtiger (also falscher) Buchstabe getroffen.
-                console.log("Treffer! Fehler gefunden.");
-                score += 10;
-                scoreElement.innerText = score;
-                scoreElement.style.color = "#00ffcc";
-
-                // Visuelles Feedback: Buchstabe wird rot und verschwindet
-                mesh.material.color.set(0xff0000);
-                
-                // Kurze Verzögerung, dann entfernen (später hier: Explosionseffekt)
-                setTimeout(() => {
-                    scene.remove(mesh);
-                    // Hier müsste man jetzt den *richtigen* Buchstaben an die Stelle setzen.
-                    // Das heben wir uns für den nächsten Schritt auf, wenn das hier läuft.
-                    // TODO: Ersetze durch Korrektur
-                }, 300);
-
-            } else {
-                // DANEBEN! Auf einen richtigen Buchstaben geschossen.
-                console.log("Falsch! Das war ein korrekter Buchstabe.");
-                score -= 5;
-                scoreElement.innerText = score;
-                scoreElement.style.color = "red";
-                
-                // Visuelles Feedback: Buchstabe blinkt kurz rot auf
-                const oldColor = mesh.material.color.getHex();
-                mesh.material.color.set(0xff0000);
-                setTimeout(() => {
-                     mesh.material.color.setHex(oldColor);
-                     scoreElement.style.color = "white";
-                }, 500);
-            }
+        let mouseX = 0;
+        let mouseY = 0;
+        function onMouseMove(event) {
+            mouseX = (event.clientX - window.innerWidth / 2) * 0.001;
+            mouseY = (event.clientY - window.innerHeight / 2) * 0.001;
         }
 
         function onWindowResize() {
@@ -209,15 +250,20 @@
 
         function animate() {
             requestAnimationFrame(animate);
-
-            // Optional: Leichte Rotation des gesamten Satzes für mehr Dynamik
-            /* letters.forEach(letter => {
-                letter.rotation.y += 0.005;
-            }); */
             
+            // Leichte Kamerabewegung mit der Maus (Parallax)
+            camera.position.x += (mouseX - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+
+            // Buchstaben schweben lassen
+            const time = Date.now() * 0.001;
+            letters.forEach((l, idx) => {
+                l.position.y += Math.sin(time + idx) * 0.002;
+            });
+
             renderer.render(scene, camera);
         }
-
     </script>
 </body>
 </html>
