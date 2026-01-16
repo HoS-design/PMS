@@ -29,7 +29,6 @@
             pointer-events: none;
             z-index: 10;
         }
-        /* Kleiner Punkt in der Mitte des Fadenkreuzes */
         #crosshair::after {
             content: '';
             position: absolute;
@@ -66,42 +65,41 @@
         import { FontLoader } from 'three/addons/loaders/FontLoader.js';
         import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
+        // --- HIER WAR DER FEHLER: Variablen müssen oben stehen! ---
         let scene, camera, renderer, raycaster, mouse;
         let letters = []; 
         let score = 0;
+        let mouseX = 0; // Hierher verschoben
+        let mouseY = 0; // Hierher verschoben
+        
         const scoreElement = document.getElementById('score');
 
         // --- DEINE SÄTZE ---
         const sentences = [
             { text: "Der Pogel fliegt.", errorIndex: 4, correctChar: "V" },
             { text: "Das Haus ist gros.", errorIndex: 13, correctChar: "ß" },
-            { text: "Ich esse gernen Eis.", errorIndex: 10, correctChar: "" }, // 'n' ist zu viel
-            { text: "Die Sonne scheint.", errorIndex: -1, correctChar: "" } // Kein Fehler (zum Testen)
+            { text: "Ich esse gernen Eis.", errorIndex: 10, correctChar: "" }, 
+            { text: "Die Sonne scheint.", errorIndex: -1, correctChar: "" } 
         ];
         
-        // Aktueller Satz
         let currentSentence = sentences[0]; 
 
         init();
         animate();
 
         function init() {
-            // Szene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x050510); // Sehr dunkles Blau
+            scene.background = new THREE.Color(0x050510);
             scene.fog = new THREE.Fog(0x050510, 10, 50);
 
-            // Kamera
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
             camera.position.set(0, 0, 20);
 
-            // Renderer
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // Licht
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
             
@@ -109,42 +107,31 @@
             dirLight.position.set(5, 10, 7);
             scene.add(dirLight);
             
-            // Punktlicht beim Text für Glanz
             const pointLight = new THREE.PointLight(0x00ffcc, 1, 30);
             pointLight.position.set(0, 0, 5);
             scene.add(pointLight);
 
-            // Raycaster
             raycaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2(0, 0); // Mitte des Bildschirms
+            mouse = new THREE.Vector2(0, 0);
 
-            // Schrift laden
             const loader = new FontLoader();
             loader.load('font.json', function (font) {
                 createSentence3D(currentSentence.text, font);
             }, undefined, function(err) {
                 console.error(err);
-                alert("Fehler: font.json nicht gefunden! Bitte lade die Datei hoch.");
+                alert("Fehler: font.json nicht gefunden!");
             });
 
-            // Events
             window.addEventListener('click', shoot);
             window.addEventListener('resize', onWindowResize);
-            
-            // Mausbewegung für leichten Parallax-Effekt (optional)
             document.addEventListener('mousemove', onMouseMove);
         }
 
         function createSentence3D(text, font) {
-            // Alte Buchstaben löschen
             letters.forEach(l => scene.remove(l));
             letters = [];
 
-            let xOffset = 0;
-            // Wir berechnen erst die Gesamtbreite, um den Text zu zentrieren
-            // Das ist etwas komplexer, daher machen wir es simpel: 
-            // Wir schätzen den Startpunkt links.
-            xOffset = - (text.length * 0.8); 
+            let xOffset = - (text.length * 0.8); 
 
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
@@ -164,7 +151,6 @@
                     bevelSegments: 3
                 });
 
-                // Material: Sci-Fi Look
                 const material = new THREE.MeshStandardMaterial({ 
                     color: 0x00aaff, 
                     roughness: 0.3,
@@ -175,7 +161,6 @@
                 const mesh = new THREE.Mesh(geometry, material);
                 mesh.position.set(xOffset, 0, 0);
                 
-                // Wir speichern Infos im Objekt
                 mesh.userData = { 
                     char: char, 
                     index: i,
@@ -185,7 +170,6 @@
                 scene.add(mesh);
                 letters.push(mesh);
 
-                // Breite für nächsten Buchstaben
                 geometry.computeBoundingBox();
                 const width = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
                 xOffset += width + 0.3;
@@ -200,31 +184,24 @@
                 const hitObj = intersects[0].object;
                 
                 if (hitObj.userData.isError) {
-                    // RICHTIG GETROFFEN (also den Fehler)
                     score += 100;
                     scoreElement.innerText = "Score: " + score;
-                    scoreElement.style.color = "#00ff00"; // Grün
+                    scoreElement.style.color = "#00ff00"; 
                     
-                    // Effekt: Rot werden und rotieren
                     hitObj.material.color.set(0xff0000);
                     hitObj.material.emissive.set(0xff0000);
-                    
-                    // Kleiner Sprung-Effekt
                     hitObj.position.y += 0.5;
 
                     setTimeout(() => {
                         scoreElement.style.color = "white";
-                        // Hier könnte man den nächsten Satz laden
                         alert("Gut gemacht! Fehler eliminiert.");
                     }, 500);
 
                 } else {
-                    // FALSCH (richtigen Buchstaben abgeschossen)
                     score -= 50;
                     scoreElement.innerText = "Score: " + score;
                     scoreElement.style.color = "red";
                     
-                    // Kurz rot blinken
                     const oldColor = hitObj.material.color.getHex();
                     hitObj.material.color.set(0xff0000);
                     setTimeout(() => {
@@ -235,8 +212,6 @@
             }
         }
 
-        let mouseX = 0;
-        let mouseY = 0;
         function onMouseMove(event) {
             mouseX = (event.clientX - window.innerWidth / 2) * 0.001;
             mouseY = (event.clientY - window.innerHeight / 2) * 0.001;
@@ -251,12 +226,11 @@
         function animate() {
             requestAnimationFrame(animate);
             
-            // Leichte Kamerabewegung mit der Maus (Parallax)
+            // Jetzt existieren mouseX und mouseY, wenn animate aufgerufen wird
             camera.position.x += (mouseX - camera.position.x) * 0.05;
             camera.position.y += (-mouseY - camera.position.y) * 0.05;
             camera.lookAt(0, 0, 0);
 
-            // Buchstaben schweben lassen
             const time = Date.now() * 0.001;
             letters.forEach((l, idx) => {
                 l.position.y += Math.sin(time + idx) * 0.002;
