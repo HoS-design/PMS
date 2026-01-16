@@ -2457,6 +2457,24 @@
 </script>
 
 <!-- ===================== ADDON END ===================== -->
+<script>
+/* === HOTFIX: Modul 4 korrekt abschließen === */
+(function(){
+  const app = window.__HoSApp;
+  if(!app) return;
+
+  const oldValidate = app.steps[3].validate;
+  app.steps[3].validate = function(){
+    const ok = oldValidate();
+    if(ok){
+      const st = app.getState();
+      st.done.m4 = true;
+      app.setState(st);
+    }
+    return ok;
+  };
+})();
+</script>
 
 <!-- ===================== BLOCK 6/6 ===================== -->
 <!-- Abschluss: Footer + sauberes HTML-Ende -->
