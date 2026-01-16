@@ -20,10 +20,8 @@
             --ink: #1e293b;
             --muted: #64748b;
             --line: #e2e8f0;
-            --accent: #3b82f6; /* Blau für Aktionen */
-            --accent2: #10b981; /* Grün für Positives */
-            --warn: #f59e0b;
-            --danger: #ef4444; /* Rot für Locked */
+            --accent: #3b82f6;
+            --danger: #ef4444;
             --radius: 16px;
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -39,20 +37,15 @@
 
         #app-header {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%;
             padding: 16px 24px;
             background: var(--surface);
             border-bottom: 1px solid var(--line);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; justify-content: space-between;
             z-index: 10;
             box-shadow: var(--shadow-md);
         }
 
-        /* Brand Styles wie im Lernstudio */
         .brand-row { display:flex; align-items:center; gap:12px; }
         .logo-img { width:48px; height:48px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
         .badge-main {
@@ -63,454 +56,467 @@
         }
         .brand-title h1 { margin:0; font-size:18px; font-weight:800; letter-spacing:-0.5px; color: var(--ink); }
 
-        #controls-area {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        #controls-area { display: flex; gap: 10px; align-items: center; }
 
         #roll-button {
-            background: var(--ink);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: var(--radius);
-            cursor: pointer;
-            box-shadow: var(--shadow-md);
+            background: var(--ink); color: white; border: none;
+            padding: 12px 32px; font-size: 15px; font-weight: 700; text-transform: uppercase;
+            border-radius: var(--radius); cursor: pointer; box-shadow: var(--shadow-md);
             transition: all 0.2s;
         }
-
-        #roll-button:hover {
-            background: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        #info-text {
-            color: var(--muted);
-            font-size: 13px;
-            background: var(--surface);
-            padding: 8px 16px;
-            border-radius: var(--radius);
-            border: 1px solid var(--line);
-        }
+        #roll-button:hover { background: var(--accent); transform: translateY(-2px); }
+        #roll-button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
         #app-container {
-            display: flex;
-            height: 100vh;
-            padding-top: 80px; /* Platz für Header */
-            box-sizing: border-box;
+            display: flex; height: 100vh; padding-top: 80px; box-sizing: border-box;
         }
 
-        #canvas-container {
-            flex-grow: 1;
-            position: relative;
-            /* Wichtig: Transparenter Hintergrund damit der CSS Hintergrund durchscheint */
-            background: transparent; 
-        }
+        #canvas-container { flex-grow: 1; position: relative; background: transparent; }
 
         #results-sidebar {
-            width: 320px;
+            width: 380px;
             background: var(--surface);
             border-left: 1px solid var(--line);
             padding: 24px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            display: flex; flex-direction: column; gap: 20px;
             box-shadow: -4px 0 15px rgba(0,0,0,0.05);
+            z-index: 5;
         }
 
-        .result-card {
-            background: var(--bg);
-            border: 1px solid var(--line);
-            padding: 16px;
+        /* Zusammenfassungs-Box */
+        .summary-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
             border-radius: var(--radius);
-            transition: all 0.3s;
+            padding: 20px;
         }
+        .summary-box h3 { margin: 0 0 12px 0; font-size: 14px; text-transform: uppercase; color: #1e40af; }
+        .summary-text { font-size: 15px; line-height: 1.6; color: #1e3a8a; }
 
-        .result-card h3 {
-            margin: 0 0 8px 0;
-            font-size: 14px;
-            text-transform: uppercase;
-            color: var(--muted);
-            display: flex;
-            justify-content: space-between;
+        /* Karten */
+        .result-card {
+            background: var(--bg); border: 1px solid var(--line);
+            padding: 12px 16px; border-radius: 12px;
+            transition: all 0.2s; display: flex; align-items: center; gap: 12px;
         }
+        .result-icon { font-size: 28px; }
+        .result-content { flex: 1; }
+        .result-label { font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; display: block; margin-bottom: 2px;}
+        .result-value { font-size: 15px; font-weight: 600; color: var(--ink); }
+        
+        .result-card.locked { border-color: var(--danger); background: #fef2f2; }
+        .lock-icon { opacity: 0; color: var(--danger); font-size: 18px;}
+        .result-card.locked .lock-icon { opacity: 1; }
 
-        .result-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--ink);
-            min-height: 20px;
-        }
-
-        /* Indikator für gesperrte Würfel */
-        .locked-indicator {
-            color: var(--danger);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .result-card.locked .locked-indicator {
-            opacity: 1;
-        }
-        .result-card.locked {
-            border-color: var(--danger);
-            background: #fef2f2; /* Helles Rot */
-        }
-
-        /* Overlay beim Laden */
         #loading-overlay {
             position: absolute; top:0; left:0; width:100%; height:100%;
             background: var(--bg); color: var(--muted);
             display: flex; justify-content: center; align-items: center;
             z-index: 100; font-weight: 600;
         }
+        
+        @media (max-width: 800px) {
+            #app-container { flex-direction: column; }
+            #results-sidebar { width: 100%; height: 40%; order: 2; border-left: none; border-top: 1px solid var(--line); }
+            #canvas-container { height: 60%; order: 1; }
+        }
     </style>
 </head>
 <body>
-    <div id="loading-overlay">Lade 3D-Szene & Texturen...</div>
+    <div id="loading-overlay">Lade Märchenwelt...</div>
 
     <header id="app-header">
         <div class="brand-row">
-             <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="brand-title">
                 <div class="badge-main">HoS Creative</div>
                 <h1>Märchen-Generator 3D</h1>
             </div>
         </div>
         <div id="controls-area">
-            <span id="info-text">Klicke auf Würfel zum Sperren (🔒). 'R' oder Button zum Rollen.</span>
             <button id="roll-button">Würfeln (R)</button>
         </div>
     </header>
 
     <div id="app-container">
         <div id="canvas-container"></div>
+        
         <aside id="results-sidebar">
-            <div class="result-card" id="card-Held"><h3>Held <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
-            <div class="result-card" id="card-Ort"><h3>Ort <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
-            <div class="result-card" id="card-Zauber"><h3>Zauber <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
-            <div class="result-card" id="card-Bösewicht"><h3>Bösewicht <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
-            <div class="result-card" id="card-Prüfung"><h3>Prüfung <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
-            <div class="result-card" id="card-Moral"><h3>Moral <span class="locked-indicator">🔒</span></h3><div class="result-value">...</div></div>
+            <div class="summary-box">
+                <h3>Dein Schreibauftrag</h3>
+                <div id="story-summary" class="summary-text">
+                    Drücke auf "Würfeln", um dein Märchen zu starten...
+                </div>
+            </div>
+
+            <div id="cards-container">
+                </div>
         </aside>
     </div>
-
 
     <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // --- Konfiguration ---
+        // --- Daten ---
         const categories = ["Held", "Ort", "Zauber", "Bösewicht", "Prüfung", "Moral"];
         const diceData = {
-            "Held": ["Mutiger Ritter", "Schlaues Bauernmädchen", "Verwunschener Prinz", "Armer Müllersohn", "Kleine Hexe", "Sprechendes Tier"],
-            "Ort": ["Dunkler Wald", "Verlassenes Schloss", "Wolkenreich", "Gläserner Berg", "Häuschen aus Süßigkeiten", "Tiefsee-Höhle"],
-            "Zauber": ["Unsichtbarkeitsmantel", "Fliegender Teppich", "Zauberspiegel", "Wunschring", "Verwandlungstrank", "Zeitreise-Uhr"],
-            "Bösewicht": ["Böse Stiefmutter", "Feuerspeiender Drache", "Hinterlistiger Zauberer", "Riesiger Troll", "Neidische Fee", "Schattenwesen"],
-            "Prüfung": ["Drei Rätsel lösen", "Einen Drachen besiegen", "Einen verlorenen Gegenstand finden", "Einen Fluch brechen", "Mut beweisen", "Jemandem vergeben"],
-            "Moral": ["Wahre Schönheit kommt von innen", "Mut wird belohnt", "Gier führt ins Verderben", "Zusammenhalt ist Stärke", "Ehrlich währt am längsten", "Jeder hat eine zweite Chance verdient"]
+            "Held": [
+                {text: "Mutiger Ritter", icon: "⚔️"}, {text: "Schlaues Mädchen", icon: "👧"},
+                {text: "Prinz", icon: "🤴"}, {text: "Müllersohn", icon: "🌾"},
+                {text: "Kleine Hexe", icon: "🧙‍♀️"}, {text: "Sprechender Fuchs", icon: "🦊"}
+            ],
+            "Ort": [
+                {text: "Dunkler Wald", icon: "🌲"}, {text: "Altes Schloss", icon: "🏰"},
+                {text: "Wolkenreich", icon: "☁️"}, {text: "Gläserner Berg", icon: "🏔️"},
+                {text: "Hexenhaus", icon: "🍪"}, {text: "Unterwasser", icon: "🌊"}
+            ],
+            "Zauber": [
+                {text: "Tarnumhang", icon: "🧥"}, {text: "Fliegender Teppich", icon: "🧶"},
+                {text: "Zauberspiegel", icon: "🪞"}, {text: "Wunschring", icon: "💍"},
+                {text: "Zaubertrank", icon: "🧪"}, {text: "Zeituhr", icon: "⏳"}
+            ],
+            "Bösewicht": [
+                {text: "Böse Stiefmutter", icon: "👸"}, {text: "Feuerdrache", icon: "🐉"},
+                {text: "Zauberer", icon: "🧙‍♂️"}, {text: "Riesiger Troll", icon: "👹"},
+                {text: "Neidische Fee", icon: "🧚‍♀️"}, {text: "Schattenmonster", icon: "👻"}
+            ],
+            "Prüfung": [
+                {text: "3 Rätsel lösen", icon: "❓"}, {text: "Drachenkampf", icon: "🗡️"},
+                {text: "Suche im Labyrinth", icon: "🌀"}, {text: "Fluch brechen", icon: "✨"},
+                {text: "Mutprobe", icon: "🦁"}, {text: "Jemandem vergeben", icon: "🤝"}
+            ],
+            "Moral": [
+                {text: "Wahre Schönheit", icon: "💖"}, {text: "Mut lohnt sich", icon: "🏆"},
+                {text: "Gier schadet", icon: "💰"}, {text: "Zusammenhalt", icon: "🤲"},
+                {text: "Ehrlichkeit", icon: "🤥"}, {text: "2. Chance", icon: "🔄"}
+            ]
         };
 
-        // --- Globale Variablen ---
+        // --- Global ---
         let scene, camera, renderer, controls;
-        let dice = []; // Array für die Würfel-Meshes
+        let dice = [];
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
-        const textureLoader = new THREE.TextureLoader();
-        let textures = {}; // Speichert geladene Texturen
-        let isRolling = false; // Globaler Status
+        let textures = {}; 
+        let isRolling = false;
+        
+        let currentStory = {
+            "Held": null, "Ort": null, "Zauber": null, 
+            "Bösewicht": null, "Prüfung": null, "Moral": null
+        };
 
-        // Hilfsfunktion: Textur erstellen
-        function createTextTexture(text, bgColor) {
+        // --- Textur Generator (Vollflächig & Lesbar) ---
+        function createTextTexture(text, icon, bgColor, textColor) {
             const canvas = document.createElement('canvas');
-            canvas.width = 256;
-            canvas.height = 256;
+            canvas.width = 512; 
+            canvas.height = 512;
             const ctx = canvas.getContext('2d');
 
-            // Hintergrund (Hellerer Stil)
+            // 1. Hintergrund (Vollflächig!)
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Rahmen
-            ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 10;
-            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+            // 2. Dekorativer Rahmen (damit es wie ein Würfel aussieht)
+            ctx.strokeStyle = "rgba(0,0,0,0.1)"; 
+            ctx.lineWidth = 40;
+            // Abgerundetes Rechteck simulieren
+            ctx.strokeRect(0,0,canvas.width, canvas.height);
 
-            // Text
-            ctx.fillStyle = '#1e293b'; // Dunkelgrauer Text
-            ctx.font = 'bold 24px sans-serif'; // Klarere Schrift
+            // 3. Icon (Riesig in der Mitte)
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            ctx.font = '220px serif'; 
+            ctx.fillText(icon, canvas.width / 2, canvas.height / 2 - 50);
 
-            // Einfacher Zeilenumbruch
+            // 4. Text (Unten, Fett)
+            ctx.fillStyle = textColor; 
+            ctx.font = 'bold 50px sans-serif'; 
+            
+            // Zeilenumbruch
             const words = text.split(' ');
-            let line = '';
-            let y = canvas.height / 2;
-            if (words.length > 2) {
-                 // Mehrzeilig für längere Texte
+            let y = canvas.height / 2 + 120;
+            
+            if (text.length > 12 && words.length > 1) {
                  const mid = Math.floor(words.length / 2);
                  const line1 = words.slice(0, mid).join(' ');
                  const line2 = words.slice(mid).join(' ');
-                 ctx.fillText(line1, canvas.width / 2, y - 15);
-                 ctx.fillText(line2, canvas.width / 2, y + 15);
+                 ctx.fillText(line1, canvas.width / 2, y);
+                 ctx.fillText(line2, canvas.width / 2, y + 60);
             } else {
-                 ctx.fillText(text, canvas.width / 2, y);
+                 ctx.fillText(text, canvas.width / 2, y + 30);
             }
 
             const texture = new THREE.CanvasTexture(canvas);
-            texture.colorSpace = THREE.SRGBColorSpace; // Wichtig für korrekte Farben
+            texture.colorSpace = THREE.SRGBColorSpace;
             return texture;
         }
 
-        // Texturen vorladen
         async function preloadTextures() {
-            // Start-Textur (Fragezeichen) - Heller Stil
-            textures['default'] = createTextTexture("?", "#ffffff");
+            textures['default'] = createTextTexture("Start", "🎲", "#ffffff", "#94a3b8");
 
-            const colors = {
-                "Held": "#eff6ff", "Ort": "#f0fdf4", "Zauber": "#faf5ff",
-                "Bösewicht": "#fef2f2", "Prüfung": "#fff7ed", "Moral": "#fcfaf5"
+            const styles = {
+                "Held": {bg: "#dbeafe", text: "#1e40af"}, // Blau
+                "Ort": {bg: "#dcfce7", text: "#166534"}, // Grün
+                "Zauber": {bg: "#f3e8ff", text: "#6b21a8"}, // Lila
+                "Bösewicht": {bg: "#fee2e2", text: "#991b1b"}, // Rot
+                "Prüfung": {bg: "#ffedd5", text: "#9a3412"}, // Orange
+                "Moral": {bg: "#f1f5f9", text: "#334155"} // Grau
             };
 
             for (const cat of categories) {
                 textures[cat] = {};
-                for (const result of diceData[cat]) {
-                    // Wir nutzen Pastellfarben für die Hintergründe der Texturen passend zum HoS Style
-                    textures[cat][result] = createTextTexture(result, colors[cat] || "#ffffff");
+                for (const item of diceData[cat]) {
+                    textures[cat][item.text] = createTextTexture(item.text, item.icon, styles[cat].bg, styles[cat].text);
                 }
             }
         }
 
-
-        // --- Initialisierung ---
+        // --- Setup ---
         async function init() {
             await preloadTextures();
             document.getElementById('loading-overlay').style.display = 'none';
+            initSidebar();
 
             const container = document.getElementById('canvas-container');
-
-            // Szene - Hintergrundfarbe auf das HoS Hellgrau setzen
+            
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xf2f4f7); 
+            // Nebel für Tiefe
+            scene.fog = new THREE.Fog(0xf2f4f7, 20, 50);
 
-            // Kamera
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 10, 15); // Etwas höhere Kameraposition
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 14, 20);
 
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
             renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.shadowMap.enabled = true; // Schatten aktivieren
+            renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.SoftShadowMap;
             container.appendChild(renderer.domElement);
 
-            // Licht (Helleres, freundlicheres Licht)
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6); // Helles Umgebungslicht
-            scene.add(ambientLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff, 1.5); // Starke Sonne
-            dirLight.position.set(5, 20, 10);
-            dirLight.castShadow = true;
-            dirLight.shadow.camera.top = 10;
-            dirLight.shadow.camera.bottom = -10;
-            dirLight.shadow.camera.left = -15;
-            dirLight.shadow.camera.right = 15;
-            dirLight.shadow.mapSize.width = 2048; // Schärfere Schatten
-            dirLight.shadow.mapSize.height = 2048;
-            scene.add(dirLight);
+            // Licht Setup (Hell & Freundlich)
+            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambient);
             
-            // Optional: Ein weiches Fülllicht von der Seite
-            const fillLight = new THREE.PointLight(0xeff6ff, 0.5);
-            fillLight.position.set(-10, 5, -10);
-            scene.add(fillLight);
+            const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+            sun.position.set(10, 20, 10);
+            sun.castShadow = true;
+            sun.shadow.mapSize.width = 2048;
+            sun.shadow.mapSize.height = 2048;
+            sun.shadow.camera.near = 0.5;
+            sun.shadow.camera.far = 50;
+            sun.shadow.camera.left = -20;
+            sun.shadow.camera.right = 20;
+            sun.shadow.camera.top = 20;
+            sun.shadow.camera.bottom = -20;
+            scene.add(sun);
 
+            // Boden
+            const groundMat = new THREE.ShadowMaterial({ opacity: 0.1 });
+            const ground = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -2;
+            ground.receiveShadow = true;
+            scene.add(ground);
 
-            // Boden (Schattenfänger)
-            const planeGeometry = new THREE.PlaneGeometry(50, 50);
-            const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.05 }); // Sehr subtiler Schatten
-            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-            plane.rotation.x = -Math.PI / 2;
-            plane.position.y = -1.5; // Etwas tiefer als die Würfel
-            plane.receiveShadow = true;
-            scene.add(plane);
+            // Würfel erstellen (BoxGeometry für perfekte Textur-Mapping)
+            const boxGeo = new THREE.BoxGeometry(2.8, 2.8, 2.8); 
 
-            // Würfel erstellen
-            const cubeGeometry = new THREE.BoxGeometry(2, 2, 2);
-            // Abgerundete Ecken für modernen Look (braucht mehr Polygone, aber sieht besser aus)
-            const roundedCubeGeo = createRoundedBox(2, 2, 2, 0.2, 10);
-
-            categories.forEach((cat, index) => {
-                // Basis-Material (weiß, glänzend)
-                const material = new THREE.MeshStandardMaterial({
+            categories.forEach((cat, i) => {
+                // Initial Textur
+                const mat = new THREE.MeshStandardMaterial({
                     map: textures['default'],
+                    color: 0xffffff, // WICHTIG: Weiß, damit Texturfarben stimmen
                     roughness: 0.3,
-                    metalness: 0.1,
-                    color: 0xffffff
+                    metalness: 0.0
                 });
 
-                const cube = new THREE.Mesh(roundedCubeGeo, material);
-                // Positionierung in einer Reihe, etwas Abstand
-                cube.position.set((index - 2.5) * 3.5, 0, 0);
+                const cube = new THREE.Mesh(boxGeo, mat);
+                
+                // 2 Reihen à 3
+                const row = i < 3 ? 0 : 1;
+                const col = i % 3;
+                // Versatz für schöne Anordnung
+                cube.position.set((col - 1) * 4.5, 0, (row - 0.5) * 4.5);
+                
                 cube.castShadow = true;
                 cube.receiveShadow = true;
-
-                // Eigene Daten anhängen
+                
                 cube.userData = {
                     category: cat,
                     locked: false,
-                    currentResult: null,
-                    // Animations-Daten
                     velocity: new THREE.Vector3(),
-                    rotVelocity: new THREE.Vector3(),
-                    isAnimating: false
+                    rotVel: new THREE.Vector3(),
+                    isAnimating: false,
+                    startPos: cube.position.clone()
                 };
-
+                
                 scene.add(cube);
                 dice.push(cube);
             });
 
-            // Controls
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-            controls.minDistance = 5;
-            controls.maxDistance = 30;
-            // Begrenzen, damit man nicht unter den Boden schaut
-            controls.maxPolarAngle = Math.PI / 2 - 0.1; 
+            controls.maxPolarAngle = Math.PI / 2 - 0.1;
+            controls.enablePan = false;
+            controls.minDistance = 10;
+            controls.maxDistance = 40;
 
-            // Event Listeners
-            window.addEventListener('resize', onWindowResize);
+            window.addEventListener('resize', onResize);
             document.getElementById('roll-button').addEventListener('click', rollDice);
             window.addEventListener('keydown', (e) => { if(e.key.toLowerCase() === 'r') rollDice(); });
-            renderer.domElement.addEventListener('click', onMouseClick);
+            renderer.domElement.addEventListener('click', onClick);
 
-            // Start-Animation loop
             animate();
             
-            // Initial einmal rollen für einen Startzustand
+            // Start Animation
             setTimeout(rollDice, 500);
         }
 
-        // Hilfsfunktion für abgerundete Box (sieht edler aus)
-        function createRoundedBox( width, height, depth, radius0, smoothness ) {
-            let shape = new THREE.Shape();
-            let eps = 0.00001;
-            let radius = radius0 - eps;
-            shape.absarc( eps, eps, eps, -Math.PI / 2, -Math.PI, true );
-            shape.absarc( eps, height -  radius * 2, eps, Math.PI, Math.PI / 2, true );
-            shape.absarc( width - radius * 2, height -  radius * 2, eps, Math.PI / 2, 0, true );
-            shape.absarc( width - radius * 2, eps, eps, 0, -Math.PI / 2, true );
-            let geometry = new THREE.ExtrudeGeometry( shape, {
-                depth: depth - radius0 * 2,
-                bevelEnabled: true,
-                bevelSegments: smoothness * 2,
-                steps: 1,
-                bevelSize: radius,
-                bevelThickness: radius0,
-                curveSegments: smoothness
+        // --- UI ---
+        function initSidebar() {
+            const container = document.getElementById('cards-container');
+            categories.forEach(cat => {
+                const el = document.createElement('div');
+                el.className = 'result-card';
+                el.id = `card-${cat}`;
+                el.innerHTML = `
+                    <div class="result-icon">🎲</div>
+                    <div class="result-content">
+                        <span class="result-label">${cat}</span>
+                        <div class="result-value">...</div>
+                    </div>
+                    <div class="lock-icon">🔒</div>
+                `;
+                container.appendChild(el);
             });
-            geometry.center();
-            return geometry;
         }
 
+        function updateStorySummary() {
+            const p = currentStory;
+            if (!p.Held || !p.Ort || !p.Zauber || !p.Bösewicht || !p.Prüfung || !p.Moral) {
+                document.getElementById('story-summary').textContent = "Würfle, um die Geschichte zu enthüllen...";
+                return;
+            }
+
+            // Dynamischer Text
+            const text = `Es war einmal <b>${p.Held}</b>, unterwegs im <b>${p.Ort}</b>. 
+            Plötzlich tauchte <b>${p.Zauber}</b> auf! Doch Vorsicht: <b>${p.Bösewicht}</b> lauerte bereits. 
+            Die Aufgabe war schwer: <b>${p.Prüfung}</b>. Und die Moral? <b>${p.Moral}</b>.`;
+            
+            document.getElementById('story-summary').innerHTML = text;
+        }
+
+        function updateCard(cat, item, locked) {
+            const card = document.getElementById(`card-${cat}`);
+            card.querySelector('.result-value').textContent = item.text;
+            card.querySelector('.result-icon').textContent = item.icon;
+            if (locked) card.classList.add('locked'); else card.classList.remove('locked');
+            
+            currentStory[cat] = item.text;
+        }
 
         // --- Logik ---
         function rollDice() {
-            if (isRolling) return; // Verhindert Doppel-Klicks während Animation
+            if (isRolling) return;
             isRolling = true;
             document.getElementById('roll-button').disabled = true;
 
-            let rollingCount = 0;
+            let activeCount = 0;
 
             dice.forEach(cube => {
                 if (!cube.userData.locked) {
-                    rollingCount++;
+                    activeCount++;
                     cube.userData.isAnimating = true;
                     
-                    // 1. Ergebnis auswählen (wird erst am Ende der Animation gezeigt)
-                    const possibleResults = diceData[cube.userData.category];
-                    const newResult = possibleResults[Math.floor(Math.random() * possibleResults.length)];
-                    cube.userData.nextTexture = textures[cube.userData.category][newResult];
-                    cube.userData.nextResultText = newResult;
-                    
-                    // 2. Physik-Startwerte setzen für das "Hochwerfen"
-                    // Zufälliger Schub nach oben (y) und leichte seitliche Bewegung (x, z)
-                    cube.userData.velocity.set(
-                        (Math.random() - 0.5) * 0.1,  // x
-                        0.3 + Math.random() * 0.2,    // y (starker Schub nach oben)
-                        (Math.random() - 0.5) * 0.1   // z
-                    );
-                    // Zufällige schnelle Rotation
-                    cube.userData.rotVelocity.set(
-                        (Math.random() - 0.5) * 0.4,
-                        (Math.random() - 0.5) * 0.4,
-                        (Math.random() - 0.5) * 0.4
-                    );
+                    // Ergebnis
+                    const pool = diceData[cube.userData.category];
+                    const pick = pool[Math.floor(Math.random() * pool.length)];
+                    cube.userData.nextTex = textures[cube.userData.category][pick.text];
+                    cube.userData.nextInfo = pick;
 
-                    // UI zurücksetzen während des Rollens
-                    updateSidebarCard(cube.userData.category, "...", false);
+                    // Reset Position leicht
+                    cube.position.y = 0;
+
+                    // Physik Start (Hochwerfen)
+                    cube.userData.velocity.set(
+                        (Math.random() - 0.5) * 0.2, // x drift
+                        0.5 + Math.random() * 0.3,   // y Schub (hoch!)
+                        (Math.random() - 0.5) * 0.2  // z drift
+                    );
+                    
+                    // Rotation (Wild)
+                    cube.userData.rotVel.set(
+                        (Math.random() - 0.5) * 0.8,
+                        (Math.random() - 0.5) * 0.8,
+                        (Math.random() - 0.5) * 0.8
+                    );
                 }
             });
 
-            if (rollingCount === 0) {
+            if (activeCount === 0) {
                 isRolling = false;
                 document.getElementById('roll-button').disabled = false;
             }
         }
 
-        // Der wichtigste Teil: Der Animations-Loop
         function animate() {
             requestAnimationFrame(animate);
-
-            let stillAnimating = false;
+            
+            let moving = false;
 
             dice.forEach(cube => {
+                // Animation für gelockte (Schweben)
                 if (cube.userData.locked) {
-                     // Gesperrte Würfel schweben nur ganz leicht
-                     cube.position.y = Math.sin(Date.now() * 0.002 + cube.position.x) * 0.05;
+                    cube.position.y = 0.5 + Math.sin(Date.now() * 0.003 + cube.position.x) * 0.1;
+                    // Sanfte Rotation zurücksetzen wenn gelockt
+                    cube.rotation.x = THREE.MathUtils.lerp(cube.rotation.x, 0, 0.1);
+                    cube.rotation.z = THREE.MathUtils.lerp(cube.rotation.z, 0, 0.1);
                 }
                 
+                // Physik Animation
                 if (cube.userData.isAnimating) {
-                    stillAnimating = true;
+                    moving = true;
                     
-                    // Physik anwenden
+                    // Position
                     cube.position.add(cube.userData.velocity);
-                    cube.rotation.x += cube.userData.rotVelocity.x;
-                    cube.rotation.y += cube.userData.rotVelocity.y;
-                    cube.rotation.z += cube.userData.rotVelocity.z;
+                    
+                    // Rotation
+                    cube.rotation.x += cube.userData.rotVel.x;
+                    cube.rotation.y += cube.userData.rotVel.y;
+                    cube.rotation.z += cube.userData.rotVel.z;
 
-                    // Schwerkraft (zieht nach unten)
-                    cube.userData.velocity.y -= 0.015;
+                    // Schwerkraft
+                    cube.userData.velocity.y -= 0.02;
 
-                    // Landung prüfen (wenn y unter 0 fällt)
+                    // Bodenberührung
                     if (cube.position.y <= 0) {
-                        cube.position.y = 0; // Auf den Boden setzen
-                        cube.userData.isAnimating = false; // Animation stoppen
-                        
-                        // Ergebnis anwenden (Texturwechsel im Moment der Landung)
-                        cube.material.map = cube.userData.nextTexture;
-                        cube.userData.currentResult = cube.userData.nextResultText;
-                        
-                        // Rotation "säubern" (damit er gerade liegt)
-                        // Ein kleiner Trick: Wir setzen die Rotation auf fast 0, mit leichter Variation, damit es natürlich aussieht
-                        cube.rotation.set(
-                            Math.round(cube.rotation.x / (Math.PI/2)) * (Math.PI/2),
-                             Math.round(cube.rotation.y / (Math.PI/2)) * (Math.PI/2),
-                             Math.round(cube.rotation.z / (Math.PI/2)) * (Math.PI/2)
-                        );
-
-                        // UI Update für diesen Würfel
-                        updateSidebarCard(cube.userData.category, cube.userData.currentResult, cube.userData.locked);
+                        cube.position.y = 0;
+                        // Bounce Effekt (kleiner Hüpfer wenn Energie übrig)
+                        if(Math.abs(cube.userData.velocity.y) > 0.1) {
+                             cube.userData.velocity.y *= -0.4; // Dämpfung
+                        } else {
+                            // Landung fertig
+                            cube.userData.isAnimating = false;
+                            
+                            // Textur anwenden
+                            cube.material.map = cube.userData.nextTex;
+                            
+                            // Ausrichten (damit Text oben ist)
+                            cube.rotation.set(0, 0, 0); 
+                            // Zurück zur Startposition gleiten (falls zu weit weggesprungen)
+                            cube.position.x = cube.userData.startPos.x;
+                            cube.position.z = cube.userData.startPos.z;
+                            
+                            updateCard(cube.userData.category, cube.userData.nextInfo, false);
+                            updateStorySummary();
+                        }
                     }
                 }
             });
-            
-            // Prüfen, ob alle fertig sind
-            if (!stillAnimating && isRolling) {
+
+            if (!moving && isRolling) {
                 isRolling = false;
                 document.getElementById('roll-button').disabled = false;
             }
@@ -519,81 +525,33 @@
             renderer.render(scene, camera);
         }
 
-
-        function toggleLock(cube) {
-            if(isRolling) return; // Nicht sperren während des Rollens
-            cube.userData.locked = !cube.userData.locked;
-
-            // Visuelles Feedback am Würfel
-            if (cube.userData.locked) {
-                cube.material.color.set(0xef4444); // Rötlicher Stich wenn gesperrt
-                // Würfel leicht anheben um Sperre zu zeigen
-                gsap.to(cube.position, {y: 0.5, duration: 0.2});
-            } else {
-                cube.material.color.set(0xffffff); // Zurück zu weiß
-                gsap.to(cube.position, {y: 0, duration: 0.2});
-            }
-
-            // UI Update
-            updateSidebarCard(cube.userData.category, cube.userData.currentResult, cube.userData.locked);
-        }
-
-        function updateSidebarCard(category, result, isLocked) {
-            const card = document.getElementById(`card-${category}`);
-            if (!card) return;
-            const valueEl = card.querySelector('.result-value');
-            
-            card.classList.toggle('locked', isLocked);
-            if (valueEl) valueEl.textContent = result || "...";
-        }
-
-        // --- Event Handler Helpers ---
-        function onWindowResize() {
-            const container = document.getElementById('canvas-container');
-            camera.aspect = container.clientWidth / container.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(container.clientWidth, container.clientHeight);
-        }
-
-        function onMouseClick(event) {
+        function onClick(e) {
             if (isRolling) return;
-            // Mausposition im Canvas normalisieren
+            // Raycast
             const rect = renderer.domElement.getBoundingClientRect();
-            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+            
             raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(dice);
-
-            if (intersects.length > 0) {
-                toggleLock(intersects[0].object);
+            const hits = raycaster.intersectObjects(dice);
+            
+            if (hits.length > 0) {
+                const cube = hits[0].object;
+                cube.userData.locked = !cube.userData.locked;
+                
+                // Update UI sofort
+                const cat = cube.userData.category;
+                const info = diceData[cat].find(i => i.text === currentStory[cat]) || {text:"...", icon:"🎲"};
+                updateCard(cat, info, cube.userData.locked);
             }
         }
-        
-        // Einfache GSAP-ähnliche Animation für das Sperren (da wir keine externe Lib laden wollen für so wenig)
-        const gsap = {
-            to: (target, props) => {
-                const duration = props.duration || 0.5;
-                const startY = target.y;
-                const endY = props.y;
-                const startTime = Date.now();
-                
-                function step() {
-                    const now = Date.now();
-                    let progress = Math.min((now - startTime) / (duration * 1000), 1);
-                    // Einfaches Easing (Smooth step)
-                    progress = progress * progress * (3 - 2 * progress); 
-                    
-                    target.y = startY + (endY - startY) * progress;
-                    
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    }
-                }
-                step();
-            }
-        };
 
+        function onResize() {
+            const c = document.getElementById('canvas-container');
+            camera.aspect = c.clientWidth / c.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(c.clientWidth, c.clientHeight);
+        }
 
         init();
     </script>
