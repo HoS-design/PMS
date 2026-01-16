@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Argumente-Waage | HoS</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --accent-strong: #2e7d32; 
+            --accent-weak: #d32f2f;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* --- Header Bereich (Logo & Text Links) --- */
+        header {
+            width: 100%;
+            max-width: 600px; /* Gleiche Breite wie Spielfeld */
+            box-sizing: border-box;
+            padding: 20px;
+            margin-top: 30px; /* Platz für den Zurück-Link */
+            text-align: left; /* Alles linksbündig */
+            z-index: 10;
+        }
+
+        .logo {
+            display: block;
+            max-width: 120px; /* Logo-Größe */
+            height: auto;
+            margin-bottom: 10px;
+            /* Kein auto-margin mehr, daher links */
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; color: #2c3e50; }
+        p.subtitle { color: #666; margin: 5px 0 0 0; font-size: 0.9rem; }
+
+        /* --- Das Spielfeld --- */
+        .game-area {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .zones-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            pointer-events: none; 
+        }
+
+        .zone {
+            width: 45%;
+            height: 100%;
+            border: 2px dashed #bbb;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .zone.strong { border-color: var(--accent-strong); background: rgba(46, 125, 50, 0.05); }
+        .zone.weak { border-color: var(--accent-weak); background: rgba(211, 47, 47, 0.05); }
+
+        .zone span { font-size: 1.2rem; display: block; margin-bottom: 5px; }
+        .zone small { font-size: 0.8rem; font-weight: normal; }
+
+        /* --- Die Karte --- */
+        .card-stack {
+            position: relative;
+            width: 280px;
+            height: 200px;
+            perspective: 1000px;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            cursor: grab;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            user-select: none;
+            touch-action: none; 
+            border: 1px solid #eee;
+        }
+
+        .card:active { cursor: grabbing; }
+
+        .topic-badge {
+            position: absolute;
+            top: -10px;
+            background: #ff9800;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Feedback Bereich */
+        #feedback-area {
+            margin-top: 10px;
+            height: 80px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .feedback-correct { color: var(--accent-strong); background: #e8f5e9; border: 1px solid #c8e6c9; }
+        .feedback-wrong { color: var(--accent-weak); background: #ffebee; border: 1px solid #ffcdd2; }
+
+        .btn-restart {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #1976d2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 15px;
+            left: 20px; /* Bündig mit dem Padding */
+            text-decoration: none;
+            color: #999;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .back-link:hover { color: #333; }
+
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-link">← Zurück zur Übersicht</a>
+
+    <header>
+        <img src="chatisthisreal.png" alt="Logo" class="logo">
+        <h1>Argumente-Waage</h1>
+        <p class="subtitle">Ziehe die Karte auf die richtige Seite!</p>
+    </header>
+
+    <div class="game-area">
+        <div class="zones-container">
+            <div class="zone strong">
+                <span>Stark</span>
+                <small>Sachlich, begründet,<br>logisch, belegt</small>
+            </div>
+            <div class="zone weak">
+                <span>Schwach</span>
+                <small>Behauptung, subjektiv,<br>Parole, Angriff</small>
+            </div>
+        </div>
+
+        <div class="card-stack" id="card-stack">
+            <div class="card" id="current-card">Lade...</div>
+        </div>
+    </div>
+
+    <div id="feedback-area"></div>
+    <button class="btn-restart" onclick="location.reload()">Neustart</button>
+
+<script>
+    // --- DATEN ---
+    const data = [
+        { 
+            topic: "Schuluniform", 
+            text: "Einheitliche Kleidung verringert den Markendruck unter Schülern.", 
+            type: "strong", 
+            info: "Richtig! Das ist ein sachliches Argument mit einer logischen Begründung." 
+        },
+        { 
+            topic: "Schuluniform", 
+            text: "Uniformen sehen einfach total hässlich aus und nerven.", 
+            type: "weak", 
+            info: "Das ist rein subjektiv (Geschmackssache) und keine sachliche Begründung." 
+        },
+        { 
+            topic: "Handyverbot", 
+            text: "Ohne Handys können wir uns im Notfall nicht bei den Eltern melden.", 
+            type: "strong", 
+            info: "Ein valider Punkt (Sicherheit), der gegen ein totales Verbot spricht." 
+        },
+        { 
+            topic: "Handyverbot", 
+            text: "Lehrer verbieten Handys nur, um Macht zu demonstrieren.", 
+            type: "weak", 
+            info: "Das ist eine Unterstellung (Verschwörungstheorie) und kein Sachargument." 
+        },
+        { 
+            topic: "Tempolimit", 
+            text: "Ein Tempolimit senkt nachweislich den CO2-Ausstoß und die Unfallgefahr.", 
+            type: "strong", 
+            info: "Sehr gut! Dieses Argument stützt sich auf überprüfbare Fakten." 
+        },
+        { 
+            topic: "Tempolimit", 
+            text: "Freie Fahrt für freie Bürger!", 
+            type: "weak", 
+            info: "Ein typisches Schlagwort (Parole), das emotionalisiert, aber nichts begründet." 
+        },
+        { 
+            topic: "Hausaufgaben", 
+            text: "Hausaufgaben vertiefen den Lernstoff durch eigenständige Wiederholung.", 
+            type: "strong", 
+            info: "Korrekt, hier wird der pädagogische Nutzen sachlich erklärt." 
+        },
+        { 
+            topic: "Hausaufgaben", 
+            text: "Hausaufgaben sind unnötige Zeitverschwendung und Diebstahl meiner Freizeit.", 
+            type: "weak", 
+            info: "Das ist eine emotionale Bewertung ohne sachlichen Kern." 
+        }
+    ];
+
+    // --- LOGIK ---
+    let currentIndex = 0;
+    const cardElement = document.getElementById('current-card');
+    const feedbackArea = document.getElementById('feedback-area');
+
+    data.sort(() => Math.random() - 0.5);
+
+    function loadCard() {
+        if (currentIndex >= data.length) {
+            cardElement.style.display = 'none';
+            feedbackArea.innerHTML = "<b>Super! Alle Argumente sortiert. 🎉</b>";
+            feedbackArea.className = "feedback-correct";
+            document.querySelector('.btn-restart').style.display = 'block';
+            return;
+        }
+
+        const item = data[currentIndex];
+        cardElement.innerHTML = `<div class="topic-badge">${item.topic}</div>${item.text}`;
+        
+        cardElement.style.transform = 'translate(0, 0) rotate(0deg)';
+        cardElement.style.transition = 'none';
+        cardElement.style.opacity = '1';
+        
+        feedbackArea.innerText = "";
+        feedbackArea.className = "";
+    }
+
+    // --- DRAG & DROP ENGINE ---
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+
+    function startDrag(e) {
+        if (currentIndex >= data.length) return;
+        isDragging = true;
+        startX = (e.type === 'touchstart') ? e.touches[0].clientX : e.clientX;
+        cardElement.style.transition = 'none';
+        cardElement.style.cursor = 'grabbing';
+    }
+
+    function moveDrag(e) {
+        if (!isDragging) return;
+        e.preventDefault(); 
+        
+        let clientX = (e.type === 'touchmove') ? e.touches[0].clientX : e.clientX;
+        let deltaX = clientX - startX;
+        currentX = deltaX;
+
+        let rotate = deltaX * 0.05; 
+        cardElement.style.transform = `translate(${deltaX}px, 0) rotate(${rotate}deg)`;
+
+        const zoneStrong = document.querySelector('.zone.strong');
+        const zoneWeak = document.querySelector('.zone.weak');
+        
+        if (deltaX < -50) { 
+            zoneStrong.style.background = 'rgba(46, 125, 50, 0.2)';
+            zoneWeak.style.background = '';
+        } else if (deltaX > 50) { 
+            zoneWeak.style.background = 'rgba(211, 47, 47, 0.2)';
+            zoneStrong.style.background = '';
+        } else {
+            zoneStrong.style.background = '';
+            zoneWeak.style.background = '';
+        }
+    }
+
+    function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        cardElement.style.cursor = 'grab';
+        
+        document.querySelector('.zone.strong').style.background = '';
+        document.querySelector('.zone.weak').style.background = '';
+
+        const threshold = 100; 
+
+        if (currentX < -threshold) {
+            checkAnswer('strong');
+        } else if (currentX > threshold) {
+            checkAnswer('weak');
+        } else {
+            cardElement.style.transition = 'transform 0.3s ease-out';
+            cardElement.style.transform = 'translate(0, 0)';
+        }
+    }
+
+    function checkAnswer(userChoice) {
+        const item = data[currentIndex];
+        const isCorrect = item.type === userChoice;
+
+        let endX = userChoice === 'strong' ? -500 : 500;
+        cardElement.style.transition = 'transform 0.4s ease-in, opacity 0.3s';
+        cardElement.style.transform = `translate(${endX}px, 50px) rotate(${endX/10}deg)`;
+        cardElement.style.opacity = '0';
+
+        setTimeout(() => {
+            if (isCorrect) {
+                feedbackArea.innerHTML = `✅ <b>Korrekt!</b><br>${item.info}`;
+                feedbackArea.className = "feedback-correct";
+            } else {
+                feedbackArea.innerHTML = `❌ <b>Falsch.</b><br>${item.info}`;
+                feedbackArea.className = "feedback-wrong";
+            }
+            
+            currentIndex++;
+            setTimeout(loadCard, 2000); 
+        }, 300);
+    }
+
+    cardElement.addEventListener('mousedown', startDrag);
+    document.addEventListener('mousemove', moveDrag);
+    document.addEventListener('mouseup', endDrag);
+
+    cardElement.addEventListener('touchstart', startDrag);
+    document.addEventListener('touchmove', moveDrag, { passive: false });
+    document.addEventListener('touchend', endDrag);
+
+    loadCard();
+
+</script>
+</body>
+</html>
