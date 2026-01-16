@@ -1,387 +1,399 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HoS · Lernübungen</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HoS Lern-Apps Dashboard</title>
+    <style>
+        :root {
+            /* -- HoS Light Theme (Paper Design) -- */
+            --bg: #f2f4f7;
+            --surface: #ffffff;
+            --ink: #1e293b;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            
+            /* Fach-Farben (Dezent) */
+            --de-accent: #ef4444; /* Rot für Deutsch */
+            --de-bg: #fef2f2;     /* Sehr helles Rot */
+            
+            --ma-accent: #3b82f6; /* Blau für Mathe */
+            --ma-bg: #eff6ff;     /* Sehr helles Blau */
 
-  <!-- Wix-typische Kombi: klare Sans für Text, Montserrat für Headlines -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+            
+            --radius: 16px;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-  <style>
-    :root{
-      /* „Schulwebsite“-Anmutung: viel Weiß, ruhige Flächen, kräftiges Grün als Hauptakzent */
-      --bg:#f3f5f6;
-      --paper:#ffffff;
-      --ink:#0f172a;
-      --muted:#5b6472;
-      --line:rgba(15,23,42,.12);
+        * { box-sizing: border-box; }
 
-      /* Akzente (aus Fotos/Grün-Anmutung + unaufdringliches Blaugrün) */
-      --brand:#1f6f3f;      /* sattes Grün */
-      --brand2:#0f4c5c;     /* blaugrün */
-      --accent:#f2cd3e;     /* warmes Gelb (sparsam) */
+        body {
+            margin: 0;
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
 
-      --shadow:0 12px 30px rgba(15,23,42,.08);
-      --shadow2:0 16px 44px rgba(15,23,42,.12);
-      --r:16px;
-    }
+        /* --- Header & Navigation --- */
+        .app-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            padding: 16px 0;
+            position: sticky; top: 0; z-index: 50;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:"Open Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--ink);
-      background:var(--bg);
-    }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
 
-    .wrap{max-width:1160px;margin:0 auto;padding:0 16px 56px}
+        .brand {
+            display: flex; align-items: center; gap: 14px;
+        }
+        .logo-img {
+            width: 52px; height: 52px; object-fit: contain;
+            border-radius: 12px; background: var(--bg);
+            border: 1px solid var(--line);
+        }
+        .brand-text h1 { margin: 0; font-size: 19px; font-weight: 800; letter-spacing: -0.5px; color: var(--ink); }
+        .brand-text p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
 
-    /* Top-Kontaktleiste ähnlich wie auf der Schulseite */
-    .contactbar{
-      background:#0b1220;
-      color:rgba(255,255,255,.92);
-      font-size:.92rem;
-    }
-    .contactbar .inner{
-      max-width:1160px;margin:0 auto;
-      padding:10px 16px;
-      display:flex;flex-wrap:wrap;
-      gap:12px 18px;
-      align-items:center;
-    }
-    .contactbar a{color:inherit;text-decoration:none}
-    .contactbar a:hover{ text-decoration:underline }
+        /* Suchleiste */
+        .search-wrapper {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            font-size: 14px;
+            color: var(--ink);
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+        .search-input:focus {
+            outline: none;
+            background: white;
+            border-color: var(--ma-accent); /* Neutrales Fokus-Blau */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .search-icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            font-size: 16px; opacity: 0.5; pointer-events: none;
+        }
 
-    /* Header / „Hero“ – clean & Wix-typisch: weiße Fläche + klarer Call-to-Action */
-    header{
-      background:var(--paper);
-      border-bottom:1px solid var(--line);
-    }
-    .hero{
-      max-width:1160px;margin:0 auto;
-      padding:18px 16px 22px;
-      display:flex;
-      gap:18px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .brand-left{
-      display:flex;gap:14px;align-items:center;min-width:0;
-    }
-    .meme{
-      width:74px;height:74px;border-radius:14px;
-      border:1px solid var(--line);
-      object-fit:cover;background:#eef2f7;
-      flex:0 0 auto;
-    }
-    .title{
-      min-width:0;
-    }
-    h1{
-      margin:0;
-      font-family:"Montserrat","Open Sans",system-ui,sans-serif;
-      font-weight:800;
-      letter-spacing:.2px;
-      font-size:1.55rem;
-      line-height:1.1;
-    }
-    .sub{
-      margin-top:6px;
-      color:var(--muted);
-      font-weight:600;
-    }
+        /* --- Sektionen --- */
+        .section { margin: 40px 0; }
+        
+        .section-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid transparent;
+        }
+        .section-header h2 { margin: 0; font-size: 20px; font-weight: 700; }
+        .count-badge {
+            font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+            background: var(--line); color: var(--muted);
+        }
 
-    .actions{
-      display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end;
-    }
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 12px;border-radius:999px;
-      border:1px solid rgba(31,111,63,.22);
-      background:rgba(31,111,63,.08);
-      color:rgba(15,23,42,.92);
-      font-weight:700;
-      white-space:nowrap;
-    }
-    .btn{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:#fff;
-      text-decoration:none;
-      color:var(--ink);
-      font-weight:700;
-      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-    }
-    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow); border-color:rgba(31,111,63,.28)}
-    .btn.primary{
-      border-color:rgba(31,111,63,.35);
-      background:linear-gradient(180deg, rgba(31,111,63,.12), rgba(31,111,63,.06));
-    }
+        /* Farb-Themen für Sektionen */
+        .sec-de .section-header { border-color: rgba(239, 68, 68, 0.2); }
+        .sec-de h2 { color: var(--de-accent); }
+        
+        .sec-ma .section-header { border-color: rgba(59, 130, 246, 0.2); }
+        .sec-ma h2 { color: var(--ma-accent); }
 
-    /* Inhalt */
-    main{padding-top:22px}
+        /* --- Grid & Cards --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
 
-    .section-head{
-      margin-top:26px;
-      display:flex;align-items:baseline;justify-content:space-between;gap:14px;
-    }
-    h2{
-      margin:0;
-      font-family:"Montserrat","Open Sans",system-ui,sans-serif;
-      font-weight:800;
-      font-size:1.1rem;
-      letter-spacing:.2px;
-    }
-    .rule{
-      height:3px;
-      width:120px;
-      border-radius:999px;
-      background:linear-gradient(90deg, var(--brand), var(--brand2), var(--accent));
-      opacity:.9;
-      margin-top:10px;
-    }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex; flex-direction: column; gap: 12px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(255px, 1fr));
-      gap:14px;
-      margin-top:14px;
-    }
+        /* --- HOVER EFFEKTE (NEU) --- */
+        
+        /* Deutsch: Roter Hintergrund + Rahmen bei Hover */
+        .card.de:hover {
+            background-color: var(--de-bg);
+            border-color: var(--de-accent);
+        }
+        /* Das Icon bleibt weiß/farbig, wird aber etwas kräftiger */
+        .card.de:hover .icon-box {
+            background: white;
+            border-color: var(--de-accent);
+        }
 
-    /* Karten: flacher, „Website“-Look (weniger Glass/Gradient) */
-    .card{
-      display:block;
-      background:var(--paper);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      padding:16px 16px 16px 16px;
-      text-decoration:none;
-      color:var(--ink);
-      box-shadow:0 8px 22px rgba(15,23,42,.06);
-      transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
-      position:relative;
-      overflow:hidden;
-    }
-    .card:hover{
-      transform:translateY(-2px);
-      box-shadow:var(--shadow2);
-      border-color:rgba(31,111,63,.25);
-    }
+        /* Mathe: Blauer Hintergrund + Rahmen bei Hover */
+        .card.ma:hover {
+            background-color: var(--ma-bg);
+            border-color: var(--ma-accent);
+        }
+        .card.ma:hover .icon-box {
+            background: white;
+            border-color: var(--ma-accent);
+        }
 
-    /* Wix-ähnlicher „Accent strip“ oben */
-    .card::before{
-      content:"";
-      position:absolute;left:0;top:0;right:0;height:4px;
-      background:linear-gradient(90deg, var(--brand), var(--brand2));
-      opacity:.95;
-    }
 
-    .card-top{
-      display:flex;gap:12px;align-items:flex-start;
-      margin-top:6px;
-    }
-    .icon{
-      width:40px;height:40px;border-radius:12px;
-      display:grid;place-items:center;
-      border:1px solid rgba(31,111,63,.18);
-      background:rgba(31,111,63,.08);
-      flex:0 0 auto;
-      font-size:1.05rem;
-    }
-    .card h3{
-      margin:0 0 6px;
-      font-family:"Montserrat","Open Sans",system-ui,sans-serif;
-      font-weight:800;
-      font-size:1.03rem;
-      letter-spacing:.1px;
-    }
-    .card p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.35;
-      font-weight:600;
-      font-size:.94rem;
-    }
+        .card-top {
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        
+        .icon-box {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
 
-    footer{
-      margin-top:44px;
-      text-align:center;
-      color:rgba(91,100,114,.95);
-      font-size:.92rem;
-      font-weight:600;
-    }
+        /* Card Varianten (Standard Zustand) */
+        .card.de .icon-box { background: var(--de-bg); color: var(--de-accent); border-color: rgba(239, 68, 68, 0.1); }
+        .card.ma .icon-box { background: var(--ma-bg); color: var(--ma-accent); border-color: rgba(59, 130, 246, 0.1); }
 
-    /* Mobile */
-    @media (max-width:680px){
-      .hero{flex-direction:column;align-items:flex-start}
-      .actions{width:100%;justify-content:flex-start}
-      .badge{order:3}
-    }
-  </style>
+        .card h3 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.3; }
+        .card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+        .new-badge {
+            position: absolute; top: 12px; right: 12px;
+            background: var(--ink); color: white;
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            padding: 4px 8px; border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px; padding: 40px 0;
+            text-align: center; color: var(--muted);
+            font-size: 13px; border-top: 1px solid var(--line);
+        }
+        
+        /* Utility: Verstecken beim Filtern */
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            .header-content { flex-direction: column; align-items: stretch; }
+            .search-wrapper { max-width: 100%; }
+        }
+    </style>
 </head>
-
 <body>
 
-  <div class="contactbar">
-    <div class="inner">
-      <a href="mailto:stefan.holzer@pms-dobl.at">✉️ stefan.holzer@pms-dobl.at</a>
+    <header class="app-header">
+        <div class="container header-content">
+            <div class="brand">
+                <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <div class="brand-text">
+                    <h1>HoS Lern-Apps</h1>
+                    <p>Digitale Übungen für Unterricht & Freiarbeit</p>
+                </div>
+            </div>
+            
+            <div class="search-wrapper">
+                <span class="search-icon">🔎</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Thema (z.B. Zeitformen, Körper)...">
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="section sec-de" id="sec-deutsch">
+            <div class="section-header">
+                <h2>Deutsch</h2>
+                <span class="count-badge" id="count-de">0</span>
+            </div>
+            
+            <div class="grid" id="grid-deutsch">
+                
+                <a href="3dmaerchengenerator.html" class="card de" data-keywords="märchen schreiben geschichten würfel generator">
+                    <div class="new-badge">Neu</div>
+                    <div class="card-top">
+                        <div class="icon-box">🧚‍♀️</div>
+                    </div>
+                    <div>
+                        <h3>3D Märchen-Generator</h3>
+                        <p>Interaktive Würfel für kreative Schreibanlässe. Helden, Orte und Bösewichte kombinieren.</p>
+                    </div>
+                </a>
+
+                <a href="Argument.html" class="card de" data-keywords="argumentieren erörterung meinung begründung">
+                    <div class="card-top"><div class="icon-box">🧩</div></div>
+                    <div>
+                        <h3>Argumente bauen</h3>
+                        <p>Argumente aus Bausteinen zusammensetzen – erkenne die Störbausteine.</p>
+                    </div>
+                </a>
+
+                <a href="FremdwortGenerator.html" class="card de" data-keywords="fremdwörter sprache wortschatz bedeutung">
+                    <div class="card-top"><div class="icon-box">📚</div></div>
+                    <div>
+                        <h3>Fremdwort-Generator</h3>
+                        <p>Begriffe verstehen & korrekt im Satz verwenden.</p>
+                    </div>
+                </a>
+
+                <a href="durchgeschuettelt.html" class="card de" data-keywords="buchstabensalat rätsel wörter">
+                    <div class="card-top"><div class="icon-box">🫨</div></div>
+                    <div>
+                        <h3>Fremdwörter geschüttelt</h3>
+                        <p>Erkennst du den Begriff im Buchstabensalat?</p>
+                    </div>
+                </a>
+
+                <a href="ZeitformenQuiz.html" class="card de" data-keywords="zeiten grammatik präsens präteritum futur">
+                    <div class="card-top"><div class="icon-box">⏳</div></div>
+                    <div>
+                        <h3>Zeitformen-Quiz</h3>
+                        <p>Bestimme die Zeitform: Präsens, Präteritum, Perfekt & Futur.</p>
+                    </div>
+                </a>
+
+                <a href="Speedrunde.html" class="card de" data-keywords="schnell quiz spiel grammatik">
+                    <div class="card-top"><div class="icon-box">⚡</div></div>
+                    <div>
+                        <h3>Speedrunde</h3>
+                        <p>60-Sekunden-Quiz: Wie viele Grammatik-Fragen schaffst du?</p>
+                    </div>
+                </a>
+
+                <a href="memorypassiv.html" class="card de" data-keywords="aktiv passiv memory spiel">
+                    <div class="card-top"><div class="icon-box">🎴</div></div>
+                    <div>
+                        <h3>Memory Aktiv–Passiv</h3>
+                        <p>Finde die passenden Paare. Spielerisch Grammatik üben.</p>
+                    </div>
+                </a>
+
+                <a href="montessori-wortarten2.html" class="card de" data-keywords="wortarten nomen verben montessori symbole">
+                    <div class="card-top"><div class="icon-box">🔴</div></div>
+                    <div>
+                        <h3>Wortarten-Training</h3>
+                        <p>Bestimme Wortarten nach Maria Montessori Symbolen.</p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <div class="section sec-ma" id="sec-mathe">
+            <div class="section-header">
+                <h2>Mathematik</h2>
+                <span class="count-badge" id="count-ma">0</span>
+            </div>
+
+            <div class="grid" id="grid-mathe">
+                
+                <a href="dreiecke.html" class="card ma" data-keywords="geometrie dreieck winkel spitz stumpf">
+                    <div class="card-top"><div class="icon-box">🔺</div></div>
+                    <div>
+                        <h3>Dreiecke & Winkel</h3>
+                        <p>Spitz, recht, stumpf erkennen und sortieren.</p>
+                    </div>
+                </a>
+
+                <a href="koerperbauen.html" class="card ma" data-keywords="geometrie körper netze basteln 3d">
+                    <div class="card-top"><div class="icon-box">🧲</div></div>
+                    <div>
+                        <h3>Körpernetze bauen</h3>
+                        <p>Netze für Zylinder & Kegel frei bauen mit Snap-Funktion.</p>
+                    </div>
+                </a>
+
+                <a href="3dkoerperwerkstatt3.html" class="card ma" data-keywords="volumen oberfläche formeln 3d raum">
+                    <div class="card-top"><div class="icon-box">🧠</div></div>
+                    <div>
+                        <h3>3D KörperCheck</h3>
+                        <p>Volumen & Oberfläche berechnen – üben und prüfen.</p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
     </div>
-  </div>
 
-  <header>
-    <div class="hero">
-      <div class="brand-left">
-        <img class="meme" src="chatistthisreal.png" alt="Chat is this real?"
-             onerror="this.onerror=null;this.src='chatisthisreal.png';">
-        <div class="title">
-          <h1>HoS · Digitale Lernübungen</h1>
-          <div class="sub">Deutsch & Mathematik · interaktiv · selbstständig</div>
-        </div>
-      </div>
+    <footer>
+        HoS Apps • Entwickelt für die PMS Dobl
+    </footer>
 
-      <div class="actions">
-        <span class="badge">🏫 PMS Dobl </span>
-        <a class="btn" href="https://www.pms-dobl.at" target="_blank" rel="noopener">Schulwebsite</a>
-        <a class="btn primary" href="#deutsch">Zu Deutsch</a>
-      </div>
-    </div>
-  </header>
+    <script>
+        // --- Suchfunktion ---
+        const searchInput = document.getElementById('searchInput');
+        const cards = document.querySelectorAll('.card');
+        const sections = document.querySelectorAll('.section');
 
-  <div class="wrap">
-    <main>
+        function updateCounts() {
+            document.getElementById('count-de').textContent = document.querySelectorAll('#grid-deutsch .card:not(.hidden)').length;
+            document.getElementById('count-ma').textContent = document.querySelectorAll('#grid-mathe .card:not(.hidden)').length;
+        }
 
-      <!-- DEUTSCH -->
-      <div id="deutsch" class="section-head">
-        <div>
-          <h2>Deutsch</h2>
-          <div class="rule" aria-hidden="true"></div>
-        </div>
-        <a class="btn" href="#mathe">Zu Mathe</a>
-      </div>
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
 
-      <div class="grid">
-        <a href="Argument.html" class="card">
-          <div class="card-top">
-            <div class="icon">🧩</div>
-            <div>
-              <h3>Argumente bauen</h3>
-              <p>Argumente aus Bausteinen zusammensetzen – mit Störbausteinen.</p>
-            </div>
-          </div>
-        </a>
+            cards.forEach(card => {
+                // Suche in Titel, Text und versteckten Keywords
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const text = card.querySelector('p').textContent.toLowerCase();
+                const keywords = card.getAttribute('data-keywords') || "";
+                
+                const match = title.includes(term) || text.includes(term) || keywords.includes(term);
+                
+                if (match) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
 
-        <a href="FremdwortGenerator.html" class="card">
-          <div class="card-top">
-            <div class="icon">📚</div>
-            <div>
-              <h3>Fremdwort-Generator</h3>
-              <p>Begriffe verstehen & korrekt verwenden.</p>
-            </div>
-          </div>
-        </a>
+            // Leere Sektionen ausblenden
+            sections.forEach(sec => {
+                const visibleCards = sec.querySelectorAll('.card:not(.hidden)').length;
+                sec.style.display = visibleCards > 0 ? 'block' : 'none';
+            });
 
-        <a href="durchgeschuettelt.html" class="card">
-          <div class="card-top">
-            <div class="icon">🫨</div>
-            <div>
-              <h3>Fremdwörter durchgeschüttelt</h3>
-              <p>Begriffe erkennen.</p>
-            </div>
-          </div>
-        </a>
-		
-        <a href="ZeitformenQuiz.html" class="card">
-          <div class="card-top">
-            <div class="icon">⏳</div>
-            <div>
-              <h3>Zeitformen-Quiz</h3>
-              <p>Präsens · Präteritum · Perfekt · Futur.</p>
-            </div>
-          </div>
-        </a>
+            updateCounts();
+        });
 
-        <a href="Speedrunde.html" class="card">
-          <div class="card-top">
-            <div class="icon">⚡</div>
-            <div>
-              <h3>Speedrunde</h3>
-              <p>60-Sekunden-Quiz zu Grammatik & Zeitformen.</p>
-            </div>
-          </div>
-        </a>
-
-        <a href="memorypassiv.html" class="card">
-          <div class="card-top">
-            <div class="icon">🎴</div>
-            <div>
-              <h3>Memory Aktiv–Passiv</h3>
-              <p>Spielerisch üben – ideal für zwischendurch.</p>
-            </div>
-          </div>
-        </a>
-		
-		<a href="montessori-wortarten2.html" class="card">
-          <div class="card-top">
-            <div class="icon">💪</div>
-            <div>
-              <h3>Wortarten mit Maria Montessori</h3>
-              <p>Hier kannst du dein Wissen trainieren.</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <!-- MATHE -->
-      <div id="mathe" class="section-head" style="margin-top:34px">
-        <div>
-          <h2>Mathematik</h2>
-          <div class="rule" aria-hidden="true"></div>
-        </div>
-        <a class="btn" href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Nach oben</a>
-      </div>
-
-      <div class="grid">
-        <a href="dreiecke.html" class="card">
-          <div class="card-top">
-            <div class="icon">🔺</div>
-            <div>
-              <h3>Dreiecke – Winkelarten</h3>
-              <p>spitz · recht · stumpf erkennen & herstellen.</p>
-            </div>
-          </div>
-        </a>
-
-        <a href="koerperbauen.html" class="card">
-          <div class="card-top">
-            <div class="icon">🧲</div>
-            <div>
-              <h3>Körpernetze – Zylinder & Kegel</h3>
-              <p>Netz frei bauen mit Andocken (Snap) · prüfen & nächste Aufgabe.</p>
-            </div>
-          </div>
-        </a>
-
-        <a href="3dkoerperwerkstatt3.html" class="card">
-          <div class="card-top">
-            <div class="icon">🧠</div>
-            <div>
-              <h3>3D KörperCheck</h3>
-              <p>Volumen & Oberfläche – üben, prüfen, weiter.</p>
-            </div>
-          </div>
-        </a>
-      </div>
-
-      <footer>
-        HoS · Unterricht & Freiarbeit · interaktive Übungen
-      </footer>
-
-    </main>
-  </div>
+        // Init
+        updateCounts();
+    </script>
 </body>
 </html>
