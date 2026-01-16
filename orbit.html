@@ -11,7 +11,7 @@
             background-color: #000; 
             user-select: none; 
             font-family: 'Segoe UI', sans-serif; 
-            cursor: none; /* Wir verstecken den normalen Mauszeiger! */
+            cursor: none; 
         }
         
         #ui-layer {
@@ -38,26 +38,31 @@
             font-size: 1.5rem;
             color: white;
             margin-top: 10px;
+            transition: transform 0.2s;
         }
 
         #status {
-            color: yellow;
+            color: #ffcc00;
             margin-top: 20px;
             font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px black;
+            background-color: rgba(0,0,0,0.5); /* Hintergrund für bessere Lesbarkeit */
+            padding: 10px;
+            border-radius: 5px;
         }
 
-        /* Das Fadenkreuz */
         #crosshair {
             position: absolute;
             width: 40px;
             height: 40px;
             border: 2px solid rgba(255, 50, 50, 0.9);
             border-radius: 50%;
-            pointer-events: none; /* Wichtig: Klicks gehen durch das Fadenkreuz hindurch */
+            pointer-events: none; 
             z-index: 10;
-            transform: translate(-50%, -50%); /* Zentriert den Kreis auf der Maus */
+            transform: translate(-50%, -50%);
             box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
-            transition: transform 0.1s ease-out; /* Leichtes Nachziehen für cooles Feeling */
+            transition: transform 0.05s ease-out; 
         }
         
         #crosshair::after {
@@ -78,10 +83,10 @@
     <div id="ui-layer">
         <div id="header">
             <h1>Orthographie-Orbit</h1>
-            <p>Bewege die Maus zum Zielen – Klick zum Schießen!</p>
+            <p>Finde den Fehler! Schieß ihn ab!</p>
         </div>
         <div id="score-display">Score: 0</div>
-        <div id="status">Lade System...</div>
+        <div id="status">Lade 'font.json'...</div>
     </div>
     
     <div id="crosshair" style="left: 50%; top: 50%;"></div>
@@ -100,34 +105,37 @@
         import { FontLoader } from 'three/addons/loaders/FontLoader.js';
         import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
+        // --- GLOBALE VARIABLEN ---
         let scene, camera, renderer, raycaster;
-        // Wir brauchen einen Vektor für die Mausposition im 3D Raum (-1 bis +1)
         let mouseVector = new THREE.Vector2(); 
+        let pointLight; 
         
         let letters = []; 
         let starField;
         let score = 0;
         let currentSentenceIndex = 0;
         let fontGlobal;
+        let isTransitioning = false; 
 
         const statusText = document.getElementById('status');
         const scoreText = document.getElementById('score-display');
         const crosshairDiv = document.getElementById('crosshair');
 
-        // Deine Sätze
+        // --- DATEN ---
         const levels = [
             { text: "Der Pogel fliegt.", errorIndex: 4, correctChar: "V" },
             { text: "Das Haus ist gros.", errorIndex: 13, correctChar: "ß" },
             { text: "Viele Kiche kochen Brei.", errorIndex: 6, correctChar: "ö" },
-            { text: "Er liest ein Buch.", errorIndex: -1, correctChar: "" }
+            { text: "Er liest ein Buch.", errorIndex: -1, correctChar: "" } 
         ];
 
         init();
         animate();
 
         function init() {
+            // 1. Setup
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x020205); // Fast Schwarz
+            scene.background = new THREE.Color(0x020205); 
             scene.fog = new THREE.Fog(0x020205, 10, 80);
 
             camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -138,45 +146,54 @@
             renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
-            // Licht
+            // 2. Licht
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
             scene.add(ambientLight);
             const dirLight = new THREE.DirectionalLight(0xffffff, 1);
             dirLight.position.set(5, 10, 10);
             scene.add(dirLight);
             
-            // Punktlicht das der Maus folgt (optional, macht es atmosphärisch)
-            const pointLight = new THREE.PointLight(0x00ffcc, 0.5, 20);
+            pointLight = new THREE.PointLight(0x00ffcc, 1, 25);
             scene.add(pointLight);
 
-            // Sterne im Hintergrund
             createStars();
 
             raycaster = new THREE.Raycaster();
 
-            // Schrift laden
+            // 3. Schrift laden (LOKAL)
             const loader = new FontLoader();
+            
+            // WICHTIG: Hier wird jetzt deine lokale Datei geladen!
             loader.load('font.json', function (font) {
                 fontGlobal = font;
                 statusText.innerText = ""; 
                 loadLevel(0);
-            }, undefined, function (err) {
-                statusText.innerText = "FEHLER: font.json fehlt!";
+            }, 
+            // Progress Callback (optional)
+            function (xhr) {
+                // Zeigt an, wie viel geladen wurde
+                // statusText.innerText = Math.round((xhr.loaded / xhr.total * 100)) + '% geladen';
+            },
+            // Error Callback
+            function (err) {
+                console.error("Fehler beim Laden der Schrift:", err);
+                statusText.innerHTML = "FEHLER:<br>Die Datei 'font.json' wurde nicht gefunden.<br>Bitte prüfe, ob sie hochgeladen ist!";
                 statusText.style.color = "red";
             });
 
+            // Events
             window.addEventListener('click', onShoot);
             window.addEventListener('resize', onWindowResize);
-            document.addEventListener('mousemove', (e) => onMouseMove(e, pointLight));
+            document.addEventListener('mousemove', onMouseMove);
         }
 
         function createStars() {
             const geometry = new THREE.BufferGeometry();
             const vertices = [];
             for ( let i = 0; i < 2000; i ++ ) {
-                vertices.push( THREE.MathUtils.randFloatSpread( 300 ) ); // x
-                vertices.push( THREE.MathUtils.randFloatSpread( 200 ) ); // y
-                vertices.push( THREE.MathUtils.randFloatSpread( 100 ) ); // z - Tiefe
+                vertices.push( THREE.MathUtils.randFloatSpread( 300 ) ); 
+                vertices.push( THREE.MathUtils.randFloatSpread( 200 ) ); 
+                vertices.push( THREE.MathUtils.randFloatSpread( 100 ) ); 
             }
             geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
             const material = new THREE.PointsMaterial( { color: 0xaaaaaa, size: 0.4 } );
@@ -185,12 +202,17 @@
         }
 
         function loadLevel(index) {
+            isTransitioning = false;
+            
+            // Aufräumen (inklusive korrigierte Buchstaben)
             letters.forEach(l => scene.remove(l));
-            letters = [];
+            letters = []; 
 
             if (index >= levels.length) {
                 statusText.innerText = "Alle Level geschafft! 🎉";
                 statusText.style.color = "#00ffcc";
+                scoreText.innerText = "Endstand: " + score;
+                setTimeout(() => location.reload(), 5000);
                 return;
             }
 
@@ -230,68 +252,67 @@
                 
                 mesh.userData = { 
                     isError: (i === levelData.errorIndex),
-                    originalChar: char
+                    originalChar: char,
+                    index: i 
                 };
 
                 scene.add(mesh);
-                letters.push(mesh);
+                letters.push(mesh); 
 
                 geo.computeBoundingBox();
                 xOffset += (geo.boundingBox.max.x - geo.boundingBox.min.x) + 0.3;
             }
         }
 
-        // --- HIER IST DER FIX: Maus bewegt Fadenkreuz & Raycaster ---
-        function onMouseMove(event, light) {
-            // 1. Visuelles Fadenkreuz bewegen (Pixel)
+        function onMouseMove(event) {
             crosshairDiv.style.left = event.clientX + 'px';
             crosshairDiv.style.top = event.clientY + 'px';
 
-            // 2. Maus-Licht bewegen
-            // Wir rechnen Pixel grob in 3D Koordinaten um für das Licht
-            if(light) {
-                light.position.x = (event.clientX / window.innerWidth) * 40 - 20;
-                light.position.y = -(event.clientY / window.innerHeight) * 20 + 10;
+            if(pointLight) {
+                pointLight.position.x = (event.clientX / window.innerWidth) * 40 - 20;
+                pointLight.position.y = -(event.clientY / window.innerHeight) * 20 + 10;
             }
 
-            // 3. Raycaster Vektor aktualisieren (-1 bis +1)
             mouseVector.x = ( event.clientX / window.innerWidth ) * 2 - 1;
             mouseVector.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
         }
 
         function onShoot() {
-            if (!fontGlobal) return;
+            if (!fontGlobal || isTransitioning) return;
 
-            // Wir schießen von der Kamera durch die Mausposition
             raycaster.setFromCamera(mouseVector, camera);
             const intersects = raycaster.intersectObjects(letters);
 
             if (intersects.length > 0) {
                 const hitMesh = intersects[0].object;
+                
+                // Lehrer-Hilfe
+                console.log("Treffer auf: " + hitMesh.userData.originalChar + " (Index: " + hitMesh.userData.index + ")");
 
                 if (hitMesh.userData.isError) {
-                    // TREFFER!
+                    // TREFFER
                     score += 100;
                     scoreText.innerText = "Score: " + score;
                     scoreText.style.color = "#00ff00";
+                    scoreText.style.transform = "scale(1.2)";
+                    setTimeout(() => scoreText.style.transform = "scale(1)", 200);
 
-                    hitMesh.material.color.set(0xff0000); // Rot werden
-                    hitMesh.material.emissive.set(0xff0000);
+                    isTransitioning = true; 
 
-                    // Explosionseffekt (Simpel)
-                    hitMesh.scale.set(1.5, 1.5, 1.5);
+                    createExplosion(hitMesh.position);
+                    scene.remove(hitMesh); 
+
+                    const correctChar = levels[currentSentenceIndex].correctChar;
+                    spawnCorrectLetter(hitMesh.position, correctChar);
+
+                    statusText.innerText = "Korrekt!";
                     
                     setTimeout(() => {
-                        createExplosion(hitMesh.position);
-                        scene.remove(hitMesh); // Fehler entfernen
-                        
-                        // Nächstes Level
-                        setTimeout(() => {
-                            currentSentenceIndex++;
-                            loadLevel(currentSentenceIndex);
-                            scoreText.style.color = "white";
-                        }, 1000);
-                    }, 200);
+                        currentSentenceIndex++;
+                        statusText.innerText = "";
+                        scoreText.style.color = "white";
+                        loadLevel(currentSentenceIndex);
+                    }, 2500); 
 
                 } else {
                     // DANEBEN
@@ -300,13 +321,49 @@
                     scoreText.style.color = "red";
                     
                     const oldColor = hitMesh.material.color.getHex();
-                    hitMesh.material.color.set(0xff8800); // Orange Warnung
+                    hitMesh.material.color.set(0xff8800); 
+                    hitMesh.position.y -= 0.2;
                     setTimeout(() => {
                         hitMesh.material.color.setHex(oldColor);
+                        hitMesh.position.y += 0.2;
                         scoreText.style.color = "white";
                     }, 300);
                 }
             }
+        }
+
+        function spawnCorrectLetter(position, char) {
+            const geo = new TextGeometry(char, {
+                font: fontGlobal,
+                size: 1.5,
+                height: 0.5,
+                curveSegments: 5,
+                bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 3
+            });
+
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: 0x00ff00, 
+                emissive: 0x004400,
+                roughness: 0.2,
+                metalness: 0.5
+            });
+
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.copy(position);
+            mesh.scale.set(0.1, 0.1, 0.1);
+            
+            scene.add(mesh);
+            letters.push(mesh); // Damit er beim nächsten Level gelöscht wird!
+
+            let scale = 0.1;
+            const growInterval = setInterval(() => {
+                scale += 0.1;
+                mesh.scale.set(scale, scale, scale);
+                if (scale >= 1.2) { 
+                    clearInterval(growInterval);
+                    setTimeout(() => mesh.scale.set(1, 1, 1), 100);
+                }
+            }, 30);
         }
 
         function createExplosion(pos) {
@@ -325,5 +382,23 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Sterne langsam drehen
             if(starField) {
+                starField.rotation.y += 0.0003;
+            }
+
+            const time = Date.now() * 0.001;
+            letters.forEach((l, i) => {
+                if(l.parent === scene) {
+                    l.position.y += Math.sin(time * 2 + i) * 0.002;
+                }
+            });
+
+            camera.position.x += (mouseVector.x * 2 - camera.position.x) * 0.05;
+            camera.position.y += (mouseVector.y * 2 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
