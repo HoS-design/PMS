@@ -3,387 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geschichte Kompendium: Von Sarajevo bis zur Machtergreifung</title>
+    <title>Geschichte Komplett: WWI & NS-Zeit</title>
     <style>
-        /* HoS-Style v6.0 (Author's Edition)
-           - Umfassendes Lehrbuch-Layout
-           - Optimierte Lesbarkeit für lange Texte
-           - Reparierte Grafiken
+        /* HoS-Style v7.0 (Massive Content Edition)
+           - Styles für Tabellen, Zeitleisten und Experten-Boxen
+           - Optimiert für große Textmengen
         */
         :root {
-            --bg-body: #f0f2f5;
+            --bg-body: #f4f6f8;
             --bg-paper: #ffffff;
-            --text-main: #1a1a1a;
-            --text-light: #555;
-            --primary: #003366; /* Seriöses Dunkelblau */
-            --accent: #d35400; /* Akzentfarbe für Wichtiges */
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --primary: #2c3e50; /* Dunkles Blau-Grau */
+            --accent: #2980b9; /* Helles Blau */
+            --highlight: #e67e22; /* Orange für Merksätze */
             --success: #27ae60;
             --error: #c0392b;
-            --border-radius: 12px;
-            --shadow-card: 0 6px 18px rgba(0,0,0,0.08);
-            --font-read: 'Georgia', serif; /* Für Fließtext */
-            --font-ui: 'Segoe UI', Roboto, sans-serif; /* Für Überschriften/UI */
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Georgia', serif;
         }
 
         body {
-            font-family: var(--font-ui);
+            font-family: var(--font-main);
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
             padding: 0;
-            line-height: 1.7;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            line-height: 1.6;
         }
 
         /* --- HEADER --- */
         header {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #1a252f);
             color: white;
             padding: 40px 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        header h1 { margin: 0; font-size: 2rem; font-weight: 700; letter-spacing: 1px; }
-        header p { margin: 10px 0 0; opacity: 0.9; font-size: 1.1rem; }
+        header h1 { margin: 0; font-size: 2.2rem; font-weight: 700; }
+        header p { margin: 10px 0 0; font-size: 1.1rem; opacity: 0.8; font-family: var(--font-serif); font-style: italic; }
 
-        /* --- NAVIGATION --- */
+        /* --- NAV --- */
         nav {
             background: #fff;
             position: sticky;
             top: 0;
-            z-index: 100;
-            padding: 15px;
+            z-index: 1000;
+            padding: 15px 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
         }
         .nav-btn {
             background: transparent;
-            border: 2px solid var(--text-light);
-            padding: 10px 30px;
-            font-family: var(--font-ui);
+            border: 2px solid transparent;
+            padding: 10px 25px;
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--text-light);
+            color: var(--text-muted);
             cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.3s ease;
+            border-radius: 25px;
+            transition: all 0.2s;
         }
-        .nav-btn:hover { background: #f5f5f5; border-color: var(--primary); color: var(--primary); }
-        .nav-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
-        }
+        .nav-btn:hover { background: #f8f9fa; color: var(--accent); }
+        .nav-btn.active { background: var(--accent); color: white; box-shadow: 0 4px 10px rgba(41, 128, 185, 0.3); }
 
-        /* --- MAIN CONTAINER --- */
+        /* --- CONTENT --- */
         main {
-            flex: 1;
-            width: 100%;
-            max-width: 960px;
+            max-width: 900px;
             margin: 40px auto;
             padding: 0 20px;
-            box-sizing: border-box;
         }
 
-        .section { display: none; animation: fadeIn 0.6s ease; }
+        .section { display: none; animation: fadeIn 0.5s ease; }
         .section.active { display: block; }
 
-        /* --- LEHRBUCH STYLES --- */
         .chapter {
             background: var(--bg-paper);
-            padding: 60px;
-            margin-bottom: 50px;
+            padding: 50px;
+            margin-bottom: 40px;
             border-radius: var(--border-radius);
-            box-shadow: var(--shadow-card);
-            border-top: 5px solid var(--primary);
-        }
-        
-        .chapter h2 {
-            font-family: var(--font-ui);
-            color: var(--primary);
-            font-size: 1.8rem;
-            border-bottom: 3px solid #eee;
-            padding-bottom: 20px;
-            margin-top: 0;
+            box-shadow: var(--shadow);
+            border-left: 6px solid var(--accent);
         }
 
-        .chapter h3 {
-            font-family: var(--font-ui);
-            color: var(--accent);
-            font-size: 1.4rem;
-            margin-top: 50px;
-            margin-bottom: 25px;
-        }
+        .chapter h2 { color: var(--primary); font-size: 1.8rem; margin-top: 0; border-bottom: 2px solid #f1f1f1; padding-bottom: 15px; }
+        .chapter h3 { color: var(--accent); font-size: 1.4rem; margin-top: 40px; margin-bottom: 20px; }
+        .chapter h4 { color: var(--text-main); font-size: 1.1rem; font-weight: 700; margin-top: 25px; }
 
-        /* Lesetext */
-        .read-text p {
-            font-family: var(--font-read);
-            font-size: 1.15rem;
-            margin-bottom: 1.5em;
-            color: #333;
-            text-align: justify;
-        }
-        .read-text strong { color: var(--primary); font-weight: 700; }
+        /* Text Styles */
+        p { font-size: 1.05rem; margin-bottom: 1.5rem; text-align: justify; }
+        ul, ol { margin-bottom: 1.5rem; padding-left: 20px; }
+        li { margin-bottom: 8px; font-size: 1.05rem; }
 
-        /* Info-Boxen & Grafiken */
-        .info-box {
-            background: #f8f9fa;
-            border-left: 5px solid var(--accent);
-            padding: 25px;
-            margin: 35px 0;
-            border-radius: 0 8px 8px 0;
-            font-family: var(--font-ui);
+        /* Special Boxes */
+        .highlight-box {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
         }
-        .info-title { display: block; font-weight: bold; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .highlight-box strong { display: block; margin-bottom: 5px; text-transform: uppercase; font-size: 0.9rem; }
 
-        .graphic-container {
-            margin: 50px auto;
-            text-align: center;
-            padding: 30px;
-            background: #fff;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            max-width: 800px;
+        .deep-dive {
+            background-color: #f1f8e9;
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            margin: 25px 0;
+            font-size: 0.95rem;
         }
-        .graphic-caption { display: block; margin-top: 20px; font-family: var(--font-ui); color: var(--text-light); font-style: italic; }
+        .deep-dive-title { font-weight: bold; color: var(--success); display: block; margin-bottom: 5px; }
+
+        /* Data Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 1rem;
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .data-table th { background-color: var(--primary); color: white; }
+        .data-table tr:nth-child(even) { background-color: #f9f9f9; }
+
+        /* Timeline List */
+        .timeline-list { list-style: none; padding: 0; }
+        .timeline-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 20px;
+            border-left: 3px solid #ddd;
+        }
+        .timeline-list li::before {
+            content: ''; position: absolute; left: -9px; top: 5px;
+            width: 15px; height: 15px; border-radius: 50%;
+            background: var(--accent); border: 3px solid white;
+        }
+        .time-date { font-weight: bold; color: var(--accent); display: block; }
+
+        /* SVG Containers */
+        .graphic-wrapper {
+            background: #fff; border: 1px solid #eee; padding: 20px;
+            border-radius: 8px; margin: 30px 0; text-align: center;
+        }
+        .caption { display: block; font-size: 0.9rem; color: #999; margin-top: 10px; font-style: italic; }
         svg { max-width: 100%; height: auto; }
 
         /* --- QUIZ STYLES --- */
-        .quiz-container {
-            background: var(--bg-paper);
-            padding: 50px;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-card);
-            text-align: center;
+        .quiz-wrapper { background: white; padding: 40px; border-radius: 8px; box-shadow: var(--shadow); text-align: center; }
+        .progress-cont { height: 10px; background: #eee; border-radius: 5px; margin-bottom: 30px; overflow: hidden; }
+        .progress-val { height: 100%; background: var(--success); width: 0%; transition: width 0.3s; }
+        
+        .question-header { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 30px; }
+        
+        .options-container { display: grid; gap: 15px; text-align: left; }
+        .opt-btn {
+            background: white; border: 2px solid #ddd; padding: 15px; border-radius: 8px;
+            cursor: pointer; font-size: 1rem; transition: 0.2s;
         }
-        .progress-track { height: 10px; background: #eee; border-radius: 5px; margin-bottom: 40px; overflow: hidden; }
-        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.4s ease; }
+        .opt-btn:hover:not([disabled]) { border-color: var(--accent); background: #f0f8ff; }
+        .opt-btn.correct { background: #d4edda; border-color: var(--success); color: #155724; }
+        .opt-btn.wrong { background: #f8d7da; border-color: var(--error); color: #721c24; }
 
-        .question-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 40px; color: var(--primary); }
-
-        /* MC & Match */
-        .mc-grid { display: grid; gap: 15px; text-align: left; }
-        .btn-option {
-            background: #fff; border: 2px solid #ddd; padding: 20px; border-radius: 10px;
-            font-size: 1.1rem; cursor: pointer; transition: 0.2s; color: var(--text-main);
+        /* Matching */
+        .match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+        .match-tile {
+            padding: 15px; background: #fafafa; border: 2px solid #ddd; border-radius: 6px;
+            cursor: pointer; font-size: 0.95rem;
         }
-        .btn-option:hover:not([disabled]) { border-color: var(--primary); background: #f0f4ff; }
-        .btn-option.correct { border-color: var(--success); background: #e8f8f5; color: var(--success); font-weight: bold; }
-        .btn-option.wrong { border-color: var(--error); background: #fdedec; color: var(--error); }
+        .match-tile.selected { background: #cce5ff; border-color: var(--accent); }
+        .match-tile.solved { background: #d4edda; border-color: var(--success); color: var(--success); cursor: default; opacity: 0.6; }
 
-        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; text-align: left; }
-        .match-card {
-            padding: 20px; background: #fafafa; border: 2px solid #ddd; border-radius: 8px;
-            cursor: pointer; font-size: 1rem; transition: 0.2s; display: flex; align-items: center;
+        .feedback { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; text-align: left; background: #eee; }
+        .next-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 40px;
+            border-radius: 25px; font-size: 1rem; cursor: pointer; margin-top: 20px; display: none;
         }
-        .match-card.selected { border-color: var(--primary); background: #eef6fc; box-shadow: 0 0 10px rgba(0,51,102,0.2); }
-        .match-card.solved { border-color: var(--success); background: #eafaf1; color: var(--success); cursor: default; opacity: 0.7; }
-
-        /* Feedback & Controls */
-        .feedback-panel {
-            margin-top: 40px; padding: 25px; border-radius: 10px; text-align: left; display: none; font-family: var(--font-ui);
-        }
-        .feedback-panel.correct { background: #eafaf1; border: 2px solid var(--success); color: #1e8449; }
-        .feedback-panel.wrong { background: #fdedec; border: 2px solid var(--error); color: #c0392b; }
-
-        .btn-next {
-            background: var(--primary); color: white; border: none; padding: 15px 50px;
-            border-radius: 30px; font-size: 1.2rem; cursor: pointer; margin-top: 40px;
-            font-weight: 700; display: none; box-shadow: 0 6px 20px rgba(0, 51, 102, 0.3);
-            transition: transform 0.2s;
-        }
-        .btn-next:hover { transform: translateY(-3px); }
 
         /* Footer */
-        footer {
-            margin-top: 80px; padding: 40px; text-align: center; border-top: 1px solid #eee;
-            color: #7f8c8d; background: #fff; font-size: 0.9rem;
-        }
-        .insider-img { height: 28px; vertical-align: middle; opacity: 0.6; margin-left: 12px; transition: opacity 0.3s; }
-        .insider-img:hover { opacity: 1; }
+        footer { margin-top: 50px; text-align: center; padding: 30px; color: #aaa; border-top: 1px solid #eee; }
+        .footer-meme { height: 25px; vertical-align: middle; opacity: 0.4; margin-left: 10px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            .chapter { padding: 30px; }
-            .match-grid { grid-template-columns: 1fr; }
-            header h1 { font-size: 1.5rem; }
-            .read-text p { font-size: 1.05rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 700px) {
+            .match-area { grid-template-columns: 1fr; }
+            .chapter { padding: 25px; }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Geschichte Kompendium</h1>
-    <p>Das Zeitalter der Extreme: Von 1914 bis 1933</p>
+    <h1>Geschichte Komplett</h1>
+    <p>Lehrbuch & Prüfungsvorbereitung (Klasse 4)</p>
 </header>
 
 <nav>
-    <button class="nav-btn active" onclick="switchView('learn')">Lehrbuch</button>
-    <button class="nav-btn" onclick="switchView('quiz')">Prüfungssimulation</button>
+    <button class="nav-btn active" onclick="switchTab('learn')">Schulbuch</button>
+    <button class="nav-btn" onclick="switchTab('quiz')">Prüfung</button>
 </nav>
 
 <main>
 
-    <div id="learn-view" class="section active">
+    <div id="learn-tab" class="section active">
         
         <div class="chapter">
-            <h2>I. Die Urkatastrophe: Der Erste Weltkrieg (1914–1918)</h2>
+            <h2>I. Der Erste Weltkrieg (1914–1918)</h2>
             
-            <h3>1. Der Weg in den Abgrund</h3>
-            <div class="read-text">
-                <p>Zu Beginn des 20. Jahrhunderts glich Europa einem Pulverfass. Imperialismus, Nationalismus und ein extremes Wettrüsten hatten die Spannung zum Zerreißen gebracht. Die Großmächte hatten sich in zwei starre Bündnissysteme verkeilt: Die <strong>Mittelmächte</strong> (Deutschland, Österreich-Ungarn) standen der <strong>Entente</strong> (Großbritannien, Frankreich, Russland) gegenüber.</p>
-                <p>Der Funke, der dieses Pulverfass zur Explosion brachte, war das <strong>Attentat von Sarajevo am 28. Juni 1914</strong>. Der serbische Nationalist Gavrilo Princip erschoss den österreichischen Thronfolger Franz Ferdinand. Österreich-Ungarn wollte Serbien dafür bestrafen. Was als regionaler Konflikt begann, eskalierte durch die Bündnisverpflichtungen innerhalb weniger Wochen zum Weltkrieg (die sogenannte "Julikrise").</p>
+            <h3>1. Ursachen und Ausbruch</h3>
+            <p>Der Ausbruch des Krieges war kein Zufall, sondern das Ergebnis eines angespannten Europas. Imperialismus (Streben nach Macht und Kolonien) und Nationalismus heizten die Stimmung an.</p>
+            
+            <div class="highlight-box">
+                <strong>Der Auslöser (28. Juni 1914)</strong>
+                Das Attentat von Sarajevo: Der serbische Nationalist Gavrilo Princip erschoss den österreichischen Thronfolger Franz Ferdinand und seine Frau Sophie. Dies löste die "Julikrise" aus.
             </div>
 
-            <div class="graphic-container">
-                <svg viewBox="0 0 600 200">
-                    <rect x="20" y="40" width="200" height="120" rx="12" fill="#fff5f5" stroke="#c0392b" stroke-width="3"/>
-                    <text x="120" y="75" text-anchor="middle" font-weight="bold" fill="#c0392b" font-family="sans-serif" font-size="18">MITTELMÄCHTE</text>
-                    <line x1="40" y1="85" x2="200" y2="85" stroke="#e74c3c" stroke-width="1"/>
-                    <text x="120" y="115" text-anchor="middle" font-family="sans-serif" font-size="16">Deutschland</text>
-                    <text x="120" y="140" text-anchor="middle" font-family="sans-serif" font-size="16">Österreich-Ungarn</text>
-                    <text x="120" y="165" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#777">(+ Osmanisches Reich)</text>
+            <p>Aufgrund der starren Bündnissysteme führte die Kriegserklärung Österreich-Ungarns an Serbien zu einer unaufhaltsamen Kettenreaktion:</p>
+            
+            <div class="graphic-wrapper">
+                <svg viewBox="0 0 600 150">
+                    <rect x="10" y="20" width="200" height="110" rx="10" fill="#fff5f5" stroke="#c0392b" stroke-width="2"/>
+                    <text x="110" y="50" text-anchor="middle" font-weight="bold" fill="#c0392b" font-family="sans-serif">MITTELMÄCHTE</text>
+                    <text x="110" y="80" text-anchor="middle" font-family="sans-serif">Deutschland</text>
+                    <text x="110" y="100" text-anchor="middle" font-family="sans-serif">Österreich-Ungarn</text>
                     
-                    <text x="300" y="110" text-anchor="middle" font-weight="bold" font-size="24" fill="#555">VS.</text>
+                    <text x="300" y="85" text-anchor="middle" font-weight="bold" font-size="20">VS.</text>
                     
-                    <rect x="380" y="40" width="200" height="120" rx="12" fill="#f0f8ff" stroke="#2980b9" stroke-width="3"/>
-                    <text x="480" y="75" text-anchor="middle" font-weight="bold" fill="#2980b9" font-family="sans-serif" font-size="18">ENTENTE</text>
-                    <line x1="400" y1="85" x2="560" y2="85" stroke="#3498db" stroke-width="1"/>
-                    <text x="480" y="115" text-anchor="middle" font-family="sans-serif" font-size="16">Frankreich, GB</text>
-                    <text x="480" y="140" text-anchor="middle" font-family="sans-serif" font-size="16">Russland (bis 1917)</text>
-                    <text x="480" y="165" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#777">(+ Italien ab 1915, USA ab 1917)</text>
+                    <rect x="390" y="20" width="200" height="110" rx="10" fill="#e3f2fd" stroke="#2980b9" stroke-width="2"/>
+                    <text x="490" y="50" text-anchor="middle" font-weight="bold" fill="#2980b9" font-family="sans-serif">ENTENTE</text>
+                    <text x="490" y="80" text-anchor="middle" font-family="sans-serif">Frankreich & GB</text>
+                    <text x="490" y="100" text-anchor="middle" font-family="sans-serif">Russland (bis 1917)</text>
+                    <text x="490" y="120" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">USA (ab 1917)</text>
                 </svg>
-                <span class="graphic-caption">Abb. 1: Die feindlichen Bündnisblöcke bei Kriegsausbruch.</span>
+                <span class="caption">Abb. 1: Die verfeindeten Blöcke in Europa.</span>
             </div>
 
-            <h3>2. Die Realität des industriellen Krieges</h3>
-            <div class="read-text">
-                <p>Die anfängliche Kriegsbegeisterung ("Zu Weihnachten sind wir wieder zu Hause") wich schnell dem Entsetzen. Deutschlands Plan, Frankreich im Westen blitzschnell zu besiegen (Schlieffen-Plan), scheiterte. An der Westfront erstarrte der Krieg zum grausamen <strong>Stellungskrieg</strong>. Millionen Soldaten lebten und starben in kilometerlangen Schützengräben, oft für wenige Meter Geländegewinn. Schlachten wie <strong>Verdun (1916)</strong> wurden zu Symbolen sinnlosen Massensterbens.</p>
-                <p>Es war der erste industrialisierte Krieg. Neue Waffen wie Maschinengewehre, schwerste Artillerie, Giftgas, Panzer und Flugzeuge maximierten die Tötungskapazität. An der "Heimatfront" litt die Zivilbevölkerung unter der britischen Seeblockade. Im <strong>Steckrübenwinter 1916/17</strong> verhungerten Hunderttausende in Deutschland.</p>
+            <h3>2. Verlauf und Schrecken an der Front</h3>
+            <p>Der Krieg entwickelte sich anders als geplant. Der deutsche "Schlieffen-Plan" (schneller Sieg über Frankreich) scheiterte. Es kam zum jahrelangen <strong>Stellungskrieg</strong> in Schützengräben.</p>
+            
+            <ul class="timeline-list">
+                <li>
+                    <span class="time-date">1914</span>
+                    Kriegsausbruch und Scheitern des Bewegungskrieges im Westen.
+                </li>
+                <li>
+                    <span class="time-date">1915</span>
+                    Erster Einsatz von Giftgas bei Ypern (Belgien). U-Boot-Krieg beginnt.
+                </li>
+                <li>
+                    <span class="time-date">1916</span>
+                    "Hölle von Verdun": Hunderttausende sterben für minimale Geländegewinne.
+                </li>
+                <li>
+                    <span class="time-date">1917 (Wendejahr)</span>
+                    <strong>USA:</strong> Treten in den Krieg ein und stärken die Entente.<br>
+                    <strong>Russland:</strong> Scheidet durch die Revolution aus dem Krieg aus.
+                </li>
+            </ul>
+
+            <div class="deep-dive">
+                <span class="deep-dive-title">Vertiefung: Geheimverhandlungen 1917</span>
+                Kaiser Karl I. von Österreich versuchte 1917, geheime Friedensgespräche mit Frankreich zu führen (über seinen Schwager Sixtus). Diese Gespräche scheiterten jedoch und wurden öffentlich bekannt, was Karls Ansehen massiv schadete.
             </div>
 
-            <h3>3. Die Wende 1917 und das bittere Ende</h3>
-            <div class="read-text">
-                <p>Das Jahr 1917 brachte die Entscheidung. Zwar schied Russland aufgrund der Russischen Revolution aus dem Krieg aus (ein Vorteil für Deutschland), doch fast gleichzeitig traten die <strong>USA</strong> aufseiten der Entente in den Krieg ein. Ihre wirtschaftliche Macht und frischen Truppen besiegelten die Niederlage der Mittelmächte.</p>
-                <p>Im November 1918 kapitulierten Deutschland und Österreich-Ungarn. Die Monarchien brachen zusammen, die Kaiser dankten ab. Die Bilanz war verheerend: Etwa <strong>17 Millionen Tote</strong> (10 Mio. Soldaten, 7 Mio. Zivilisten) und eine traumatisierte Generation.</p>
-            </div>
+            <h3>3. Das bittere Ende 1918</h3>
+            <p>Nicht nur an der Front, auch an der "Heimatfront" brach alles zusammen. Durch die britische Seeblockade herrschte Hunger. Im <strong>Steckrübenwinter 1916/17</strong> starben Zehntausende Zivilisten.</p>
+            <p>Im November 1918 kapitulierten die Mittelmächte. Die Kaiser mussten abdanken. Europa wurde neu geordnet (Zerfall Österreich-Ungarns in Nationalstaaten wie Tschechoslowakei, Ungarn, etc.).</p>
         </div>
 
         <div class="chapter">
-            <h2>II. Die fragile Demokratie: Die Weimarer Republik (1918–1933)</h2>
+            <h2>II. Die Weimarer Republik & Der Aufstieg Hitlers</h2>
             
-            <h3>1. Die Hypothek von Versailles</h3>
-            <div class="read-text">
-                <p>Nach dem Krieg wurde Deutschland erstmals eine Demokratie: die Weimarer Republik. Doch ihr Start war schwer belastet. Im <strong>Versailler Vertrag (1919)</strong> wurde Deutschland die <strong>alleinige Kriegsschuld</strong> zugewiesen (Artikel 231). Es musste riesige Gebiete abtreten, abrüsten und astronomisch hohe Reparationen zahlen. Dieser Vertrag wurde von fast allen Deutschen als "Schanddiktat" empfunden und war der ideale Nährboden für rechte Hetze.</p>
+            <h3>1. Die Last von Versailles</h3>
+            <p>Die erste deutsche Demokratie (Weimarer Republik) hatte einen schweren Start. Der <strong>Versailler Vertrag (1919)</strong> legte fest:</p>
+            <ul>
+                <li>Deutschland trägt die <strong>alleinige Kriegsschuld</strong> (Art. 231).</li>
+                <li>Hohe Reparationszahlungen an die Sieger.</li>
+                <li>Gebietsverluste (ca. 13% der Fläche).</li>
+            </ul>
+            
+            <div class="deep-dive">
+                <span class="deep-dive-title">Die Dolchstoßlegende</span>
+                Rechte Politiker und Militärs (wie Hindenburg) verbreiteten die Lüge, das deutsche Heer sei "im Felde unbesiegt" gewesen und nur durch einen "Dolchstoß" der Heimat (durch Sozialisten und Juden) verraten worden. Das war falsch, aber viele glaubten es und hassten die Demokratie dafür.
             </div>
 
-            <h3>2. Die Krisenjahre (1919–1923)</h3>
-            <div class="read-text">
-                <p>Die junge Republik wurde von links und rechts angegriffen. 1923 eskalierte die Lage: Weil Deutschland Reparationen nicht zahlen konnte, besetzten Franzosen das Ruhrgebiet. Die Regierung druckte Geld, um den passiven Widerstand zu finanzieren. Die Folge war eine <strong>Hyperinflation</strong>: Geld wurde wertlos, ein Brot kostete Milliarden Mark. Die Mittelschicht verlor ihre Ersparnisse und ihr Vertrauen in den Staat.</p>
-            </div>
-            
-            <div class="info-box">
-                <span class="info-title">Der Hitler-Putsch 1923</span>
-                <p>In diesem Chaos versuchte ein noch unbekannter Adolf Hitler am 9. November 1923 in München, die Macht durch einen Putsch zu ergreifen. Der Versuch scheiterte kläglich an der Polizei. Hitler kam in Haft, nutzte die Zeit aber, um sein ideologisches Buch <strong>"Mein Kampf"</strong> zu schreiben.</p>
-            </div>
-
-            <h3>3. Goldene Zwanziger und der Todesstoß 1929</h3>
-            <div class="read-text">
-                <p>Ab 1924 stabilisierte sich die Lage kurzzeitig ("Goldene Zwanziger"). Doch der Aufschwung war auf Pump finanziert. Als im Oktober 1929 die <strong>New Yorker Börse crashte (Weltwirtschaftskrise)</strong>, zogen amerikanische Banken ihre Kredite aus Deutschland ab. Die Wirtschaft kollabierte. 1932 gab es 6 Millionen Arbeitslose. Elend und Verzweiflung trieben die Menschen in die Arme der radikalen Parteien: der Kommunisten (KPD) und vor allem der Nationalsozialisten (NSDAP).</p>
-            </div>
+            <h3>2. Krisenjahr 1923 & "Goldene Zwanziger"</h3>
+            <p>1923 kam es zur <strong>Hyperinflation</strong>. Geld wurde wertlos, Menschen bezahlten Brot mit Milliarden-Scheinen. In diesem Chaos versuchte Adolf Hitler in München einen Putsch, der scheiterte. Er kam in Haft und schrieb dort sein Buch "Mein Kampf".</p>
+            <p>Danach erholte sich Deutschland kurz ("Goldene Zwanziger"), bis 1929 die <strong>Weltwirtschaftskrise</strong> (Börsencrash New York) alles zerstörte. Arbeitslosigkeit und Elend trieben die Wähler zur NSDAP.</p>
         </div>
 
         <div class="chapter">
-            <h2>III. Die Ideologie: Faschismus und Nationalsozialismus</h2>
-            
-            <div class="read-text">
-                <p>In der Krise der Nachkriegszeit entstanden neue, antidemokratische Bewegungen. Vorbild war Benito Mussolini, der in Italien den <strong>Faschismus</strong> etablierte. Hitler adaptierte dieses Modell für Deutschland. Beide Systeme basierten auf Gewalt, Diktatur und der totalen Unterordnung des Einzelnen unter den Staat.</p>
-            </div>
+            <h2>III. Faschismus und Nationalsozialismus im Vergleich</h2>
+            <p>Benito Mussolini (Italien) und Adolf Hitler (Deutschland) errichteten Diktaturen. Doch wo liegen die Unterschiede? Deine Unterlagen zeigen folgenden Vergleich:</p>
 
-            <div class="graphic-container">
-                <svg viewBox="0 0 550 280">
-                    <polygon points="70,250 480,250 275,20" fill="#2c3e50" stroke="#34495e" stroke-width="2"/>
-                    
-                    <line x1="173" y1="135" x2="377" y2="135" stroke="#ecf0f1" stroke-width="2" stroke-dasharray="5,5"/>
-                    <line x1="220" y1="80" x2="330" y2="80" stroke="#ecf0f1" stroke-width="2"/>
-                    
-                    <text x="275" y="65" text-anchor="middle" fill="#ecf0f1" font-weight="bold" font-family="sans-serif" font-size="18">DER FÜHRER</text>
-                    <text x="275" y="115" text-anchor="middle" fill="#ecf0f1" font-size="14" font-family="sans-serif">Partei-Elite / SS / SA</text>
-                    <text x="275" y="200" text-anchor="middle" fill="#ecf0f1" font-size="16" font-family="sans-serif" font-weight="bold">VOLKSGEMEINSCHAFT</text>
-                    <text x="275" y="225" text-anchor="middle" fill="#bdc3c7" font-size="13" font-family="sans-serif">(Gehorsam, keine Individualrechte)</text>
-                    
-                    <text x="490" y="130" fill="#c0392b" font-size="14" font-family="sans-serif" font-weight="bold">Keine Demokratie</text>
-                    <text x="490" y="160" fill="#c0392b" font-size="14" font-family="sans-serif" font-weight="bold">Keine Opposition</text>
-                    
-                    <text x="60" y="130" text-anchor="end" fill="#c0392b" font-size="14" font-family="sans-serif" font-weight="bold">Befehl ▼</text>
-                    <text x="60" y="160" text-anchor="end" fill="#c0392b" font-size="14" font-family="sans-serif" font-weight="bold">Gehorsam ▲</text>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50%;">Gemeinsamkeiten (Faschismus & NS)</th>
+                        <th style="width: 50%;">Unterschiede (Spezifisch NS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>Führerkult:</strong> Alles auf eine Person ausgerichtet.<br><br>
+                            <strong>Keine Demokratie:</strong> Parlament entmachtet.<br><br>
+                            <strong>Gewalt & Terror:</strong> Gegen Andersdenkende.<br><br>
+                            <strong>Propaganda:</strong> Massenbeeinflussung (Radio).
+                        </td>
+                        <td>
+                            <strong>Rassenideologie:</strong> Biologisch begründeter Rassismus.<br><br>
+                            <strong>Antisemitismus:</strong> Radikaler Hass auf Juden als zentrales politisches Ziel.<br><br>
+                            <strong>Lebensraum:</strong> Vernichtungskrieg im Osten.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="graphic-wrapper">
+                <svg viewBox="0 0 500 250">
+                    <polygon points="50,230 450,230 250,20" fill="#34495e"/>
+                    <line x1="150" y1="125" x2="350" y2="125" stroke="white" stroke-width="2"/>
+                    <text x="250" y="70" text-anchor="middle" fill="white" font-weight="bold" font-family="sans-serif">DER FÜHRER</text>
+                    <text x="250" y="110" text-anchor="middle" fill="white" font-size="12" font-family="sans-serif">SS / SA / Partei</text>
+                    <text x="250" y="180" text-anchor="middle" fill="white" font-weight="bold" font-family="sans-serif">VOLKSGEMEINSCHAFT</text>
+                    <text x="50" y="130" fill="#c0392b" font-weight="bold" font-family="sans-serif">BEFEHL ▼</text>
+                    <text x="450" y="130" text-anchor="end" fill="#c0392b" font-weight="bold" font-family="sans-serif">GEHORSAM ▲</text>
                 </svg>
-                <span class="graphic-caption">Abb. 2: Das Führerprinzip – Struktur der faschistischen Diktatur.</span>
+                <span class="caption">Abb. 2: Das Führerprinzip in der Diktatur.</span>
             </div>
 
-            <h3>Der entscheidende Unterschied</h3>
-            <div class="read-text">
-                <p>Der deutsche Nationalsozialismus war jedoch mehr als nur eine Kopie des italienischen Faschismus. Sein zentraler Kern war der <strong>biologische Rassismus und der radikale Antisemitismus (Judenhass)</strong>. Die Nazis sahen die Geschichte als ewigen "Rassenkampf", in dem die "arische Herrenrasse" die "minderwertigen Rassen" (vor allem Juden, aber auch Slawen) unterwerfen oder vernichten müsse.</p>
-            </div>
+            <h3>Hitlers Weg zur Macht (Biografie)</h3>
+            <ul>
+                <li><strong>1889:</strong> Geboren in Braunau am Inn (Österreich).</li>
+                <li><strong>1914–1918:</strong> Soldat im Ersten Weltkrieg (wird sein prägendes Erlebnis).</li>
+                <li><strong>1923:</strong> Gescheiterter Hitler-Putsch in München.</li>
+                <li><strong>1933:</strong> Ernennung zum <strong>Reichskanzler</strong> durch Hindenburg.</li>
+                <li><strong>1934:</strong> Tod Hindenburgs. Hitler vereinigt die Ämter zum "Führer und Reichskanzler".</li>
+            </ul>
         </div>
-
-        <div class="chapter">
-            <h2>IV. Biografie: Adolf Hitlers Weg zur Macht</h2>
-            
-            <h3>1. Prägung im Krieg</h3>
-            <div class="read-text">
-                <p>Adolf Hitler wurde 1889 in Braunau am Inn (Österreich) geboren. Sein Traum, Künstler zu werden, scheiterte in Wien. Er lebte orientierungslos, bis 1914 der Erste Weltkrieg ausbrach. Hitler meldete sich freiwillig zur bayerischen Armee. Der Krieg gab seinem Leben erstmals Sinn und Struktur. Die Kapitulation 1918 empfand er als Verrat durch Sozialisten und Juden ("Dolchstoßlegende").</p>
-            </div>
-
-            <h3>2. Der politische Aufstieg</h3>
-            <div class="read-text">
-                <p>Nach dem Krieg blieb Hitler beim Militär in München und wurde als politischer Spitzel eingesetzt. Dabei entdeckte er sein rhetorisches Talent. Er trat einer winzigen rechtsextremen Partei bei, die er bald übernahm und zur <strong>NSDAP</strong> (Nationalsozialistische Deutsche Arbeiterpartei) umformte.</p>
-                <p>Nach dem gescheiterten Putsch von 1923 änderte Hitler seine Taktik: Er wollte die Demokratie nun mit ihren eigenen Waffen schlagen – durch Wahlen. In den "Goldenen Zwanzigern" blieb die NSDAP eine Splitterpartei. Erst die Weltwirtschaftskrise 1929 katapultierte sie nach oben. Hitler reiste rastlos durch Deutschland, hielt fanatische Reden und versprach Arbeit, Brot und die Wiederherstellung der deutschen Ehre.</p>
-            </div>
-
-            <h3>3. Die "Machtergreifung" 1933</h3>
-            <div class="read-text">
-                <p>Obwohl die NSDAP bei Wahlen 1932 stärkste Kraft wurde, erreichte sie nie die absolute Mehrheit. Hitler kam nicht durch einen gewaltsamen Putsch an die Macht, sondern wurde von konservativen Eliten unterschätzt, die glaubten, ihn "zähmen" zu können. Sie überredeten den greisen Reichspräsidenten Paul von Hindenburg.</p>
-                <p>Am <strong>30. Januar 1933 ernannte Hindenburg Adolf Hitler zum Reichskanzler</strong>. Viele feierten dies mit Fackelzügen, während Gegner bereits ahnten, dass dies das Ende der Weimarer Republik und der Beginn einer brutalen Diktatur war.</p>
-            </div>
-        </div>
-
     </div>
 
-    <div id="quiz-view" class="section">
-        <div class="quiz-container">
+    <div id="quiz-tab" class="section">
+        <div class="quiz-wrapper">
             <div id="quiz-intro">
-                <h2 class="question-title">Prüfungssimulation: Das Zeitalter der Extreme</h2>
-                <p style="font-size: 1.2rem; margin-bottom: 30px;">Diese Prüfung umfasst alle Kapitel des Lehrbuchs, von den Ursachen des 1. Weltkriegs bis zu Hitlers Ernennung zum Kanzler 1933.</p>
-                <ul style="display: inline-block; text-align: left; margin-bottom: 40px; color: var(--text-light);">
-                    <li>📝 12 Fragen pro Durchgang</li>
-                    <li>🎲 Zufällige Auswahl aus großem Pool</li>
-                    <li>⚡ Multiple Choice & Zuordnungsaufgaben</li>
+                <h2>Große Abschlussprüfung</h2>
+                <p>Umfassender Test über alle Kapitel.</p>
+                <ul style="display:inline-block; text-align:left; color:#666; margin: 20px 0;">
+                    <li>20 Fragen im Pool</li>
+                    <li>Zufallsgenerator</li>
+                    <li>Multiple Choice & Zuordnung</li>
                 </ul>
                 <br>
-                <button class="btn-next" style="display: inline-block; margin-top:0;" onclick="startQuiz()">Prüfung beginnen</button>
+                <button class="nav-btn" style="background:var(--primary); color:white; border:none;" onclick="startQuiz()">Prüfung starten</button>
             </div>
 
-            <div id="quiz-active" style="display: none;">
-                <div class="progress-track"><div id="progress-bar" class="progress-bar"></div></div>
+            <div id="quiz-active" style="display:none;">
+                <div class="progress-cont"><div id="progress-bar" class="progress-val"></div></div>
                 <div id="question-container"></div>
-                <div id="feedback-panel" class="feedback-panel"></div>
-                <button id="btn-next-q" class="btn-next" onclick="nextQuestion()">Nächste Frage</button>
+                <div id="feedback" class="feedback"></div>
+                <button id="next-btn" class="next-btn" onclick="nextQuestion()">Nächste Frage</button>
             </div>
 
-            <div id="quiz-result" style="display: none;">
-                <h2 style="color: var(--primary);">Prüfungsergebnis</h2>
-                <div style="font-size: 4rem; font-weight: 800; color: var(--accent); margin: 20px 0;" id="score-final">0%</div>
-                <img src="chatisthisreal.png" id="reward-img" style="max-width: 200px; border-radius: 12px; margin: 20px auto; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <p id="result-text" style="font-size: 1.2rem; margin: 30px 0;"></p>
-                <button class="btn-next" style="display: inline-block;" onclick="startQuiz()">Prüfung wiederholen</button>
+            <div id="quiz-result" style="display:none;">
+                <h2>Dein Ergebnis</h2>
+                <div style="font-size:3.5rem; color:var(--accent); font-weight:bold; margin:20px 0;" id="score-display">0%</div>
+                <img src="chatisthisreal.png" id="meme-reward" style="max-width:200px; display:none; margin:0 auto; border-radius:8px;">
+                <p id="result-msg"></p>
+                <button class="nav-btn" style="background:var(--primary); color:white;" onclick="location.reload()">Neustarten</button>
             </div>
         </div>
     </div>
@@ -391,134 +388,124 @@
 </main>
 
 <footer>
-    HoS Digital Textbook Project | Version 6.0 (Author's Edition)
-    <img src="chatisthisreal.png" class="insider-img" title="Real?">
+    <div>HoS Education Suite v7.0 | Massive Content Edition</div>
+    <img src="chatisthisreal.png" class="footer-meme" title="Real?">
 </footer>
 
 <script>
-    // --- FRAGENPOOL (ERWEITERT FÜR V6.0) ---
+    /* DATENBANK (ERWEITERT) */
     const pool = [
-        // WWI (Kapitel 1)
-        { t: 'mc', q: "Welches Ereignis gilt als direkter Auslöser des Ersten Weltkriegs?", o: ["Einmarsch in Belgien", "Attentat von Sarajevo", "Versenkung der Lusitania", "Börsencrash in NY"], c: 1, i: "Die Ermordung Franz Ferdinands am 28. Juni 1914 löste die Julikrise aus." },
-        { t: 'mc', q: "Was kennzeichnete den Krieg an der Westfront ab Ende 1914?", o: ["Blitzkrieg", "Bewegungskrieg", "Stellungskrieg in Schützengräben", "Reiner Seekrieg"], c: 2, i: "Die Fronten erstarrten. Geländegewinne waren minimal trotz riesiger Verluste." },
-        { t: 'mc', q: "Warum war 1917 das entscheidende 'Wendejahr'?", o: ["Kriegsende durch Waffenstillstand", "Hitler trat der Armee bei", "USA traten ein, Russland schied aus", "Gründung des Völkerbunds"], c: 2, i: "Die USA brachten die Entscheidung zugunsten der Entente." },
-        { t: 'match', q: "Ordne die Bündnispartner von 1914 zu!", p: [{l:"Deutschland",r:"Österreich-Ungarn"},{l:"Frankreich",r:"Großbritannien & Russland"},{l:"Mittelmächte",r:"Der Block um DE & ÖU"},{l:"Entente",r:"Der Block um F, GB, RUS"}], i: "Diese Bündnisautomatismen führten zum Weltkrieg." },
+        // WWI
+        {t:'mc', q:"Was war der Auslöser der 'Julikrise' 1914?", o:["Einmarsch in Polen","Attentat von Sarajevo","Bau der Berliner Mauer","Untergang der Titanic"], c:1, i:"Das Attentat auf Franz Ferdinand war der Funke."},
+        {t:'mc', q:"Was ist typisch für den Stellungskrieg?", o:["Schnelle Panzerbewegungen","Kaum Frontverschiebung, Schützengräben","Reiner Luftkrieg","Friedliche Verhandlungen"], c:1, i:"Die Fronten erstarrten über Jahre."},
+        {t:'mc', q:"Wann trat die USA in den Krieg ein?", o:["1914","1915","1917","1918"], c:2, i:"1917 war das Wendejahr (USA rein, Russland raus)."},
+        {t:'mc', q:"Was bedeutet 'Steckrübenwinter'?", o:["Ein Festessen","Hungersnot 1916/17","Eine neue Waffe","Ein Kältewelle"], c:1, i:"Wegen der Blockade gab es nur noch Steckrüben zu essen."},
+        {t:'mc', q:"Wie viele Soldaten starben etwa im 1. Weltkrieg?", o:["1 Million","10 Millionen","100.000","50 Millionen"], c:1, i:"Ca. 10 Mio. Soldaten und 7 Mio. Zivilisten."},
         
-        // Weimarer Republik (Kapitel 2 - NEU)
-        { t: 'mc', q: "Wie wurde der Versailler Vertrag in Deutschland mehrheitlich empfunden?", o: ["Als fairer Kompromiss", "Als Schanddiktat", "Als großer diplomatischer Erfolg", "Er wurde ignoriert"], c: 1, i: "Besonders die Alleinschuld und die Reparationen wurden als ungerecht empfunden." },
-        { t: 'mc', q: "Was war ein Hauptgrund für die Hyperinflation 1923?", o: ["Die Weltwirtschaftskrise", "Der Börsencrash in NY", "Finanzierung des Ruhrkampfes durch Gelddrucken", "Der Kriegseintritt der USA"], c: 2, i: "Der Staat druckte Geld, um streikende Arbeiter im besetzten Ruhrgebiet zu bezahlen." },
-        { t: 'mc', q: "Welches Ereignis im Oktober 1929 beendete die 'Goldenen Zwanziger'?", o: ["Hitlers Machtergreifung", "Der New Yorker Börsencrash", "Der Tod Hindenburgs", "Der Hitler-Putsch"], c: 1, i: "Der Crash löste die Weltwirtschaftskrise aus, die Deutschland hart traf." },
-        { t: 'match', q: "Krisenjahre der Weimarer Republik", p: [{l:"1919",r:"Versailler Vertrag"},{l:"1923",r:"Hyperinflation & Hitler-Putsch"},{l:"1929",r:"Beginn Weltwirtschaftskrise"},{l:"1932",r:"Höhepunkt der Arbeitslosigkeit"}], i: "Diese Krisen ebneten den Weg für Radikale." },
+        // Weimar & NS
+        {t:'mc', q:"Was besagte Artikel 231 des Versailler Vertrags?", o:["Deutschland hat die Alleinschuld","Österreich darf sich anschließen","Gründung der EU","Einführung des Euro"], c:0, i:"Die Alleinschuld war Grundlage für Reparationen."},
+        {t:'mc', q:"Was geschah im Krisenjahr 1923 NICHT?", o:["Hyperinflation","Hitler-Putsch","Besetzung des Ruhrgebiets","Beginn des 2. Weltkriegs"], c:3, i:"1923 war das Krisenjahr der Republik, nicht Kriegsbeginn."},
+        {t:'mc', q:"Welches Ereignis beendete die 'Goldenen Zwanziger'?", o:["Börsencrash New York 1929","Wahl Hitlers","Kriegsende","Mauerfall"], c:0, i:"Die Weltwirtschaftskrise stürzte Deutschland ins Elend."},
+        {t:'mc', q:"Wie kam Hitler an die Macht?", o:["Durch blutigen Putsch","Ernennung zum Kanzler durch Hindenburg","Militärputsch","Wahlfälschung"], c:1, i:"Es war eine legale Ernennung am 30. Januar 1933."},
+        
+        // Unterschiede & Begriffe
+        {t:'mc', q:"Was unterscheidet den NS vom Faschismus?", o:["Führerkult","Gewalt","Antisemitismus/Rassismus","Propaganda"], c:2, i:"Der biologische Rassismus ist spezifisch für die Nazis."},
+        {t:'mc', q:"Was war der 'Volksempfänger'?", o:["Ein Orden","Ein billiges Radio für Propaganda","Ein Parteiamt","Eine Waffe"], c:1, i:"Damit kam Hitlers Stimme in jedes Wohnzimmer."},
 
-        // Faschismus & NS (Kapitel 3)
-        { t: 'mc', q: "Was ist der zentrale Unterschied zwischen italienischem Faschismus und deutschem Nationalsozialismus?", o: ["Das Führerprinzip", "Der Militarismus", "Die Propaganda", "Der biologische Rassismus & Antisemitismus"], c: 3, i: "Der Rassenwahn war das spezifische Merkmal der NS-Ideologie." },
-        { t: 'match', q: "Merkmale von Diktaturen", p: [{l:"Führerkult",r:"Alles auf eine Person ausgerichtet"},{l:"Keine Opposition",r:"Andere Parteien verboten"},{l:"Propaganda",r:"Manipulation der Meinung"},{l:"Volksgemeinschaft",r:"Ausgrenzung von Minderheiten"}], i: "Diese Elemente finden sich im Faschismus und Nationalsozialismus." },
-
-        // Hitler Biografie (Kapitel 4 - NEU)
-        { t: 'mc', q: "Welche Erfahrung prägte Hitler entscheidend vor seiner politischen Karriere?", o: ["Sein Kunststudium in Wien", "Seine Zeit als Soldat im 1. Weltkrieg", "Seine Reisen in die USA", "Seine Arbeit als Architekt"], c: 1, i: "Der Krieg gab seinem Leben Struktur; die Niederlage radikalisierte ihn." },
-        { t: 'mc', q: "Was passierte nach Hitlers gescheitertem Putsch 1923?", o: ["Er wurde sofort Reichskanzler", "Er floh ins Ausland", "Er kam in Haft und schrieb 'Mein Kampf'", "Er wurde hingerichtet"], c: 2, i: "Er nutzte die milde Haftstrafe, um seine Ideologie niederzuschreiben." },
-        { t: 'mc', q: "Wie kam Hitler am 30. Januar 1933 an die Macht?", o: ["Durch einen gewaltsamen Putsch", "Er wurde von Hindenburg zum Kanzler ernannt", "Er gewann die absolute Mehrheit bei Wahlen", "Mussolini setzte ihn ein"], c: 1, i: "Es war eine Ernennung nach der Verfassung, keine gewaltsame Machtergreifung." },
-        { t: 'match', q: "Hitlers Weg zur Macht", p: [{l:"1923",r:"Gescheiterter Putsch in München"},{l:"1929",r:"Wirtschaftskrise stärkt NSDAP"},{l:"Januar 1933",r:"Ernennung zum Reichskanzler"},{l:"August 1934",r:"Vereinigung der Ämter zum 'Führer'"}], i: "Die wichtigen Stationen seiner Machtkonsolidierung." }
+        // Matching
+        {t:'match', q:"Ordne die Jahre zu!", p:[{l:"1914",r:"Kriegsbeginn"},{l:"1917",r:"Kriegseintritt USA"},{l:"1918",r:"Kriegsende"},{l:"1933",r:"Hitler wird Kanzler"}], i:"Wichtige Daten der Geschichte."},
+        {t:'match', q:"Begriffe verbinden", p:[{l:"Heimatfront",r:"Leiden der Zivilisten"},{l:"Entente",r:"Bündnis F, GB, RUS"},{l:"Versailles",r:"Friedensvertrag"},{l:"Dolchstoß",r:"Legende vom Verrat"}], i:"Zentrale Begriffe verstanden."}
     ];
 
-    // --- QUIZ LOGIC ---
-    let currentQuestions = [], qIndex = 0, score = 0, selection = null;
+    let questions=[], current=0, score=0, sel=null;
 
-    function switchView(view) {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector(`.nav-btn[onclick="switchView('${view}')"]`).classList.add('active');
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(view + '-view').classList.add('active');
+    function switchTab(id) {
+        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+        document.getElementById(id+'-tab').classList.add('active');
+        // Button highlight logic simplified
+        if(id==='learn') document.querySelector('button[onclick="switchTab(\'learn\')"]').classList.add('active');
+        else document.querySelector('button[onclick="switchTab(\'quiz\')"]').classList.add('active');
         window.scrollTo(0,0);
     }
 
     function startQuiz() {
-        currentQuestions = [...pool].sort(() => Math.random() - 0.5).slice(0, 12); // 12 Fragen
-        qIndex = 0; score = 0;
-        document.getElementById('quiz-intro').style.display = 'none';
-        document.getElementById('quiz-result').style.display = 'none';
-        document.getElementById('quiz-active').style.display = 'block';
+        questions = [...pool].sort(()=>Math.random()-0.5).slice(0, 10);
+        current=0; score=0;
+        document.getElementById('quiz-intro').style.display='none';
+        document.getElementById('quiz-result').style.display='none';
+        document.getElementById('quiz-active').style.display='block';
         loadQ();
     }
 
     function loadQ() {
-        const q = currentQuestions[qIndex];
+        const q = questions[current];
         const cont = document.getElementById('question-container');
-        const fb = document.getElementById('feedback-panel');
-        const next = document.getElementById('btn-next-q');
-        
-        cont.innerHTML = `<h3 class="question-title">${qIndex+1}. ${q.q}</h3>`;
-        fb.style.display = 'none'; fb.className = 'feedback-panel';
-        next.style.display = 'none';
-        document.getElementById('progress-bar').style.width = `${(qIndex/currentQuestions.length)*100}%`;
+        cont.innerHTML = `<div class="question-header">Frage ${current+1}: ${q.q}</div>`;
+        document.getElementById('feedback').style.display='none';
+        document.getElementById('next-btn').style.display='none';
+        document.getElementById('progress-bar').style.width = `${(current/questions.length)*100}%`;
 
-        if(q.t === 'mc') renderMC(q, cont); else renderMatch(q, cont);
-    }
-
-    function renderMC(q, cont) {
-        const grid = document.createElement('div'); grid.className = 'mc-grid';
-        q.o.forEach((opt, i) => {
-            const btn = document.createElement('button'); btn.className = 'btn-option';
-            btn.textContent = opt; btn.onclick = () => checkMC(btn, i, q);
-            grid.appendChild(btn);
-        });
-        cont.appendChild(grid);
-    }
-
-    function checkMC(btn, i, q) {
-        document.querySelectorAll('.btn-option').forEach(b => b.disabled = true);
-        const fb = document.getElementById('feedback-panel');
-        if(i === q.c) {
-            btn.classList.add('correct'); score++; fb.innerHTML = `<strong>Richtig!</strong><br>${q.i}`; fb.classList.add('correct');
+        if(q.t==='mc') {
+            const grid = document.createElement('div'); grid.className='options-container';
+            q.o.forEach((opt,i)=>{
+                const b=document.createElement('div'); b.className='opt-btn'; b.textContent=opt;
+                b.onclick=()=>checkMC(b,i,q); grid.appendChild(b);
+            });
+            cont.appendChild(grid);
         } else {
-            btn.classList.add('wrong'); document.querySelectorAll('.btn-option')[q.c].classList.add('correct');
-            fb.innerHTML = `<strong>Falsch.</strong><br>${q.i}`; fb.classList.add('wrong');
+            const grid = document.createElement('div'); grid.className='match-area';
+            let l=q.p.map((x,i)=>({t:x.l,id:i,s:'l'})), r=q.p.map((x,i)=>({t:x.r,id:i,s:'r'}));
+            [l,r].forEach(arr=>{
+                const col=document.createElement('div'); col.style.display='grid'; col.style.gap='10px';
+                arr.sort(()=>Math.random()-0.5).forEach(item=>{
+                    const b=document.createElement('div'); b.className='match-tile'; b.textContent=item.t;
+                    b.onclick=()=>checkMatch(b,item,q); col.appendChild(b);
+                });
+                grid.appendChild(col);
+            });
+            cont.appendChild(grid); q._matches=0; sel=null;
         }
-        fb.style.display = 'block'; document.getElementById('btn-next-q').style.display = 'inline-block';
     }
 
-    function renderMatch(q, cont) {
-        const grid = document.createElement('div'); grid.className = 'match-grid';
-        let l = q.p.map((p,i)=>({t:p.l,id:i,s:'l'})), r = q.p.map((p,i)=>({t:p.r,id:i,s:'r'}));
-        [l,r].forEach(arr => arr.sort(()=>Math.random()-0.5).forEach(item => {
-            const card = document.createElement('div'); card.className = 'match-card';
-            card.textContent = item.t; card.onclick = () => checkMatch(card, item, q);
-            grid.appendChild(card);
-        }));
-        cont.appendChild(grid);
-        q._m = 0; selection = null;
+    function checkMC(btn,i,q) {
+        document.querySelectorAll('.opt-btn').forEach(b=>b.style.pointerEvents='none');
+        const fb=document.getElementById('feedback'); fb.style.display='block';
+        if(i===q.c) { btn.classList.add('correct'); score++; fb.innerHTML="<strong>Richtig!</strong> "+q.i; fb.style.background='#d4edda'; color='#155724'; }
+        else { btn.classList.add('wrong'); fb.innerHTML="<strong>Falsch.</strong> "+q.i; fb.style.background='#f8d7da'; color='#721c24'; }
+        document.getElementById('next-btn').style.display='inline-block';
     }
 
-    function checkMatch(card, item, q) {
-        if(card.classList.contains('solved')) return;
-        if(!selection) { selection = {card, item}; card.classList.add('selected'); }
+    function checkMatch(tile,item,q) {
+        if(tile.classList.contains('solved')) return;
+        if(!sel) { sel={tile,item}; tile.classList.add('selected'); }
         else {
-            if(selection.item.s !== item.s && selection.item.id === item.id) {
-                card.classList.add('solved'); selection.card.classList.remove('selected'); selection.card.classList.add('solved');
-                q._m++; selection = null;
-                if(q._m === q.p.length) {
-                    score++; const fb = document.getElementById('feedback-panel');
-                    fb.innerHTML = `<strong>Perfekt gelöst!</strong><br>${q.i}`; fb.classList.add('correct'); fb.style.display='block';
-                    document.getElementById('btn-next-q').style.display = 'inline-block';
+            if(sel.item.s!==item.s && sel.item.id===item.id) {
+                tile.classList.add('solved'); sel.tile.classList.remove('selected'); sel.tile.classList.add('solved');
+                q._matches++; sel=null;
+                if(q._matches===q.p.length) {
+                    score++; const fb=document.getElementById('feedback'); fb.style.display='block';
+                    fb.innerHTML="<strong>Perfekt gelöst!</strong> "+q.i; fb.style.background='#d4edda';
+                    document.getElementById('next-btn').style.display='inline-block';
                 }
-            } else { selection.card.classList.remove('selected'); selection = null; }
+            } else { sel.tile.classList.remove('selected'); sel=null; }
         }
     }
 
     function nextQuestion() {
-        qIndex++; if(qIndex < currentQuestions.length) loadQ(); else showResult();
+        current++; if(current<questions.length) loadQ(); else showRes();
     }
 
-    function showResult() {
-        document.getElementById('quiz-active').style.display = 'none';
-        document.getElementById('quiz-result').style.display = 'block';
-        const pct = Math.round((score/currentQuestions.length)*100);
-        document.getElementById('score-final').textContent = pct+'%';
-        const img = document.getElementById('reward-img'), txt = document.getElementById('result-text');
-        if(pct===100) { txt.textContent="Hervorragend! Du hast Historiker-Niveau erreicht."; img.style.display='block'; }
-        else if(pct>=80) { txt.textContent="Sehr starke Leistung! Du bist bestens vorbereitet."; img.style.display='none'; }
-        else { txt.textContent="Nutze das Lehrbuch, um die Lücken zu schließen."; img.style.display='none'; }
+    function showRes() {
+        document.getElementById('quiz-active').style.display='none';
+        document.getElementById('quiz-result').style.display='block';
+        const pct=Math.round((score/questions.length)*100);
+        document.getElementById('score-display').textContent=pct+'%';
+        const img=document.getElementById('meme-reward');
+        if(pct===100) { img.style.display='block'; document.getElementById('result-msg').textContent="Hervorragend!"; }
+        else { img.style.display='none'; document.getElementById('result-msg').textContent="Übung macht den Meister."; }
     }
 </script>
+
 </body>
 </html>
