@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschichte Lern-App: 1. Weltkrieg & Faschismus</title>
+    <style>
+        /* HoS-Style v2.0
+           Design-Prinzipien:
+           - "Cognitive Load" reduzieren: Viel Weißraum, klare Hierarchien.
+           - Keine Ablenkung: Fokus auf Text und Verständnis.
+           - Lehrer-Handschrift: Wirkt wie ein gut strukturiertes Skript.
+        */
+        :root {
+            --bg-body: #f0f2f5;
+            --bg-card: #ffffff;
+            --text-main: #1a1a1a;
+            --text-muted: #666;
+            --primary: #0d47a1; /* Akademisches Dunkelblau */
+            --primary-light: #e3f2fd;
+            --accent-correct: #2e7d32;
+            --accent-wrong: #c62828;
+            --border-radius: 12px;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --font-stack: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 1.4rem; font-weight: 600; }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+
+        /* --- Main Container --- */
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- Menu Grid --- */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .menu-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .menu-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+        .menu-title { font-weight: 700; font-size: 1.2rem; display: block; color: var(--primary); }
+        .menu-desc { font-size: 0.9rem; color: var(--text-muted); display: block; margin-top: 5px; }
+
+        /* --- Content Views --- */
+        .view-section {
+            display: none; /* Hidden by default */
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .active-view { display: block; }
+
+        /* --- Navigation Back Button --- */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0;
+        }
+        .back-btn:hover { color: var(--primary); }
+
+        /* --- Learning Content (Accordion) --- */
+        .topic-group { margin-bottom: 30px; }
+        .topic-title { 
+            font-size: 1.3rem; 
+            color: var(--primary); 
+            border-bottom: 2px solid var(--primary-light); 
+            padding-bottom: 8px; 
+            margin-bottom: 15px;
+        }
+
+        details {
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        summary {
+            background-color: #fafafa;
+            padding: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none; /* Hide default marker */
+            position: relative;
+        }
+        
+        summary::-webkit-details-marker { display: none; }
+        
+        summary::after {
+            content: '+';
+            position: absolute;
+            right: 20px;
+            font-weight: 300;
+            font-size: 1.5rem;
+            top: 50%;
+            transform: translateY(-55%);
+            color: var(--text-muted);
+        }
+
+        details[open] summary::after { content: '-'; }
+        details[open] summary { background-color: var(--primary-light); color: var(--primary); }
+
+        .details-content {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background-color: white;
+        }
+
+        .details-content ul { padding-left: 20px; margin: 0; }
+        .details-content li { margin-bottom: 8px; }
+        .key-term { font-weight: 600; color: #333; }
+
+        /* --- Quiz Styles --- */
+        .progress-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
+
+        .question-text { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #eee;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .option-btn.correct { background: #e8f5e9; border-color: var(--accent-correct); color: var(--accent-correct); font-weight: 600; }
+        .option-btn.wrong { background: #ffebee; border-color: var(--accent-wrong); color: var(--accent-wrong); }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 4px solid #ccc;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .feedback-box.correct { border-color: var(--accent-correct); background: #e8f5e9; }
+        .feedback-box.wrong { border-color: var(--accent-wrong); background: #ffebee; }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            display: none;
+            float: right;
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 600px) {
+            .menu-grid { grid-template-columns: 1fr; }
+            main { padding: 0 15px; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Geschichte 4. Klasse</h1>
+    <p>1. Weltkrieg & Faschismus</p>
+</header>
+
+<main>
+    <div id="start-menu" class="active-view">
+        <div class="menu-grid">
+            <div class="menu-card" onclick="showLearning()">
+                <span class="menu-icon">📖</span>
+                <span class="menu-title">Lerninhalte</span>
+                <span class="menu-desc">Wiederhole den Stoff mit dem digitalen Heft.</span>
+            </div>
+            <div class="menu-card" onclick="startQuiz()">
+                <span class="menu-icon">✍️</span>
+                <span class="menu-title">Prüfungssimulation</span>
+                <span class="menu-desc">Teste dein Wissen mit 10 Prüfungsfragen.</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="learning-view" class="view-section">
+        <button class="back-btn" onclick="goHome()">← Zurück zum Menü</button>
+        
+        <div class="topic-group">
+            <div class="topic-title">I. Der Erste Weltkrieg (1914–1918)</div>
+            
+            <details>
+                <summary>Ursachen & Ausbruch</summary>
+                <div class="details-content">
+                    <ul>
+                        <li><strong>Der Funke:</strong> Das Attentat von Sarajevo auf den österreichischen Thronfolger Franz Ferdinand war der Auslöser.</li>
+                        <li><strong>Kettenreaktion:</strong> Durch das komplizierte Bündnissystem (Mittelmächte vs. Entente) wurden fast alle europäischen Großmächte in den Krieg gezogen.</li>
+                        <li><strong>Stimmung:</strong> Anfangs herrschte große Kriegsbegeisterung ("In wenigen Wochen wieder zu Hause"), die jedoch bald umschlug.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>Kriegsverlauf & Fronten</summary>
+                <div class="details-content">
+                    <ul>
+                        <li><strong>Westfront:</strong> Hier herrschte der <em>Stellungskrieg</em>. Armeen gruben sich in Schützengräben ein. Trotz riesiger Schlachten (Verdun) bewegte sich die Front kaum.</li>
+                        <li><strong>Ostfront:</strong> Kämpfe zwischen Deutschland/Österreich-Ungarn und Russland. Hier war der Krieg beweglicher.</li>
+                        <li><strong>Wendejahr 1917:</strong>
+                            <ul>
+                                <li>Russland schied durch die Revolution aus.</li>
+                                <li>Die USA traten in den Krieg ein und brachten die Entscheidung.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>Leiden an der Heimatfront</summary>
+                <div class="details-content">
+                    <ul>
+                        <li><strong>Hunger:</strong> Durch die britische Seeblockade kamen keine Waren mehr an. Der "Steckrübenwinter" 1916/17 war besonders schlimm.</li>
+                        <li><strong>Frauenarbeit:</strong> Da Männer an der Front waren, mussten Frauen die Arbeit in Munitionsfabriken und auf Feldern übernehmen.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>Folgen & Friedensvertrag</summary>
+                <div class="details-content">
+                    <ul>
+                        <li><strong>Politik:</strong> Monarchien zerfielen (Kaiser dankte ab), Republiken entstanden.</li>
+                        <li><strong>Landkarte:</strong> Österreich-Ungarn wurde aufgelöst, neue Staaten (Tschechoslowakei, Ungarn, etc.) entstanden.</li>
+                        <li><strong>Versailler Vertrag:</strong> Deutschland bekam die alleinige Kriegsschuld und musste hohe Reparationen zahlen. Das empfanden viele als ungerecht.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+
+        <div class="topic-group">
+            <div class="topic-title">II. Faschismus & Nationalsozialismus</div>
+            
+            <details>
+                <summary>Merkmale des Faschismus</summary>
+                <div class="details-content">
+                    <p>Fast alle faschistischen Systeme (wie unter Mussolini in Italien) haben diese Kennzeichen:</p>
+                    <ul>
+                        <li><strong>Führerkult:</strong> Ein "starker Mann" bestimmt alles.</li>
+                        <li><strong>Keine Opposition:</strong> Andere Parteien und Meinungen sind verboten.</li>
+                        <li><strong>Gewalt & Militarismus:</strong> Krieg wird verherrlicht.</li>
+                        <li><strong>Propaganda:</strong> Medien (Presse, Radio) werden kontrolliert, um die Menschen zu manipulieren.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>Unterschied zum Nationalsozialismus</summary>
+                <div class="details-content">
+                    <p>Der deutsche Nationalsozialismus (Hitler) hatte alle Merkmale des Faschismus, aber ein Merkmal war besonders extrem:</p>
+                    <ul>
+                        <li><strong>Rassenideologie & Antisemitismus:</strong> Der Hass auf Juden und der Glaube an eine "überlegene Rasse" standen im Mittelpunkt.</li>
+                    </ul>
+                </div>
+            </details>
+
+            <details>
+                <summary>Hitlers Weg zur Macht</summary>
+                <div class="details-content">
+                    <ul>
+                        <li>1933 Ernennung zum Reichskanzler.</li>
+                        <li>1934 (nach Hindenburgs Tod) vereinte er die Ämter zum "Führer und Reichskanzler".</li>
+                        <li>Er nutzte das Radio ("Volksempfänger") effektiv für Propaganda.</li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="next-btn" style="display: inline-block; float: none;" onclick="startQuiz()">Jetzt Wissen testen</button>
+        </div>
+    </div>
+
+    <div id="quiz-view" class="view-section">
+        <button class="back-btn" onclick="goHome()">← Abbrechen</button>
+        
+        <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+        
+        <div id="quiz-container">
+            <div id="question-text" class="question-text">Frage lädt...</div>
+            <div id="options-container"></div>
+            
+            <div id="feedback-box" class="feedback-box"></div>
+            <button id="next-question-btn" class="next-btn" onclick="nextQuestion()">Nächste Frage</button>
+        </div>
+
+        <div id="result-container" style="display: none; text-align: center;">
+            <h2 id="result-title">Ergebnis</h2>
+            <div style="font-size: 3rem; color: var(--primary); font-weight: bold; margin: 20px 0;" id="result-score">0%</div>
+            <p id="result-msg">Nachricht</p>
+            <button class="next-btn" style="display: inline-block; float: none;" onclick="location.reload()">Neustarten</button>
+        </div>
+    </div>
+
+</main>
+
+<script>
+    // --- APP STATE ---
+    const questions = [
+        {
+            q: "Was löste die Kettenreaktion aus, die zum Ersten Weltkrieg führte?",
+            options: ["Einmarsch in Belgien", "Attentat von Sarajevo", "Versenkung der Lusitania", "Russische Revolution"],
+            correct: 1,
+            info: "Das Attentat auf Franz Ferdinand in Sarajevo aktivierte die Bündnissysteme."
+        },
+        {
+            q: "Was ist typisch für den 'Stellungskrieg' an der Westfront?",
+            options: ["Schnelle Panzerangriffe", "Bewegunglose Fronten & Schützengräben", "Reine Luftschlachten", "Seekrieg"],
+            correct: 1,
+            info: "Die Armeen gruben sich ein. Es gab kaum Geländegewinne trotz riesiger Verluste."
+        },
+        {
+            q: "Warum ist 1917 das 'Wendejahr' des Krieges?",
+            options: ["USA treten ein, Russland scheidet aus", "Attentat von Sarajevo", "Kriegsende", "Erster Panzereinsatz"],
+            correct: 0,
+            info: "Die USA brachten neue Kraft für die Entente, während Russland durch die Revolution wegfiel."
+        },
+        {
+            q: "Was bedeutete der 'Steckrübenwinter' 1916/17 für die Heimatfront?",
+            options: ["Großer Reichtum", "Hungersnot durch Seeblockade", "Frauenwahlrecht", "Zerstörte Städte"],
+            correct: 1,
+            info: "Wegen der britischen Blockade fehlten Lebensmittel, die Menschen hungerten."
+        },
+        {
+            q: "Was verärgerte viele Deutsche am Versailler Vertrag am meisten?",
+            options: ["Gründung des Völkerbundes", "Die alleinige Kriegsschuld", "Demokratie-Pflicht", "Verlust der Flotte"],
+            correct: 1,
+            info: "Artikel 231 wies Deutschland die Alleinschuld zu, was als ungerecht empfunden wurde."
+        },
+        {
+            q: "Welches Merkmal gehört NICHT zum Faschismus?",
+            options: ["Führerkult", "Freie Presse & Opposition", "Militarismus", "Propaganda"],
+            correct: 1,
+            info: "Im Faschismus werden andere Meinungen und Parteien verboten."
+        },
+        {
+            q: "Was unterscheidet den NS vom italienischen Faschismus am stärksten?",
+            options: ["Ablehnung der Demokratie", "Rassenideologie & Antisemitismus", "Propaganda", "Nationalismus"],
+            correct: 1,
+            info: "Der biologische Rassismus und Judenhass waren der Kern der NS-Ideologie."
+        },
+        {
+            q: "Welches Amt übernahm Hitler 1934 nach Hindenburgs Tod?",
+            options: ["Kaiser", "Führer und Reichskanzler", "Außenminister", "General"],
+            correct: 1,
+            info: "Er vereinigte die Ämter und hatte damit absolute Macht."
+        },
+        {
+            q: "Welches Medium brachten die Nazis in jedes Wohnzimmer?",
+            options: ["Fernsehen", "Volksempfänger (Radio)", "Internet", "Zeitung"],
+            correct: 1,
+            info: "Das Radio war das billigste und effektivste Mittel zur Massenbeeinflussung."
+        },
+        {
+            q: "Was geschah mit Österreich-Ungarn nach 1918?",
+            options: ["Wurde Teil Deutschlands", "Zerfall in Nationalstaaten", "Blieb Großmacht", "Wurde zur Türkei"],
+            correct: 1,
+            info: "Der Vielvölkerstaat wurde aufgelöst, Österreich wurde ein Kleinstaat."
+        }
+    ];
+
+    let currentQ = 0;
+    let score = 0;
+
+    // --- NAVIGATION FUNCTIONS ---
+    function goHome() {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+        document.getElementById('start-menu').classList.add('active-view');
+    }
+
+    function showLearning() {
+        document.getElementById('start-menu').classList.remove('active-view');
+        document.getElementById('learning-view').classList.add('active-view');
+        window.scrollTo(0,0);
+    }
+
+    function startQuiz() {
+        currentQ = 0;
+        score = 0;
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-view'));
+        document.getElementById('quiz-view').classList.add('active-view');
+        document.getElementById('quiz-container').style.display = 'block';
+        document.getElementById('result-container').style.display = 'none';
+        renderQuestion();
+    }
+
+    // --- QUIZ LOGIC ---
+    function renderQuestion() {
+        const q = questions[currentQ];
+        const total = questions.length;
+        
+        // Progress
+        document.getElementById('progress-fill').style.width = `${(currentQ / total) * 100}%`;
+        
+        // Reset UI
+        document.getElementById('feedback-box').style.display = 'none';
+        document.getElementById('feedback-box').className = 'feedback-box';
+        document.getElementById('next-question-btn').style.display = 'none';
+        
+        // Text
+        document.getElementById('question-text').textContent = `${currentQ + 1}. ${q.q}`;
+        
+        // Options
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btn) {
+        const q = questions[currentQ];
+        const allBtns = document.getElementById('options-container').children;
+        const feedback = document.getElementById('feedback-box');
+        
+        // Disable all
+        for(let b of allBtns) b.disabled = true;
+
+        if(selectedIndex === q.correct) {
+            score++;
+            btn.classList.add('correct');
+            feedback.textContent = "Richtig! " + q.info;
+            feedback.classList.add('correct');
+        } else {
+            btn.classList.add('wrong');
+            allBtns[q.correct].classList.add('correct');
+            feedback.textContent = "Leider falsch. " + q.info;
+            feedback.classList.add('wrong');
+        }
+
+        feedback.style.display = 'block';
+        document.getElementById('next-question-btn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) {
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('result-container').style.display = 'block';
+        document.getElementById('progress-fill').style.width = '100%';
+        
+        const percent = Math.round((score / questions.length) * 100);
+        document.getElementById('result-score').textContent = percent + "%";
+        
+        let msg = "";
+        if(percent === 100) msg = "Perfekt! Du bist ein Profi.";
+        else if(percent > 80) msg = "Sehr gut gemacht!";
+        else if(percent > 50) msg = "Gute Basis, lies dir die Lerninhalte nochmal durch.";
+        else msg = "Nutze den Lernmodus, um dich zu verbessern.";
+        
+        document.getElementById('result-msg').textContent = msg;
+    }
+</script>
+
+</body>
+</html>
