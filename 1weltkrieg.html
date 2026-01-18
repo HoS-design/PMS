@@ -14,24 +14,32 @@
     */
 
     :root{
-      --primary:#0f172a;
-      --accent:#0284c7;
-      --highlight:#ea580c;
-      --success:#16a34a;
-      --error:#dc2626;
-
-      --bg-sidebar:#f8fafc;
-      --bg-content:#ffffff;
-      --bg-app:#f1f5f9;
-
-      --text-main:#1e293b;
-      --text-muted:#64748b;
-
-      --font-serif:'Georgia','Times New Roman',serif;
-      --font-sans:'Segoe UI',Roboto,system-ui,-apple-system,Arial,sans-serif;
-
-      --shadow-soft:0 12px 40px rgba(2,6,23,.06);
+      --subject-color:#10b981;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --accent-soft:#eff6ff;
+      --success:#10b981;
+      --danger:#ef4444;
       --radius:18px;
+      --shadow-soft:0 12px 40px rgba(2,6,23,.06);
+      --font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-serif:var(--font-sans);
+
+      --primary:var(--ink);
+      --highlight:#f59e0b;
+      --error:var(--danger);
+
+      --bg-sidebar:var(--surface);
+      --bg-content:var(--surface);
+      --bg-app:var(--bg);
+
+      --text-main:var(--ink);
+      --text-muted:var(--muted);
+
       --max-reading:980px;
     }
 
@@ -40,18 +48,19 @@
 
     body{
       margin:0;
-      font-family:var(--font-serif);
+      font-family:var(--font-sans);
       color:var(--text-main);
       background:var(--bg-app);
       display:flex;
       overflow:hidden; /* Laptop: App-Frame, Scroll nur in main */
+      padding-top:68px;
     }
 
     /* --- SIDEBAR --- */
     aside{
       width:340px;
       background:var(--bg-sidebar);
-      border-right:1px solid #e2e8f0;
+      border-right:1px solid var(--line);
       display:flex;
       flex-direction:column;
       flex-shrink:0;
@@ -59,7 +68,7 @@
     }
     .brand-header{
       padding:28px 26px;
-      background:#fff;
+      background:var(--surface);
       border-bottom:2px solid var(--accent);
       text-align:center;
       position:sticky;
@@ -91,7 +100,7 @@
       gap:10px;
       user-select:none;
     }
-    .nav-item:hover:not(.locked){ background:#e2e8f0; color:var(--primary); }
+    .nav-item:hover:not(.locked){ background:var(--accent-soft); color:var(--primary); }
     .nav-item.active{ background:var(--primary); color:#fff; }
     .nav-item.locked{
       opacity:.4;
@@ -100,10 +109,10 @@
     }
     .lock-badge{
       font-size:.85rem;
-      background:#cbd5e1;
+      background:var(--line);
       padding:2px 8px;
       border-radius:999px;
-      color:#475569;
+      color:var(--muted);
       flex-shrink:0;
     }
 
@@ -516,10 +525,44 @@
       aside{ width:100%; }
       main{ padding:38px 20px; overflow:visible; }
     }
-  </style>
+  
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Geschichte</div>
+  </div>
+</header>
+
   <aside>
     <div class="brand-header"><h1>Geschichte Digital</h1></div>
     <ul class="nav-list">

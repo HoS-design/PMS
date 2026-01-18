@@ -7,18 +7,28 @@
 
 <style>
 :root{
-  --bg:#0b1220;
-  --card:#121a33;
-  --text:#f3f6ff;
-  --muted:#b8c2ff;
-  --ok:#3ddc97;
-  --no:#ff6b6b;
+      --subject-color:#ef4444;
+  --bg:#f2f4f7;
+  --surface:#ffffff;
+  --ink:#1e293b;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --accent:#3b82f6;
+  --accent-soft:#eff6ff;
+  --success:#10b981;
+  --danger:#ef4444;
+  --radius:16px;
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+  --card:var(--surface);
+  --text:var(--ink);
+  --ok:var(--success);
+  --no:var(--danger);
 }
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:linear-gradient(160deg,#0b1220,#070d1a);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
   color:var(--text);
 }
 header{
@@ -39,7 +49,9 @@ header{
   display:inline-block;
   padding:6px 12px;
   border-radius:999px;
-  background:rgba(255,255,255,.08);
+  background:var(--accent-soft);
+  border:1px solid var(--line);
+  color:var(--ink);
   margin-bottom:10px;
 }
 main{
@@ -51,29 +63,35 @@ main{
   background:var(--card);
   border-radius:18px;
   padding:16px;
+  border:1px solid var(--line);
+  box-shadow:var(--shadow-md);
 }
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .btn{
   padding:10px 16px;
   border-radius:14px;
-  border:none;
+  border:1px solid var(--accent);
   font-weight:700;
   cursor:pointer;
-  background:#2a3cff;
+  background:var(--accent);
   color:white;
 }
-.btn.secondary{background:rgba(255,255,255,.12)}
+.btn.secondary{
+  background:var(--surface);
+  color:var(--ink);
+  border-color:var(--line);
+}
 .option{
   padding:10px;
   border-radius:12px;
-  border:1px solid rgba(255,255,255,.2);
-  background:rgba(0,0,0,.2);
-  color:white;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--ink);
   cursor:pointer;
   text-align:left;
 }
-.option.ok{background:rgba(61,220,151,.35)}
-.option.no{background:rgba(255,107,107,.35)}
+.option.ok{background:#ecfdf5;border-color:#a7f3d0}
+.option.no{background:#fef2f2;border-color:#fecaca}
 #question{font-size:1.15rem;margin:14px 0 12px}
 #answers{display:grid;gap:8px}
 #resultBox{
@@ -81,14 +99,16 @@ main{
   margin-top:14px;
   padding:12px;
   border-radius:14px;
-  border:1px dashed rgba(255,255,255,.25);
+  border:1px dashed var(--line);
+  background:var(--surface);
 }
 .mini{
   display:none;
   margin-top:16px;
   padding:12px;
   border-radius:16px;
-  border:1px solid rgba(255,255,255,.2);
+  border:1px solid var(--line);
+  background:var(--surface);
 }
 .miniBox{
   margin:10px 0;
@@ -98,17 +118,46 @@ main{
   align-items:center;
   justify-content:center;
   border-radius:16px;
-  border:1px solid rgba(255,255,255,.25);
+  border:1px solid var(--line);
   cursor:pointer;
   user-select:none;
 }
-.miniBox.wait{background:rgba(0,0,0,.35)}
-.miniBox.go{background:rgba(255,0,0,.45)}
+.miniBox.wait{background:var(--accent-soft)}
+.miniBox.go{background:#fee2e2}
 .small{color:var(--muted);font-size:.95rem}
+
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
 </style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
 <header>
   <img src="chatistthisreal.png"
        onerror="this.onerror=null;this.src='chatisthisreal.png';"

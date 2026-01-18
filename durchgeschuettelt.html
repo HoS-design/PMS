@@ -7,13 +7,17 @@
 
 <style>
 :root{
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --ink:#1f2937;
-  --muted:#6b7280;
-  --accent:#1e40af;
-  --ok:#16a34a;
-  --bad:#dc2626;
+      --subject-color:#ef4444;
+  --bg:#f2f4f7;
+  --surface:#ffffff;
+  --ink:#1e293b;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --accent:#3b82f6;
+  --accent-soft:#eff6ff;
+  --ok:#10b981;
+  --bad:#ef4444;
+  --card:var(--surface);
 }
 
 *{box-sizing:border-box}
@@ -46,6 +50,7 @@ header p{
   background:var(--card);
   border-radius:14px;
   padding:20px;
+  border:1px solid var(--line);
   box-shadow:0 10px 30px rgba(0,0,0,.06);
 }
 
@@ -62,7 +67,7 @@ header p{
 .progress{
   margin-bottom:12px;
   height:8px;
-  background:#e5e7eb;
+  background:var(--line);
   border-radius:999px;
   overflow:hidden;
 }
@@ -76,7 +81,7 @@ header p{
 .meaning{
   padding:14px;
   border-left:4px solid var(--accent);
-  background:#f1f5f9;
+  background:var(--accent-soft);
   margin-bottom:16px;
 }
 
@@ -97,13 +102,13 @@ header p{
 }
 
 .tile{
-  background:#e5e7eb;
+  background:var(--line);
   cursor:grab;
 }
 
 .slot{
-  background:#f9fafb;
-  border:2px dashed #d1d5db;
+  background:var(--surface);
+  border:2px dashed var(--line);
 }
 
 .controls{
@@ -115,7 +120,7 @@ header p{
 button{
   flex:1;
   padding:10px;
-  border:none;
+  border:1px solid var(--accent);
   border-radius:10px;
   background:var(--accent);
   color:white;
@@ -140,10 +145,39 @@ footer{
   color:var(--muted);
   font-size:.8rem;
 }
+
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
 </style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
 <main>
 
 <header>

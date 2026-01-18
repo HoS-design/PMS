@@ -6,21 +6,27 @@
   <title>Argument-Bausteine – Drag & Drop (HoS)</title>
   <style>
     :root{
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --line:#d1d5db;
-      --bg:#0b1220;
-      --bg2:#101a33;
-      --accent:#2563eb;
+      --subject-color:#ef4444;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --accent-soft:#eff6ff;
       --ok:#10b981;
       --bad:#ef4444;
       --warn:#f59e0b;
+      --radius:16px;
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+      --font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      background:radial-gradient(1000px 600px at 20% 0%, var(--bg2) 0%, var(--bg) 60%);
+      font-family:var(--font-sans);
+      background:var(--bg);
+      color:var(--ink);
       min-height:100vh;
       padding:18px;
       display:flex;
@@ -37,17 +43,17 @@
     .brand{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
     .meme{
       width:92px;height:92px;object-fit:cover;border-radius:18px;
-      border:1px solid rgba(255,255,255,.18);
-      box-shadow:0 10px 25px rgba(0,0,0,.25);
-      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      background:var(--bg);
     }
-    h1{margin:0;color:#e8eefc}
-    p{margin:6px 0 0;color:rgba(232,238,252,.72);line-height:1.35}
+    h1{margin:0;color:var(--ink)}
+    p{margin:6px 0 0;color:var(--muted);line-height:1.35}
     .badge{
       padding:10px 12px;border-radius:999px;
-      background:rgba(37,99,235,.18);
-      border:1px solid rgba(37,99,235,.35);
-      color:#e8eefc;font-size:12px;font-weight:800;
+      background:var(--accent-soft);
+      border:1px solid var(--line);
+      color:var(--ink);font-size:12px;font-weight:800;
       white-space:nowrap;
     }
 
@@ -55,18 +61,19 @@
     @media(max-width:900px){.grid{grid-template-columns:1fr}}
 
     .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.85));
+      background:var(--surface);
       border-radius:18px;
       padding:16px;
-      box-shadow:0 16px 40px rgba(0,0,0,.24);
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
       overflow:hidden;
     }
     .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.4}
 
     .metaRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
     .pill{
-      border:1px solid rgba(31,41,55,.15);
-      background:rgba(255,255,255,.7);
+      border:1px solid var(--line);
+      background:var(--bg);
       padding:7px 10px;
       border-radius:999px;
       font-size:12px;
@@ -75,8 +82,8 @@
     .pill b{color:var(--ink)}
     .kbd{
       font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-      border:1px solid rgba(31,41,55,.15);
-      background:rgba(255,255,255,.8);
+      border:1px solid var(--line);
+      background:var(--bg);
       padding:2px 6px;
       border-radius:8px;
       color:var(--ink);
@@ -84,19 +91,19 @@
     }
 
     .dropzone{
-      border:2px dashed rgba(107,114,128,.35);
+      border:2px dashed var(--line);
       border-radius:16px;
       padding:12px;
       margin-top:10px;
       display:flex;
       gap:10px;
       align-items:center;
-      background:rgba(255,255,255,.65);
+      background:var(--bg);
       min-height:62px;
     }
     .dropzone.over{
-      border-color:rgba(37,99,235,.75);
-      background:rgba(37,99,235,.08);
+      border-color:var(--accent);
+      background:var(--accent-soft);
     }
     .slotlabel{
       width:170px;
@@ -116,11 +123,11 @@
       margin-top:12px;
     }
     .tile{
-      background:white;
+      background:var(--surface);
       border:1px solid var(--line);
       border-radius:14px;
       padding:10px 12px;
-      box-shadow:0 6px 18px rgba(0,0,0,.08);
+      box-shadow:var(--shadow-md);
       cursor:grab;
       user-select:none;
       line-height:1.35;
@@ -132,22 +139,22 @@
     button{
       padding:10px 12px;
       border-radius:12px;
-      border:none;
+      border:1px solid var(--accent);
       font-weight:900;
       cursor:pointer;
       background:var(--accent);
       color:white;
     }
     button.secondary{
-      background:transparent;
-      color:#1f2937;
+      background:var(--surface);
+      color:var(--ink);
       border:1px solid var(--line);
     }
     button:active{transform:translateY(1px)}
 
     .msg{
       margin-top:12px;padding:10px 12px;border-radius:14px;
-      font-size:13px;line-height:1.4;border:1px solid rgba(31,41,55,.12);
+      font-size:13px;line-height:1.4;border:1px solid var(--line);
       display:none;
     }
     .msg.ok{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35);display:block}
@@ -155,9 +162,38 @@
     .msg.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);display:block}
 
     .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
-  </style>
+  
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 </head>
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
 <div class="app">
 
 <header>

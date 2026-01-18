@@ -6,28 +6,31 @@
   <title>Zeitformen-Quiz 🎉</title>
   <style>
     :root{
-      --bg1:#0b1024;
-      --bg2:#2a0f3c;
-      --card: rgba(255,255,255,.10);
-      --border: rgba(255,255,255,.18);
-      --text:#f4f6ff;
-      --muted:#cfd6ff;
-      --a:#ff7ad9;
-      --b:#7cf7c6;
-      --c:#7db7ff;
-      --d:#ffd166;
-      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --subject-color:#ef4444;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --accent-soft:#eff6ff;
+      --success:#10b981;
+      --danger:#ef4444;
+      --shadow: 0 18px 50px rgba(0,0,0,.12);
+      --card: var(--surface);
+      --border: var(--line);
+      --text: var(--ink);
+      --a: var(--accent);
+      --b: var(--success);
+      --c: #38bdf8;
+      --d: #f59e0b;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
-      background:
-        radial-gradient(900px 600px at 10% 10%, rgba(255,122,217,.22), transparent 55%),
-        radial-gradient(900px 650px at 90% 10%, rgba(124,247,198,.18), transparent 55%),
-        radial-gradient(900px 650px at 65% 90%, rgba(125,183,255,.16), transparent 55%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
+      background:var(--bg);
       min-height:100vh;
       display:flex;
       align-items:center;
@@ -40,7 +43,7 @@
       gap:14px;
     }
     header{
-      background: linear-gradient(90deg, rgba(255,122,217,.18), rgba(124,247,198,.12), rgba(125,183,255,.14));
+      background: var(--surface);
       border:1px solid var(--border);
       border-radius:22px;
       padding:16px 18px;
@@ -52,8 +55,8 @@
       align-items:center;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.18);
+      border:1px solid var(--border);
+      background: var(--accent-soft);
       color:var(--muted);
       font-size:.95rem;
     }
@@ -63,7 +66,7 @@
     }
     p{margin:0;color:var(--muted);max-width:75ch;line-height:1.5}
     .card{
-      background: rgba(255,255,255,.08);
+      background: var(--card);
       border:1px solid var(--border);
       border-radius:22px;
       padding:16px;
@@ -74,9 +77,7 @@
     .card::before{
       content:"";
       position:absolute; inset:0;
-      background:
-        radial-gradient(500px 220px at 20% 0%, rgba(255,209,102,.12), transparent 60%),
-        radial-gradient(500px 220px at 90% 0%, rgba(255,122,217,.10), transparent 60%);
+      background: linear-gradient(180deg, rgba(59,130,246,.08), rgba(255,255,255,0));
       pointer-events:none;
     }
     .card > *{position:relative}
@@ -94,8 +95,8 @@
       gap:.45rem;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.22);
-      background: rgba(0,0,0,.16);
+      border:1px solid var(--border);
+      background: var(--accent-soft);
       color:var(--text);
       font-size:.95rem;
       white-space:nowrap;
@@ -113,18 +114,18 @@
       width:100%;
       text-align:left;
       border-radius:16px;
-      border:1px solid rgba(255,255,255,.18);
+      border:1px solid var(--border);
       padding:12px 12px;
-      background: rgba(0,0,0,.18);
+      background: var(--surface);
       color:var(--text);
       cursor:pointer;
       transition: transform .12s ease, background .12s ease;
       font-size:1rem;
     }
-    button.option:hover{ transform: translateY(-1px); background: rgba(255,255,255,.10); }
+    button.option:hover{ transform: translateY(-1px); background: var(--accent-soft); }
     button.option[disabled]{opacity:.75; cursor:not-allowed; transform:none}
-    .ok{ outline:2px solid rgba(124,247,198,.7); }
-    .no{ outline:2px solid rgba(255,122,217,.65); }
+    .ok{ outline:2px solid rgba(16,185,129,.55); }
+    .no{ outline:2px solid rgba(239,68,68,.55); }
 
     .controls{
       display:flex; gap:10px; flex-wrap:wrap;
@@ -133,19 +134,19 @@
       align-items:center;
     }
     .btn{
-      border:0;
+      border:1px solid var(--accent);
       padding:10px 14px;
       border-radius:14px;
       cursor:pointer;
       font-weight:700;
-      color:#0b1024;
-      background: linear-gradient(90deg, var(--b), var(--d));
-      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+      color:#fff;
+      background: var(--accent);
+      box-shadow: 0 10px 24px rgba(15,23,42,.12);
     }
     .btn.secondary{
-      background: rgba(0,0,0,.18);
+      background: var(--surface);
       color:var(--text);
-      border:1px solid rgba(255,255,255,.22);
+      border:1px solid var(--border);
       font-weight:650;
     }
     .hint{
@@ -157,18 +158,18 @@
       margin-top:14px;
       padding:12px;
       border-radius:16px;
-      border:1px dashed rgba(255,255,255,.25);
-      background: linear-gradient(90deg, rgba(125,183,255,.12), rgba(124,247,198,.10), rgba(255,209,102,.10));
+      border:1px dashed var(--border);
+      background: var(--accent-soft);
     }
-    .result strong{ color: var(--d); }
+    .result strong{ color: var(--accent); }
     .tiny{
       font-size:.9rem; color:var(--muted);
     }
     .progress{
       height:10px;
       border-radius:999px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.18);
+      border:1px solid var(--border);
+      background: var(--bg);
       overflow:hidden;
       width:min(360px, 100%);
     }
@@ -178,10 +179,39 @@
       background: linear-gradient(90deg, var(--a), var(--c), var(--b), var(--d));
       transition: width .25s ease;
     }
-  </style>
+  
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
   <div class="wrap">
     <header>
       <span class="badge">🎉 Zeitformen-Quiz • HoS • „Lernen mit Wupp!“</span>

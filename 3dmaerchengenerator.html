@@ -14,6 +14,7 @@
     </script>
     <style>
         :root {
+            --subject-color:#ef4444;
             /* -- HoS Light Theme -- */
             --bg: #f2f4f7;
             --surface: #ffffff;
@@ -50,7 +51,7 @@
         .logo-img { width:48px; height:48px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
         .badge-main {
             display:inline-flex; align-items:center;
-            background: var(--ink); color: white;
+            background: var(--subject-color); color: white;
             font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
             padding:3px 8px; border-radius:99px; margin-bottom:4px;
         }
@@ -121,16 +122,18 @@
             #results-sidebar { width: 100%; height: 40%; order: 2; border-left: none; border-top: 1px solid var(--line); }
             #canvas-container { height: 60%; order: 1; }
         }
-    </style>
+
+</style>
 </head>
 <body>
+
     <div id="loading-overlay">Lade Märchenwelt...</div>
 
     <header id="app-header">
         <div class="brand-row">
             <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
             <div class="brand-title">
-                <div class="badge-main">HoS Creative</div>
+                <div class="badge-main">Deutsch</div>
                 <h1>Märchen-Generator 3D</h1>
             </div>
         </div>

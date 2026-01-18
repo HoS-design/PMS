@@ -6,21 +6,22 @@
   <title>HoS · Satz-Invaders</title>
   <style>
     :root{
-      --ink:#e7eefc; --muted:#b8c2dd; --line:rgba(255,255,255,.14);
-      --shadow:0 24px 80px rgba(0,0,0,.50);
-      --accent:#66ccff; --accent2:#7c3aed; --accent3:#22c55e;
-      --good:#9affc8; --bad:#ff7b7b;
+      --subject-color:#ef4444;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --shadow:0 24px 80px rgba(0,0,0,.12);
+      --accent:#3b82f6; --accent2:#7c3aed; --accent3:#22c55e;
+      --good:#10b981; --bad:#ef4444;
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
     }
     *{box-sizing:border-box}
     body{
       margin:0; height:100vh; overflow:hidden; font-family:var(--sans); color:var(--ink);
-      background:
-        radial-gradient(1200px 800px at 15% 10%, rgba(124,58,237,.22), transparent 60%),
-        radial-gradient(1000px 700px at 85% 15%, rgba(102,204,255,.18), transparent 60%),
-        radial-gradient(900px 600px at 50% 120%, rgba(34,197,94,.12), transparent 55%),
-        #050a12;
+      background:var(--bg);
     }
     canvas{display:block;width:100%;height:100%}
 
@@ -30,25 +31,25 @@
       pointer-events:auto;
       display:inline-flex; align-items:center; gap:10px; flex-wrap:wrap;
       padding:10px 12px; border-radius:999px; border:1px solid var(--line);
-      background: rgba(0,0,0,.22); backdrop-filter: blur(10px);
+      background: var(--surface); backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
       font-size:13px; color:var(--muted);
     }
     .pill b{color:var(--ink)}
     .btn{
       pointer-events:auto;
-      appearance:none; border:1px solid var(--line); background: rgba(255,255,255,.06);
+      appearance:none; border:1px solid var(--line); background: var(--surface);
       color:var(--ink); padding:10px 12px; border-radius:14px; cursor:pointer;
       font-size:13px; box-shadow: 0 12px 35px rgba(0,0,0,.25);
     }
-    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn:hover{ background: var(--bg); border-color: var(--line); }
 
     .bottom{margin-top:auto; display:flex; justify-content:center;}
     .card{
       pointer-events:auto;
       width:min(1100px, calc(100vw - 24px));
       border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
+      background: var(--surface);
       box-shadow: var(--shadow);
       border-radius:22px;
       padding:12px 14px;
@@ -59,20 +60,20 @@
     .hint{margin:0; font-size:12px; color:var(--muted); line-height:1.45;}
     .kbd{
       font-family:var(--mono); font-size:11px; padding:4px 6px; border-radius:10px;
-      border:1px solid var(--line); background: rgba(0,0,0,.22); color:var(--ink);
+      border:1px solid var(--line); background: var(--bg); color:var(--ink);
     }
-    .bar{height:10px; border-radius:999px; border:1px solid var(--line); background: rgba(0,0,0,.18); overflow:hidden; margin-top:10px;}
-    .fill{height:100%; width:0%; background: linear-gradient(90deg, rgba(102,204,255,.85), rgba(124,58,237,.85));}
+    .bar{height:10px; border-radius:999px; border:1px solid var(--line); background: var(--bg); overflow:hidden; margin-top:10px;}
+    .fill{height:100%; width:0%; background: linear-gradient(90deg, var(--accent), var(--accent2));}
 
     .overlay{
       position:fixed; inset:0; display:grid; place-items:center;
-      background: rgba(0,0,0,.45); backdrop-filter: blur(10px);
+      background: rgba(15,23,42,.12); backdrop-filter: blur(10px);
     }
     .panel{
       width:min(900px, calc(100vw - 24px));
       border:1px solid var(--line);
       border-radius:26px;
-      background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.06));
+      background: var(--surface);
       box-shadow: var(--shadow);
       padding:18px 18px 16px;
     }
@@ -80,7 +81,7 @@
       display:inline-flex; align-items:center; gap:10px;
       padding:8px 10px; border-radius:999px;
       border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
+      background: var(--bg);
       color:var(--muted); font-size:12px;
     }
     .panelHead{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px;}
@@ -90,7 +91,7 @@
     @media(max-width:760px){ .grid2{grid-template-columns:1fr} }
     .note{
       border:1px solid var(--line);
-      background: rgba(0,0,0,.18);
+      background: var(--bg);
       border-radius:18px;
       padding:12px;
       color:var(--muted);
@@ -101,17 +102,51 @@
     .flash{
       position:fixed; left:50%; top:14px; transform:translateX(-50%);
       padding:10px 12px; border-radius:14px; border:1px solid var(--line);
-      background: rgba(0,0,0,.35); color:var(--ink); font-size:13px; box-shadow: var(--shadow);
+      background: var(--surface); color:var(--ink); font-size:13px; box-shadow: var(--shadow);
       opacity:0; pointer-events:none; transition: opacity .15s ease, transform .15s ease;
       backdrop-filter: blur(10px);
     }
     .flash.show{opacity:1; transform:translateX(-50%) translateY(-2px);}
     .good{color:var(--good)}
     .bad{color:var(--bad)}
-  </style>
+  
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
   <canvas id="game"></canvas>
 
   <div class="hud">
