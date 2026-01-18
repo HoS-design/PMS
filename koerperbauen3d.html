@@ -7,12 +7,25 @@
 
   <style>
     :root{
-      --ink:#1f2937; --muted:#6b7280; --line:#d1d5db; --soft:#f8fafc;
-      --card:#ffffff; --accent:#2563eb; --good:#10b981; --bad:#ef4444;
-      --shadow:0 10px 30px rgba(0,0,0,.08); --radius:18px;
+      --subject-color:#3b82f6;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --accent-soft:#eff6ff;
+      --success:#10b981;
+      --danger:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:18px;
+      --soft:var(--accent-soft);
+      --card:var(--surface);
+      --good:var(--success);
+      --bad:var(--danger);
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff,#f7fafc)}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
     header{padding:18px 16px 10px;max-width:1200px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
     .meme{width:78px;height:78px;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
     .titlewrap{flex:1;min-width:240px}
@@ -60,10 +73,39 @@
     #err{display:none;position:fixed;inset:0;background:rgba(255,255,255,.98);z-index:9999;padding:18px}
     #err h3{margin:0 0 8px}
     #err pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;max-width:1000px}
-  </style>
+  
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Mathe</div>
+  </div>
+</header>
+
 <div id="err">
   <h3>⚠️ Die 3D-App konnte nicht starten.</h3>
   <p>Unten steht die genaue Fehlermeldung (hilft beim Debuggen):</p>

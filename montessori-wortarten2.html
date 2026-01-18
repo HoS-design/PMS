@@ -7,14 +7,15 @@
   
   <style>
     :root{
+      --subject-color:#ef4444;
       /* Base (Durchgeschüttelt-Optik) */
-      --bg:#f8fafc;
+      --bg:#f2f4f7;
       --card:#ffffff;
-      --ink:#1f2937;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --accent:#1e40af;
-      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
       --radius:14px;
 
       /* Montessori-Farben (beibehalten) */
@@ -28,8 +29,8 @@
       --conj:#ec4899;         /* Konjunktion: rosa */
       --interj:#fbbf24;       /* Interjektion: gold */
 
-      --ok:#16a34a;
-      --bad:#dc2626;
+      --ok:#10b981;
+      --bad:#ef4444;
       --warn:#f59e0b;
 
       --focus: rgba(30,64,175,.25);
@@ -320,11 +321,40 @@
       color:var(--muted);
       font-size:13px;
     }
-  </style>
+  
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
 
 </head>
 
 <body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
   <div class="wrap">
     <header>
       <div class="brand">
