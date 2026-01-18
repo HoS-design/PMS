@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zeitformen-Quiz 🎉</title>
+  <title>Zeitformen-Quiz • HoS</title>
   <style>
     :root{
       --subject-color:#ef4444;
@@ -17,9 +17,7 @@
       --success:#10b981;
       --danger:#ef4444;
       --shadow: 0 18px 50px rgba(0,0,0,.12);
-      --card: var(--surface);
-      --border: var(--line);
-      --text: var(--ink);
+      --radius:22px;
       --a: var(--accent);
       --b: var(--success);
       --c: #38bdf8;
@@ -29,25 +27,54 @@
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--text);
+      color:var(--ink);
       background:var(--bg);
       min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
+      padding:22px;
     }
     .wrap{
       width:min(980px, 100%);
+      margin:0 auto;
       display:grid;
       gap:14px;
     }
-    header{
-      background: var(--surface);
-      border:1px solid var(--border);
-      border-radius:22px;
-      padding:16px 18px;
-      box-shadow: var(--shadow);
+
+    /* HoS Hero Header (wie Speedrunde-Ziel) */
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:18px;
+      align-items:start;
+      padding:10px 6px 6px;
+      margin:4px 0 6px;
+    }
+    .minirow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .mini-logo{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      object-fit:cover;
+    }
+    .badge-main{
+      display:inline-flex;
+      align-items:center;
+      background: var(--subject-color);
+      color: #fff;
+      font-size:10px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.04);
+      white-space:nowrap;
     }
     .badge{
       display:inline-flex;
@@ -55,20 +82,44 @@
       align-items:center;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid var(--border);
+      border:1px solid var(--line);
       background: var(--accent-soft);
       color:var(--muted);
       font-size:.95rem;
+      white-space:nowrap;
     }
-    h1{
-      margin:10px 0 6px;
-      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    .hero-title{
+      margin:0;
+      font-size: clamp(28px, 3.2vw, 40px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
     }
-    p{margin:0;color:var(--muted);max-width:75ch;line-height:1.5}
+    .hero-sub{
+      margin:10px 0 0;
+      color:var(--muted);
+      max-width:75ch;
+      line-height:1.5;
+      font-size:15px;
+    }
+    .hero-sticker{
+      width:110px;
+      height:auto;
+      border-radius:14px;
+      transform: rotate(-6deg);
+      opacity:.95;
+      justify-self:end;
+      align-self:start;
+    }
+    @media (max-width: 720px){
+      .hero{ grid-template-columns: 1fr; }
+      .hero-sticker{ justify-self:start; width:96px; transform: rotate(-4deg); }
+    }
+
+    /* Card styles (aus deiner Datei, leicht bereinigt) */
     .card{
-      background: var(--card);
-      border:1px solid var(--border);
-      border-radius:22px;
+      background: var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
       padding:16px;
       box-shadow: var(--shadow);
       position:relative;
@@ -81,6 +132,7 @@
       pointer-events:none;
     }
     .card > *{position:relative}
+
     .toprow{
       display:flex;
       justify-content:space-between;
@@ -95,29 +147,23 @@
       gap:.45rem;
       padding:6px 10px;
       border-radius:999px;
-      border:1px solid var(--border);
+      border:1px solid var(--line);
       background: var(--accent-soft);
-      color:var(--text);
+      color:var(--ink);
       font-size:.95rem;
       white-space:nowrap;
     }
-    .q{
-      margin:10px 0 0;
-      font-size:1.05rem;
-    }
-    .answers{
-      margin-top:12px;
-      display:grid;
-      gap:10px;
-    }
+    .q{ margin:10px 0 0; font-size:1.05rem; }
+    .answers{ margin-top:12px; display:grid; gap:10px; }
+
     button.option{
       width:100%;
       text-align:left;
       border-radius:16px;
-      border:1px solid var(--border);
+      border:1px solid var(--line);
       padding:12px 12px;
       background: var(--surface);
-      color:var(--text);
+      color:var(--ink);
       cursor:pointer;
       transition: transform .12s ease, background .12s ease;
       font-size:1rem;
@@ -145,30 +191,25 @@
     }
     .btn.secondary{
       background: var(--surface);
-      color:var(--text);
-      border:1px solid var(--border);
+      color:var(--ink);
+      border:1px solid var(--line);
       font-weight:650;
     }
-    .hint{
-      color:var(--muted);
-      font-size:.95rem;
-    }
+    .hint{ color:var(--muted); font-size:.95rem; }
     .result{
       display:none;
       margin-top:14px;
       padding:12px;
       border-radius:16px;
-      border:1px dashed var(--border);
+      border:1px dashed var(--line);
       background: var(--accent-soft);
     }
     .result strong{ color: var(--accent); }
-    .tiny{
-      font-size:.9rem; color:var(--muted);
-    }
+    .tiny{ font-size:.9rem; color:var(--muted); }
     .progress{
       height:10px;
       border-radius:999px;
-      border:1px solid var(--border);
+      border:1px solid var(--line);
       background: var(--bg);
       overflow:hidden;
       width:min(360px, 100%);
@@ -179,44 +220,25 @@
       background: linear-gradient(90deg, var(--a), var(--c), var(--b), var(--d));
       transition: width .25s ease;
     }
-  
-    .app-header {
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
-    }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
-    .app-header .badge-main {
-      display:inline-flex; align-items:center;
-      background: var(--subject-color);
-      color: white;
-      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-      padding:3px 8px; border-radius:99px;
-    }
-
-</style>
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+  </style>
 </head>
 
 <body>
-
-<header class="app-header">
-  <div class="brand-row">
-    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
-  </div>
-</header>
-
   <div class="wrap">
-    <header>
-      <span class="badge">🎉 Zeitformen-Quiz • HoS • „Lernen mit Wupp!“</span>
-      <h1>Welche Zeitform ist das? 🤹‍♂️</h1>
-      <p>Klicke die richtige Zeitform an. Du bekommst sofort Feedback – und am Ende deinen Score.</p>
+
+    <header class="hero">
+      <div class="hero-left">
+        <div class="minirow">
+          <img src="chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'">
+          <span class="badge-main">Deutsch</span>
+          <span class="badge">Zeitformen-Quiz • HoS</span>
+        </div>
+        <h1 class="hero-title">Welche Zeitform ist das? 🤹‍♂️</h1>
+        <p class="hero-sub">Klicke die richtige Zeitform an. Du bekommst sofort Feedback – und am Ende deinen Score.</p>
+      </div>
+      <img src="chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'">
     </header>
 
     <main class="card">
@@ -241,6 +263,8 @@
       <div class="result" id="resultBox"></div>
       <div class="tiny" style="margin-top:10px;">Hinweis: Dieses Quiz läuft als normale HTML-Seite. In Google Sites am besten per „Einbetten → Von URL“ einbinden.</div>
     </main>
+    
+
   </div>
 
   <script>

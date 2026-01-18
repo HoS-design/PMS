@@ -15,6 +15,7 @@
       --accent:#3b82f6;
       --accent2:#10b981;
       --shadow:0 10px 30px rgba(0,0,0,.12);
+      --radius:18px;
     }
     *{box-sizing:border-box}
     body{
@@ -23,30 +24,103 @@
       color:var(--ink);
       background:var(--bg);
       min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
+      padding:22px;
     }
-    .wrap{width:min(980px,100%);}
+
+    .wrap{width:min(980px,100%); margin:0 auto;}
+
+    /* HoS Hero Header (wie Speedrunde-Ziel) */
+    .hero{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:18px;
+      align-items:start;
+      padding:10px 6px 6px;
+      margin:4px 0 18px;
+    }
+    .minirow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+    .mini-logo{
+      width:34px;height:34px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      object-fit:cover;
+    }
+    .badge-main{
+      display:inline-flex;
+      align-items:center;
+      background: var(--subject-color);
+      color: #fff;
+      font-size:10px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.04);
+      white-space:nowrap;
+    }
+    .hero-title{
+      margin:0;
+      font-size: clamp(28px, 3.2vw, 40px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
+    }
+    .hero-sub{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:15px;
+    }
+    .hero-sticker{
+      width:110px;
+      height:auto;
+      border-radius:14px;
+      transform: rotate(-6deg);
+      opacity:.95;
+      justify-self:end;
+      align-self:start;
+    }
+
+    @media (max-width: 720px){
+      .hero{ grid-template-columns: 1fr; }
+      .hero-sticker{ justify-self:start; width:96px; transform: rotate(-4deg); }
+    }
+
+    /* Card */
     .card{
       background:var(--surface);
       border:1px solid var(--line);
-      border-radius:18px;
+      border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding:20px;
     }
-    header{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start}
-    h1{margin:0}
+
+    .toprow{
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      margin-bottom:12px;
+    }
+
     .badge{
       white-space:nowrap;
-      background:var(--accent-soft, #eff6ff);
+      background: #eff6ff;
       border:1px solid var(--line);
       padding:8px 10px;
       border-radius:999px;
       font-size:12px;
       color:var(--ink);
     }
+
+    h2{margin:0}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
     button{
       background:var(--accent);
@@ -84,7 +158,7 @@
     }
     .pill{
       border:1px solid var(--line);
-      background:var(--accent-soft, #eff6ff);
+      background:#eff6ff;
       border-radius:999px;
       padding:6px 10px;
     }
@@ -96,84 +170,69 @@
       border-radius:8px;
       color:var(--ink);
     }
-  
-    .app-header {
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
-    }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
-    .app-header .badge-main {
-      display:inline-flex; align-items:center;
-      background: var(--subject-color);
-      color: white;
-      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-      padding:3px 8px; border-radius:99px;
-    }
-
-</style>
+  </style>
 </head>
 <body>
+  <div class="wrap">
 
-<header class="app-header">
-  <div class="brand-row">
-    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
-  </div>
-</header>
-
-<div class="wrap">
-  <div class="card">
-    <header>
-      <div>
-        <h1>Fremdwörter im Kontext</h1>
-        <p class="meta">Zufälliges Fremdwort · kurze Bedeutung · Duden-Link · ohne Beispielsatz</p>
+    <header class="hero">
+      <div class="hero-left">
+        <div class="minirow">
+          <img src="chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'">
+          <span class="badge-main">Deutsch</span>
+          <span class="badge">Station • HoS</span>
+        </div>
+        <h1 class="hero-title">Fremdwörter im Kontext</h1>
+        <p class="hero-sub">Zufälliges Fremdwort · kurze Bedeutung · Duden-Link · ohne Beispielsatz</p>
       </div>
-      <div class="badge">Station • HoS</div>
+
+      <img src="chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'">
     </header>
 
-    <div class="row">
-      <button id="newWord" title="Neues Wort (N)">Neues Fremdwort</button>
-      <button id="reset" class="secondary" title="Reset (R)">Reset</button>
-    </div>
+    <div class="card">
+      <div class="toprow">
+        <div>
+          <h2 style="margin:0">Generator</h2>
+          <p class="meta" style="margin:6px 0 0">Klicke auf „Neues Fremdwort“ (oder drücke <span class="kbd">N</span>).</p>
+        </div>
+      </div>
 
-    <div class="stats">
-      <span class="pill">Benutzt: <b id="usedCount">0</b></span>
-      <span class="pill">Verfügbar: <b id="leftCount">0</b></span>
-      <span class="pill">Gesamt: <b id="totalCount">0</b></span>
-      <span class="pill">Tastatur: <span class="kbd">N</span> / <span class="kbd">R</span></span>
-    </div>
+      <div class="row">
+        <button id="newWord" title="Neues Wort (N)">Neues Fremdwort</button>
+        <button id="reset" class="secondary" title="Reset (R)">Reset</button>
+      </div>
 
-    <h2 class="word" id="word">–</h2>
-    <p class="meta" id="pos">–</p>
+      <div class="stats">
+        <span class="pill">Benutzt: <b id="usedCount">0</b></span>
+        <span class="pill">Verfügbar: <b id="leftCount">0</b></span>
+        <span class="pill">Gesamt: <b id="totalCount">0</b></span>
+        <span class="pill">Tastatur: <span class="kbd">N</span> / <span class="kbd">R</span></span>
+      </div>
 
-    <div class="box">
-      <b>Bedeutung</b>
-      <p id="meaning" style="margin:8px 0 0">–</p>
-    </div>
+      <h3 class="word" id="word">–</h3>
+      <p class="meta" id="pos">–</p>
 
-    <div class="box auftrag">
-      <b>✏️ Arbeitsauftrag</b>
-      <p style="margin:8px 0 0">
-        Schreibe <b>einen eigenen Satz</b>, in dem das Fremdwort sinnvoll verwendet wird.<br>
-        Der Satz muss zeigen, dass du die Bedeutung verstanden hast.
-      </p>
-    </div>
+      <div class="box">
+        <b>Bedeutung</b>
+        <p id="meaning" style="margin:8px 0 0">–</p>
+      </div>
 
-    <div class="box">
-      <b>Duden-Link</b><br>
-      <a id="duden" href="#" target="_blank" rel="noopener">–</a>
+      <div class="box auftrag">
+        <b>✏️ Arbeitsauftrag</b>
+        <p style="margin:8px 0 0">
+          Schreibe <b>einen eigenen Satz</b>, in dem das Fremdwort sinnvoll verwendet wird.<br>
+          Der Satz muss zeigen, dass du die Bedeutung verstanden hast.
+        </p>
+      </div>
+
+      <div class="box">
+        <b>Duden-Link</b><br>
+        <a id="duden" href="#" target="_blank" rel="noopener">–</a>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
+  <script>
   const duden = w => `https://www.duden.de/rechtschreibung/${encodeURIComponent(w)}`;
 
   // ✅ 60 Wörter (ohne Beispielsätze)

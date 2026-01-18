@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Argument-Bausteine – Drag & Drop (HoS)</title>
-  <style>
-    :root{
+  <style>    :root{
       --subject-color:#ef4444;
       --bg:#f2f4f7;
       --surface:#ffffff;
@@ -29,17 +28,9 @@
       color:var(--ink);
       min-height:100vh;
       padding:18px;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
     }
-    .app{width:min(1100px,100%);}
-
-    header{
-      display:flex; gap:14px;
-      align-items:center; justify-content:space-between;
-      flex-wrap:wrap; margin-bottom:14px;
-    }
+    .wrap{width:min(1100px,100%);margin:0 auto;}
+    .app{width:100%;}
     .brand{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
     .meme{
       width:92px;height:92px;object-fit:cover;border-radius:18px;
@@ -162,52 +153,82 @@
     .msg.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);display:block}
 
     .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
-  
-    .app-header {
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    /* HoS Hero-Header (wie Speedrunde) */
+    .hero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:22px;
+      align-items:start;
+      margin:6px 0 18px;
     }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
-    .app-header .badge-main {
-      display:inline-flex; align-items:center;
-      background: var(--subject-color);
-      color: white;
-      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-      padding:3px 8px; border-radius:99px;
+    .hero-left{min-width:0;}
+    .minirow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
     }
+    .mini-logo{
+      width:36px;height:36px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--surface);
+      object-fit:contain;
+    }
+    .badge-red{
+      background:var(--subject-color);
+      color:#fff;
+      border-color:rgba(0,0,0,0.04);
+      font-weight:900;
+    }
+    .hero-title{
+      margin:0;
+      font-size:clamp(28px,3.2vw,40px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
+    }
+    .hero-sub{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.45;
+    }
+    .hero-sticker{
+      width:120px;
+      height:auto;
+      border-radius:14px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      background:var(--surface);
+      transform:rotate(-6deg);
+      opacity:.98;
+      object-fit:cover;
+    }
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;gap:12px;}
+      .hero-sticker{justify-self:start;width:104px;}
+    }
+
 
 </style>
 </head>
 <body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-left">
+        <div class="minirow">
+          <img src="chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'"> 
+          <span class="badge badge-red">DEUTSCH</span>
+        </div>
+        <h1 class="hero-title">Argumente zusammensetzen <span class="muted">(Drag &amp; Drop)</span></h1>
+        <p class="hero-sub">Behauptung → Begründung → Beispiel/Erklärung • <b>Immer 1 Störbaustein</b> bleibt übrig.</p>
+      </div>
+      <img src="chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'"> 
+    </header>
 
-<header class="app-header">
-  <div class="brand-row">
-    <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
-  </div>
-</header>
-
-<div class="app">
-
-<header>
-  <div class="brand">
-    <img src="chatisthisreal.png" alt="Chat is this real?" class="meme">
-    <div>
-      <h1>Argumente zusammensetzen (Drag &amp; Drop)</h1>
-      <p>Behauptung → Begründung → Beispiel/Erklärung • <b>Immer 1 Störbaustein</b> bleibt übrig.</p>
-    </div>
-  </div>
-  <div class="badge">3. Plan · Erörterung &amp; Argumentation · HoS</div>
-</header>
-
-<div class="grid">
+    <div class="app">
+      <div class="grid">
 
   <section class="card">
     <h2 id="title" style="margin:0 0 6px 0;">–</h2>
@@ -251,8 +272,10 @@
     <div class="bank" id="bank"></div>
   </section>
 
-</div>
-</div>
+
+      </div>
+    </div>
+  </div>
 
 <script>
   // 12 Aufgaben (im gewünschten Bereich 10–15), jede mit 3 korrekten Bausteinen + 1 Störbaustein
@@ -520,4 +543,3 @@
 </script>
 </body>
 </html>
-```0
