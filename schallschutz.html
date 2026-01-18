@@ -1,0 +1,2407 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Schallschutz • Lernapp (6. Schulstufe)</title>
+
+  <!-- jsPDF (PDF Export). Internet ist ok laut dir. -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --ink:#0f172a;
+      --muted:#5b6476;
+      --line:#e5e7eb;
+      --paper:#fbfbf8;
+      --paper2:#f6f7fb;
+      --card:#ffffff;
+
+      --accent:#2563eb;   /* calm blue */
+      --warm:#b45309;     /* warm highlight */
+      --good:#16a34a;
+      --bad:#dc2626;
+
+      --shadow:0 18px 60px rgba(2,6,23,.08);
+      --shadow2:0 10px 26px rgba(2,6,23,.06);
+      --r:18px;
+      --r2:24px;
+
+      --serif: ui-serif, Georgia, "Times New Roman", serif;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+
+      --max: 1040px;
+      --sidebar: 340px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(37,99,235,.10), transparent 60%),
+        radial-gradient(900px 540px at 80% 10%, rgba(180,83,9,.10), transparent 55%),
+        linear-gradient(180deg, var(--paper), var(--paper2));
+      font-family:var(--serif);
+      overflow:hidden;
+    }
+
+    .app{
+      height:100%;
+      display:flex;
+    }
+
+    /* Sidebar */
+    aside{
+      width:var(--sidebar);
+      border-right:1px solid var(--line);
+      background:rgba(255,255,255,.65);
+      backdrop-filter: blur(10px);
+      display:flex;
+      flex-direction:column;
+      overflow:auto;
+    }
+    .brand{
+      position:sticky; top:0; z-index:5;
+      padding:22px 22px 16px;
+      background:rgba(255,255,255,.78);
+      border-bottom:1px solid var(--line);
+    }
+    .brand-row{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
+    .brand-text{min-width:0;}
+    .brand-logo{width:46px; height:46px; flex:0 0 auto; border-radius:14px; object-fit:cover; background:#fff; border:1px solid rgba(2,6,23,.10); box-shadow: var(--shadow2);}
+    @media (max-width: 1100px){
+      .brand-row{justify-content:flex-start;}
+      .brand-logo{width:42px; height:42px;}
+    }
+
+    .brand .kicker{
+      font-family:var(--sans);
+      letter-spacing:.14em;
+      font-weight:900;
+      text-transform:uppercase;
+      font-size:.78rem;
+      color:var(--muted);
+    }
+    .brand h1{
+      margin:.35rem 0 .35rem;
+      font-family:var(--serif);
+      font-size:1.55rem;
+      line-height:1.05;
+      font-weight:900;
+      letter-spacing:-.01em;
+    }
+    .brand .meta{
+      font-family:var(--sans);
+      font-size:.95rem;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .nav{
+      padding:14px 14px 10px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .navbtn{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.8);
+      border-radius:14px;
+      padding:12px 12px;
+      cursor:pointer;
+      transition:.18s;
+      box-shadow:0 1px 0 rgba(2,6,23,.02);
+      user-select:none;
+    }
+    .navbtn:hover{ transform: translateY(-1px); box-shadow: var(--shadow2); }
+    .navbtn .left{
+      display:flex; align-items:center; gap:10px;
+      min-width:0;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background:#cbd5e1;
+      flex:0 0 auto;
+    }
+    .navbtn.active{ border-color: rgba(37,99,235,.35); }
+    .navbtn.active .dot{ background: var(--accent); }
+    .title{
+      font-family:var(--sans);
+      font-weight:900;
+      font-size:.98rem;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .tag{
+      font-family:var(--sans);
+      font-size:.8rem;
+      color:var(--muted);
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      flex:0 0 auto;
+    }
+    .locked{ opacity:.45; cursor:not-allowed; }
+    .locked:hover{ transform:none; box-shadow:none; }
+    .locked .tag{ content:""; }
+
+    .side-actions{
+      padding:10px 14px 18px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+    }
+    .side-actions button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.85);
+      border-radius:14px;
+      padding:12px 12px;
+      font-family:var(--sans);
+      font-weight:900;
+      cursor:pointer;
+      transition:.18s;
+    }
+    .side-actions button:hover{ transform:translateY(-1px); box-shadow:var(--shadow2); }
+    .side-actions .danger{ border-color: rgba(220,38,38,.25); }
+    .side-actions .danger:hover{ box-shadow:0 16px 40px rgba(220,38,38,.12); }
+
+    /* Main */
+    main{
+      flex:1;
+      overflow:auto;
+      padding:54px 60px 80px;
+    }
+    .wrap{ max-width: var(--max); margin:0 auto; }
+
+    .hero{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.78);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      padding:28px 30px;
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+      align-items:center;
+    }
+    .hero h2{
+      margin:0 0 10px;
+      font-family:var(--serif);
+      font-size:2.15rem;
+      line-height:1.05;
+      letter-spacing:-.01em;
+    }
+    .hero p{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--muted);
+      font-size:1.02rem;
+      line-height:1.6;
+    }
+    .hero .box{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(37,99,235,.08), rgba(180,83,9,.06));
+      padding:16px 16px;
+      min-height:160px;
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.86);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow2);
+      padding:26px 28px;
+    }
+
+    .kicker{
+      font-family:var(--sans);
+      font-size:.78rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      font-weight:900;
+      color:var(--muted);
+    }
+    h1.page{
+      margin:.35rem 0 10px;
+      font-family:var(--serif);
+      font-size:2.35rem;
+      line-height:1.06;
+      letter-spacing:-.01em;
+    }
+    .sub{
+      margin:0 0 8px;
+      font-family:var(--sans);
+      color:var(--muted);
+      line-height:1.65;
+      font-size:1.04rem;
+    }
+
+    .section-title{
+      margin:18px 0 8px;
+      font-family:var(--sans);
+      font-weight:950;
+      font-size:1.15rem;
+      letter-spacing:-.01em;
+    }
+
+    .prose p{
+      margin:0 0 12px;
+      font-size:1.12rem;
+      line-height:1.85;
+    }
+
+    .merke{
+      margin:16px 0 0;
+      border-radius:18px;
+      border:1px solid rgba(180,83,9,.25);
+      background: linear-gradient(180deg, rgba(180,83,9,.08), rgba(255,255,255,.9));
+      padding:16px 16px;
+      display:flex; gap:12px; align-items:flex-start;
+      font-family:var(--sans);
+    }
+    .merke .badge{
+      flex:0 0 auto;
+      font-weight:950;
+      font-size:.78rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color: #8a4b12;
+      border:1px solid rgba(180,83,9,.30);
+      background:#fff;
+      padding:4px 10px;
+      border-radius:999px;
+    }
+    .merke .txt{
+      margin:0;
+      color:#3b2a1a;
+      line-height:1.55;
+      font-weight:750;
+    }
+
+    .figure{
+      margin-top:14px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      padding:14px;
+    }
+    .figcap{
+      margin-top:10px;
+      font-family:var(--sans);
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.45;
+    }
+
+    .practice{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgba(37,99,235,.22);
+      background: linear-gradient(180deg, rgba(37,99,235,.07), rgba(255,255,255,.92));
+      padding:16px;
+      font-family:var(--sans);
+    }
+    .practice .ptitle{
+      font-weight:950;
+      margin:0 0 6px;
+      color:#0b2a6b;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+    }
+    .practice .ptitle small{
+      color:var(--muted);
+      font-weight:900;
+    }
+    .practice .pdesc{
+      margin:0 0 10px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .mini-check{
+      margin-top:16px;
+      border-radius:20px;
+      border:2px solid rgba(22,163,74,.22);
+      background: linear-gradient(180deg, rgba(22,163,74,.08), rgba(255,255,255,.95));
+      padding:18px 16px;
+      font-family:var(--sans);
+    }
+    .mini-check h3{
+      margin:0 0 8px;
+      font-size:1.15rem;
+      font-weight:950;
+      letter-spacing:-.01em;
+      color:#14532d;
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .mini-check .hint{
+      margin:0 0 12px;
+      color:#14532d;
+      opacity:.9;
+      line-height:1.45;
+    }
+
+    .q{
+      margin:10px 0 12px;
+      padding:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+    }
+    .q .qhead{
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .q .qid{
+      font-weight:950;
+      color:var(--muted);
+      font-size:.85rem;
+      flex:0 0 auto;
+      padding:2px 8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+    }
+    .q .qtext{
+      margin:0;
+      font-weight:900;
+      line-height:1.4;
+      flex:1 1 auto;
+    }
+    .q .qbody{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+    }
+    input[type="text"], textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 12px;
+      font-family:var(--sans);
+      font-size:1rem;
+      outline:none;
+      background:#fff;
+    }
+    textarea{ min-height:120px; resize:vertical; line-height:1.55; }
+
+    .opts{
+      display:grid; gap:8px;
+    }
+    .opt{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+      font-weight:850;
+      transition:.12s;
+    }
+    .opt:hover{ border-color: rgba(37,99,235,.35); background: rgba(37,99,235,.05); }
+    .opt.selected{
+      border-color: rgba(37,99,235,.55);
+      background: rgba(37,99,235,.10);
+    }
+
+    .row{
+      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+      margin-top:10px;
+    }
+    .btn{
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      font-family:var(--sans);
+      font-weight:950;
+      padding:12px 16px;
+      border-radius:999px;
+      cursor:pointer;
+      transition:.16s;
+    }
+    .btn:hover{ transform:translateY(-1px); filter:brightness(1.02); }
+    .btn.ghost{
+      background:transparent;
+      border:1px solid var(--line);
+      color:var(--ink);
+    }
+    .btn.good{ background:var(--good); }
+    .btn.warm{ background:var(--warm); }
+
+    .status{
+      font-family:var(--sans);
+      font-weight:900;
+      color:var(--muted);
+    }
+    .msg{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      font-family:var(--sans);
+      font-weight:850;
+      line-height:1.45;
+      border:1px solid transparent;
+      display:none;
+    }
+    .msg.ok{
+      display:block;
+      background: rgba(22,163,74,.10);
+      border-color: rgba(22,163,74,.25);
+      color:#14532d;
+    }
+    .msg.bad{
+      display:block;
+      background: rgba(220,38,38,.10);
+      border-color: rgba(220,38,38,.25);
+      color:#7f1d1d;
+    }
+    .msg.neutral{
+      display:block;
+      background: rgba(37,99,235,.08);
+      border-color: rgba(37,99,235,.20);
+      color:#0b2a6b;
+    }
+
+    .footer{
+      margin-top:18px;
+      display:flex; gap:12px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+      font-family:var(--sans);
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px){
+      body{ overflow:auto; }
+      .app{ flex-direction:column; height:auto; }
+      aside{ width:100%; position:relative; }
+      main{ padding:28px 18px 60px; }
+      .hero{ grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">
+      <div class="brand-row">
+        <div class="brand-text">
+          <div class="kicker">Physik • 6. Schulstufe</div>
+          <h1>Schallschutz</h1>
+        </div>
+        <img class="brand-logo" src="chatisthisreal.png" alt="HoS" onerror="this.style.display='none'" />
+      </div>
+      <div class="meta">Lernunterlage • Übungen • Kontrolle • PDF-Abgabe</div>
+    </div>
+
+    <div class="nav" id="nav"></div>
+
+    <div class="side-actions">
+      <button onclick="openRepeat()">🔁 Wiederholen (unsicher)</button>
+      <button onclick="openExport()">📄 PDF exportieren</button>
+      <button class="danger" onclick="resetAll()">🧹 Alles zurücksetzen</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="wrap" id="view"></div>
+  </main>
+</div>
+
+<script>
+/* =========================
+   Daten: Lektionen & Checks
+   ========================= */
+
+const APP_KEY = "hos_schallschutz_v1";
+
+const LESSONS = [
+  {
+    id:"start",
+    title:"Start",
+    icon:"🏠",
+    unlocked:true,
+    done:false,
+    render: renderStart
+  },
+  {
+    id:"l1",
+    title:"Lektion 1 • Was ist Schall?",
+    icon:"🌊",
+    unlocked:false,
+    done:false,
+    render: (root) => renderLesson({
+      id:"l1",
+      kicker:"Grundlagen",
+      h1:"Was ist Schall?",
+      sub:"Du lernst, was Schall physikalisch ist – und worin sich Tonhöhe und Lautstärke unterscheiden.",
+      prose:[
+        "Schall ist eine <b>Schwingung</b>, die sich als <b>Druckwelle</b> ausbreitet. Wichtig: Ohne ein <b>Medium</b> (z. B. Luft, Wasser, Festkörper) kann sich Schall nicht ausbreiten.",
+        "Zwei Eigenschaften sind besonders wichtig: <b>Tonhöhe</b> hängt davon ab, wie <b>schnell</b> etwas schwingt (Frequenz). <b>Lautstärke</b> hängt davon ab, wie <b>stark</b> etwas schwingt (Amplitude).",
+        "In der Praxis bedeutet das: Eine hohe Frequenz klingt „hoch“ (z. B. Pfeife), eine große Amplitude klingt „laut“."
+      ],
+      figure: figWave(),
+      figcap:"Grafik: Frequenz beeinflusst die Tonhöhe, Amplitude die Lautstärke.",
+      merke:"Schall braucht ein Medium. Tonhöhe ↔ Frequenz (wie schnell). Lautstärke ↔ Amplitude (wie stark).",
+      practice: [
+        practiceMC("p_l1_1","Übung (kurz)","Was verändert die Tonhöhe?", [
+          {k:"Die Frequenz (wie schnell die Schwingung ist).", ok:true},
+          {k:"Die Amplitude (wie stark die Schwingung ist).", ok:false},
+          {k:"Die Farbe des Instruments.", ok:false}
+        ])
+      ],
+      miniCheck: miniCheckConfig("mc_l1","Mini-Check 1 (Pflicht)","Tippe die Begriffe ein. Groß/Klein ist egal.", [
+        {
+          id:"l1_q1",
+          type:"input",
+          prompt:"Schall braucht ein ____ (physikalisch: ein Stoff/… ).",
+          accept:["medium","stoff","materie","luft"], // luft als Alltagsbeispiel okay
+          hint:"Tipp: Ohne etwas „drinnen“ kann sich Schall nicht ausbreiten."
+        },
+        {
+          id:"l1_q2",
+          type:"input",
+          prompt:"Tonhöhe hängt von der ____ ab.",
+          accept:["frequenz","schwingungsfrequenz"],
+          hint:"Tipp: Wie schnell pro Sekunde?"
+        },
+        {
+          id:"l1_q3",
+          type:"input",
+          prompt:"Lautstärke hängt mit der ____ zusammen.",
+          accept:["amplitude","schwingungsstaerke","schwingungsstärke"],
+          hint:"Tipp: Wie stark die Schwingung ist."
+        }
+      ], "l2")
+    }, root)
+  },
+  {
+    id:"l2",
+    title:"Lektion 2 • Luftschall & Körperschall",
+    icon:"🧱",
+    unlocked:false,
+    done:false,
+    render: (root) => renderLesson({
+      id:"l2",
+      kicker:"Ausbreitung",
+      h1:"Wie breitet sich Schall aus?",
+      sub:"Du unterscheidest Luftschall und Körperschall – und erkennst typische Alltagsbeispiele.",
+      prose:[
+        "Schall kann sich in <b>Luft</b>, <b>Wasser</b> und <b>Festkörpern</b> ausbreiten. In Festkörpern spürt man oft, dass Schall auch als <b>Vibration</b> weitergegeben wird.",
+        "Wenn du Schritte durch den Boden hörst oder ein Bohren durch die Wand: Das ist meist <b>Körperschall</b>. Beim Sprechen oder Musik aus einem Lautsprecher ist es meistens <b>Luftschall</b>.",
+        "Technischer Gedanke: Je besser Teile miteinander verbunden sind, desto leichter kann Vibration übertragen werden."
+      ],
+      figure: figMedia(),
+      figcap:"Grafik: Schall breitet sich in verschiedenen Medien aus. In Festkörpern spielt Vibration (Körperschall) eine große Rolle.",
+      merke:"Luftschall: durch Luft (Sprechen, Lautsprecher). Körperschall: als Vibration durch feste Teile (Boden, Wand, Rohre).",
+      practice: [
+        practiceMatchMini("p_l2_1","Übung (Zuordnung)","Ordne richtig zu.", [
+          {left:"Schritte durch die Decke", right:"Körperschall"},
+          {left:"Musik aus dem Lautsprecher", right:"Luftschall"},
+          {left:"Bohren in der Wand", right:"Körperschall"},
+          {left:"Jemand spricht im Raum", right:"Luftschall"},
+        ], ["Luftschall","Körperschall"])
+      ],
+      miniCheck: miniCheckConfig("mc_l2","Mini-Check 2 (Pflicht)","Kurze Antworten – die App gibt dir Hinweise, wenn etwas fehlt.", [
+        {
+          id:"l2_q1",
+          type:"input",
+          prompt:"Schall in festen Materialien heißt ____.",
+          accept:["koerperschall","körperschall"],
+          hint:"Tipp: Das Wort beginnt mit „Körper…“"
+        },
+        {
+          id:"l2_q2",
+          type:"input",
+          prompt:"Nenne 1 Beispiel für Körperschall (2–6 Wörter).",
+          acceptAnyContains:["schritt","tramp","bohr","klopf","hammer","zug","tram","heizung","rohr","vibration"],
+          hint:"Tipp: Denk an Boden/Wand/Rohre (Schritte, Bohren, …)."
+        }
+      ], "l3")
+    }, root)
+  },
+  {
+    id:"l3",
+    title:"Lektion 3 • Lautstärke & dB",
+    icon:"🔊",
+    unlocked:false,
+    done:false,
+    render: (root) => renderLesson({
+      id:"l3",
+      kicker:"Etwas technischer",
+      h1:"Lautstärke, Dezibel und Gehör",
+      sub:"Du lernst dB als Einheit kennen und kannst Situationen grob einordnen.",
+      prose:[
+        "Für Lautstärke verwendet man die Einheit <b>Dezibel (dB)</b>. Dezibel ist kein „normales“ lineares Maß: Kleine Änderungen können sich deutlich anfühlen.",
+        "Als Faustidee: <b>+10 dB</b> wirkt oft deutlich lauter. (Du musst hier nicht rechnen – du sollst ein Gefühl dafür bekommen.)",
+        "Zu lauter Schall kann das Gehör schädigen. Darum ist <b>Gehörschutz</b> z. B. bei Konzerten, lauten Maschinen oder langen Lärmzeiten sinnvoll."
+      ],
+      figure: figDb(),
+      figcap:"Grafik: dB-Skala (grob) – wichtig ist die Einordnung, nicht exakte Zahlen.",
+      merke:"Einheit: Dezibel (dB). Sehr laute Situationen: Gehörschutz kann notwendig sein.",
+      practice: [
+        practiceSortLite("p_l3_1","Übung (Sortieren)","Ordne von leise → laut (gedanklich).", ["Flüstern","Gespräch","Straße","Konzert"])
+      ],
+      miniCheck: miniCheckConfig("mc_l3","Mini-Check 3 (Pflicht)","Gemischte Formate. Kein Punkte-Stress – nur „passt / noch nicht“.", [
+        {
+          id:"l3_q1",
+          type:"input",
+          prompt:"Die Einheit für Lautstärke heißt ____.",
+          accept:["db","dezibel","deci bel","dezi bel"],
+          hint:"Tipp: Abkürzung mit 2 Buchstaben."
+        },
+        {
+          id:"l3_q2",
+          type:"mc",
+          prompt:"Welche Änderung wirkt in der Regel deutlich lauter?",
+          options:["+1 dB","+10 dB","+0,5 dB"],
+          correctIndex:1,
+          hint:"Tipp: Es geht um eine merkbare Änderung."
+        },
+        {
+          id:"l3_q3",
+          type:"textarea",
+          prompt:"Konzert ohne Gehörschutz: sinnvoll? Antworte kurz (1 Satz) und begründe.",
+          rubric: {
+            wantAny:["gehoer","gehör","schutz","zu laut","laerm","lärm","schaden","dezibel","db"],
+            missingHint:"Tipp: Denk an Lautstärke und möglichen Gehör-Schaden."
+          }
+        }
+      ], "l4")
+    }, root)
+  },
+  {
+    id:"l4",
+    title:"Lektion 4 • Schallschutz-Prinzipien",
+    icon:"🧩",
+    unlocked:false,
+    done:false,
+    render: (root) => renderLesson({
+      id:"l4",
+      kicker:"Kern",
+      h1:"Absorption, Dämmung, Entkopplung",
+      sub:"Du lernst die drei wichtigsten Schallschutz-Prinzipien – und den häufigsten Unterschied.",
+      prose:[
+        "<b>Absorption</b> bedeutet: Material „schluckt“ Schall im Raum. Das reduziert <b>Hall</b> und macht den Raum angenehmer (z. B. Teppiche, Vorhänge, Akustikpaneele).",
+        "<b>Dämmung (Masse)</b> bedeutet: Schall soll <b>nicht durch</b> eine Wand/Tür/Fenster gehen. Dafür helfen oft <b>schwere, dichte</b> Materialien (z. B. Beton, schwere Türen, mehrschichtige Verglasung).",
+        "<b>Entkopplung</b> bedeutet: Vibrationen werden <b>getrennt</b>, damit Körperschall schlechter übertragen wird. Beispiele sind weiche Zwischenlagen, Gummipuffer, „schwimmender“ Aufbau oder Teppich-Unterlage.",
+        "Der Klassiker: <b>Absorption</b> macht es <i>im Raum</i> leiser (weniger Hall). <b>Dämmung</b> macht es <i>beim Nachbarn</i> leiser (weniger Durchgang)."
+      ],
+      figure: figPrinciples(),
+      figcap:"Grafik: Drei Prinzipien (Absorption, Dämmung, Entkopplung) – mit typischen Wirkungen.",
+      merke:"Absorption: weniger Hall im Raum. Dämmung/Masse: weniger Durchgang. Entkopplung: weniger Körperschall-Übertragung.",
+      practice: [
+        practiceDragLite("p_l4_1","Übung (Material → Prinzip)","Wähle zu jedem Material das passende Prinzip.", [
+          {m:"Teppich", want:"Absorption"},
+          {m:"Akustikpanel", want:"Absorption"},
+          {m:"Betonwand", want:"Dämmung (Masse)"},
+          {m:"Gummipuffer", want:"Entkopplung"},
+        ], ["Absorption","Dämmung (Masse)","Entkopplung"])
+      ],
+      miniCheck: miniCheckConfig("mc_l4","Mini-Check 4 (Pflicht)","Hier ist das Fachwort wichtig – aber Alltagswort wird auch akzeptiert.", [
+        {
+          id:"l4_q1",
+          type:"input",
+          prompt:"Poröse Materialien reduzieren im Raum den ____ (Fachwort; Hall wird auch akzeptiert).",
+          accept:["absorption","hall"],
+          hint:"Tipp: Fachwort beginnt mit „Abs…“"
+        },
+        {
+          id:"l4_q2",
+          type:"mc",
+          prompt:"Ein Raum hallt stark. Was hilft am besten?",
+          options:["Akustikpaneele/Teppich","Noch schwerere Tür","Stahlplatte an die Wand"],
+          correctIndex:0,
+          hint:"Tipp: Hier geht es um „im Raum“."
+        },
+        {
+          id:"l4_q3",
+          type:"textarea",
+          prompt:"Warum hilft Entkopplung? Antworte in 1 Satz.",
+          rubric:{
+            wantAny:["vibration","koerper","körper","uebertragung","übertragung","trennen","entkoppel","federn","puffer"],
+            missingHint:"Tipp: Entkopplung trennt Vibrationen → weniger Übertragung."
+          }
+        }
+      ], "l5")
+    }, root)
+  },
+  {
+    id:"l5",
+    title:"Lektion 5 • Anwendung planen",
+    icon:"🏫",
+    unlocked:false,
+    done:false,
+    render: (root) => renderLesson({
+      id:"l5",
+      kicker:"Anwendung",
+      h1:"Schallschutz in der Praxis",
+      sub:"Du kombinierst Maßnahmen für echte Situationen (Klasse, Musikraum, Wohnung).",
+      prose:[
+        "In echten Gebäuden kombiniert man oft mehrere Prinzipien: <b>Absorption</b> (weniger Hall), <b>Dämmung</b> (weniger Durchgang) und <b>Entkopplung</b> (weniger Körperschall).",
+        "Beispiel Musikraum: Akustikpaneele + Vorhänge (Absorption) reduzieren Hall. Schwere Tür oder Dichtungen (Dämmung) reduzieren Durchgang in den Gang.",
+        "Beispiel Trittschall: Eine weiche Zwischenlage / Teppich-Unterlage kann Vibrationen entkoppeln. Wenn zusätzlich Luftschall stört, helfen dichte Bauteile (Dämmung)."
+      ],
+      figure: figRoom(),
+      figcap:"Grafik: In der Praxis ist es oft eine Kombination aus Absorption, Dämmung und Entkopplung.",
+      merke:"Plan: 1) Problem erkennen (Hall? Nachbar? Trittschall?) 2) passendes Prinzip wählen 3) Maßnahme begründen.",
+      practice: [
+        practiceScenario("p_l5_1","Übung (Szenario)","Musikraum hallt stark. Wähle 2 Maßnahmen und begründe kurz.",
+          ["Akustikpaneele","Teppich/Vorhang","Schwere Tür","Gummipuffer unter Geräten","Fensterdichtung"]
+        )
+      ],
+      miniCheck: miniCheckConfig("mc_l5","Mini-Check 5 (Pflicht)","Danach wird die Abschlusskontrolle freigeschaltet.", [
+        {
+          id:"l5_q1",
+          type:"mc",
+          prompt:"Ein Raum hallt stark. Welche Maßnahme passt besser?",
+          options:["Akustikpaneele/Teppich","Schwerere Tür"],
+          correctIndex:0,
+          hint:"Tipp: Hall im Raum → Absorption."
+        },
+        {
+          id:"l5_q2",
+          type:"mc",
+          prompt:"Trittschall von oben. Was ist besonders wichtig?",
+          options:["Entkopplung (z. B. Unterlage)","Mehr Gardinen"],
+          correctIndex:0,
+          hint:"Tipp: Trittschall ist oft Körperschall (Vibration)."
+        },
+        {
+          id:"l5_q3",
+          type:"input",
+          prompt:"Schwere, dichte Materialien helfen bei ____ (Prinzip).",
+          accept:["daemmung","dämmung","schalldaemmung","schalldämmung","daemmung masse","dämmung masse"],
+          hint:"Tipp: Hat mit „Masse“ zu tun."
+        }
+      ], "final")
+    }, root)
+  },
+  {
+    id:"final",
+    title:"Abschlusskontrolle",
+    icon:"📝",
+    unlocked:false,
+    done:false,
+    render: renderFinal
+  },
+  {
+    id:"repeat",
+    title:"Wiederholen",
+    icon:"🔁",
+    unlocked:true,
+    done:false,
+    render: renderRepeat
+  },
+  {
+    id:"export",
+    title:"PDF Export",
+    icon:"📄",
+    unlocked:true,
+    done:false,
+    render: renderExport
+  }
+];
+
+/* =========================
+   State + Storage
+   ========================= */
+
+function defaultState(){
+  return {
+    userName: "",
+    unlocked: { start:true, repeat:true, export:true },
+    completed: {},
+    answers: {},          // qid -> {value, meta}
+    results: {},          // qid -> {ok:boolean, notes:string}
+    practice: {},         // practice ids
+    lastView: "start",
+    allowExport: false,   // becomes true after final completed
+    declaration: true     // include declaration in pdf
+  };
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(APP_KEY);
+    if(!raw) return defaultState();
+    const s = JSON.parse(raw);
+    return { ...defaultState(), ...s, unlocked:{...defaultState().unlocked, ...(s.unlocked||{})} };
+  }catch(e){
+    return defaultState();
+  }
+}
+function saveState(){ localStorage.setItem(APP_KEY, JSON.stringify(state)); }
+
+let state = loadState();
+
+/* =========================
+   Helpers
+   ========================= */
+
+function norm(s){
+  return (s ?? "").toString().trim().toLowerCase()
+    .replace(/\s+/g," ")
+    .replace(/[ä]/g,"ae").replace(/[ö]/g,"oe").replace(/[ü]/g,"ue").replace(/[ß]/g,"ss");
+}
+function nowStamp(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,"0");
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function lessonById(id){ return LESSONS.find(x=>x.id===id); }
+
+function isUnlocked(id){
+  if(id==="start"||id==="repeat"||id==="export") return true;
+  return !!state.unlocked[id];
+}
+function setUnlocked(id, v=true){
+  state.unlocked[id]=v;
+  saveState();
+}
+function markCompleted(id, v=true){
+  state.completed[id]=v;
+  saveState();
+}
+
+function setActive(id){
+  state.lastView = id;
+  saveState();
+  renderNav(id);
+  renderView(id);
+}
+
+function openRepeat(){ setActive("repeat"); }
+function openExport(){ setActive("export"); }
+
+function resetAll(){
+  if(!confirm("Alles wirklich zurücksetzen? (Name, Antworten, Freischaltungen)")) return;
+  localStorage.removeItem(APP_KEY);
+  state = defaultState();
+  renderNav("start");
+  renderView("start");
+}
+
+/* =========================
+   Navigation
+   ========================= */
+
+function renderNav(activeId){
+  // If a view is locked (e.g. after reset), highlight Start instead
+  if(activeId && !isUnlocked(activeId)) activeId = 'start';
+
+  const nav = document.getElementById("nav");
+  nav.innerHTML = "";
+
+  // show in order, but hide "repeat/export" duplicates? We'll keep as separate entries and also keep side-actions.
+  const navItems = LESSONS.filter(x => !["export","repeat"].includes(x.id));
+
+  navItems.forEach(item=>{
+    const locked = !isUnlocked(item.id);
+    const done = !!state.completed[item.id];
+    const btn = document.createElement("div");
+    btn.className = "navbtn" + (activeId===item.id ? " active":"") + (locked ? " locked":"");
+    btn.onclick = () => { if(!locked) setActive(item.id); };
+    btn.innerHTML = `
+      <div class="left">
+        <div class="dot" style="background:${done ? "var(--good)" : (activeId===item.id ? "var(--accent)" : "#cbd5e1")}"></div>
+        <div class="title">${item.icon} ${item.title}</div>
+      </div>
+      <div class="tag">${locked ? "🔒" : (done ? "✓" : "•")}</div>
+    `;
+    nav.appendChild(btn);
+  });
+
+  // Make sure start always exists
+  if(!state.unlocked.start) state.unlocked.start = true;
+}
+
+/* =========================
+   View renderers
+   ========================= */
+
+function renderView(id){
+  const view = document.getElementById("view");
+  view.innerHTML = "";
+  const lesson = lessonById(id) || lessonById("start");
+  lesson.render(view);
+}
+
+function renderStart(root){
+  // unlock L1 if name present? We'll unlock on start click.
+  const card = document.createElement("div");
+  card.className = "hero";
+  card.innerHTML = `
+    <div>
+      <div class="kicker">Willkommen</div>
+      <h2>Deine Lernapp zu Schallschutz</h2>
+      <p>
+        Du arbeitest Lektion für Lektion. Am Ende jeder Lektion gibt es einen <b>Mini-Check</b> (Pflicht), der die nächste Lektion freischaltet.
+        Zum Schluss exportierst du deine Antworten als <b>PDF</b> und gibst sie in Google Classroom ab.
+      </p>
+      <div class="grid" style="margin-top:14px">
+        <div class="card">
+          <div class="section-title">Name für die Abgabe</div>
+          <div class="sub">Trage deinen Namen oder Spitznamen ein. Er erscheint im PDF.</div>
+          <div class="row">
+            <input id="nameInp" type="text" placeholder="Name / Spitzname" value="${escapeHtml(state.userName)}" style="flex:1 1 320px" />
+            <button class="btn" onclick="saveNameAndStart()">Start</button>
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label style="display:flex;align-items:center;gap:10px;font-family:var(--sans);color:var(--muted);font-weight:850">
+              <input id="declChk" type="checkbox" ${state.declaration ? "checked":""} />
+              Im PDF soll eine „selbstständig bearbeitet“-Zeile erscheinen
+            </label>
+          </div>
+          <div class="msg neutral" style="display:block;margin-top:12px">
+            Hinweis: Deine Antworten werden <b>lokal</b> gespeichert (auf diesem Laptop). Du kannst jederzeit „Alles zurücksetzen“ verwenden.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      ${figHeroMini()}
+    </div>
+  `;
+  root.appendChild(card);
+
+  const footer = document.createElement("div");
+  footer.className = "footer";
+  footer.innerHTML = `
+    <div>Stand: ${nowStamp()}</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="status">Freischaltung: ${isUnlocked("l1") ? "Lektion 1 offen" : "noch nicht gestartet"}</span>
+      <button class="btn ghost" onclick="setActive('l1')" ${isUnlocked("l1") ? "" : "disabled"}>Zu Lektion 1</button>
+    </div>
+  `;
+  root.appendChild(footer);
+}
+
+function saveNameAndStart(){
+  const nameInp = document.getElementById("nameInp");
+  const declChk = document.getElementById("declChk");
+  const name = (nameInp?.value || "").trim();
+  state.declaration = !!declChk?.checked;
+
+  if(!name){
+    alert("Bitte gib einen Namen/Spitznamen ein (für das PDF).");
+    return;
+  }
+  state.userName = name;
+  // unlock first lesson
+  setUnlocked("l1", true);
+  saveState();
+  renderNav("start");
+  setActive("l1");
+}
+
+function renderLesson(cfg, root){
+  root = root || document.getElementById("view");
+
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="kicker">${cfg.kicker}</div>
+    <h1 class="page">${cfg.h1}</h1>
+    <p class="sub">${cfg.sub}</p>
+
+    <div class="prose">
+      ${cfg.prose.map(p=>`<p>${p}</p>`).join("")}
+    </div>
+
+    <div class="figure">
+      ${cfg.figure}
+      <div class="figcap">${cfg.figcap}</div>
+    </div>
+
+    <div class="merke">
+      <div class="badge">Merke</div>
+      <p class="txt">${cfg.merke}</p>
+    </div>
+
+    ${cfg.practice?.map(p=>`<div class="practice">${p}</div>`).join("") || ""}
+
+    <div class="mini-check" id="${cfg.miniCheck.containerId}">
+      <h3>✅ ${escapeHtml(cfg.miniCheck.title)} <span class="tag" id="${cfg.miniCheck.statusId}">${state.completed[cfg.id] ? "✓ erledigt" : "Pflicht"}</span></h3>
+      <p class="hint">${cfg.miniCheck.hint}</p>
+      <div id="${cfg.miniCheck.questionsId}"></div>
+      <div class="row">
+        <button class="btn good" onclick="submitMiniCheck('${cfg.id}','${cfg.miniCheck.key}','${cfg.miniCheck.nextUnlock}')">Abgeben & prüfen</button>
+        <button class="btn ghost" onclick="saveDraftMini('${cfg.id}','${cfg.miniCheck.key}')">Zwischenspeichern</button>
+        <span class="status" id="${cfg.miniCheck.saveId}">${draftStatus(cfg.miniCheck.key)}</span>
+      </div>
+      <div class="msg" id="${cfg.miniCheck.msgId}"></div>
+    </div>
+
+    <div class="footer">
+      <div>Autosave: aktiv (localStorage)</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn ghost" onclick="openRepeat()">Wiederholen</button>
+        <button class="btn warm" onclick="goNextIfUnlocked('${cfg.miniCheck.nextUnlock}')">Weiter</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(card);
+
+  renderMiniQuestions(cfg.id, cfg.miniCheck);
+}
+
+function goNextIfUnlocked(nextId){
+  if(!isUnlocked(nextId)){
+    alert("Noch nicht freigeschaltet. Bitte zuerst den Mini-Check erfolgreich abgeben.");
+    return;
+  }
+  setActive(nextId);
+}
+
+function renderFinal(root){
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="kicker">Kontrolle</div>
+    <h1 class="page">Abschlusskontrolle</h1>
+    <p class="sub">Gemischte Aufgaben. Kein Punkte-Stress: Du bekommst Hinweise, wenn zentrale Begriffe fehlen. Nach dem Abschluss kannst du dein PDF exportieren.</p>
+
+    <div class="practice" style="margin-top:0">
+      <div class="ptitle">📌 Hinweis <small>fair & freundlich</small></div>
+      <div class="pdesc">Bei Freitext gibt es Hinweise („denk an …“), nicht hart „falsch“. Du kannst danach im Wiederholen-Modus gezielt unsichere Dinge üben.</div>
+    </div>
+
+    <div class="mini-check" id="final_block">
+      <h3>✅ Abschluss abgeben <span class="tag" id="final_status">${state.completed.final ? "✓ erledigt" : "Pflicht"}</span></h3>
+      <p class="hint">Bitte beantworte alles. Deine Antworten landen später im PDF.</p>
+      <div id="final_questions"></div>
+      <div class="row">
+        <button class="btn good" onclick="submitFinal()">Abgeben & prüfen</button>
+        <button class="btn ghost" onclick="saveDraftFinal()">Zwischenspeichern</button>
+        <span class="status" id="final_save">${draftStatus("final")}</span>
+      </div>
+      <div class="msg" id="final_msg"></div>
+    </div>
+
+    <div class="footer">
+      <div>Nach Abschluss: PDF exportieren & in Classroom abgeben</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn ghost" onclick="openRepeat()">Wiederholen</button>
+        <button class="btn warm" onclick="openExport()">PDF Export</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(card);
+
+  renderFinalQuestions();
+}
+
+function renderRepeat(root){
+  const list = getUncertainList();
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="kicker">Wiederholen</div>
+    <h1 class="page">Gezielt unsichere Inhalte üben</h1>
+    <p class="sub">Hier erscheinen Aufgaben, die beim letzten Prüfen noch nicht gepasst haben. Du kannst sie erneut beantworten und damit „bereinigen“.</p>
+
+    <div class="practice" style="margin-top:0">
+      <div class="ptitle">🔎 Deine Liste <small>${list.length} Element(e)</small></div>
+      <div class="pdesc">${list.length ? "Arbeite die Aufgaben durch und klicke am Ende auf „Neu bewerten“." : "Aktuell ist nichts als unsicher markiert. Du kannst trotzdem Lektionen wiederholen oder die Abschlusskontrolle öffnen."}</div>
+    </div>
+
+    <div id="repeat_area" style="margin-top:12px"></div>
+
+    <div class="footer">
+      <div>Hinweis: „Unsicher“ bedeutet: Kernbegriff fehlte oder Auswahl war nicht korrekt.</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn ghost" onclick="setActive('l1')" ${isUnlocked("l1")?"":"disabled"}>Zu Lektion 1</button>
+        <button class="btn ghost" onclick="setActive('final')" ${isUnlocked("final")?"":"disabled"}>Zur Abschlusskontrolle</button>
+        <button class="btn good" onclick="recheckRepeat()">Neu bewerten</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(card);
+
+  const area = document.getElementById("repeat_area");
+  if(!list.length){
+    area.innerHTML = `<div class="msg neutral" style="display:block">Alles gut: keine offenen Unsicherheiten.</div>`;
+    return;
+  }
+
+  // Render questions in same UI, reuse stored original definitions
+  area.innerHTML = "";
+  list.forEach(item=>{
+    const qHtml = renderQuestionBlock(item.qDef, "repeat");
+    const wrapper = document.createElement("div");
+    wrapper.className = "q";
+    wrapper.innerHTML = qHtml;
+    area.appendChild(wrapper);
+    hookQuestionEvents(item.qDef, "repeat");
+    // load existing value into input
+    loadAnswerIntoUI(item.qDef, "repeat");
+  });
+
+  area.insertAdjacentHTML("beforeend", `<div class="msg neutral" style="display:block;margin-top:10px">Tipp: Auch wenn du schon etwas eingetippt hast – prüfe, ob ein Kernbegriff fehlt (die Hinweise zeigen es).</div>`);
+}
+
+function renderExport(root){
+  const ready = !!state.allowExport;
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div class="kicker">Abgabe</div>
+    <h1 class="page">PDF Export</h1>
+    <p class="sub">Erstelle eine PDF mit allen Antworten und lade sie in Google Classroom hoch.</p>
+
+    <div class="practice" style="margin-top:0">
+      <div class="ptitle">📄 Was steht im PDF?</div>
+      <div class="pdesc">
+        Name, Zeitstempel, Mini-Checks (L1–L5) und Abschlusskontrolle – jeweils mit deinen eingetragenen Antworten.
+      </div>
+    </div>
+
+    ${ready ? `
+      <div class="row" style="margin-top:14px">
+        <button class="btn" onclick="exportPDF()">PDF herunterladen</button>
+        <button class="btn ghost" onclick="openPrintView()">Druckansicht (Fallback)</button>
+      </div>
+      <div class="msg neutral" style="display:block;margin-top:12px">
+        Tipp: Wenn du nach einer Wiederholung noch etwas verbessert hast, exportiere die PDF einfach erneut.
+      </div>
+    ` : `
+      <div class="msg bad" style="display:block;margin-top:12px">
+        PDF ist noch gesperrt: Bitte zuerst die <b>Abschlusskontrolle</b> erfolgreich abgeben.
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn ghost" onclick="setActive('final')" ${isUnlocked("final")?"":"disabled"}>Zur Abschlusskontrolle</button>
+      </div>
+    `}
+
+    <div class="footer">
+      <div>Speicher: lokal (dieser Laptop)</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn ghost" onclick="openRepeat()">Wiederholen</button>
+        <button class="btn ghost" onclick="setActive('start')">Start</button>
+      </div>
+    </div>
+  `;
+  root.appendChild(card);
+}
+
+/* =========================
+   Mini-check engine
+   ========================= */
+
+function miniCheckConfig(key, title, hint, questions, nextUnlock){
+  return {
+    key,
+    title,
+    hint,
+    questions,
+    nextUnlock,
+    containerId:`${key}_block`,
+    questionsId:`${key}_questions`,
+    msgId:`${key}_msg`,
+    saveId:`${key}_save`,
+    statusId:`${key}_status`
+  };
+}
+
+function draftStatus(key){
+  const t = state.answers?.[`__draft_${key}`]?.value;
+  return t ? `Gespeichert: ${t}` : "Noch nicht gespeichert";
+}
+
+function renderMiniQuestions(lessonId, mc){
+  const qWrap = document.getElementById(mc.questionsId);
+  qWrap.innerHTML = "";
+  mc.questions.forEach((q, idx)=>{
+    const block = document.createElement("div");
+    block.className = "q";
+    block.innerHTML = renderQuestionBlock(q, mc.key, idx+1);
+    qWrap.appendChild(block);
+    hookQuestionEvents(q, mc.key);
+    loadAnswerIntoUI(q, mc.key);
+  });
+}
+
+function renderQuestionBlock(q, key, num){
+  const label = num ? `Q${num}` : "Q";
+  const stored = state.answers[q.id]?.value ?? "";
+
+  const head = `
+    <div class="qhead">
+      <div class="qid">${label}</div>
+      <p class="qtext">${escapeHtml(q.prompt)}</p>
+    </div>
+  `;
+
+  let body = "";
+  if(q.type==="input"){
+    body = `<input type="text" data-qid="${q.id}" data-key="${key}" placeholder="Antwort …" value="${escapeHtml(stored)}" />`;
+  } else if(q.type==="mc"){
+    const sel = state.answers[q.id]?.value;
+    body = `<div class="opts">
+      ${q.options.map((opt,i)=>`
+        <div class="opt ${sel===i ? "selected":""}" data-qid="${q.id}" data-key="${key}" data-idx="${i}">
+          ${escapeHtml(opt)}
+        </div>`).join("")}
+    </div>`;
+  } else if(q.type==="textarea"){
+    body = `<textarea data-qid="${q.id}" data-key="${key}" placeholder="Schreibe kurz …">${escapeHtml(stored)}</textarea>`;
+  } else if(q.type==="matchmini"){
+    // left items with dropdown to choose among rights
+    body = q.pairs.map((p, i)=>`
+      <div style="display:grid;grid-template-columns:1fr 220px;gap:10px;align-items:center">
+        <div style="font-weight:900">${escapeHtml(p.left)}</div>
+        <select data-qid="${q.id}" data-key="${key}" data-left="${escapeHtml(p.left)}">
+          <option value="">— wählen —</option>
+          ${q.rights.map(r=>`<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join("")}
+        </select>
+      </div>
+    `).join("");
+  } else if(q.type==="scenario"){
+    body = `
+      <div style="display:grid;gap:10px">
+        <div style="font-weight:900">${escapeHtml(q.scenario)}</div>
+        <div class="opts">
+          ${q.choices.map((c,i)=>`
+            <div class="opt" data-qid="${q.id}" data-key="${key}" data-idx="${i}">
+              ${escapeHtml(c)}
+            </div>`).join("")}
+        </div>
+        <textarea data-qid="${q.id}_why" data-key="${key}" placeholder="Begründung (1–2 Sätze) …">${escapeHtml(state.answers[q.id+"_why"]?.value ?? "")}</textarea>
+      </div>
+    `;
+  }
+
+  return head + `<div class="qbody">${body}</div>`;
+}
+
+function hookQuestionEvents(q, key){
+  // input/textarea autosave
+  document.querySelectorAll(`[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`).forEach(el=>{
+    if(el.tagName==="INPUT" || el.tagName==="TEXTAREA"){
+      el.addEventListener("input", () => {
+        state.answers[q.id] = { value: el.value, at: nowStamp(), key };
+        saveState();
+      });
+    }
+    if(el.classList.contains("opt")){
+      el.addEventListener("click", () => {
+        // select one
+        const idx = parseInt(el.getAttribute("data-idx"),10);
+        state.answers[q.id] = { value: idx, at: nowStamp(), key };
+        saveState();
+        // update UI
+        document.querySelectorAll(`.opt[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`)
+          .forEach(o => o.classList.toggle("selected", o===el));
+      });
+    }
+    if(el.tagName==="SELECT"){
+      el.addEventListener("change", () => {
+        // store mapping per left
+        const left = el.getAttribute("data-left");
+        const mapKey = `${q.id}__map`;
+        const current = state.answers[mapKey]?.value || {};
+        current[left] = el.value;
+        state.answers[mapKey] = { value: current, at: nowStamp(), key };
+        saveState();
+      });
+    }
+  });
+
+  // scenario special
+  if(q.type==="scenario"){
+    document.querySelectorAll(`.opt[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`).forEach(el=>{
+      el.addEventListener("click", () => {
+        const idx = parseInt(el.getAttribute("data-idx"),10);
+        let arr = state.answers[q.id]?.value || [];
+        if(!Array.isArray(arr)) arr = [];
+        // toggle selection (multi-select)
+        if(arr.includes(idx)) arr = arr.filter(x=>x!==idx);
+        else arr.push(idx);
+        state.answers[q.id] = { value: arr, at: nowStamp(), key };
+        saveState();
+        el.classList.toggle("selected", arr.includes(idx));
+      });
+    });
+    const why = document.querySelector(`textarea[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id+"_why")}"]`);
+    if(why){
+      why.addEventListener("input", ()=>{
+        state.answers[q.id+"_why"] = { value: why.value, at: nowStamp(), key };
+        saveState();
+      });
+    }
+  }
+}
+
+function loadAnswerIntoUI(q, key){
+  if(q.type==="input"){
+    const el = document.querySelector(`input[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`);
+    if(el && state.answers[q.id]) el.value = state.answers[q.id].value ?? "";
+  } else if(q.type==="textarea"){
+    const el = document.querySelector(`textarea[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`);
+    if(el && state.answers[q.id]) el.value = state.answers[q.id].value ?? "";
+  } else if(q.type==="mc"){
+    const sel = state.answers[q.id]?.value;
+    document.querySelectorAll(`.opt[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`)
+      .forEach(o => o.classList.toggle("selected", parseInt(o.getAttribute("data-idx"),10)===sel));
+  } else if(q.type==="matchmini"){
+    const mapKey = `${q.id}__map`;
+    const map = state.answers[mapKey]?.value || {};
+    document.querySelectorAll(`select[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`).forEach(sel=>{
+      const left = sel.getAttribute("data-left");
+      if(map[left] !== undefined) sel.value = map[left];
+    });
+  } else if(q.type==="scenario"){
+    const arr = state.answers[q.id]?.value || [];
+    document.querySelectorAll(`.opt[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id)}"]`).forEach(el=>{
+      const idx = parseInt(el.getAttribute("data-idx"),10);
+      el.classList.toggle("selected", Array.isArray(arr) && arr.includes(idx));
+    });
+    const why = document.querySelector(`textarea[data-key="${cssEscape(key)}"][data-qid="${cssEscape(q.id+"_why")}"]`);
+    if(why && state.answers[q.id+"_why"]) why.value = state.answers[q.id+"_why"].value ?? "";
+  }
+}
+
+function saveDraftMini(lessonId, key){
+  state.answers[`__draft_${key}`] = { value: nowStamp() };
+  saveState();
+  const lbl = document.getElementById(`${key}_save`);
+  if(lbl) lbl.textContent = draftStatus(key);
+  alert("Zwischengespeichert (lokal).");
+}
+
+function submitMiniCheck(lessonId, key, nextUnlock){
+  const def = MINI_DEF[key];
+  if(!def || !Array.isArray(def.questions)){
+    console.error('Mini-Check definition missing for key:', key, def);
+    alert('Interner Fehler: Mini-Check konnte nicht geladen werden. Bitte Seite neu laden.');
+    return;
+  }
+
+  const res = evaluateQuestions(def.questions, key);
+
+  const msg = document.getElementById(`${key}_msg`);
+  msg.className = "msg " + (res.okAll ? "ok" : "bad");
+  msg.style.display = "block";
+  msg.innerHTML = res.message;
+
+  // update status label
+  const st = document.getElementById(`${key}_status`);
+  if(st) st.textContent = res.okAll ? "✓ erledigt" : "Pflicht";
+
+  if(res.okAll){
+    markCompleted(lessonId, true);
+    setUnlocked(nextUnlock, true);
+    // also unlock export only after final
+    renderNav(lessonId);
+  } else {
+    // keep unlocked state unchanged
+  }
+
+  // autosave draft stamp
+  state.answers[`__draft_${key}`] = { value: nowStamp() };
+  saveState();
+  const lbl = document.getElementById(`${key}_save`);
+  if(lbl) lbl.textContent = draftStatus(key);
+}
+
+function evaluateQuestions(questions, key){
+  let okAll = true;
+  const missing = [];
+  const hints = [];
+
+  questions.forEach(q=>{
+    const r = evalOne(q, key);
+    state.results[q.id] = { ok: r.ok, notes: r.note, at: nowStamp(), key };
+
+    if(!r.ok){
+      okAll = false;
+      missing.push(`<li><b>${escapeHtml(q.prompt)}</b><br><span style="color:var(--muted)">${escapeHtml(r.note)}</span></li>`);
+      if(q.hint) hints.push(q.hint);
+    }
+  });
+
+  // Also store draft time
+  state.answers[`__draft_${key}`] = { value: nowStamp() };
+  saveState();
+
+  if(okAll){
+    return {
+      okAll:true,
+      message:`✅ Passt! Du kannst weitergehen. (Wenn du möchtest: „Wiederholen“ bleibt jederzeit möglich.)`
+    };
+  }
+
+  // Deduplicate hints
+  const uniqueHints = [...new Set(hints)].slice(0,3);
+  return {
+    okAll:false,
+    message:`❗ Noch nicht ganz. Schau dir diese Punkte an:
+      <ul style="margin:10px 0 0; padding-left:18px">${missing.join("")}</ul>
+      ${uniqueHints.length ? `<div style="margin-top:10px"><b>Hinweise:</b><ul style="margin:6px 0 0; padding-left:18px">${uniqueHints.map(h=>`<li>${escapeHtml(h)}</li>`).join("")}</ul></div>`:""}
+      <div style="margin-top:10px">Du kannst direkt verbessern und nochmal abgeben.</div>`
+  };
+}
+
+function evalOne(q, key){
+  if(q.type==="input"){
+    const v = norm(state.answers[q.id]?.value || "");
+    if(q.accept){
+      const ok = q.accept.map(norm).includes(v);
+      return { ok, note: ok ? "ok" : (q.hint || "Begriff stimmt noch nicht.") };
+    }
+    if(q.acceptAnyContains){
+      const ok = q.acceptAnyContains.map(norm).some(tok => v.includes(tok));
+      return { ok, note: ok ? "ok" : (q.hint || "Beispiel/Keyword fehlt noch.") };
+    }
+    return { ok: !!v, note: !!v ? "ok" : (q.hint || "Bitte etwas eintragen.") };
+  }
+
+  if(q.type==="mc"){
+    const sel = state.answers[q.id]?.value;
+    const ok = (sel === q.correctIndex);
+    return { ok, note: ok ? "ok" : (q.hint || "Auswahl stimmt noch nicht.") };
+  }
+
+  if(q.type==="textarea"){
+    const txt = norm(state.answers[q.id]?.value || "");
+    if(!txt) return { ok:false, note:"Bitte schreibe eine kurze Antwort." };
+    const want = (q.rubric?.wantAny || []).map(norm);
+    const ok = want.some(w => txt.includes(w));
+    return { ok, note: ok ? "ok" : (q.rubric?.missingHint || "Es fehlt noch ein Kernbegriff.") };
+  }
+
+  if(q.type==="matchmini"){
+    const map = state.answers[`${q.id}__map`]?.value || {};
+    let okAll = true;
+    q.pairs.forEach(p=>{
+      const got = map[p.left] || "";
+      if(got !== p.right) okAll = false;
+    });
+    return { ok: okAll, note: okAll ? "ok" : "Zuordnung passt noch nicht ganz." };
+  }
+
+  if(q.type==="scenario"){
+    const sel = state.answers[q.id]?.value;
+    const why = norm(state.answers[q.id+"_why"]?.value || "");
+    const okSel = Array.isArray(sel) && sel.length >= (q.minSelect || 2);
+    const okWhy = q.rubric?.wantAny ? q.rubric.wantAny.map(norm).some(w=>why.includes(w)) : (why.length > 10);
+    const ok = okSel && okWhy;
+    const note = ok ? "ok" : `Wähle mindestens ${q.minSelect||2} Maßnahmen und begründe mit einem Kernwort (z. B. Hall/Absorption, Durchgang/Dämmung, Vibration/Entkopplung).`;
+    return { ok, note };
+  }
+
+  return { ok:false, note:"Unbekanntes Format." };
+}
+
+/* =========================
+   Final questions
+   ========================= */
+
+const FINAL_DEF = {
+  key:"final",
+  questions: [
+    {
+      id:"f_q1",
+      type:"matchmini",
+      prompt:"Zuordnung: Prinzip ↔ Beschreibung",
+      pairs:[
+        {left:"Absorption", right:"Weniger Hall im Raum"},
+        {left:"Dämmung (Masse)", right:"Weniger Schall-Durchgang"},
+        {left:"Entkopplung", right:"Weniger Körperschall-Übertragung"}
+      ],
+      rights:["Weniger Hall im Raum","Weniger Schall-Durchgang","Weniger Körperschall-Übertragung"]
+    },
+    {
+      id:"f_q2",
+      type:"matchmini",
+      prompt:"Zuordnung: Material ↔ Prinzip",
+      pairs:[
+        {left:"Teppich / Vorhang", right:"Absorption"},
+        {left:"Betonwand / schwere Tür", right:"Dämmung (Masse)"},
+        {left:"Gummipuffer / Unterlage", right:"Entkopplung"}
+      ],
+      rights:["Absorption","Dämmung (Masse)","Entkopplung"]
+    },
+    {
+      id:"f_q3",
+      type:"input",
+      prompt:"Schall in festen Materialien heißt ____.",
+      accept:["koerperschall","körperschall"],
+      hint:"Kernwort: Körperschall."
+    },
+    {
+      id:"f_q4",
+      type:"input",
+      prompt:"Tonhöhe hängt von der ____ ab.",
+      accept:["frequenz","schwingungsfrequenz"],
+      hint:"Kernwort: Frequenz."
+    },
+    {
+      id:"f_q5",
+      type:"mc",
+      prompt:"Welche Änderung wirkt in der Regel deutlich lauter?",
+      options:["+1 dB","+10 dB","+0,5 dB"],
+      correctIndex:1,
+      hint:"Faustidee: +10 dB wirkt deutlich lauter."
+    },
+    {
+      id:"f_q6",
+      type:"textarea",
+      prompt:"Erkläre kurz den Unterschied zwischen Absorption und Dämmung (2–4 Sätze, mit Beispiel).",
+      rubric:{
+        wantAny:["absorption","hall","daemm","dämm","durchgang","nachbar","wand","tuer","tür","raum"],
+        missingHint:"Tipp: Absorption → Hall im Raum. Dämmung → weniger Durchgang zum Nachbarn."
+      }
+    },
+    {
+      id:"f_q7",
+      type:"textarea",
+      prompt:"Nachbar hört Schritte (Trittschall). Welche 2 Maßnahmen empfiehlst du und warum? (2–4 Sätze).",
+      rubric:{
+        wantAny:["entkoppel","vibration","unterlage","gummi","teppich","schwimm","daemm","dämm","dicht","boden","decke"],
+        missingHint:"Tipp: Trittschall → Entkopplung/Vibration. Wenn zusätzlich Luftschall stört: Dämmung/dicht."
+      }
+    },
+    {
+      id:"f_q8",
+      type:"textarea",
+      prompt:"Warum ist Gehörschutz wichtig? (1–2 Sätze).",
+      rubric:{
+        wantAny:["gehoer","gehör","schaden","laerm","lärm","zu laut","dezibel","db","schutz"],
+        missingHint:"Tipp: Zu lauter Schall kann das Gehör schädigen."
+      }
+    }
+  ]
+};
+
+function renderFinalQuestions(){
+  const wrap = document.getElementById("final_questions");
+  wrap.innerHTML = "";
+  FINAL_DEF.questions.forEach((q, idx)=>{
+    const block = document.createElement("div");
+    block.className = "q";
+    block.innerHTML = renderQuestionBlock(q, "final", idx+1);
+    wrap.appendChild(block);
+    hookQuestionEvents(q, "final");
+    loadAnswerIntoUI(q, "final");
+  });
+}
+
+function saveDraftFinal(){
+  state.answers[`__draft_final`] = { value: nowStamp() };
+  saveState();
+  const lbl = document.getElementById("final_save");
+  if(lbl) lbl.textContent = draftStatus("final");
+  alert("Zwischengespeichert (lokal).");
+}
+
+function submitFinal(){
+  const res = evaluateQuestions(FINAL_DEF.questions, "final");
+  const msg = document.getElementById("final_msg");
+  msg.className = "msg " + (res.okAll ? "ok" : "bad");
+  msg.style.display = "block";
+  msg.innerHTML = res.message;
+
+  const st = document.getElementById("final_status");
+  if(st) st.textContent = res.okAll ? "✓ erledigt" : "Pflicht";
+
+  if(res.okAll){
+    markCompleted("final", true);
+    state.allowExport = true;
+    saveState();
+    renderNav("final");
+  }
+  state.answers[`__draft_final`] = { value: nowStamp() };
+  saveState();
+  const lbl = document.getElementById("final_save");
+  if(lbl) lbl.textContent = draftStatus("final");
+}
+
+/* =========================
+   Uncertain list / Repeat
+   ========================= */
+
+const MINI_DEF = {}; // key -> {questions}
+function registerMiniDefs(){
+  // hard-register from the closures by recreating the definitions via known keys:
+  // We'll store them manually here consistent with above
+  MINI_DEF["mc_l1"] = { questions: LESSONS_MINI.l1 };
+  MINI_DEF["mc_l2"] = { questions: LESSONS_MINI.l2 };
+  MINI_DEF["mc_l3"] = { questions: LESSONS_MINI.l3 };
+  MINI_DEF["mc_l4"] = { questions: LESSONS_MINI.l4 };
+  MINI_DEF["mc_l5"] = { questions: LESSONS_MINI.l5 };
+}
+
+// Static mini defs (single source of truth for repeat)
+const LESSONS_MINI = {
+  l1: [
+    { id:"l1_q1", type:"input", prompt:"Schall braucht ein ____ (physikalisch: ein Stoff/… ).", accept:["medium","stoff","materie","luft"], hint:"Tipp: Ohne Medium kein Schall." },
+    { id:"l1_q2", type:"input", prompt:"Tonhöhe hängt von der ____ ab.", accept:["frequenz","schwingungsfrequenz"], hint:"Tipp: Wie schnell pro Sekunde?" },
+    { id:"l1_q3", type:"input", prompt:"Lautstärke hängt mit der ____ zusammen.", accept:["amplitude","schwingungsstaerke","schwingungsstärke"], hint:"Tipp: Wie stark die Schwingung ist." },
+  ],
+  l2: [
+    { id:"l2_q1", type:"input", prompt:"Schall in festen Materialien heißt ____.", accept:["koerperschall","körperschall"], hint:"Tipp: Wort beginnt mit „Körper…“" },
+    { id:"l2_q2", type:"input", prompt:"Nenne 1 Beispiel für Körperschall (2–6 Wörter).", acceptAnyContains:["schritt","tramp","bohr","klopf","hammer","zug","tram","heizung","rohr","vibration"], hint:"Tipp: Schritte, Bohren, Rohre …" },
+  ],
+  l3: [
+    { id:"l3_q1", type:"input", prompt:"Die Einheit für Lautstärke heißt ____.", accept:["db","dezibel","deci bel","dezi bel"], hint:"Tipp: Abkürzung: dB." },
+    { id:"l3_q2", type:"mc", prompt:"Welche Änderung wirkt in der Regel deutlich lauter?", options:["+1 dB","+10 dB","+0,5 dB"], correctIndex:1, hint:"Tipp: +10 dB." },
+    { id:"l3_q3", type:"textarea", prompt:"Konzert ohne Gehörschutz: sinnvoll? Antworte kurz (1 Satz) und begründe.", rubric:{ wantAny:["gehoer","gehör","schutz","zu laut","laerm","lärm","schaden","dezibel","db"], missingHint:"Tipp: Gehör kann Schaden nehmen." } },
+  ],
+  l4: [
+    { id:"l4_q1", type:"input", prompt:"Poröse Materialien reduzieren im Raum den ____ (Fachwort; Hall wird auch akzeptiert).", accept:["absorption","hall"], hint:"Tipp: Absorption / Hall." },
+    { id:"l4_q2", type:"mc", prompt:"Ein Raum hallt stark. Was hilft am besten?", options:["Akustikpaneele/Teppich","Noch schwerere Tür","Stahlplatte an die Wand"], correctIndex:0, hint:"Tipp: Absorption im Raum." },
+    { id:"l4_q3", type:"textarea", prompt:"Warum hilft Entkopplung? Antworte in 1 Satz.", rubric:{ wantAny:["vibration","koerper","körper","uebertragung","übertragung","trennen","entkoppel","federn","puffer"], missingHint:"Tipp: Vibrationen werden getrennt → weniger Übertragung." } },
+  ],
+  l5: [
+    { id:"l5_q1", type:"mc", prompt:"Ein Raum hallt stark. Welche Maßnahme passt besser?", options:["Akustikpaneele/Teppich","Schwerere Tür"], correctIndex:0, hint:"Tipp: Hall → Absorption." },
+    { id:"l5_q2", type:"mc", prompt:"Trittschall von oben. Was ist besonders wichtig?", options:["Entkopplung (z. B. Unterlage)","Mehr Gardinen"], correctIndex:0, hint:"Tipp: Trittschall ist oft Körperschall." },
+    { id:"l5_q3", type:"input", prompt:"Schwere, dichte Materialien helfen bei ____ (Prinzip).", accept:["daemmung","dämmung","schalldaemmung","schalldämmung","daemmung masse","dämmung masse"], hint:"Tipp: Dämmung/Masse." },
+  ]
+};
+
+function getUncertainList(){
+  const ids = Object.keys(state.results || {}).filter(qid => state.results[qid] && state.results[qid].ok === false);
+
+  // Build qDef for each
+  const allDefs = [
+    ...LESSONS_MINI.l1, ...LESSONS_MINI.l2, ...LESSONS_MINI.l3, ...LESSONS_MINI.l4, ...LESSONS_MINI.l5,
+    ...FINAL_DEF.questions
+  ];
+
+  const map = new Map(allDefs.map(d => [d.id, d]));
+  const out = [];
+  ids.forEach(id=>{
+    const qDef = map.get(id);
+    if(qDef) out.push({ qid:id, qDef });
+  });
+
+  // also include matchmini maps for final (store under id only)
+  // already covered.
+
+  // unique by id
+  const seen = new Set();
+  return out.filter(x => (seen.has(x.qid) ? false : (seen.add(x.qid), true)));
+}
+
+function recheckRepeat(){
+  const list = getUncertainList();
+  if(!list.length){
+    alert("Keine unsicheren Elemente vorhanden.");
+    return;
+  }
+
+  let fixed = 0;
+  list.forEach(item=>{
+    const r = evalOne(item.qDef, "repeat");
+    state.results[item.qDef.id] = { ok: r.ok, notes: r.note, at: nowStamp(), key:"repeat" };
+    if(r.ok) fixed++;
+  });
+  saveState();
+  alert(`Neu bewertet. Verbessert: ${fixed} Element(e).`);
+  setActive("repeat");
+}
+
+/* =========================
+   Practice widgets
+   ========================= */
+
+function practiceMC(pid, title, q, options){
+  const stored = state.practice[pid]?.sel ?? null;
+  const opts = options.map((o,i)=>`
+    <div class="opt ${stored===i?"selected":""}" data-practice="${pid}" data-idx="${i}">
+      ${escapeHtml(o.k)}
+    </div>`).join("");
+
+  setTimeout(()=>{ // hook after inserted
+    document.querySelectorAll(`.opt[data-practice="${cssEscape(pid)}"]`).forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const idx = parseInt(el.getAttribute("data-idx"),10);
+        state.practice[pid] = { sel: idx, at: nowStamp() };
+        saveState();
+        document.querySelectorAll(`.opt[data-practice="${cssEscape(pid)}"]`).forEach(o=>o.classList.toggle("selected", o===el));
+        const ok = !!options[idx]?.ok;
+        const m = document.getElementById(`pmsg_${pid}`);
+        m.className = "msg " + (ok ? "ok":"bad");
+        m.style.display = "block";
+        m.innerHTML = ok ? "✅ Passt." : "🔎 Noch nicht. Denk an: Tonhöhe ↔ Frequenz.";
+      });
+    });
+  },0);
+
+  return `
+    <div class="ptitle">🧠 ${escapeHtml(title)} <small>sofortiges Feedback</small></div>
+    <div class="pdesc">${escapeHtml(q)}</div>
+    <div class="opts">${opts}</div>
+    <div class="msg" id="pmsg_${pid}"></div>
+  `;
+}
+
+function practiceMatchMini(pid, title, q, pairs, rights){
+  const mapKey = `pmap_${pid}`;
+  const map = state.practice[mapKey] || {};
+  setTimeout(()=>{
+    document.querySelectorAll(`select[data-practice="${cssEscape(pid)}"]`).forEach(sel=>{
+      sel.addEventListener("change", ()=>{
+        const left = sel.getAttribute("data-left");
+        map[left] = sel.value;
+        state.practice[mapKey] = map;
+        saveState();
+        // check
+        let okAll = true;
+        pairs.forEach(p=>{ if((map[p.left]||"") !== p.right) okAll=false; });
+        const m = document.getElementById(`pmsg_${pid}`);
+        if(Object.keys(map).length < pairs.length){
+          m.className = "msg neutral"; m.style.display="block";
+          m.innerHTML = "Wähle alle Zuordnungen aus.";
+          return;
+        }
+        m.className = "msg " + (okAll ? "ok":"bad");
+        m.style.display = "block";
+        m.innerHTML = okAll ? "✅ Alles korrekt." : "🔎 Noch nicht ganz. Prüfe Luftschall/Körperschall.";
+      });
+    });
+  },0);
+
+  return `
+    <div class="ptitle">🧩 ${escapeHtml(title)} <small>Zuordnung</small></div>
+    <div class="pdesc">${escapeHtml(q)}</div>
+    <div style="display:grid;gap:10px">
+      ${pairs.map(p=>`
+        <div style="display:grid;grid-template-columns:1fr 220px;gap:10px;align-items:center">
+          <div style="font-weight:900">${escapeHtml(p.left)}</div>
+          <select data-practice="${pid}" data-left="${escapeHtml(p.left)}">
+            <option value="">— wählen —</option>
+            ${rights.map(r=>`<option value="${escapeHtml(r)}" ${map[p.left]===r?"selected":""}>${escapeHtml(r)}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+    </div>
+    <div class="msg" id="pmsg_${pid}"></div>
+  `;
+}
+
+function practiceSortLite(pid, title, q, items){
+  return `
+    <div class="ptitle">📚 ${escapeHtml(title)} <small>Denken, nicht tippen</small></div>
+    <div class="pdesc">${escapeHtml(q)}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      ${items.map(x=>`<span class="tag">${escapeHtml(x)}</span>`).join("")}
+    </div>
+    <div class="msg neutral" style="display:block;margin-top:10px">
+      Lösungsidee: Flüstern → Gespräch → Straße → Konzert
+    </div>
+  `;
+}
+
+function practiceDragLite(pid, title, q, items, options){
+  // Simplified: dropdown per material
+  const mapKey = `pmap_${pid}`;
+  const map = state.practice[mapKey] || {};
+  setTimeout(()=>{
+    document.querySelectorAll(`select[data-practice="${cssEscape(pid)}"]`).forEach(sel=>{
+      sel.addEventListener("change", ()=>{
+        const m = sel.getAttribute("data-m");
+        map[m] = sel.value;
+        state.practice[mapKey] = map; saveState();
+        let okAll = true;
+        items.forEach(it=>{ if((map[it.m]||"") !== it.want) okAll=false; });
+        const msg = document.getElementById(`pmsg_${pid}`);
+        if(Object.keys(map).length < items.length){
+          msg.className="msg neutral"; msg.style.display="block";
+          msg.innerHTML="Wähle für alle Materialien ein Prinzip.";
+          return;
+        }
+        msg.className="msg " + (okAll ? "ok":"bad");
+        msg.style.display="block";
+        msg.innerHTML = okAll ? "✅ Passt. (Gute Unterscheidung!)" : "🔎 Noch nicht ganz. Denk an: Teppich/Akustik → Absorption, schwer → Dämmung, Gummi → Entkopplung.";
+      });
+    });
+  },0);
+
+  return `
+    <div class="ptitle">🧰 ${escapeHtml(title)} <small>Materialien</small></div>
+    <div class="pdesc">${escapeHtml(q)}</div>
+    <div style="display:grid;gap:10px">
+      ${items.map(it=>`
+        <div style="display:grid;grid-template-columns:1fr 240px;gap:10px;align-items:center">
+          <div style="font-weight:900">${escapeHtml(it.m)}</div>
+          <select data-practice="${pid}" data-m="${escapeHtml(it.m)}">
+            <option value="">— wählen —</option>
+            ${options.map(o=>`<option value="${escapeHtml(o)}" ${map[it.m]===o?"selected":""}>${escapeHtml(o)}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+    </div>
+    <div class="msg" id="pmsg_${pid}"></div>
+  `;
+}
+
+function practiceScenario(pid, title, scenario, choices){
+  const qid = `psel_${pid}`;
+  const whyId = `pwhy_${pid}`;
+  const sel = state.practice[qid]?.sel || [];
+  const why = state.practice[whyId]?.txt || "";
+  setTimeout(()=>{
+    document.querySelectorAll(`.opt[data-practice="${cssEscape(pid)}"]`).forEach(el=>{
+      el.addEventListener("click", ()=>{
+        const idx = parseInt(el.getAttribute("data-idx"),10);
+        let arr = Array.isArray(state.practice[qid]?.sel) ? [...state.practice[qid].sel] : [];
+        if(arr.includes(idx)) arr = arr.filter(x=>x!==idx); else arr.push(idx);
+        state.practice[qid] = { sel: arr, at: nowStamp() };
+        saveState();
+        el.classList.toggle("selected", arr.includes(idx));
+      });
+    });
+    const ta = document.querySelector(`textarea[data-practice="${cssEscape(pid)}"]`);
+    if(ta){
+      ta.addEventListener("input", ()=>{
+        state.practice[whyId] = { txt: ta.value, at: nowStamp() };
+        saveState();
+      });
+    }
+    const btn = document.getElementById(`pbtn_${pid}`);
+    btn.addEventListener("click", ()=>{
+      const arr = state.practice[qid]?.sel || [];
+      const txt = norm(state.practice[whyId]?.txt || "");
+      const hasKey = ["hall","absorption","daemm","dämm","vibration","entkoppel","durchgang"].some(k=>txt.includes(norm(k)));
+      const ok = Array.isArray(arr) && arr.length>=2 && hasKey;
+      const m = document.getElementById(`pmsg_${pid}`);
+      m.className = "msg " + (ok ? "ok":"bad");
+      m.style.display = "block";
+      m.innerHTML = ok
+        ? "✅ Passt. Du hast Maßnahmen gewählt und mit einem Prinzip begründet."
+        : "🔎 Noch nicht ganz: Wähle mind. 2 Maßnahmen und verwende ein Kernwort (Hall/Absorption, Durchgang/Dämmung, Vibration/Entkopplung).";
+    });
+  },0);
+
+  return `
+    <div class="ptitle">🧪 ${escapeHtml(title)} <small>Anwenden</small></div>
+    <div class="pdesc">${escapeHtml(scenario)}</div>
+    <div class="opts">
+      ${choices.map((c,i)=>`
+        <div class="opt ${sel.includes(i)?"selected":""}" data-practice="${pid}" data-idx="${i}">${escapeHtml(c)}</div>
+      `).join("")}
+    </div>
+    <textarea data-practice="${pid}" placeholder="Begründung (1–2 Sätze) …">${escapeHtml(why)}</textarea>
+    <div class="row">
+      <button class="btn" id="pbtn_${pid}">Prüfen</button>
+    </div>
+    <div class="msg" id="pmsg_${pid}"></div>
+  `;
+}
+
+/* =========================
+   PDF Export + Print fallback
+   ========================= */
+
+function exportPDF(){
+  if(!state.allowExport){
+    alert("PDF ist noch gesperrt. Bitte zuerst die Abschlusskontrolle erfolgreich abgeben.");
+    return;
+  }
+  if(!state.userName){
+    alert("Bitte zuerst am Start einen Namen/Spitznamen eintragen.");
+    setActive("start");
+    return;
+  }
+
+  const { jsPDF } = window.jspdf || {};
+  if(!jsPDF){
+    alert("PDF-Library konnte nicht geladen werden. Nutze bitte die Druckansicht (Fallback).");
+    openPrintView();
+    return;
+  }
+
+  const doc = new jsPDF({ unit:"pt", format:"a4" });
+  const margin = 46;
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  let y = margin;
+
+  function addTitle(t){
+    doc.setFont("times","bold");
+    doc.setFontSize(18);
+    y = addWrapped(t, 18, true) + 10;
+  }
+  function addKicker(t){
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(10);
+    doc.setTextColor(90,100,118);
+    y = addWrapped(t.toUpperCase(), 10, false) + 6;
+    doc.setTextColor(20,30,55);
+  }
+  function addLine(t, size=11){
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(size);
+    y = addWrapped(t, size, false) + 4;
+  }
+  function addWrapped(t, size, bold){
+    const maxW = pageW - margin*2;
+    const lines = doc.splitTextToSize(t, maxW);
+    // page break if needed
+    const lineH = size + 3;
+    lines.forEach(line=>{
+      if(y + lineH > pageH - margin){
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(line, margin, y);
+      y += lineH;
+    });
+    return y;
+  }
+
+  addKicker("Physik • Schallschutz");
+  addTitle("Antworten – PDF Abgabe");
+  addLine(`Name/Spitzname: ${state.userName}`);
+  addLine(`Zeitstempel: ${nowStamp()}`);
+  if(state.declaration){
+    addLine("Selbstständigkeit: Ich habe die Aufgaben selbstständig bearbeitet.");
+  }
+  y += 8;
+
+  function addSection(title){
+    y += 8;
+    doc.setDrawColor(229,231,235);
+    doc.line(margin, y, pageW - margin, y);
+    y += 12;
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(13);
+    doc.setTextColor(15,23,42);
+    y = addWrapped(title, 13, true) + 4;
+  }
+
+  function qValueText(qid){
+    const a = state.answers[qid]?.value;
+    if(a === undefined || a === null || a === "") return "—";
+    if(typeof a === "number") return String(a);
+    if(Array.isArray(a)) return a.map(i=>String(i)).join(", ");
+    if(typeof a === "object") return JSON.stringify(a);
+    return String(a);
+  }
+
+  // Mini checks sections
+  const order = [
+    {name:"Mini-Check 1", qs: LESSONS_MINI.l1},
+    {name:"Mini-Check 2", qs: LESSONS_MINI.l2},
+    {name:"Mini-Check 3", qs: LESSONS_MINI.l3},
+    {name:"Mini-Check 4", qs: LESSONS_MINI.l4},
+    {name:"Mini-Check 5", qs: LESSONS_MINI.l5},
+  ];
+
+  order.forEach(sec=>{
+    addSection(sec.name);
+    sec.qs.forEach(q=>{
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(11);
+      y = addWrapped(`Frage: ${stripHtml(q.prompt)}`, 11, true) + 2;
+      doc.setFont("helvetica","normal");
+      doc.setFontSize(11);
+      const ans = q.type==="mc"
+        ? (q.options?.[state.answers[q.id]?.value] ?? "—")
+        : (q.type==="textarea" ? (state.answers[q.id]?.value ?? "—") : (state.answers[q.id]?.value ?? "—"));
+      y = addWrapped(`Antwort: ${String(ans).trim() || "—"}`, 11, false) + 6;
+
+      // show note if existed
+      const r = state.results[q.id];
+      if(r && r.ok === false){
+        doc.setTextColor(127,29,29);
+        y = addWrapped(`Hinweis: ${r.notes || "—"}`, 10, false) + 4;
+        doc.setTextColor(15,23,42);
+      }
+      y += 4;
+    });
+  });
+
+  // Final
+  addSection("Abschlusskontrolle");
+  FINAL_DEF.questions.forEach(q=>{
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(11);
+    y = addWrapped(`Aufgabe: ${stripHtml(q.prompt)}`, 11, true) + 2;
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(11);
+
+    if(q.type==="mc"){
+      const idx = state.answers[q.id]?.value;
+      const ans = (q.options && typeof idx==="number") ? q.options[idx] : "—";
+      y = addWrapped(`Antwort: ${String(ans)}`, 11, false) + 6;
+    } else if(q.type==="matchmini"){
+      const map = state.answers[`${q.id}__map`]?.value || {};
+      const lines = q.pairs.map(p=>`${p.left} → ${map[p.left] || "—"}`);
+      y = addWrapped(`Antworten: ${lines.join(" | ")}`, 11, false) + 6;
+    } else {
+      const ans = state.answers[q.id]?.value ?? "—";
+      y = addWrapped(`Antwort: ${String(ans).trim() || "—"}`, 11, false) + 6;
+    }
+
+    const r = state.results[q.id];
+    if(r && r.ok === false){
+      doc.setTextColor(127,29,29);
+      y = addWrapped(`Hinweis: ${r.notes || "—"}`, 10, false) + 4;
+      doc.setTextColor(15,23,42);
+    }
+    y += 6;
+  });
+
+  const filename = `Schallschutz_${safeFile(state.userName)}_${nowStamp().replace(/[: ]/g,"-")}.pdf`;
+  doc.save(filename);
+}
+
+function openPrintView(){
+  if(!state.allowExport){
+    alert("PDF ist noch gesperrt. Bitte zuerst die Abschlusskontrolle erfolgreich abgeben.");
+    return;
+  }
+
+  const html = buildPrintHTML();
+  const w = window.open("", "_blank");
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+}
+
+function buildPrintHTML(){
+  const esc = s => escapeHtml(String(s ?? ""));
+  const stamp = nowStamp();
+  const name = state.userName || "—";
+
+  const miniSections = [
+    ["Mini-Check 1", LESSONS_MINI.l1],
+    ["Mini-Check 2", LESSONS_MINI.l2],
+    ["Mini-Check 3", LESSONS_MINI.l3],
+    ["Mini-Check 4", LESSONS_MINI.l4],
+    ["Mini-Check 5", LESSONS_MINI.l5],
+  ];
+
+  const qRow = (q) => {
+    let ans = "—";
+    if(q.type==="mc"){
+      const idx = state.answers[q.id]?.value;
+      ans = (typeof idx==="number" && q.options) ? q.options[idx] : "—";
+    } else {
+      ans = state.answers[q.id]?.value ?? "—";
+    }
+    const note = state.results[q.id]?.ok===false ? `Hinweis: ${state.results[q.id].notes || "—"}` : "";
+    return `<tr><td>${esc(stripHtml(q.prompt))}</td><td>${esc(String(ans).trim() || "—")}${note ? `<div class="note">${esc(note)}</div>`:""}</td></tr>`;
+  };
+
+  const finalRow = (q) => {
+    let ans = "—";
+    if(q.type==="mc"){
+      const idx = state.answers[q.id]?.value;
+      ans = (typeof idx==="number" && q.options) ? q.options[idx] : "—";
+    } else if(q.type==="matchmini"){
+      const map = state.answers[`${q.id}__map`]?.value || {};
+      ans = q.pairs.map(p=>`${p.left} → ${map[p.left] || "—"}`).join(" | ");
+    } else {
+      ans = state.answers[q.id]?.value ?? "—";
+    }
+    const note = state.results[q.id]?.ok===false ? `Hinweis: ${state.results[q.id].notes || "—"}` : "";
+    return `<tr><td>${esc(stripHtml(q.prompt))}</td><td>${esc(String(ans).trim() || "—")}${note ? `<div class="note">${esc(note)}</div>`:""}</td></tr>`;
+  };
+
+  return `
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Schallschutz – Druckansicht</title>
+<style>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:#0f172a; padding:28px;}
+  h1{margin:0 0 8px; font-size:22px;}
+  .meta{color:#475569; margin:0 0 14px}
+  .hr{height:1px;background:#e2e8f0;margin:14px 0}
+  h2{font-size:16px; margin:18px 0 8px}
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th,td{border:1px solid #e2e8f0; padding:10px; vertical-align:top}
+  th{background:#f8fafc; text-align:left}
+  .note{margin-top:6px; color:#7f1d1d}
+  .decl{margin-top:10px; color:#0f172a}
+  @media print{ body{padding:0} }
+</style>
+</head>
+<body>
+  <h1>Schallschutz – Antworten</h1>
+  <div class="meta">Name: <b>${esc(name)}</b> • Zeit: ${esc(stamp)}</div>
+  ${state.declaration ? `<div class="decl">Selbstständigkeit: Ich habe die Aufgaben selbstständig bearbeitet.</div>`:""}
+  <div class="hr"></div>
+
+  ${miniSections.map(([t, qs])=>`
+    <h2>${esc(t)}</h2>
+    <table>
+      <tr><th>Frage</th><th>Antwort</th></tr>
+      ${qs.map(qRow).join("")}
+    </table>
+  `).join("")}
+
+  <h2>Abschlusskontrolle</h2>
+  <table>
+    <tr><th>Aufgabe</th><th>Antwort</th></tr>
+    ${FINAL_DEF.questions.map(finalRow).join("")}
+  </table>
+
+  <script>window.print();<\/script>
+</body>
+</html>`;
+}
+
+/* =========================
+   SVG Figures
+   ========================= */
+
+function figHeroMini(){
+  return `
+  <svg viewBox="0 0 520 220" width="100%" height="100%" aria-label="Schall Illustration">
+    <defs>
+      <linearGradient id="g1" x1="0" x2="1">
+        <stop offset="0" stop-color="rgba(37,99,235,.25)"/>
+        <stop offset="1" stop-color="rgba(180,83,9,.18)"/>
+      </linearGradient>
+    </defs>
+    <rect x="10" y="10" width="500" height="200" rx="18" fill="url(#g1)" stroke="rgba(15,23,42,.10)"/>
+    <circle cx="120" cy="110" r="46" fill="rgba(255,255,255,.75)" stroke="rgba(15,23,42,.12)"/>
+    <path d="M120 86 q18 24 0 48" fill="none" stroke="rgba(15,23,42,.55)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M160 72 C 210 92 210 128 160 148" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M190 58 C 265 90 265 130 190 162" fill="none" stroke="rgba(255,255,255,.60)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M224 48 C 320 90 320 130 224 172" fill="none" stroke="rgba(255,255,255,.42)" stroke-width="6" stroke-linecap="round"/>
+    <text x="260" y="206" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="14" fill="rgba(15,23,42,.70)" font-weight="800">
+      Schall = Schwingung / Druckwelle
+    </text>
+  </svg>`;
+}
+
+function figWave(){
+  return `
+  <svg viewBox="0 0 900 260" width="100%" height="auto">
+    <rect x="10" y="10" width="880" height="240" rx="16" fill="white" stroke="rgba(15,23,42,.10)"/>
+    <text x="40" y="48" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="18" fill="rgba(15,23,42,.85)">Tonhöhe (Frequenz) vs. Lautstärke (Amplitude)</text>
+
+    <text x="60" y="86" font-family="system-ui,Segoe UI,Arial" font-weight="800" font-size="13" fill="rgba(90,100,118,.95)">höhere Frequenz → höherer Ton</text>
+    <path d="M60 125 C 95 95, 125 155, 160 125 C 195 95, 225 155, 260 125 C 295 95, 325 155, 360 125"
+          fill="none" stroke="rgba(37,99,235,.9)" stroke-width="4"/>
+    <path d="M60 160 C 120 130, 170 190, 230 160 C 290 130, 340 190, 400 160"
+          fill="none" stroke="rgba(37,99,235,.55)" stroke-width="4"/>
+
+    <text x="520" y="86" font-family="system-ui,Segoe UI,Arial" font-weight="800" font-size="13" fill="rgba(90,100,118,.95)">größere Amplitude → lauter</text>
+    <path d="M520 150 C 560 130, 590 170, 630 150 C 670 130, 700 170, 740 150 C 780 130, 810 170, 850 150"
+          fill="none" stroke="rgba(180,83,9,.55)" stroke-width="4"/>
+    <path d="M520 150 C 560 95, 590 205, 630 150 C 670 95, 700 205, 740 150 C 780 95, 810 205, 850 150"
+          fill="none" stroke="rgba(180,83,9,.9)" stroke-width="4"/>
+
+    <line x1="450" y1="70" x2="450" y2="220" stroke="rgba(15,23,42,.08)" stroke-width="2"/>
+  </svg>`;
+}
+
+function figMedia(){
+  return `
+  <svg viewBox="0 0 900 260" width="100%" height="auto">
+    <rect x="10" y="10" width="880" height="240" rx="16" fill="white" stroke="rgba(15,23,42,.10)"/>
+    <text x="40" y="48" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="18" fill="rgba(15,23,42,.85)">Schall in Luft, Wasser, Festkörper</text>
+
+    <g transform="translate(60,78)">
+      <rect x="0" y="0" width="240" height="150" rx="14" fill="rgba(37,99,235,.06)" stroke="rgba(37,99,235,.18)"/>
+      <text x="120" y="28" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="14" fill="rgba(15,23,42,.85)">LUFT</text>
+      <path d="M30 90 C 55 65, 80 115, 105 90 C 130 65, 155 115, 180 90 C 205 65, 230 115, 255 90"
+            fill="none" stroke="rgba(37,99,235,.75)" stroke-width="4"/>
+      <text x="120" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">Luftschall (Sprechen)</text>
+    </g>
+
+    <g transform="translate(330,78)">
+      <rect x="0" y="0" width="240" height="150" rx="14" fill="rgba(180,83,9,.06)" stroke="rgba(180,83,9,.18)"/>
+      <text x="120" y="28" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="14" fill="rgba(15,23,42,.85)">WASSER</text>
+      <path d="M20 98 C 60 78, 100 118, 140 98 C 180 78, 220 118, 260 98"
+            fill="none" stroke="rgba(180,83,9,.75)" stroke-width="4"/>
+      <text x="120" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">Schall breitet sich aus</text>
+    </g>
+
+    <g transform="translate(600,78)">
+      <rect x="0" y="0" width="240" height="150" rx="14" fill="rgba(22,163,74,.06)" stroke="rgba(22,163,74,.18)"/>
+      <text x="120" y="28" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="14" fill="rgba(15,23,42,.85)">FESTKÖRPER</text>
+      <rect x="44" y="54" width="152" height="68" rx="12" fill="rgba(22,163,74,.10)" stroke="rgba(22,163,74,.30)"/>
+      <path d="M60 88 L 180 88" stroke="rgba(22,163,74,.85)" stroke-width="6" stroke-linecap="round"/>
+      <path d="M74 74 L 74 102" stroke="rgba(22,163,74,.55)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M92 74 L 92 102" stroke="rgba(22,163,74,.55)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M110 74 L 110 102" stroke="rgba(22,163,74,.55)" stroke-width="4" stroke-linecap="round"/>
+      <text x="120" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">Körperschall (Vibration)</text>
+    </g>
+  </svg>`;
+}
+
+function figDb(){
+  return `
+  <svg viewBox="0 0 900 260" width="100%" height="auto">
+    <rect x="10" y="10" width="880" height="240" rx="16" fill="white" stroke="rgba(15,23,42,.10)"/>
+    <text x="40" y="48" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="18" fill="rgba(15,23,42,.85)">Dezibel (dB) – grobe Einordnung</text>
+
+    <g transform="translate(120,72)">
+      <rect x="0" y="0" width="140" height="170" rx="14" fill="rgba(37,99,235,.06)" stroke="rgba(37,99,235,.18)"/>
+      <rect x="54" y="18" width="32" height="132" rx="10" fill="rgba(37,99,235,.10)" stroke="rgba(37,99,235,.25)"/>
+      <rect x="54" y="118" width="32" height="32" rx="10" fill="rgba(37,99,235,.35)"/>
+      <text x="70" y="164" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">leiser</text>
+    </g>
+
+    <g transform="translate(330,72)">
+      <rect x="0" y="0" width="140" height="170" rx="14" fill="rgba(180,83,9,.06)" stroke="rgba(180,83,9,.18)"/>
+      <rect x="54" y="18" width="32" height="132" rx="10" fill="rgba(180,83,9,.10)" stroke="rgba(180,83,9,.25)"/>
+      <rect x="54" y="84" width="32" height="66" rx="10" fill="rgba(180,83,9,.35)"/>
+      <text x="70" y="164" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">mittel</text>
+    </g>
+
+    <g transform="translate(540,72)">
+      <rect x="0" y="0" width="140" height="170" rx="14" fill="rgba(220,38,38,.06)" stroke="rgba(220,38,38,.18)"/>
+      <rect x="54" y="18" width="32" height="132" rx="10" fill="rgba(220,38,38,.10)" stroke="rgba(220,38,38,.25)"/>
+      <rect x="54" y="38" width="32" height="112" rx="10" fill="rgba(220,38,38,.35)"/>
+      <text x="70" y="164" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">sehr laut</text>
+    </g>
+
+    <g transform="translate(710,92)">
+      <text x="0" y="0" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="13" fill="rgba(15,23,42,.85)">Beispiele</text>
+      <text x="0" y="26" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Flüstern</text>
+      <text x="0" y="48" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Gespräch</text>
+      <text x="0" y="70" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Straße</text>
+      <text x="0" y="92" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Konzert</text>
+      <text x="0" y="122" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(127,29,29,.95)" font-weight="900">Gehörschutz</text>
+    </g>
+  </svg>`;
+}
+
+function figPrinciples(){
+  return `
+  <svg viewBox="0 0 900 320" width="100%" height="auto">
+    <rect x="10" y="10" width="880" height="300" rx="16" fill="white" stroke="rgba(15,23,42,.10)"/>
+    <text x="40" y="48" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="18" fill="rgba(15,23,42,.85)">Drei Prinzipien des Schallschutzes</text>
+
+    <g transform="translate(40,72)">
+      <rect x="0" y="0" width="260" height="210" rx="16" fill="rgba(180,83,9,.06)" stroke="rgba(180,83,9,.18)"/>
+      <text x="130" y="30" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="950" font-size="14" fill="rgba(15,23,42,.90)">Absorption</text>
+      <path d="M35 96 C 75 66, 110 126, 150 96 C 190 66, 225 126, 265 96" fill="none" stroke="rgba(180,83,9,.65)" stroke-width="4"/>
+      <rect x="40" y="118" width="180" height="56" rx="12" fill="rgba(180,83,9,.10)" stroke="rgba(180,83,9,.22)"/>
+      <path d="M52 146 L 200 146" stroke="rgba(180,83,9,.85)" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 10"/>
+      <text x="130" y="196" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">weniger Hall im Raum</text>
+    </g>
+
+    <g transform="translate(320,72)">
+      <rect x="0" y="0" width="260" height="210" rx="16" fill="rgba(37,99,235,.06)" stroke="rgba(37,99,235,.18)"/>
+      <text x="130" y="30" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="950" font-size="14" fill="rgba(15,23,42,.90)">Dämmung (Masse)</text>
+      <path d="M40 110 C 80 80, 110 140, 150 110 C 190 80, 220 140, 260 110" fill="none" stroke="rgba(37,99,235,.65)" stroke-width="4"/>
+      <rect x="152" y="74" width="64" height="120" rx="12" fill="rgba(37,99,235,.12)" stroke="rgba(37,99,235,.30)"/>
+      <text x="130" y="196" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">weniger Durchgang</text>
+    </g>
+
+    <g transform="translate(600,72)">
+      <rect x="0" y="0" width="260" height="210" rx="16" fill="rgba(22,163,74,.06)" stroke="rgba(22,163,74,.18)"/>
+      <text x="130" y="30" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-weight="950" font-size="14" fill="rgba(15,23,42,.90)">Entkopplung</text>
+      <rect x="46" y="84" width="70" height="96" rx="14" fill="rgba(22,163,74,.10)" stroke="rgba(22,163,74,.28)"/>
+      <rect x="194" y="84" width="70" height="96" rx="14" fill="rgba(22,163,74,.10)" stroke="rgba(22,163,74,.28)"/>
+      <path d="M126 104 C 140 92, 155 92, 170 104 C 155 116, 140 116, 126 104 Z"
+            fill="rgba(22,163,74,.30)" stroke="rgba(22,163,74,.55)" stroke-width="2"/>
+      <text x="130" y="196" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">weniger Vibration-Übertragung</text>
+    </g>
+  </svg>`;
+}
+
+function figRoom(){
+  return `
+  <svg viewBox="0 0 900 300" width="100%" height="auto">
+    <rect x="10" y="10" width="880" height="280" rx="16" fill="white" stroke="rgba(15,23,42,.10)"/>
+    <text x="40" y="48" font-family="system-ui,Segoe UI,Arial" font-weight="900" font-size="18" fill="rgba(15,23,42,.85)">Anwendung: Raum + Maßnahmen</text>
+
+    <g transform="translate(60,76)">
+      <rect x="0" y="0" width="360" height="190" rx="16" fill="rgba(37,99,235,.06)" stroke="rgba(37,99,235,.18)"/>
+      <rect x="24" y="24" width="312" height="142" rx="14" fill="rgba(255,255,255,.85)" stroke="rgba(15,23,42,.10)"/>
+      <rect x="44" y="44" width="110" height="50" rx="12" fill="rgba(180,83,9,.10)" stroke="rgba(180,83,9,.22)"/>
+      <text x="99" y="74" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="900">Paneele</text>
+      <rect x="180" y="44" width="132" height="50" rx="12" fill="rgba(22,163,74,.10)" stroke="rgba(22,163,74,.22)"/>
+      <text x="246" y="74" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="900">Dichtung</text>
+
+      <rect x="44" y="110" width="268" height="34" rx="12" fill="rgba(15,23,42,.06)" stroke="rgba(15,23,42,.10)"/>
+      <text x="178" y="132" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="900">Teppich/Unterlage</text>
+
+      <text x="180" y="176" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">Kombination aus Prinzipien</text>
+    </g>
+
+    <g transform="translate(460,96)">
+      <text x="0" y="0" font-family="system-ui,Segoe UI,Arial" font-weight="950" font-size="13" fill="rgba(15,23,42,.85)">Denke so:</text>
+      <text x="0" y="26" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Hall im Raum → Absorption</text>
+      <text x="0" y="48" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Durchgang zum Nachbarn → Dämmung</text>
+      <text x="0" y="70" font-family="system-ui,Segoe UI,Arial" font-size="12" fill="rgba(90,100,118,.95)" font-weight="800">• Trittschall/Vibration → Entkopplung</text>
+    </g>
+  </svg>`;
+}
+
+/* =========================
+   Init
+   ========================= */
+
+function ensureUnlockChain(){
+  // If l1 done unlock l2 etc
+  if(state.completed.l1) state.unlocked.l2 = true;
+  if(state.completed.l2) state.unlocked.l3 = true;
+  if(state.completed.l3) state.unlocked.l4 = true;
+  if(state.completed.l4) state.unlocked.l5 = true;
+  if(state.completed.l5) state.unlocked.final = true;
+  if(state.completed.final) state.allowExport = true;
+  saveState();
+}
+
+function start(){
+  registerMiniDefs();
+  ensureUnlockChain();
+
+  // Always keep start unlocked
+  setUnlocked("start", true);
+
+  const startView = isUnlocked(state.lastView) ? state.lastView : "start";
+  renderNav(startView);
+  setActive(startView);
+
+  // If name exists and l1 not unlocked yet, unlock it for convenience
+  if(state.userName && !state.unlocked.l1){
+    state.unlocked.l1 = true;
+    saveState();
+    renderNav(state.lastView);
+  }
+}
+
+start();
+
+/* =========================
+   Utilities
+   ========================= */
+
+function escapeHtml(s){
+  return (s ?? "").toString()
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function stripHtml(s){
+  return (s ?? "").toString().replace(/<[^>]*>/g,"");
+}
+function safeFile(s){
+  return (s ?? "Name").toString().trim().replace(/[^\w\-]+/g,"_").slice(0,40) || "Name";
+}
+function cssEscape(s){
+  // minimal escape for attribute selectors; good enough here
+  return (s ?? "").toString().replace(/"/g,'\\"').replace(/\\/g,'\\\\');
+}
+</script>
+</body>
+</html>
