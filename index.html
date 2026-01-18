@@ -241,76 +241,7 @@
                 <span class="count-badge" id="count-de">0</span>
             </div>
             
-            <div class="grid" id="grid-deutsch">
-                
-                <a href="3dmaerchengenerator.html" class="card de" data-keywords="märchen schreiben geschichten würfel generator">
-                    <div class="new-badge">Neu</div>
-                    <div class="card-top">
-                        <div class="icon-box">🧚‍♀️</div>
-                    </div>
-                    <div>
-                        <h3>3D Märchen-Generator</h3>
-                        <p>Interaktive Würfel für kreative Schreibanlässe. Helden, Orte und Bösewichte kombinieren.</p>
-                    </div>
-                </a>
-
-                <a href="Argument.html" class="card de" data-keywords="argumentieren erörterung meinung begründung">
-                    <div class="card-top"><div class="icon-box">🧩</div></div>
-                    <div>
-                        <h3>Argumente bauen</h3>
-                        <p>Argumente aus Bausteinen zusammensetzen – erkenne die Störbausteine.</p>
-                    </div>
-                </a>
-
-                <a href="FremdwortGenerator.html" class="card de" data-keywords="fremdwörter sprache wortschatz bedeutung">
-                    <div class="card-top"><div class="icon-box">📚</div></div>
-                    <div>
-                        <h3>Fremdwort-Generator</h3>
-                        <p>Begriffe verstehen & korrekt im Satz verwenden.</p>
-                    </div>
-                </a>
-
-                <a href="durchgeschuettelt.html" class="card de" data-keywords="buchstabensalat rätsel wörter">
-                    <div class="card-top"><div class="icon-box">🫨</div></div>
-                    <div>
-                        <h3>Fremdwörter geschüttelt</h3>
-                        <p>Erkennst du den Begriff im Buchstabensalat?</p>
-                    </div>
-                </a>
-
-                <a href="ZeitformenQuiz.html" class="card de" data-keywords="zeiten grammatik präsens präteritum futur">
-                    <div class="card-top"><div class="icon-box">⏳</div></div>
-                    <div>
-                        <h3>Zeitformen-Quiz</h3>
-                        <p>Bestimme die Zeitform: Präsens, Präteritum, Perfekt & Futur.</p>
-                    </div>
-                </a>
-
-                <a href="Speedrunde.html" class="card de" data-keywords="schnell quiz spiel grammatik">
-                    <div class="card-top"><div class="icon-box">⚡</div></div>
-                    <div>
-                        <h3>Speedrunde</h3>
-                        <p>60-Sekunden-Quiz: Wie viele Grammatik-Fragen schaffst du?</p>
-                    </div>
-                </a>
-
-                <a href="memorypassiv.html" class="card de" data-keywords="aktiv passiv memory spiel">
-                    <div class="card-top"><div class="icon-box">🎴</div></div>
-                    <div>
-                        <h3>Memory Aktiv–Passiv</h3>
-                        <p>Finde die passenden Paare. Spielerisch Grammatik üben.</p>
-                    </div>
-                </a>
-
-                <a href="montessori-wortarten2.html" class="card de" data-keywords="wortarten nomen verben montessori symbole">
-                    <div class="card-top"><div class="icon-box">🔴</div></div>
-                    <div>
-                        <h3>Wortarten-Training</h3>
-                        <p>Bestimme Wortarten nach Maria Montessori Symbolen.</p>
-                    </div>
-                </a>
-
-            </div>
+            <div class="grid" id="grid-deutsch"></div>
         </div>
 
         <div class="section sec-ma" id="sec-mathe">
@@ -319,33 +250,7 @@
                 <span class="count-badge" id="count-ma">0</span>
             </div>
 
-            <div class="grid" id="grid-mathe">
-                
-                <a href="dreiecke.html" class="card ma" data-keywords="geometrie dreieck winkel spitz stumpf">
-                    <div class="card-top"><div class="icon-box">🔺</div></div>
-                    <div>
-                        <h3>Dreiecke & Winkel</h3>
-                        <p>Spitz, recht, stumpf erkennen und sortieren.</p>
-                    </div>
-                </a>
-
-                <a href="koerperbauen.html" class="card ma" data-keywords="geometrie körper netze basteln 3d">
-                    <div class="card-top"><div class="icon-box">🧲</div></div>
-                    <div>
-                        <h3>Körpernetze bauen</h3>
-                        <p>Netze für Zylinder & Kegel frei bauen mit Snap-Funktion.</p>
-                    </div>
-                </a>
-
-                <a href="3dkoerperwerkstatt3.html" class="card ma" data-keywords="volumen oberfläche formeln 3d raum">
-                    <div class="card-top"><div class="icon-box">🧠</div></div>
-                    <div>
-                        <h3>3D KörperCheck</h3>
-                        <p>Volumen & Oberfläche berechnen – üben und prüfen.</p>
-                    </div>
-                </a>
-
-            </div>
+            <div class="grid" id="grid-mathe"></div>
         </div>
 
     </div>
@@ -355,9 +260,134 @@
     </footer>
 
     <script>
+        const APP_CARDS = {
+            deutsch: [
+                {
+                    href: "3dmaerchengenerator.html",
+                    icon: "🧚‍♀️",
+                    title: "3D Märchen-Generator",
+                    description: "Interaktive Würfel für kreative Schreibanlässe. Helden, Orte und Bösewichte kombinieren.",
+                    keywords: "märchen schreiben geschichten würfel generator",
+                    isNew: true
+                },
+                {
+                    href: "Argument.html",
+                    icon: "🧩",
+                    title: "Argumente bauen",
+                    description: "Argumente aus Bausteinen zusammensetzen – erkenne die Störbausteine.",
+                    keywords: "argumentieren erörterung meinung begründung"
+                },
+                {
+                    href: "FremdwortGenerator.html",
+                    icon: "📚",
+                    title: "Fremdwort-Generator",
+                    description: "Begriffe verstehen & korrekt im Satz verwenden.",
+                    keywords: "fremdwörter sprache wortschatz bedeutung"
+                },
+                {
+                    href: "durchgeschuettelt.html",
+                    icon: "🫨",
+                    title: "Fremdwörter geschüttelt",
+                    description: "Erkennst du den Begriff im Buchstabensalat?",
+                    keywords: "buchstabensalat rätsel wörter"
+                },
+                {
+                    href: "ZeitformenQuiz.html",
+                    icon: "⏳",
+                    title: "Zeitformen-Quiz",
+                    description: "Bestimme die Zeitform: Präsens, Präteritum, Perfekt & Futur.",
+                    keywords: "zeiten grammatik präsens präteritum futur"
+                },
+                {
+                    href: "Speedrunde.html",
+                    icon: "⚡",
+                    title: "Speedrunde",
+                    description: "60-Sekunden-Quiz: Wie viele Grammatik-Fragen schaffst du?",
+                    keywords: "schnell quiz spiel grammatik"
+                },
+                {
+                    href: "memorypassiv.html",
+                    icon: "🎴",
+                    title: "Memory Aktiv–Passiv",
+                    description: "Finde die passenden Paare. Spielerisch Grammatik üben.",
+                    keywords: "aktiv passiv memory spiel"
+                },
+                {
+                    href: "montessori-wortarten2.html",
+                    icon: "🔴",
+                    title: "Wortarten-Training",
+                    description: "Bestimme Wortarten nach Maria Montessori Symbolen.",
+                    keywords: "wortarten nomen verben montessori symbole"
+                }
+            ],
+            mathe: [
+                {
+                    href: "dreiecke.html",
+                    icon: "🔺",
+                    title: "Dreiecke & Winkel",
+                    description: "Spitz, recht, stumpf erkennen und sortieren.",
+                    keywords: "geometrie dreieck winkel spitz stumpf"
+                },
+                {
+                    href: "koerperbauen.html",
+                    icon: "🧲",
+                    title: "Körpernetze bauen",
+                    description: "Netze für Zylinder & Kegel frei bauen mit Snap-Funktion.",
+                    keywords: "geometrie körper netze basteln 3d"
+                },
+                {
+                    href: "3dkoerperwerkstatt3.html",
+                    icon: "🧠",
+                    title: "3D KörperCheck",
+                    description: "Volumen & Oberfläche berechnen – üben und prüfen.",
+                    keywords: "volumen oberfläche formeln 3d raum"
+                }
+            ]
+        };
+
+        function buildCard(card, category) {
+            const link = document.createElement('a');
+            link.href = card.href;
+            link.className = `card ${category}`;
+            link.dataset.keywords = card.keywords || "";
+
+            if (card.isNew) {
+                const badge = document.createElement('div');
+                badge.className = 'new-badge';
+                badge.textContent = 'Neu';
+                link.appendChild(badge);
+            }
+
+            const top = document.createElement('div');
+            top.className = 'card-top';
+            const icon = document.createElement('div');
+            icon.className = 'icon-box';
+            icon.textContent = card.icon;
+            top.appendChild(icon);
+
+            const content = document.createElement('div');
+            const title = document.createElement('h3');
+            title.textContent = card.title;
+            const description = document.createElement('p');
+            description.textContent = card.description;
+            content.append(title, description);
+
+            link.append(top, content);
+            return link;
+        }
+
+        function renderCards() {
+            const germanGrid = document.getElementById('grid-deutsch');
+            const mathGrid = document.getElementById('grid-mathe');
+            germanGrid.innerHTML = '';
+            mathGrid.innerHTML = '';
+
+            APP_CARDS.deutsch.forEach(card => germanGrid.appendChild(buildCard(card, 'de')));
+            APP_CARDS.mathe.forEach(card => mathGrid.appendChild(buildCard(card, 'ma')));
+        }
+
         // --- Suchfunktion ---
         const searchInput = document.getElementById('searchInput');
-        const cards = document.querySelectorAll('.card');
         const sections = document.querySelectorAll('.section');
 
         function updateCounts() {
@@ -365,17 +395,17 @@
             document.getElementById('count-ma').textContent = document.querySelectorAll('#grid-mathe .card:not(.hidden)').length;
         }
 
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
+        function filterCards(term) {
+            const cards = document.querySelectorAll('.card');
 
             cards.forEach(card => {
                 // Suche in Titel, Text und versteckten Keywords
                 const title = card.querySelector('h3').textContent.toLowerCase();
                 const text = card.querySelector('p').textContent.toLowerCase();
                 const keywords = card.getAttribute('data-keywords') || "";
-                
+
                 const match = title.includes(term) || text.includes(term) || keywords.includes(term);
-                
+
                 if (match) {
                     card.classList.remove('hidden');
                 } else {
@@ -390,9 +420,14 @@
             });
 
             updateCounts();
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            filterCards(e.target.value.toLowerCase());
         });
 
         // Init
+        renderCards();
         updateCounts();
     </script>
 </body>
