@@ -99,6 +99,25 @@
             font-size: 16px; opacity: 0.5; pointer-events: none;
         }
 
+        .portal-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .portal-link:hover {
+            border-color: var(--ma-accent);
+        }
+
         /* --- Sektionen --- */
         .section { margin: 40px 0; }
         
@@ -219,7 +238,7 @@
     <header class="app-header">
         <div class="container header-content">
             <div class="brand">
-                <img src="chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
                 <div class="brand-text">
                     <h1>HoS Lern-Apps</h1>
                     <p>Digitale Übungen für Unterricht & Freiarbeit</p>
@@ -230,6 +249,8 @@
                 <span class="search-icon">🔎</span>
                 <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Thema (z.B. Zeitformen, Körper)...">
             </div>
+
+            <a class="portal-link" href="/portal/">Zum Portal</a>
         </div>
     </header>
 

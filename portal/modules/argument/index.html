@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Argument-Bausteine – Drag & Drop (HoS)</title>
+  <style>    :root{
+      --subject-color:#ef4444;
+      --bg:#f2f4f7;
+      --surface:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --accent-soft:#eff6ff;
+      --ok:#10b981;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+      --radius:16px;
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+      --font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font-sans);
+      background:var(--bg);
+      color:var(--ink);
+      min-height:100vh;
+      padding:18px;
+    }
+    .wrap{width:min(1100px,100%);margin:0 auto;}
+    .app{width:100%;}
+    .brand{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+    .meme{
+      width:92px;height:92px;object-fit:cover;border-radius:18px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      background:var(--bg);
+    }
+    h1{margin:0;color:var(--ink)}
+    p{margin:6px 0 0;color:var(--muted);line-height:1.35}
+    .badge{
+      padding:10px 12px;border-radius:999px;
+      background:var(--accent-soft);
+      border:1px solid var(--line);
+      color:var(--ink);font-size:12px;font-weight:800;
+      white-space:nowrap;
+    }
+
+    .grid{display:grid;grid-template-columns:1.05fr .95fr;gap:14px;}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+    .card{
+      background:var(--surface);
+      border-radius:18px;
+      padding:16px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      overflow:hidden;
+    }
+    .sub{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.4}
+
+    .metaRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{
+      border:1px solid var(--line);
+      background:var(--bg);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill b{color:var(--ink)}
+    .kbd{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      border:1px solid var(--line);
+      background:var(--bg);
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--ink);
+      font-weight:800;
+    }
+
+    .dropzone{
+      border:2px dashed var(--line);
+      border-radius:16px;
+      padding:12px;
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      background:var(--bg);
+      min-height:62px;
+    }
+    .dropzone.over{
+      border-color:var(--accent);
+      background:var(--accent-soft);
+    }
+    .slotlabel{
+      width:170px;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--muted);
+      font-weight:900;
+      flex:0 0 auto;
+    }
+    .slotcontent{flex:1 1 auto; min-height:24px;}
+
+    .bank{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+    .tile{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow:var(--shadow-md);
+      cursor:grab;
+      user-select:none;
+      line-height:1.35;
+    }
+    .tile.dragging{opacity:.6; transform:scale(.99)}
+    .tile.locked{opacity:.85;cursor:default}
+
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--accent);
+      font-weight:900;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+    }
+    button.secondary{
+      background:var(--surface);
+      color:var(--ink);
+      border:1px solid var(--line);
+    }
+    button:active{transform:translateY(1px)}
+
+    .msg{
+      margin-top:12px;padding:10px 12px;border-radius:14px;
+      font-size:13px;line-height:1.4;border:1px solid var(--line);
+      display:none;
+    }
+    .msg.ok{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35);display:block}
+    .msg.bad{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);display:block}
+    .msg.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);display:block}
+
+    .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
+    /* HoS Hero-Header (wie Speedrunde) */
+    .hero{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:22px;
+      align-items:start;
+      margin:6px 0 18px;
+    }
+    .hero-left{min-width:0;}
+    .minirow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .mini-logo{
+      width:36px;height:36px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:var(--surface);
+      object-fit:contain;
+    }
+    .badge-red{
+      background:var(--subject-color);
+      color:#fff;
+      border-color:rgba(0,0,0,0.04);
+      font-weight:900;
+    }
+    .hero-title{
+      margin:0;
+      font-size:clamp(28px,3.2vw,40px);
+      line-height:1.12;
+      letter-spacing:-0.02em;
+    }
+    .hero-sub{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.45;
+    }
+    .hero-sticker{
+      width:120px;
+      height:auto;
+      border-radius:14px;
+      border:1px solid var(--line);
+      box-shadow:var(--shadow-md);
+      background:var(--surface);
+      transform:rotate(-6deg);
+      opacity:.98;
+      object-fit:cover;
+    }
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr;gap:12px;}
+      .hero-sticker{justify-self:start;width:104px;}
+    }
+
+
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="hero-left">
+        <div class="minirow">
+          <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'"> 
+          <span class="badge badge-red">DEUTSCH</span>
+        </div>
+        <h1 class="hero-title">Argumente zusammensetzen <span class="muted">(Drag &amp; Drop)</span></h1>
+        <p class="hero-sub">Behauptung → Begründung → Beispiel/Erklärung • <b>Immer 1 Störbaustein</b> bleibt übrig.</p>
+      </div>
+      <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'"> 
+    </header>
+
+    <div class="app">
+      <div class="grid">
+
+  <section class="card">
+    <h2 id="title" style="margin:0 0 6px 0;">–</h2>
+    <p class="sub" id="prompt">–</p>
+
+    <div class="metaRow">
+      <span class="pill">Aufgabe: <b id="idx">1</b>/<b id="total">1</b></span>
+      <span class="pill">Tastatur: <span class="kbd">C</span> prüfen • <span class="kbd">R</span> reset • <span class="kbd">N</span> nächste</span>
+      <span class="pill">Regel: <b>1 Störbaustein bleibt übrig</b></span>
+    </div>
+
+    <div class="dropzone" data-slot="0">
+      <div class="slotlabel">Behauptung</div>
+      <div class="slotcontent" id="s0"></div>
+    </div>
+    <div class="dropzone" data-slot="1">
+      <div class="slotlabel">Begründung</div>
+      <div class="slotcontent" id="s1"></div>
+    </div>
+    <div class="dropzone" data-slot="2">
+      <div class="slotlabel">Beispiel / Erklärung</div>
+      <div class="slotcontent" id="s2"></div>
+    </div>
+
+    <div class="controls">
+      <button id="check">Prüfen</button>
+      <button id="reset" class="secondary">Reset</button>
+      <button id="next" class="secondary">Nächste Aufgabe</button>
+    </div>
+
+    <div id="msg" class="msg warn"></div>
+
+    <div class="hint">
+      Tipp: Du kannst einen Baustein auch wieder zurück in die Bank ziehen.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 style="margin:0 0 6px 0;">Bausteine</h2>
+    <p class="sub">Ziehe 3 passende Bausteine in die Felder. Der Störbaustein bleibt in der Bank.</p>
+    <div class="bank" id="bank"></div>
+  </section>
+
+
+      </div>
+    </div>
+  </div>
+
+<script>
+  // 12 Aufgaben (im gewünschten Bereich 10–15), jede mit 3 korrekten Bausteinen + 1 Störbaustein
+  const TASKS = [
+    {
+      title:"1) Handyregeln im Unterricht (Pro)",
+      prompt:"Setze ein sinnvolles Pro-Argument zusammen.",
+      pieces:[
+        {id:"t1_h", t:"Klare Handyregeln im Unterricht können die Konzentration verbessern."},
+        {id:"t1_b", t:"Denn ständige Benachrichtigungen lenken viele Lernende ab."},
+        {id:"t1_e", t:"Wenn Handys sichtbar sind, greifen manche automatisch danach."},
+        {id:"t1_x", t:"Ich finde Handys persönlich einfach nervig."}
+      ],
+      correct:["t1_h","t1_b","t1_e"]
+    },
+    {
+      title:"2) Hausaufgaben (Contra)",
+      prompt:"Setze ein Contra-Argument zusammen.",
+      pieces:[
+        {id:"t2_h", t:"Tägliche Hausaufgaben können zu Überlastung führen."},
+        {id:"t2_b", t:"Weil neben der Schule auch Erholung und Freizeit wichtig sind."},
+        {id:"t2_e", t:"Bei sehr langen Aufgaben bleibt kaum Zeit für Schlaf oder Sport."},
+        {id:"t2_x", t:"Hausaufgaben sind halt Tradition und gehören immer dazu."}
+      ],
+      correct:["t2_h","t2_b","t2_e"]
+    },
+    {
+      title:"3) Schuluniform (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen.",
+      pieces:[
+        {id:"t3_h", t:"Eine Schuluniform kann soziale Unterschiede weniger sichtbar machen."},
+        {id:"t3_b", t:"Denn Kleidung wird oft als Statussymbol genutzt und kann Druck erzeugen."},
+        {id:"t3_e", t:"Wenn Marken weniger auffallen, gibt es weniger Anlass zum Vergleichen."},
+        {id:"t3_x", t:"Uniformen sehen meistens langweilig aus."}
+      ],
+      correct:["t3_h","t3_b","t3_e"]
+    },
+    {
+      title:"4) Später Schulbeginn (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Sollte die Schule später beginnen?",
+      pieces:[
+        {id:"t4_h", t:"Ein späterer Schulbeginn kann die Leistungsfähigkeit verbessern."},
+        {id:"t4_b", t:"Weil viele Jugendliche morgens noch nicht ausreichend ausgeschlafen sind."},
+        {id:"t4_e", t:"Wenn man mehr schläft, kann man sich im Unterricht besser konzentrieren."},
+        {id:"t4_x", t:"Früh aufstehen ist einfach unfair."}
+      ],
+      correct:["t4_h","t4_b","t4_e"]
+    },
+    {
+      title:"5) Noten abschaffen (Contra)",
+      prompt:"Setze ein Contra-Argument zusammen: Sollten Noten abgeschafft werden?",
+      pieces:[
+        {id:"t5_h", t:"Noten komplett abzuschaffen kann die Vergleichbarkeit von Leistungen erschweren."},
+        {id:"t5_b", t:"Denn ohne klare Bewertung ist es schwieriger, Lernstände objektiv einzuordnen."},
+        {id:"t5_e", t:"Beim Schulwechsel könnten Lehrkräfte sonst kaum erkennen, wo jemand steht."},
+        {id:"t5_x", t:"Noten machen alle nur nervös."}
+      ],
+      correct:["t5_h","t5_b","t5_e"]
+    },
+    {
+      title:"6) Gruppenarbeit (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Sollte es mehr Gruppenarbeit geben?",
+      pieces:[
+        {id:"t6_h", t:"Mehr Gruppenarbeit kann soziale Kompetenzen stärken."},
+        {id:"t6_b", t:"Weil man dabei übt, Aufgaben zu teilen und miteinander zu kommunizieren."},
+        {id:"t6_e", t:"Wenn Rollen verteilt sind, lernen alle Verantwortung zu übernehmen."},
+        {id:"t6_x", t:"Gruppenarbeit macht manchmal einfach Spaß."}
+      ],
+      correct:["t6_h","t6_b","t6_e"]
+    },
+    {
+      title:"7) Schulweg zu Fuß/Rad (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Sollten mehr Schüler/innen zu Fuß oder mit dem Rad kommen?",
+      pieces:[
+        {id:"t7_h", t:"Zu Fuß oder mit dem Rad zur Schule zu gehen kann die Gesundheit fördern."},
+        {id:"t7_b", t:"Denn regelmäßige Bewegung stärkt Ausdauer und Wohlbefinden."},
+        {id:"t7_e", t:"Wer morgens aktiv ist, startet oft wacher in den Unterricht."},
+        {id:"t7_x", t:"Autos sind sowieso total nervig im Verkehr."}
+      ],
+      correct:["t7_h","t7_b","t7_e"]
+    },
+    {
+      title:"8) Mehr Sportstunden (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Soll es mehr Sportstunden geben?",
+      pieces:[
+        {id:"t8_h", t:"Mehr Sportstunden können die Konzentration und das Wohlbefinden steigern."},
+        {id:"t8_b", t:"Weil Bewegung Stress abbaut und den Kopf frei macht."},
+        {id:"t8_e", t:"Nach körperlicher Aktivität fällt vielen das Lernen leichter."},
+        {id:"t8_x", t:"Sport ist das beste Fach, weil es keine Tests gibt."}
+      ],
+      correct:["t8_h","t8_b","t8_e"]
+    },
+    {
+      title:"9) Ganztagsschule (Contra)",
+      prompt:"Setze ein Contra-Argument zusammen: Soll es überall Ganztagsschulen geben?",
+      pieces:[
+        {id:"t9_h", t:"Eine Ganztagsschule kann die Freizeit stark einschränken."},
+        {id:"t9_b", t:"Weil weniger Zeit für Hobbys, Familie und Erholung bleibt."},
+        {id:"t9_e", t:"Wer nachmittags Training hat, könnte häufiger in Zeitdruck geraten."},
+        {id:"t9_x", t:"Nachmittagsunterricht ist einfach langweilig."}
+      ],
+      correct:["t9_h","t9_b","t9_e"]
+    },
+    {
+      title:"10) Handy in den Pausen (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Sollte Handynutzung in Pausen erlaubt sein?",
+      pieces:[
+        {id:"t10_h", t:"Handynutzung in den Pausen kann die Organisation im Alltag erleichtern."},
+        {id:"t10_b", t:"Weil man wichtige Nachrichten kurz klären kann, ohne den Unterricht zu stören."},
+        {id:"t10_e", t:"Zum Beispiel können Abholzeiten oder Termine schnell abgestimmt werden."},
+        {id:"t10_x", t:"In den Pausen sollen alle immer machen, worauf sie Lust haben."}
+      ],
+      correct:["t10_h","t10_b","t10_e"]
+    },
+    {
+      title:"11) Schulbuffet gesünder (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Soll das Schulbuffet gesündere Angebote haben?",
+      pieces:[
+        {id:"t11_h", t:"Ein gesünderes Schulbuffet kann die Lernleistung unterstützen."},
+        {id:"t11_b", t:"Weil ausgewogene Ernährung Energie liefert und Leistungstiefs verringern kann."},
+        {id:"t11_e", t:"Wer statt Süßem etwas Nahrhaftes isst, bleibt oft länger konzentriert."},
+        {id:"t11_x", t:"Gesundes Essen schmeckt sowieso nie."}
+      ],
+      correct:["t11_h","t11_b","t11_e"]
+    },
+    {
+      title:"12) Klassensprecherwahl (Pro)",
+      prompt:"Setze ein Pro-Argument zusammen: Sollte jede Klasse eine/n Klassensprecher/in wählen?",
+      pieces:[
+        {id:"t12_h", t:"Eine Klassensprecherwahl kann die Mitbestimmung der Klasse stärken."},
+        {id:"t12_b", t:"Weil Anliegen gebündelt und klar an Lehrkräfte weitergegeben werden können."},
+        {id:"t12_e", t:"So muss nicht jede Person einzeln nachfragen, wenn es ein gemeinsames Problem gibt."},
+        {id:"t12_x", t:"Klassensprecher/innen bekommen eh nur Ärger."}
+      ],
+      correct:["t12_h","t12_b","t12_e"]
+    }
+  ];
+
+  const bank = document.getElementById("bank");
+  const slots = [document.getElementById("s0"),document.getElementById("s1"),document.getElementById("s2")];
+  const msg = document.getElementById("msg");
+
+  let i = 0;
+
+  const shuffle = (arr) => arr
+    .map(v => ({v, r: Math.random()}))
+    .sort((a,b) => a.r - b.r)
+    .map(x => x.v);
+
+  function setMsg(kind, text){
+    msg.className = "msg " + kind;
+    msg.textContent = text;
+    msg.style.display = "block";
+  }
+  function clearMsg(){
+    msg.style.display = "none";
+    msg.textContent = "";
+    msg.className = "msg";
+  }
+
+  function getAllTiles(){
+    return Array.from(document.querySelectorAll(".tile"));
+  }
+
+  function load(){
+    clearMsg();
+    document.getElementById("title").textContent = TASKS[i].title;
+    document.getElementById("prompt").textContent = TASKS[i].prompt;
+    document.getElementById("idx").textContent = String(i+1);
+    document.getElementById("total").textContent = String(TASKS.length);
+
+    bank.innerHTML = "";
+    slots.forEach(s => s.innerHTML = "");
+
+    shuffle(TASKS[i].pieces).forEach(p=>{
+      const d = document.createElement("div");
+      d.className = "tile";
+      d.textContent = p.t;
+      d.draggable = true;
+      d.dataset.id = p.id;
+
+      d.addEventListener("dragstart", (e)=>{
+        d.classList.add("dragging");
+        e.dataTransfer.setData("id", p.id);
+        e.dataTransfer.effectAllowed = "move";
+      });
+      d.addEventListener("dragend", ()=>{
+        d.classList.remove("dragging");
+      });
+
+      bank.appendChild(d);
+    });
+  }
+
+  // Dropzones
+  document.querySelectorAll(".dropzone").forEach((z, idx)=>{
+    z.addEventListener("dragover", (e)=>{ e.preventDefault(); z.classList.add("over"); });
+    z.addEventListener("dragleave", ()=> z.classList.remove("over"));
+    z.addEventListener("drop", (e)=>{
+      e.preventDefault();
+      z.classList.remove("over");
+      clearMsg();
+
+      const id = e.dataTransfer.getData("id");
+      if(!id) return;
+
+      const el = getAllTiles().find(x => x.dataset.id === id);
+      if(!el) return;
+
+      // nur 1 Baustein pro Feld – falls belegt: zurück in die Bank
+      if (slots[idx].children.length){
+        bank.appendChild(slots[idx].children[0]);
+      }
+      slots[idx].appendChild(el);
+    });
+  });
+
+  // Bank als Rückgabe-Ziel
+  bank.addEventListener("dragover", (e)=> e.preventDefault());
+  bank.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    clearMsg();
+    const id = e.dataTransfer.getData("id");
+    if(!id) return;
+    const el = getAllTiles().find(x => x.dataset.id === id);
+    if(el) bank.appendChild(el);
+  });
+
+  function check(){
+    const sel = slots.map(s => s.firstChild?.dataset.id);
+
+    if(sel.some(v => !v)){
+      setMsg("warn", "Bitte fülle alle drei Felder. Der Störbaustein bleibt in der Bank.");
+      return;
+    }
+
+    const correct = TASKS[i].correct;
+    const okOrder = sel.every((v, idx) => v === correct[idx]);
+    const noDistractor = sel.every(v => correct.includes(v));
+
+    if(okOrder && noDistractor){
+      setMsg("ok", "✔ Richtig! Du hast die passenden Bausteine logisch geordnet.");
+    }else if(noDistractor && !okOrder){
+      setMsg("bad", "✖ Die Bausteine passen, aber die Reihenfolge stimmt noch nicht. (Behauptung → Begründung → Beispiel/Erklärung)");
+    }else{
+      setMsg("bad", "✖ Mindestens ein Störbaustein wurde verwendet. Ersetze ihn durch den passenden Baustein.");
+    }
+  }
+
+  document.getElementById("check").addEventListener("click", check);
+  document.getElementById("reset").addEventListener("click", load);
+  document.getElementById("next").addEventListener("click", ()=>{
+    i = (i + 1) % TASKS.length;
+    load();
+  });
+
+  document.addEventListener("keydown", (e)=>{
+    const k = e.key.toLowerCase();
+    if(k === "c") check();
+    if(k === "r") load();
+    if(k === "n"){ i = (i + 1) % TASKS.length; load(); }
+  });
+
+  load();
+</script>
+</body>
+</html>

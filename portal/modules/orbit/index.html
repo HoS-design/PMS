@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechtschreib-Shooter Deluxe</title>
+    <style>
+        :root {
+            --subject-color:#ef4444;
+            --bg: #f2f4f7;
+            --surface: #ffffff;
+            --ink: #1e293b;
+            --muted: #64748b;
+            --line: #e2e8f0;
+            --accent: #3b82f6;
+            --danger: #ef4444;
+        }
+
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background-color: var(--bg); 
+            user-select: none; 
+            font-family: 'Segoe UI', sans-serif; 
+            cursor: none; /* Mauszeiger verstecken für Spiel-Feeling */
+        }
+        
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+        }
+
+        #header {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        #score-display {
+            font-size: 2rem;
+            color: var(--ink);
+            margin-top: 10px;
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+
+        #status {
+            color: var(--ink);
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            background-color: var(--surface); 
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        /* Das Fadenkreuz */
+        #crosshair {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--danger);
+            border-radius: 50%;
+            pointer-events: none; 
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            transition: transform 0.05s ease-out; 
+        }
+        
+        #crosshair::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--danger);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+    
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
+
+    <div id="ui-layer">
+        <div id="header">
+            <h1>Orthographie-Orbit</h1>
+            <p>Finde den Fehler! Schieß ihn ab!</p>
+        </div>
+        <div id="score-display">Score: 0</div>
+        <div id="status">Lade System...</div>
+    </div>
+    
+    <div id="crosshair" style="left: 50%; top: 50%;"></div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+        // --- GLOBALE VARIABLEN ---
+        let scene, camera, renderer, raycaster;
+        let mouseVector = new THREE.Vector2(); 
+        let pointLight; 
+        
+        let letters = []; 
+        let starField;
+        let score = 0;
+        let currentSentenceIndex = 0;
+        let fontGlobal;
+        let isTransitioning = false; 
+
+        // Audio System
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        const statusText = document.getElementById('status');
+        const scoreText = document.getElementById('score-display');
+        const crosshairDiv = document.getElementById('crosshair');
+
+        // --- DEINE NEUEN LEVEL ---
+        const levels = [
+            // Einstieg
+            { text: "Der Pogel fliegt.", errorIndex: 4, correctChar: "V" },
+            { text: "Das Haus ist gros.", errorIndex: 14, correctChar: "ß" },
+            { text: "Er liest ein Buch.", errorIndex: 1, correctChar: "e" }, // Pause
+            
+            // s-Laute & ß
+            { text: "Die Strase ist lang.", errorIndex: 8, correctChar: "ß" },
+            { text: "Er muss das wisen.", errorIndex: 12, correctChar: "ss" },
+            { text: "Der Fluss fliest.", errorIndex: 10, correctChar: "ß" },
+
+            // Dehnung (h / ie)
+            { text: "Er nam das Geld.", errorIndex: 3, correctChar: "ha" }, 
+            { text: "Viele Kiche kochen Brei.", errorIndex: 6, correctChar: "ö" },
+            { text: "Die Binen summen.", errorIndex: 4, correctChar: "ie" },
+
+            // Groß/Kleinschreibung
+            { text: "das Auto fährt schnell.", errorIndex: 0, correctChar: "D" },
+            { text: "Wir Essen gerne Pizza.", errorIndex: 4, correctChar: "e" },
+            
+            // Doppelkonsonanten
+            { text: "Die Sonne scheint hel.", errorIndex: 18, correctChar: "ll" },
+            { text: "Der Man geht heim.", errorIndex: 4, correctChar: "nn" },
+            
+            // Ende
+            { text: "ENDE - Gut gemacht!", errorIndex: -1, correctChar: "" }
+        ];
+
+        init();
+        animate();
+
+        function init() {
+            // 1. Setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x020205); 
+            scene.fog = new THREE.Fog(0x020205, 10, 80);
+
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 25;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // 2. Licht
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+            dirLight.position.set(5, 10, 10);
+            scene.add(dirLight);
+            
+            pointLight = new THREE.PointLight(0x00ffcc, 1, 25);
+            scene.add(pointLight);
+
+            createStars();
+
+            raycaster = new THREE.Raycaster();
+
+            // 3. Schrift laden (LOKAL - Das funktioniert bei dir!)
+            const loader = new FontLoader();
+            loader.load('/font.json', function (font) {
+                fontGlobal = font;
+                statusText.innerText = ""; 
+                loadLevel(0);
+            }, undefined, function (err) {
+                console.error(err);
+                statusText.innerHTML = "FEHLER:<br>Datei '/font.json' fehlt oder liegt falsch.";
+                statusText.style.color = "red";
+            });
+
+            // Events
+            window.addEventListener('mousedown', onShoot);
+            window.addEventListener('resize', onWindowResize);
+            document.addEventListener('mousemove', onMouseMove);
+            
+            // Sound aktivieren beim ersten Klick
+            document.body.addEventListener('click', () => {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+            });
+        }
+
+        // --- SOUND GENERATOR (Keine Dateien nötig!) ---
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'shoot') {
+                // Laser Pew
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            } else if (type === 'hit') {
+                // Ding!
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } else if (type === 'error') {
+                // Buzz (Fehler)
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        function createStars() {
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            for ( let i = 0; i < 2000; i ++ ) {
+                vertices.push( THREE.MathUtils.randFloatSpread( 300 ) ); 
+                vertices.push( THREE.MathUtils.randFloatSpread( 200 ) ); 
+                vertices.push( THREE.MathUtils.randFloatSpread( 100 ) ); 
+            }
+            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+            const material = new THREE.PointsMaterial( { color: 0xaaaaaa, size: 0.4 } );
+            starField = new THREE.Points( geometry, material );
+            scene.add( starField );
+        }
+
+        function loadLevel(index) {
+            isTransitioning = false;
+            
+            // Sauberes Aufräumen
+            letters.forEach(l => scene.remove(l));
+            letters = []; 
+
+            if (index >= levels.length) {
+                statusText.innerText = "Alle Level geschafft! 🎉";
+                statusText.style.color = "#00ffcc";
+                scoreText.innerText = "Endstand: " + score;
+                setTimeout(() => location.reload(), 5000);
+                return;
+            }
+
+            const levelData = levels[index];
+            create3DText(levelData.text, levelData);
+        }
+
+        function create3DText(textStr, levelData) {
+            let xOffset = - (textStr.length * 0.7); 
+
+            for (let i = 0; i < textStr.length; i++) {
+                const char = textStr[i];
+                if (char === " ") {
+                    xOffset += 1.2;
+                    continue;
+                }
+
+                const geo = new TextGeometry(char, {
+                    font: fontGlobal,
+                    size: 1.5,
+                    height: 0.4,
+                    curveSegments: 5,
+                    bevelEnabled: true,
+                    bevelThickness: 0.03,
+                    bevelSize: 0.02,
+                    bevelSegments: 3
+                });
+
+                const mat = new THREE.MeshStandardMaterial({ 
+                    color: 0x44aaff, 
+                    roughness: 0.2,
+                    metalness: 0.8
+                });
+
+                const mesh = new THREE.Mesh(geo, mat);
+                mesh.position.set(xOffset, 0, 0);
+                
+                mesh.userData = { 
+                    isError: (i === levelData.errorIndex),
+                    originalChar: char,
+                    index: i 
+                };
+
+                scene.add(mesh);
+                letters.push(mesh); 
+
+                geo.computeBoundingBox();
+                xOffset += (geo.boundingBox.max.x - geo.boundingBox.min.x) + 0.3;
+            }
+        }
+
+        function onMouseMove(event) {
+            crosshairDiv.style.left = event.clientX + 'px';
+            crosshairDiv.style.top = event.clientY + 'px';
+
+            if(pointLight) {
+                pointLight.position.x = (event.clientX / window.innerWidth) * 40 - 20;
+                pointLight.position.y = -(event.clientY / window.innerHeight) * 20 + 10;
+            }
+
+            mouseVector.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            mouseVector.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        }
+
+        function onShoot() {
+            if (!fontGlobal || isTransitioning) return;
+
+            playSound('shoot');
+
+            // Visueller Rückstoß
+            crosshairDiv.style.transform = "translate(-50%, -50%) scale(0.8)";
+            setTimeout(() => crosshairDiv.style.transform = "translate(-50%, -50%) scale(1)", 100);
+
+            raycaster.setFromCamera(mouseVector, camera);
+            const intersects = raycaster.intersectObjects(letters);
+
+            if (intersects.length > 0) {
+                const hitMesh = intersects[0].object;
+                
+                // Info für dich in der Konsole
+                console.log("Treffer: " + hitMesh.userData.originalChar + " (Index: " + hitMesh.userData.index + ")");
+
+                if (hitMesh.userData.isError) {
+                    // TREFFER
+                    playSound('hit');
+                    score += 100;
+                    scoreText.innerText = "Score: " + score;
+                    scoreText.style.color = "#00ff00";
+                    scoreText.style.transform = "scale(1.5)";
+                    setTimeout(() => scoreText.style.transform = "scale(1)", 200);
+
+                    isTransitioning = true; 
+
+                    createExplosion(hitMesh.position);
+                    scene.remove(hitMesh); 
+
+                    const correctChar = levels[currentSentenceIndex].correctChar;
+                    spawnCorrectLetter(hitMesh.position, correctChar);
+
+                    statusText.innerText = "Korrekt!";
+                    
+                    setTimeout(() => {
+                        currentSentenceIndex++;
+                        statusText.innerText = "";
+                        scoreText.style.color = "white";
+                        loadLevel(currentSentenceIndex);
+                    }, 2500); 
+
+                } else {
+                    // FEHLER
+                    playSound('error');
+                    score -= 20;
+                    scoreText.innerText = "Score: " + score;
+                    scoreText.style.color = "red";
+                    
+                    const oldColor = hitMesh.material.color.getHex();
+                    hitMesh.material.color.set(0xff0000); 
+                    hitMesh.position.y -= 0.2;
+                    setTimeout(() => {
+                        hitMesh.material.color.setHex(oldColor);
+                        hitMesh.position.y += 0.2;
+                        scoreText.style.color = "white";
+                    }, 300);
+                }
+            }
+        }
+
+        function spawnCorrectLetter(position, char) {
+            const geo = new TextGeometry(char, {
+                font: fontGlobal,
+                size: 1.5,
+                height: 0.5,
+                curveSegments: 5,
+                bevelEnabled: true, bevelThickness: 0.03, bevelSize: 0.02, bevelSegments: 3
+            });
+
+            const mat = new THREE.MeshStandardMaterial({ 
+                color: 0x00ff00, 
+                emissive: 0x004400,
+                roughness: 0.2,
+                metalness: 0.5
+            });
+
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.copy(position);
+            mesh.scale.set(0.1, 0.1, 0.1);
+            
+            scene.add(mesh);
+            letters.push(mesh); // Damit er beim nächsten Level gelöscht wird!
+
+            let scale = 0.1;
+            const growInterval = setInterval(() => {
+                scale += 0.1;
+                mesh.scale.set(scale, scale, scale);
+                if (scale >= 1.2) { 
+                    clearInterval(growInterval);
+                    setTimeout(() => mesh.scale.set(1, 1, 1), 100);
+                }
+            }, 30);
+        }
+
+        function createExplosion(pos) {
+            const light = new THREE.PointLight(0xff0000, 5, 15);
+            light.position.copy(pos);
+            scene.add(light);
+            setTimeout(() => scene.remove(light), 300);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if(starField) {
+                starField.rotation.y += 0.0003;
+            }
+
+            const time = Date.now() * 0.001;
+            letters.forEach((l, i) => {
+                if(l.parent === scene) {
+                    l.position.y += Math.sin(time * 2 + i) * 0.002;
+                }
+            });
+
+            camera.position.x += (mouseVector.x * 2 - camera.position.x) * 0.05;
+            camera.position.y += (mouseVector.y * 2 - camera.position.y) * 0.05;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
