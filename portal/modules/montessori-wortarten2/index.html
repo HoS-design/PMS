@@ -1,0 +1,917 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Montessori – Wortarten-Symbole zuordnen (HoS · 30 Sätze)</title>
+  
+  <style>
+    :root{
+      --subject-color:#ef4444;
+      /* Base (Durchgeschüttelt-Optik) */
+      --bg:#f2f4f7;
+      --card:#ffffff;
+      --ink:#1e293b;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --accent:#3b82f6;
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --radius:14px;
+
+      /* Montessori-Farben (beibehalten) */
+      --noun:#111827;         /* Nomen: schwarz */
+      --article:#93c5fd;      /* Artikel: hellblau */
+      --adj:#2563eb;          /* Adjektiv: blau */
+      --verb:#ef4444;         /* Verb: rot */
+      --adv:#f59e0b;          /* Adverb: orange */
+      --pron:#7c3aed;         /* Pronomen: lila */
+      --prep:#22c55e;         /* Präposition: grün */
+      --conj:#ec4899;         /* Konjunktion: rosa */
+      --interj:#fbbf24;       /* Interjektion: gold */
+
+      --ok:#10b981;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+
+      --focus: rgba(30,64,175,.25);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+    }
+
+    .wrap{max-width:1180px;margin:0 auto;padding:24px}
+
+    /* Header (ruhig, minimal) */
+    header{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-width:260px;
+    }
+    .meme{
+      width:44px;height:44px;border-radius:12px;object-fit:cover;
+      border:1px solid var(--line);
+      background:#fff;
+      flex:0 0 auto;
+    }
+    .titlebox h1{font-size:18px;margin:0 0 4px 0}
+    .titlebox p{margin:0;color:var(--muted);font-size:13px}
+
+    .badge{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid var(--line);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .badge b{color:var(--ink)}
+
+    /* Buttons: Durchgeschüttelt-Stil */
+    .top-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      border-radius:10px;
+      padding:10px 12px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 1px 0 rgba(0,0,0,.03);
+      transition:transform .04s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+      user-select:none;
+    }
+    .btn:hover{box-shadow:0 10px 30px rgba(0,0,0,.08); border-color:#d7dde6}
+    .btn:active{transform:translateY(1px)}
+    .btn:focus{outline:none; box-shadow:0 0 0 4px var(--focus)}
+    .btn.primary{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent);
+    }
+    .btn.primary:hover{filter:brightness(0.98)}
+    .btn.good{background:var(--ok); border-color:var(--ok); color:#fff}
+    .btn.warn{background:var(--warn); border-color:var(--warn); color:#111827}
+    .btn.ghost{background:transparent; box-shadow:none}
+    .btn.small{padding:8px 10px;border-radius:10px}
+
+    main{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns: 1fr;}
+      .brand{min-width:auto}
+    }
+
+    /* Cards: Durchgeschüttelt */
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+    }
+    .card h2{
+      font-size:14px;
+      margin:0 0 10px 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .sub{color:var(--muted);font-size:13px;margin:6px 0 0; line-height:1.35}
+
+    /* Sentence area */
+    .sentence{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px 8px;
+      padding:14px;
+      border:1px dashed var(--line);
+      border-radius:12px;
+      background:#f1f5f9;
+      align-items:flex-end;
+      min-height:140px;
+    }
+
+    .tok{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:6px;
+      padding:6px 6px 8px;
+      border-radius:12px;
+      border:1px solid transparent;
+      min-width:44px;
+    }
+    .tok.word{
+      background:#fff;
+      border-color:var(--line);
+    }
+    .tok.punct{
+      padding:0 2px 6px;
+      min-width:auto;
+      border:none;
+      background:transparent;
+    }
+
+    .tok .w{
+      font-size:16px;
+      font-weight:650;
+      cursor:pointer;
+      padding:6px 10px;
+      border-radius:10px;
+      border:1px solid transparent;
+      user-select:none;
+      white-space:nowrap;
+      outline:none;
+    }
+    .tok.word .w:hover{border-color:#c7d2fe;background:#eef2ff}
+    .tok.word.selected .w{border-color:#93c5fd;background:#eef2ff}
+    .tok.word .w:focus-visible{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(147,197,253,.35);
+      background:#eef2ff;
+    }
+
+    .slot{
+      width:46px;height:42px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:grid;place-items:center;
+      position:relative;
+    }
+    .slot.ok{border-color:rgba(22,163,74,.45); box-shadow:0 0 0 4px rgba(22,163,74,.10) inset}
+    .slot.bad{border-color:rgba(220,38,38,.40); box-shadow:0 0 0 4px rgba(220,38,38,.10) inset}
+    .slot.drop{
+      border-color:rgba(30,64,175,.45);
+      box-shadow:0 0 0 4px rgba(30,64,175,.12) inset;
+      background:#eef2ff;
+    }
+    .slot .mini{
+      width:28px;height:28px;
+      opacity:.95;
+      pointer-events:none;
+      display:grid;
+      place-items:center;
+    }
+    .slot .mini svg{width:28px;height:28px}
+
+    .slot .clear{
+      position:absolute;
+      right:-8px;
+      top:-8px;
+      width:22px;height:22px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      font-size:12px;
+      cursor:pointer;
+      opacity:0;
+      transition:opacity .15s ease;
+      box-shadow:0 10px 30px rgba(0,0,0,.10);
+    }
+    .tok.word:hover .slot .clear{opacity:1}
+
+    .palette{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    .sym{
+      display:flex; align-items:center; gap:10px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:grab;
+      user-select:none;
+      min-height:56px;
+    }
+    .sym:active{cursor:grabbing}
+    .sym .label{font-weight:700;font-size:13px}
+    .sym .hint{font-size:12px;color:var(--muted);margin-top:2px}
+    .sym .stack{display:flex;flex-direction:column;line-height:1.15}
+    .sym.selected{
+      outline:4px solid rgba(30,64,175,.18);
+      border-color:#c7d2fe;
+      background:#eef2ff;
+    }
+    .sym svg{width:34px;height:34px;flex:0 0 auto}
+
+    .status{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+      margin-top:12px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+    }
+    .status .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .pill{
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      background:#fff;font-size:12px;color:var(--muted);
+    }
+    .pill b{color:var(--ink)}
+    .msg{font-size:13px;color:var(--muted)}
+    .msg b{color:var(--ink)}
+    .kbd{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      border:1px solid var(--line);
+      padding:2px 6px;border-radius:8px;background:#fff;color:var(--muted);
+      font-size:12px;
+    }
+
+    .right-top{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .minirow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .footer{
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-top:12px; color:var(--muted); font-size:12px;
+    }
+
+    .toast{
+      margin-top:10px;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      font-size:13px;
+    }
+  
+    .app-header {
+      padding: 12px 24px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
+    .app-header .badge-main {
+      display:inline-flex; align-items:center;
+      background: var(--subject-color);
+      color: white;
+      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+      padding:3px 8px; border-radius:99px;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="badge-main">Deutsch</div>
+  </div>
+</header>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="/chatisthisreal.png"
+             onerror="this.onerror=null;this.src='/chatisthisreal.png';"
+             alt="Chat is this real?"
+             class="meme">
+        <div class="titlebox">
+          <h1>Montessori – Wortarten-Symbole zuordnen</h1>
+          <p>30 Sätze · Wortarten · Drag&Drop + Klick · HoS</p>
+        </div>
+      </div>
+
+      <div class="badge">🧩 Zuordnung • <b>Wortarten</b> • HoS</div>
+
+      <div class="top-actions">
+        <button class="btn ghost" id="homeBtn" title="Zur Startseite">🏠 Startseite</button>
+        <button class="btn warn" id="newBtn" title="Nur diesen Satz zurücksetzen">🔁 Neu</button>
+        <button class="btn primary" id="prevBtn" title="Vorheriger Satz">⬅️ Zurück</button>
+        <button class="btn primary" id="nextBtn" title="Nächster Satz">➡️ Weiter</button>
+        <button class="btn good" id="checkBtn" title="Überprüfen">✅ Prüfen</button>
+        <button class="btn" id="solveBtn" title="Lösung anzeigen">🧠 Lösung</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT -->
+      <section class="card">
+        <h2>
+          <span>Satz</span>
+          <span class="minirow">
+            <span class="pill">Satz: <b id="idx">1</b>/<span id="total">30</span></span>
+            <span class="pill">Erledigt: <b id="done">0</b></span>
+            <span class="pill">Score: <b id="score">0</b></span>
+          </span>
+        </h2>
+
+        <div class="sub">
+          Tipp: Taste <span class="kbd">1–9</span> wählt ein Symbol. <span class="kbd">Esc</span> hebt Auswahl auf.
+          Doppelklick auf Slot oder <b>×</b> entfernt Zuordnung.
+        </div>
+
+        <div id="sentence" class="sentence" aria-label="Satz mit Wörtern"></div>
+
+        <div class="status">
+          <div class="left">
+            <span class="pill">Richtig: <b id="right">0</b></span>
+            <span class="pill">Falsch: <b id="wrong">0</b></span>
+            <span class="pill">Fehlt: <b id="missing">0</b></span>
+            <span class="pill">Letzter Check: <b id="last">–</b></span>
+          </div>
+          <div class="msg" id="msg">Wähle ein Symbol und ordne es den Wörtern zu.</div>
+        </div>
+
+        <div class="toast" id="toast" style="display:none"></div>
+
+        <div class="footer">
+          <div>HoS · Montessori-Symbole · Interjektion = Marker-Symbol</div>
+          <div>Bedienung: Ziehen oder klicken</div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <aside class="card">
+        <h2>
+          <span>Symbol-Auswahl</span>
+          <span class="right-top">
+            <button class="btn small" id="clearSelBtn" title="Auswahl aufheben">✖ Auswahl</button>
+          </span>
+        </h2>
+        <div class="sub">Ziehe ein Symbol auf ein Wort <b>oder</b> klicke ein Symbol an und dann das Wort.</div>
+
+        <div class="palette" id="palette"></div>
+
+        <div class="toast" style="margin-top:12px">
+          <b>Score-Logik:</b> Beim Prüfen gibt’s <b>+1 pro richtig</b> und <b>-1 pro falsch</b> (Score fällt nie unter 0).
+          <br>„Erledigt“ zählt einen Satz, wenn <b>nichts fehlt</b> und <b>alles richtig</b> ist.
+        </div>
+      </aside>
+    </main>
+  </div>
+
+<script>
+/* =========================================================
+   Montessori-Symbole (SVG)
+========================================================= */
+const SYMBOLS = [
+  { key:"N",    name:"Nomen",        hint:"Dinge/Namen",        colorVar:"--noun",    draw:"triangle" },
+  { key:"ART",  name:"Artikel",      hint:"Begleiter",          colorVar:"--article", draw:"triangleSmall" },
+  { key:"ADJ",  name:"Adjektiv",     hint:"Eigenschaft",        colorVar:"--adj",     draw:"triangleMid" },
+  { key:"V",    name:"Verb",         hint:"Tun/Handlung",       colorVar:"--verb",    draw:"circle" },
+  { key:"ADV",  name:"Adverb",       hint:"Umstände",           colorVar:"--adv",     draw:"circleSmall" },
+  { key:"PRO",  name:"Pronomen",     hint:"Stellvertreter",     colorVar:"--pron",    draw:"trianglePron" },
+  { key:"PRÄP", name:"Präposition",  hint:"Beziehung/Lage",     colorVar:"--prep",    draw:"crescent" },
+  { key:"KONJ", name:"Konjunktion",  hint:"Verbindet",          colorVar:"--conj",    draw:"bar" },
+  { key:"INT",  name:"Interjektion", hint:"Ausruf",             colorVar:"--interj",  draw:"marker" } // wie dein Material
+];
+
+function svgFor(sym, size=34){
+  const color = getComputedStyle(document.documentElement).getPropertyValue(sym.colorVar).trim();
+  const s = size;
+  const view = `0 0 100 100`;
+
+  const tri = (scale=1, yOffset=0) => {
+    const cx=50, cy=52+yOffset;
+    const w=70*scale, h=64*scale;
+    const p1 = `${cx},${cy-h/2}`;
+    const p2 = `${cx-w/2},${cy+h/2}`;
+    const p3 = `${cx+w/2},${cy+h/2}`;
+    return `<polygon points="${p1} ${p2} ${p3}" fill="${color}" />`;
+  };
+
+  const circle = (r=34) => `<circle cx="50" cy="52" r="${r}" fill="${color}" />`;
+
+  const crescent = () => `
+    <path d="M63 20
+             A30 30 0 1 0 63 84
+             A22 30 0 1 1 63 20 Z"
+          fill="${color}" opacity="1"/>
+    <path d="M71 24
+             A24 28 0 1 0 71 80
+             A18 28 0 1 1 71 24 Z"
+          fill="white" opacity="0.92"/>
+  `;
+
+  const bar = () => `<rect x="18" y="44" width="64" height="18" rx="9" fill="${color}" />`;
+
+  const marker = () => `
+    <g>
+      <circle cx="50" cy="28" r="16" fill="${color}" />
+      <path d="M34 40
+               L66 40
+               L78 86
+               Q50 96 22 86
+               Z"
+            fill="${color}" />
+    </g>
+  `;
+
+  let shape = "";
+  switch(sym.draw){
+    case "triangle":       shape = tri(1.0, 0); break;
+    case "triangleSmall":  shape = tri(0.72, 4); break;
+    case "triangleMid":    shape = tri(0.86, 2); break;
+    case "trianglePron":   shape = tri(0.86, 2); break;
+    case "circle":         shape = circle(32); break;
+    case "circleSmall":    shape = circle(24); break;
+    case "crescent":       shape = crescent(); break;
+    case "bar":            shape = bar(); break;
+    case "marker":         shape = marker(); break;
+  }
+
+  return `
+    <svg width="${s}" height="${s}" viewBox="${view}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      ${shape}
+    </svg>
+  `;
+}
+
+/* =========================================================
+   Übungen – 30 Sätze (wortartlich korrekt)
+   - Typen beziehen sich NUR auf Wörter (Satzzeichen werden ignoriert)
+   - Adjektive bleiben ADJ, auch wenn adverbial gebraucht (z.B. "schnell", "leise")
+   - Adverbien (ADV) realistisch häufig: heute, gestern, dort, sehr, oft, nie, vielleicht, jetzt, immer, wirklich, später, hier, draußen, oben, unten, danach, bald, sofort ...
+========================================================= */
+const EXERCISES = [
+  { sentence: "Der kluge Hund läuft heute schnell durch den Park.",               types:["ART","ADJ","N","V","ADV","ADJ","PRÄP","ART","N"] },
+  { sentence: "Wow, meine Schwester liest heute sehr leise.",                     types:["INT","PRO","N","V","ADV","ADV","ADJ"] },
+  { sentence: "Ich gehe morgen vielleicht mit dir ins Kino.",                     types:["PRO","V","ADV","ADV","PRÄP","PRO","PRÄP","ART","N"] },
+  { sentence: "Der alte Mann spricht dort oft laut.",                             types:["ART","ADJ","N","V","ADV","ADV","ADJ"] },
+  { sentence: "Aua! Das tut jetzt wirklich sehr weh.",                            types:["INT","PRO","V","ADV","ADV","ADV","ADV"] },
+  { sentence: "Wir bleiben heute lieber zu Hause.",                               types:["PRO","V","ADV","ADV","PRÄP","N"] },
+  { sentence: "Die Kinder spielen draußen fröhlich.",                             types:["ART","N","V","ADV","ADJ"] },
+  { sentence: "Er hat gestern dort lange gewartet.",                              types:["PRO","V","ADV","ADV","ADV","V"] },
+  { sentence: "Oh nein, ich komme später sicher.",                                types:["INT","INT","PRO","V","ADV","ADV"] },
+  { sentence: "Der Ball liegt oben auf dem Tisch.",                               types:["ART","N","V","ADV","PRÄP","ART","N"] },
+
+  { sentence: "Sie arbeitet heute sehr konzentriert.",                            types:["PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Wow, der Film war gestern wirklich spannend.",                     types:["INT","ART","N","V","ADV","ADV","ADJ"] },
+  { sentence: "Ich bleibe jetzt hier.",                                           types:["PRO","V","ADV","ADV"] },
+  { sentence: "Der Hund schläft draußen ruhig.",                                  types:["ART","N","V","ADV","ADJ"] },
+  { sentence: "Ach, das ist heute gar nicht schlimm.",                            types:["INT","PRO","V","ADV","ADV","ADV","ADJ"] },
+  { sentence: "Die kleine Katze springt plötzlich hoch.",                         types:["ART","ADJ","N","V","ADV","ADJ"] },
+  { sentence: "Er liest oft sehr aufmerksam.",                                    types:["PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Meine Freunde warten draußen geduldig.",                           types:["PRO","N","V","ADV","ADJ"] },
+  { sentence: "Oh, das klingt heute wirklich gut.",                               types:["INT","PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Der Zug fährt jetzt langsam los.",                                 types:["ART","N","V","ADV","ADJ","ADV"] },
+
+  { sentence: "Sie bleibt morgen sicher hier.",                                   types:["PRO","V","ADV","ADV","ADV"] },
+  { sentence: "Wow, ich habe dort nie gefroren.",                                 types:["INT","PRO","V","ADV","ADV","V"] },
+  { sentence: "Der Lehrer erklärt alles heute ruhig.",                            types:["ART","N","V","PRO","ADV","ADJ"] },
+  { sentence: "Ach, wir sind jetzt endlich fertig.",                              types:["INT","PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Die Sonne scheint draußen hell.",                                  types:["ART","N","V","ADV","ADJ"] },
+  { sentence: "Er spricht dort immer höflich.",                                   types:["PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Oh nein, das klappt heute nicht.",                                 types:["INT","INT","PRO","V","ADV","ADV"] },
+  { sentence: "Mein Bruder arbeitet sehr sorgfältig.",                            types:["PRO","N","V","ADV","ADJ"] },
+  { sentence: "Wow, das war gestern echt cool.",                                  types:["INT","PRO","V","ADV","ADV","ADJ"] },
+  { sentence: "Die Kinder gehen jetzt nach Hause.",                               types:["ART","N","V","ADV","PRÄP","N"] }
+];
+
+document.getElementById("total").textContent = EXERCISES.length;
+
+/* =========================================================
+   State
+========================================================= */
+let current = 0;
+let selectedSymbolKey = null;
+
+// Score/Progress (für Lehrperson „im Vorbeigehen“)
+let score = 0;                 // +1 richtig, -1 falsch (min 0) pro Prüfen
+let doneSet = new Set();       // Satz-Indices, die einmal komplett richtig & ohne fehlend waren
+let lastCheckStr = "–";
+
+/* =========================================================
+   Helpers
+========================================================= */
+const sentenceEl = document.getElementById("sentence");
+const paletteEl  = document.getElementById("palette");
+const toastEl    = document.getElementById("toast");
+
+function escapeHtml(str){
+  return str.replace(/[&<>"']/g, (c)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function showToast(text){
+  toastEl.style.display = "block";
+  toastEl.textContent = text;
+  setTimeout(()=>{ toastEl.style.display="none"; }, 1700);
+}
+
+/* Tokenizer: trennt Wörter und Satzzeichen.
+   Wörter: Buchstaben inkl. Umlaute + ß, mit Bindestrich/Apostroph im Inneren erlaubt.
+*/
+function tokenize(sentence){
+  const re = /([A-Za-zÄÖÜäöüß]+(?:[-’'][A-Za-zÄÖÜäöüß]+)*)|([0-9]+)|([^\sA-Za-zÄÖÜäöüß0-9])/g;
+  const out = [];
+  let m;
+  while((m=re.exec(sentence))!==null){
+    if(m[1] || m[2]){
+      out.push({ kind:"word", text:(m[1]||m[2]) });
+    }else if(m[3]){
+      out.push({ kind:"punct", text:m[3] });
+    }
+  }
+  return out;
+}
+
+/* =========================================================
+   Palette
+========================================================= */
+function setSelectedSymbol(symKey){
+  selectedSymbolKey = symKey;
+
+  document.querySelectorAll(".sym").forEach(el=>{
+    el.classList.toggle("selected", el.dataset.sym === symKey);
+  });
+
+  const s = SYMBOLS.find(x=>x.key===symKey);
+  document.getElementById("msg").innerHTML = s
+    ? `Ausgewählt: <b>${s.name}</b>. Jetzt Wort anklicken oder Symbol ziehen.`
+    : `Wähle ein Symbol und ordne es den Wörtern zu.`;
+}
+
+function renderPalette(){
+  paletteEl.innerHTML = "";
+
+  SYMBOLS.forEach((s, idx) => {
+    const item = document.createElement("div");
+    item.className = "sym";
+    item.setAttribute("draggable","true");
+    item.dataset.sym = s.key;
+    item.innerHTML = `
+      ${svgFor(s, 34)}
+      <div class="stack">
+        <div class="label">${s.name}</div>
+        <div class="hint">${s.hint}</div>
+      </div>
+    `;
+
+    item.addEventListener("dragstart", (ev) => {
+      ev.dataTransfer.setData("text/plain", s.key);
+      ev.dataTransfer.effectAllowed = "copy";
+      setSelectedSymbol(s.key);
+    });
+
+    item.addEventListener("click", () => setSelectedSymbol(s.key));
+    item.title = `Taste ${idx+1}`;
+
+    paletteEl.appendChild(item);
+  });
+}
+renderPalette();
+
+/* =========================================================
+   Sentence rendering
+========================================================= */
+function updateTop(){
+  document.getElementById("idx").textContent = String(current + 1);
+  document.getElementById("score").textContent = String(score);
+  document.getElementById("done").textContent  = String(doneSet.size);
+  document.getElementById("last").textContent  = lastCheckStr;
+}
+
+function clearStats(){
+  document.getElementById("right").textContent = "0";
+  document.getElementById("wrong").textContent = "0";
+  document.getElementById("missing").textContent = "0";
+}
+
+function assignSymbolToWord(wordEl, symKey){
+  const slot = wordEl.querySelector(".slot");
+  const sym = SYMBOLS.find(s=>s.key === symKey);
+  if(!sym) return;
+
+  slot.innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear" title="Entfernen">×</div>`;
+  wordEl.dataset.assigned = symKey;
+
+  // Clear check styling until next check
+  slot.classList.remove("ok","bad");
+
+  // Clear button
+  const clearBtn = slot.querySelector(".clear");
+  clearBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    removeAssignment(wordEl);
+  });
+}
+
+function removeAssignment(wordEl){
+  const slot = wordEl.querySelector(".slot");
+  wordEl.dataset.assigned = "";
+  slot.classList.remove("ok","bad");
+  slot.innerHTML = `<div class="clear" title="Entfernen" style="opacity:0">×</div>`;
+}
+
+function loadExercise(i){
+  current = (i + EXERCISES.length) % EXERCISES.length;
+  updateTop();
+  clearStats();
+
+  const ex = EXERCISES[current];
+  const tokens = tokenize(ex.sentence);
+
+  sentenceEl.innerHTML = "";
+  setSelectedSymbol(null);
+
+  let wIndex = 0;
+
+  tokens.forEach((t) => {
+    if(t.kind === "punct"){
+      const p = document.createElement("div");
+      p.className = "tok punct";
+      p.innerHTML = `<div class="w" style="cursor:default;padding:0 2px;border:none;background:transparent">${escapeHtml(t.text)}</div>`;
+      sentenceEl.appendChild(p);
+      return;
+    }
+
+    const correctType = ex.types[wIndex] || null;
+
+    const wrap = document.createElement("div");
+    wrap.className = "tok word";
+    wrap.dataset.wi = String(wIndex);
+    wrap.dataset.correct = correctType; // ART, N, ...
+    wrap.dataset.assigned = "";
+
+    wrap.innerHTML = `
+      <div class="w" role="button" tabindex="0">${escapeHtml(t.text)}</div>
+      <div class="slot" aria-label="Symbol-Ablage"><div class="clear" title="Entfernen" style="opacity:0">×</div></div>
+    `;
+
+    const wordBtn = wrap.querySelector(".w");
+    const slot = wrap.querySelector(".slot");
+
+    // Click word to assign selected symbol
+    const assignFromSelection = () => {
+      if(!selectedSymbolKey) return;
+      assignSymbolToWord(wrap, selectedSymbolKey);
+    };
+
+    wordBtn.addEventListener("click", () => {
+      document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
+      wrap.classList.add("selected");
+      assignFromSelection();
+    });
+
+    wordBtn.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        wordBtn.click();
+      }
+    });
+
+    // Slot: double click to clear
+    slot.addEventListener("dblclick", (e) => {
+      e.preventDefault();
+      removeAssignment(wrap);
+    });
+
+    // Slot accepts drop
+    slot.addEventListener("dragover", (ev) => {
+      ev.preventDefault();
+      slot.classList.add("drop");
+    });
+    slot.addEventListener("dragleave", () => {
+      slot.classList.remove("drop");
+    });
+    slot.addEventListener("drop", (ev) => {
+      ev.preventDefault();
+      slot.classList.remove("drop");
+      const symKey = ev.dataTransfer.getData("text/plain");
+      if(symKey) assignSymbolToWord(wrap, symKey);
+    });
+
+    sentenceEl.appendChild(wrap);
+    wIndex++;
+  });
+
+  document.getElementById("msg").innerHTML = `Ordne die Symbole zu. Tipp: Taste <span class="kbd">1</span> wählt das 1. Symbol usw.`;
+}
+
+loadExercise(0);
+
+/* =========================================================
+   Checking & Solving
+========================================================= */
+const KEY_TO_TYPE = {
+  "N":"N",
+  "ART":"ART",
+  "ADJ":"ADJ",
+  "V":"V",
+  "ADV":"ADV",
+  "PRO":"PRO",
+  "PRÄP":"PRÄP",
+  "KONJ":"KONJ",
+  "INT":"INT"
+};
+
+function check(){
+  let right=0, wrong=0, missing=0;
+
+  document.querySelectorAll(".tok.word").forEach(w=>{
+    const correct = w.dataset.correct;
+    const assignedKey = w.dataset.assigned;
+    const slot = w.querySelector(".slot");
+    slot.classList.remove("ok","bad");
+
+    if(!assignedKey){
+      missing++;
+      return;
+    }
+
+    const assignedType = KEY_TO_TYPE[assignedKey] || null;
+
+    if(assignedType === correct){
+      right++;
+      slot.classList.add("ok");
+    }else{
+      wrong++;
+      slot.classList.add("bad");
+    }
+  });
+
+  // Score update (+right - wrong, min 0)
+  score = Math.max(0, score + right - wrong);
+
+  // Sentence completed?
+  const completedNow = (missing === 0 && wrong === 0);
+  if(completedNow) doneSet.add(current);
+
+  // Update UI
+  document.getElementById("right").textContent = String(right);
+  document.getElementById("wrong").textContent = String(wrong);
+  document.getElementById("missing").textContent = String(missing);
+
+  lastCheckStr = `${right}✓ ${wrong}✗ ${missing}…`;
+  updateTop();
+
+  if(missing>0){
+    document.getElementById("msg").innerHTML = `Du hast noch <b>${missing}</b> Wort/Wörter ohne Symbol. (Richtig: <b>${right}</b>, Falsch: <b>${wrong}</b>)`;
+    showToast("Noch nicht fertig – es fehlt noch etwas.");
+  }else if(wrong>0){
+    document.getElementById("msg").innerHTML = `Geprüft: Richtig <b>${right}</b> • Falsch <b>${wrong}</b>.`;
+    showToast("Schon gut – noch ein paar Fehler.");
+  }else{
+    document.getElementById("msg").innerHTML = `Perfekt! Alles richtig ✅`;
+    showToast("Top – Satz erledigt ✅");
+  }
+}
+
+function solve(){
+  // Set all correct symbols
+  document.querySelectorAll(".tok.word").forEach(w=>{
+    const correct = w.dataset.correct;
+    const symKey = Object.keys(KEY_TO_TYPE).find(k => KEY_TO_TYPE[k] === correct);
+    if(symKey) assignSymbolToWord(w, symKey);
+  });
+  check();
+  document.getElementById("msg").innerHTML = `Lösung angezeigt.`;
+}
+
+/* =========================================================
+   Reset current sentence
+========================================================= */
+function clearAssignments(){
+  document.querySelectorAll(".tok.word").forEach(w=>{
+    w.dataset.assigned = "";
+    w.classList.remove("selected");
+    const slot = w.querySelector(".slot");
+    slot.classList.remove("ok","bad","drop");
+    slot.innerHTML = `<div class="clear" title="Entfernen" style="opacity:0">×</div>`;
+  });
+  clearStats();
+  document.getElementById("msg").textContent = "Zurückgesetzt. Ordne die Symbole zu.";
+  showToast("Satz zurückgesetzt.");
+}
+
+/* =========================================================
+   Navigation & Buttons
+========================================================= */
+document.getElementById("homeBtn").addEventListener("click", () => {
+  // Zur Repo-Startseite (Root index.html)
+  window.location.href = "index.html";
+});
+document.getElementById("newBtn").addEventListener("click", clearAssignments);
+document.getElementById("prevBtn").addEventListener("click", () => loadExercise(current-1));
+document.getElementById("nextBtn").addEventListener("click", () => loadExercise(current+1));
+document.getElementById("checkBtn").addEventListener("click", check);
+document.getElementById("solveBtn").addEventListener("click", solve);
+document.getElementById("clearSelBtn").addEventListener("click", () => setSelectedSymbol(null));
+
+/* =========================================================
+   Keyboard shortcuts
+========================================================= */
+window.addEventListener("keydown", (e) => {
+  if(e.key === "Escape"){
+    setSelectedSymbol(null);
+    document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
+  }
+
+  // 1-9 selects symbol
+  const n = Number(e.key);
+  if(n>=1 && n<=SYMBOLS.length){
+    setSelectedSymbol(SYMBOLS[n-1].key);
+  }
+
+  // Optional: Nächster Satz mit Pfeil rechts
+  if(e.key === "ArrowRight"){
+    loadExercise(current+1);
+  }
+  if(e.key === "ArrowLeft"){
+    loadExercise(current-1);
+  }
+});
+</script>
+</body>
+</html>
