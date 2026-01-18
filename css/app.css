@@ -173,3 +173,115 @@
   margin: 0;
   color: var(--muted);
 }
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+
+.app-header .brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-header .logo-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.app-header .brand-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.app-header .brand-title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.app-header .badge-main {
+  display: inline-flex;
+  align-items: center;
+  background: var(--subject-color, var(--accent));
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  width: fit-content;
+}
+
+.app-header .badge-main.is-deutsch {
+  background: #ef4444;
+}
+
+.app-header .badge-main.is-mathe {
+  background: #3b82f6;
+}
+
+.app-header .header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.app-header .header-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-header .header-link:hover {
+  border-color: var(--accent);
+}
+
+.app-header .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-header .btn:hover {
+  border-color: var(--accent);
+}

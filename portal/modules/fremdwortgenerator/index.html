@@ -26,10 +26,9 @@
       color:var(--ink);
       background:var(--bg);
       min-height:100vh;
-      padding:22px;
     }
 
-    .wrap{width:min(980px,100%); margin:0 auto;}
+    .wrap{width:min(980px,100%); margin:0 auto; padding:22px;}
 
     /* HoS Hero Header (wie Speedrunde-Ziel) */
     .hero{
@@ -172,12 +171,30 @@
       border-radius:8px;
       color:var(--ink);
     }
+    .app-intro .hero-title,
+    .app-intro .minirow,
+    .app-intro .hero-sticker{
+      display:none;
+    }
+
   </style>
 </head>
 <body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Fremdwoerter im Kontext</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
   <div class="wrap">
 
-    <header class="hero">
+    <div class="hero app-intro">
       <div class="hero-left">
         <div class="minirow">
           <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'">
@@ -189,7 +206,7 @@
       </div>
 
       <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'">
-    </header>
+    </div>
 
     <div class="card">
       <div class="toprow">

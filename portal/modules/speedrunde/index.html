@@ -33,7 +33,7 @@ body{
   background:var(--bg);
   color:var(--text);
 }
-header{
+.app-intro{
   max-width:900px;
   margin:0 auto;
   padding:20px;
@@ -148,6 +148,11 @@ main{
       padding:3px 8px; border-radius:99px;
     }
 
+  .app-intro h1,
+  .app-intro .meme{
+    display:none;
+  }
+
 </style>
 </head>
 
@@ -156,11 +161,17 @@ main{
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>Speedrunde</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 
-<header>
+<div class="app-intro">
   <img src="/chatisthisreal.png"
        onerror="this.onerror=null;this.src='/chatisthisreal.png';"
        alt="Chat is this real?"
@@ -168,7 +179,7 @@ main{
   <span class="badge">⚡ Speedrunde • Zeitformen • HoS • 60 Sekunden</span>
   <h1>Wie schnell bist du? 🏁</h1>
   <p>60 Sekunden. Klick dich durch – schnell & fair 😄</p>
-</header>
+</div>
 
 <main>
   <div class="card">

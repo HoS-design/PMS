@@ -36,14 +36,14 @@ main{
   padding:24px;
 }
 
-header{
+.app-intro{
   margin-bottom:20px;
 }
-header h1{
+.app-intro h1{
   margin:0;
   font-size:1.6rem;
 }
-header p{
+.app-intro p{
   margin:6px 0 0;
   color:var(--muted);
 }
@@ -168,6 +168,10 @@ footer{
       padding:3px 8px; border-radius:99px;
     }
 
+  .app-intro h1{
+    display:none;
+  }
+
 </style>
 </head>
 
@@ -176,16 +180,22 @@ footer{
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>Durchgeschuettelt</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 
 <main>
 
-<header>
+<div class="app-intro">
   <h1>Durchgeschüttelt – Fremdwörter</h1>
   <p>Ordne die Buchstaben so, dass sie zur Bedeutung passen.</p>
-</header>
+</div>
 
 <div class="card" id="game"></div>
 

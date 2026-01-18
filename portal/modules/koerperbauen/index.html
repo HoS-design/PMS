@@ -36,13 +36,19 @@
     }
     a{color:inherit;text-decoration:none}
     .wrap{max-width:1200px;margin:0 auto;padding:18px 14px 40px}
-    header{
+    .app-intro{
       display:flex;gap:14px;align-items:center;
       padding:14px 16px;
       background:var(--surface);
       border:1px solid var(--line);
       border-radius:var(--r);
       box-shadow:var(--shadow);
+    }
+    .app-intro img,
+    .app-intro h1,
+    .app-intro .toplink,
+    .app-intro .badge{
+      display:none;
     }
     .meme{
       width:74px;height:74px;border-radius:14px;object-fit:cover;
@@ -228,12 +234,18 @@
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Mathe</div>
+    <div class="brand-title">
+      <div class="badge-main is-mathe">Mathe</div>
+      <h1>Koerpernetze bauen</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 
 <div class="wrap">
-  <header>
+  <div class="app-intro">
     <img src="/chatisthisreal.png" onerror="this.onerror=null;this.src='/chatisthisreal.png';" alt="Chat is this real?" class="meme">
     <div>
       <h1>Körpernetze bauen <span style="color:var(--b)">HoS</span></h1>
@@ -241,7 +253,7 @@
     </div>
     <a class="toplink" href="/index.html">⬅︎ Startseite</a>
     <div class="badge">🧲 Snap · Platzieren + Drag</div>
-  </header>
+  </div>
 
   <div class="grid">
     <!-- Palette -->

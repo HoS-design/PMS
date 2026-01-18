@@ -39,7 +39,7 @@
     
     /* Topbar */
     .topbar{
-      position: sticky; top: 0; z-index: 50;
+      position: sticky; top: 64px; z-index: 50;
       backdrop-filter: blur(12px);
       background: rgba(255,255,255,.92);
       border-bottom: 1px solid var(--stroke);
@@ -168,7 +168,13 @@
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Medien</div>
+    <div class="brand-title">
+      <div class="badge-main">Medien</div>
+      <h1>Suchmaschinen</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 

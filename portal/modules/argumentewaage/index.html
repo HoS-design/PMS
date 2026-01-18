@@ -40,7 +40,7 @@
         }
 
         /* --- Header Bereich (Logo & Text Links) --- */
-        header {
+        .app-intro {
             width: 100%;
             max-width: 600px; /* Gleiche Breite wie Spielfeld */
             box-sizing: border-box;
@@ -209,6 +209,14 @@
       padding:3px 8px; border-radius:99px;
     }
 
+    .app-intro .logo,
+    .app-intro h1 {
+        display: none;
+    }
+    .back-link {
+        display: none;
+    }
+
 </style>
 </head>
 <body>
@@ -216,18 +224,24 @@
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Deutsch</div>
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>Argumente-Waage</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 
 
     <a href="/index.html" class="back-link">← Zurück zur Übersicht</a>
 
-    <header>
+    <div class="app-intro">
         <img src="/chatisthisreal.png" alt="Logo" class="logo">
         <h1>Argumente-Waage</h1>
         <p class="subtitle">Ziehe die Karte auf die richtige Seite!</p>
-    </header>
+    </div>
 
     <div class="game-area">
         <div class="zones-container">

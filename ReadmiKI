@@ -1,0 +1,125 @@
+Prompt fuer neue Apps (Module) im HoS Portal
+
+Rolle
+Du bist eine KI, die neue Lern-Apps fuer das PMS_beta Projekt erstellt. Du sollst konsistente Module bauen, die zum bestehenden Portal passen.
+
+Ziel
+Erstelle ein neues Modul unter `portal/modules/<slug>/index.html` und binde es in Portal + Startseite ein. Achte auf konsistentes Design und funktionierende Links.
+
+Vorgaben (muss)
+1) Standard-Header in jeder App
+- Logo: `/chatisthisreal.png`
+- Badge: Deutsch (rot) oder Mathe (blau)
+- Titel steht im Header
+- Header ist sticky und scrollt nicht weg
+
+Verwende exakt dieses HTML (nur Text anpassen):
+```
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>App-Titel</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
+  </div>
+</header>
+```
+Badge-Variante:
+- Deutsch: `badge-main is-deutsch`
+- Mathe: `badge-main is-mathe`
+- Anderes Fach: `badge-main` und in `:root` `--subject-color` setzen.
+
+2) Pflicht-Stylesheets im `<head>`
+```
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/app.css">
+```
+
+3) Kein doppelter Titel
+Wenn die App einen alten Hero-Header oder Titel im Body hat, entferne ihn oder blende ihn aus. Der Titel soll nur im Standard-Header stehen.
+
+4) Neue App korrekt verlinken
+- Portal-Kachel in `portal/index.html` anlegen.
+- Dashboard-Card in `index.html` unter `APP_CARDS` anlegen.
+- Root-Wrapper in Repo-Root anlegen, z.B. `MeinModul.html`, der auf `/portal/modules/<slug>/` umleitet (inkl. query/hash).
+- Mapping in `docs/MIGRATION.md` ergaenzen.
+
+Struktur-Schritte fuer ein neues Modul
+1) Ordner anlegen: `portal/modules/<slug>/`
+2) Datei anlegen: `portal/modules/<slug>/index.html`
+3) Standard-Header einsetzen
+4) App-Inhalt implementieren
+5) Portal-Kachel hinzufuegen (portal/index.html)
+6) Dashboard-Card hinzufuegen (index.html)
+7) Root-Wrapper anlegen (Repo-Root)
+8) Migrationstabelle aktualisieren (docs/MIGRATION.md)
+
+Root-Wrapper Vorlage
+```
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=/portal/modules/<slug>/">
+  <link rel="canonical" href="/portal/modules/<slug>/">
+  <script>
+    (function () {
+      var target = '/portal/modules/<slug>/';
+      var url = target + window.location.search + window.location.hash;
+      window.location.replace(url);
+    })();
+  </script>
+  <title>Weiterleitung ...</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="portal-redirect">
+  <main class="redirect-card">
+    <h1>Weiterleitung ...</h1>
+    <p>Diese App ist umgezogen. Falls die Weiterleitung nicht funktioniert, klicke
+      <a href="/portal/modules/<slug>/">hier</a>.
+    </p>
+  </main>
+</body>
+</html>
+```
+
+Portal-Kachel Vorlage
+```
+<a class="portal-card" href="/portal/modules/<slug>/">
+  <h3>App-Titel</h3>
+  <p>Kurzbeschreibung.</p>
+  <div class="portal-tags">
+    <span class="portal-tag">Deutsch</span>
+  </div>
+</a>
+```
+
+Dashboard-Card Vorlage (index.html -> APP_CARDS)
+```
+{
+  href: "MeinModul.html",
+  icon: "A",
+  title: "Mein Modul",
+  description: "Kurzbeschreibung.",
+  keywords: "stichworte hier"
+}
+```
+
+Qualitaet und Stabilitaet
+- Nur ASCII in neuen Dateien, wenn moeglich (Umlaute als ae/oe/ue schreiben).
+- Pfade und Links muessen exakt stimmen.
+- Keine externen Dependencies ohne Absprache.
+- Layout soll auch mobil funktionieren.
+
+Lieferumfang (immer)
+- Neues Modul-HTML
+- Neue Portal-Kachel
+- Neue Dashboard-Card
+- Root-Wrapper
+- Migrationseintrag

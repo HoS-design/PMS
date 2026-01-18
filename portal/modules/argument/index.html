@@ -29,9 +29,8 @@
       background:var(--bg);
       color:var(--ink);
       min-height:100vh;
-      padding:18px;
     }
-    .wrap{width:min(1100px,100%);margin:0 auto;}
+    .wrap{width:min(1100px,100%);margin:0 auto;padding:18px;}
     .app{width:100%;}
     .brand{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
     .meme{
@@ -213,11 +212,29 @@
     }
 
 
+    .app-intro .hero-title,
+    .app-intro .minirow,
+    .app-intro .hero-sticker{
+      display:none;
+    }
+
 </style>
 </head>
 <body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Argumente zusammensetzen</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
   <div class="wrap">
-    <header class="hero">
+    <div class="hero app-intro">
       <div class="hero-left">
         <div class="minirow">
           <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'"> 
@@ -227,7 +244,7 @@
         <p class="hero-sub">Behauptung → Begründung → Beispiel/Erklärung • <b>Immer 1 Störbaustein</b> bleibt übrig.</p>
       </div>
       <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'"> 
-    </header>
+    </div>
 
     <div class="app">
       <div class="grid">

@@ -28,7 +28,13 @@
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
-    header{padding:18px 16px 10px;max-width:1200px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .app-intro{padding:18px 16px 10px;max-width:1200px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+    .app-intro img,
+    .app-intro h1,
+    .app-intro .badge,
+    .app-intro .linkbtn{
+      display:none;
+    }
     .meme{width:78px;height:78px;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow);background:#fff}
     .titlewrap{flex:1;min-width:240px}
     h1{margin:0;font-size:22px;line-height:1.2}
@@ -104,7 +110,13 @@
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-    <div class="badge-main">Mathe</div>
+    <div class="brand-title">
+      <div class="badge-main is-mathe">Mathe</div>
+      <h1>KoerperWerkstatt 3D</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
 
@@ -114,7 +126,7 @@
   <pre id="errText"></pre>
 </div>
 
-<header>
+<div class="app-intro">
   <img class="meme" src="/chatisthisreal.png" onerror="this.onerror=null;this.src='/chatisthisreal.png';" alt="Chat is this real?">
   <div class="titlewrap">
     <span class="badge">🧱 KörperWerkstatt 3D • <b>HoS</b> • Aufgabenmodus</span>
@@ -122,7 +134,7 @@
     <p>Klick: auswählen • Ziehen: verschieben • Aufgabenmodus: bauen → Prüfen</p>
   </div>
   <a class="linkbtn" href="/index.html">🏠 Startseite</a>
-</header>
+</div>
 
 <main class="wrap">
   <section class="panel">

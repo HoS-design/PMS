@@ -1,1 +1,147 @@
-hier ein readme
+PMS_beta - HoS Lern-Apps Portal
+
+Ziel
+Dieses Repo enthaelt eine Sammlung von Lern-Apps (Module) und zwei Einstiegsseiten:
+- `index.html` (Dashboard-Startseite)
+- `portal/index.html` (Portal-Ansicht)
+
+Die Module liegen unter `portal/modules/<slug>/index.html`. Alte Root-Links bleiben aktiv und leiten auf das jeweilige Modul um.
+
+Struktur (wichtig fuer neue Module)
+- `portal/modules/<slug>/index.html`: eigentliche App
+- `portal/index.html`: Portal-Kacheln (statische Links)
+- `index.html`: Dashboard (Karten werden per JS aus `APP_CARDS` erzeugt)
+- Root-Wrapper wie `Argument.html`, `ZeitformenQuiz.html`: Redirect auf Modul (fuer alte Links)
+- `css/style.css` + `css/app.css`: globale Styles inkl. Header-Layout
+- `docs/MIGRATION.md`: Mapping Alt -> Neu (Root-Link zu Modul)
+
+Standard-Header (alle Apps gleich)
+Jede App soll oben den gleichen Kopfbereich verwenden:
+- Logo `chatisthisreal.png`
+- Fach-Badge (Deutsch rot, Mathe blau)
+- Titel in der Kopfzeile
+- Header ist sticky (scrollt nicht weg)
+
+Pflicht in jedem Modul-HTML:
+- Im `<head>`:
+  - `<link rel="stylesheet" href="/css/style.css">`
+  - `<link rel="stylesheet" href="/css/app.css">`
+- Im `<body>` ganz oben:
+```
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>App-Titel</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
+  </div>
+</header>
+```
+Varianten fuer das Badge:
+- Deutsch: `badge-main is-deutsch`
+- Mathe: `badge-main is-mathe`
+- Anderes Fach: `badge-main` und in `:root` `--subject-color` setzen (z.B. `#10b981` fuer Geschichte/Medien).
+
+Wichtig: Falls es im alten Layout bereits einen Titel-Header gab, diesen entfernen oder ausblenden, damit der Titel nicht doppelt erscheint.
+
+Neue App hinzufuegen (Schritt-fuer-Schritt)
+1) Modul-Ordner anlegen
+   - Pfad: `portal/modules/<slug>/index.html`
+   - `slug` klein, nur a-z, 0-9, `-` (Beispiel: `zeitformenquiz`)
+2) HTML-Grundgeruest
+   - Standard-Header wie oben einbauen
+   - Inhalte darunter platzieren
+   - Wenn die App ein Vollbild-Layout hat: `body` als flex column, Inhalte in einem Container mit `flex: 1 1 auto; min-height: 0;`
+3) Portal-Link hinzufuegen
+   - Datei: `portal/index.html`
+   - Neue Kachel anlegen (copy/paste einer bestehenden `portal-card`)
+   - Beispiel:
+```
+<a class="portal-card" href="/portal/modules/<slug>/">
+  <h3>App-Titel</h3>
+  <p>Kurzbeschreibung.</p>
+  <div class="portal-tags">
+    <span class="portal-tag">Deutsch</span>
+  </div>
+</a>
+```
+4) Dashboard-Button (Startseite) hinzufuegen
+   - Datei: `index.html`
+   - In `APP_CARDS` den passenden Bereich erweitern:
+     - `APP_CARDS.deutsch` oder `APP_CARDS.mathe`
+   - Beispiel:
+```
+{
+  href: "MeinModul.html",
+  icon: "A",
+  title: "Mein Modul",
+  description: "Kurzbeschreibung.",
+  keywords: "stichworte hier"
+}
+```
+5) Root-Wrapper (Redirect) erstellen
+   - Datei in Repo-Root, z.B. `MeinModul.html`
+   - Aufgabe: auf `/portal/modules/<slug>/` umleiten
+   - Vorlage:
+```
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0; url=/portal/modules/<slug>/">
+  <link rel="canonical" href="/portal/modules/<slug>/">
+  <script>
+    (function () {
+      var target = '/portal/modules/<slug>/';
+      var url = target + window.location.search + window.location.hash;
+      window.location.replace(url);
+    })();
+  </script>
+  <title>Weiterleitung ...</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="portal-redirect">
+  <main class="redirect-card">
+    <h1>Weiterleitung ...</h1>
+    <p>Diese App ist umgezogen. Falls die Weiterleitung nicht funktioniert, klicke
+      <a href="/portal/modules/<slug>/">hier</a>.
+    </p>
+  </main>
+</body>
+</html>
+```
+6) Migrationstabelle pflegen
+   - Datei: `docs/MIGRATION.md`
+   - Neue Zeile fuer `/<RootLink>.html` -> `/portal/modules/<slug>/`
+
+Buttons auf der Startseite (Dashboard)
+- `index.html` nutzt `APP_CARDS` (JS) und erzeugt die Kacheln dynamisch.
+- Neue Module in `APP_CARDS.deutsch` oder `APP_CARDS.mathe` eintragen.
+- `href` zeigt auf den Root-Wrapper (z.B. `MeinModul.html`) damit alte Links stabil bleiben.
+
+Buttons im Portal
+- `portal/index.html` ist statisch und enthaelt `<a class="portal-card" ...>`.
+- Neuen `portal-card` Eintrag manuell hinzufuegen.
+
+Qualitaetsregeln fuer neue Module (fuer KI wichtig)
+- Einheitlicher Header: `app-header` und Logo `chatisthisreal.png`.
+- Kein doppelter Titel: Titel gehoert in den Header, nicht in einen zweiten Hero.
+- Fach-Badge korrekt:
+  - Deutsch: rotes Feld "Deutsch"
+  - Mathe: blaues Feld "Mathe"
+- ASCII-Text bevorzugen, Datei als UTF-8 speichern (keine kaputten Sonderzeichen).
+- Assets der App in `portal/modules/<slug>/` halten (keine Namens-Kollisionen).
+
+Mini-Checkliste (schnell)
+- [ ] Modul in `portal/modules/<slug>/index.html` angelegt
+- [ ] Header nach Standard (Logo + Badge + Titel + Startseite)
+- [ ] Portal-Kachel in `portal/index.html`
+- [ ] Dashboard-Card in `index.html` (APP_CARDS)
+- [ ] Root-Wrapper in Repo-Root
+- [ ] `docs/MIGRATION.md` aktualisiert
