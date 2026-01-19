@@ -1,1 +1,981 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KI - Grundlagen und Anwendung</title>
+
+  <!-- Pflicht-Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+
+  <style>
+    :root{
+      /* Anderes Fach: subject color setzen */
+      --subject-color:#7c3aed; /* violett */
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --soft:#f8fafc;
+      --card:#ffffff;
+      --good:#10b981;
+      --bad:#ef4444;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --radius:18px;
+      --max:1100px;
+    }
+
+    /* Layout */
+    main{max-width:var(--max); margin:0 auto; padding:16px 14px 80px;}
+    .wrap{display:grid; gap:14px;}
+    .row{display:grid; gap:14px;}
+    @media(min-width:920px){
+      .row.two{grid-template-columns: 1.15fr .85fr;}
+      .row.three{grid-template-columns: 1fr 1fr 1fr;}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+    .card h2{margin:0 0 8px; font-size:1.12rem}
+    .card h3{margin:14px 0 6px; font-size:1.02rem}
+    .muted{color:var(--muted)}
+    .hr{height:1px; background:var(--line); margin:14px 0}
+
+    .pillbar{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#fff,var(--soft));
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:.92rem;
+      color:var(--ink);
+    }
+    .dot{width:10px; height:10px; border-radius:50%; background:var(--subject-color); box-shadow:0 0 0 3px rgba(124,58,237,.10);}
+
+    .callout{
+      border-left:4px solid var(--subject-color);
+      background:linear-gradient(180deg,#fff,#faf5ff);
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(124,58,237,.20);
+    }
+    .rule{
+      background:linear-gradient(180deg,#fff,var(--soft));
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+    }
+
+    /* SVG blocks */
+    .svgbox{
+      border:1px dashed rgba(17,24,39,.25);
+      border-radius:16px;
+      padding:10px;
+      background:linear-gradient(180deg,#fff,#fbfbff);
+      overflow:auto;
+    }
+    svg{max-width:100%; height:auto; display:block}
+    .svgcaption{margin-top:8px; font-size:.92rem; color:var(--muted)}
+
+    /* Quiz */
+    .q{border:1px solid var(--line); border-radius:16px; padding:12px; background:#fff}
+    .q + .q{margin-top:10px}
+    .qtitle{font-weight:700; margin:0 0 10px}
+    .opt{display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg,#fff,var(--soft)); cursor:pointer}
+    .opt input{margin-top:2px}
+    .opt:hover{border-color:rgba(124,58,237,.35)}
+    .feedback{margin-top:10px; padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:var(--soft)}
+    .feedback.good{border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.08)}
+    .feedback.bad{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.08)}
+    .mini-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
+
+    /* Inputs */
+    .field{display:grid; gap:6px; margin-top:10px}
+    .field label{font-weight:600}
+    .field input[type="text"], .field textarea, .field select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      color:var(--ink);
+      outline:none;
+    }
+    .field textarea{min-height:92px; resize:vertical}
+
+    /* Buttons (match HoS vibe, no external libs) */
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#fff,var(--soft));
+      color:var(--ink);
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:650;
+      box-shadow:0 6px 18px rgba(0,0,0,.06);
+    }
+    .btn:hover{border-color:rgba(124,58,237,.35)}
+    .btn.primary{
+      border-color:rgba(124,58,237,.35);
+      background:linear-gradient(180deg,#faf5ff,#f3e8ff);
+    }
+    .btn.danger{
+      border-color:rgba(239,68,68,.35);
+      background:linear-gradient(180deg,#fff1f2,#ffe4e6);
+    }
+
+    /* Progress */
+    .progress{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .chip{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+    .chip.ok{color:var(--ink); border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.08)}
+    .chip.warn{color:var(--ink); border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.10)}
+  </style>
+</head>
+
+<body>
+  <!-- Standard-Header (exakt wie vorgegeben, nur Text angepasst) -->
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main">Informatik</div>
+        <h1>KI - Grundlagen und Anwendung</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <section class="card">
+        <h2>Uebersicht</h2>
+        <p class="muted">
+          Diese Lernunterlage fuehrt strukturiert durch zentrale KI-Begriffe und typische Anwendungen.
+          Du arbeitest in Abschnitten mit kurzen Mini-Checks, danach kommt eine groessere Ueberpruefung.
+        </p>
+        <div class="pillbar">
+          <div class="pill"><span class="dot"></span> Begriffe sicher anwenden</div>
+          <div class="pill"><span class="dot"></span> Modelle, Daten, Training verstehen</div>
+          <div class="pill"><span class="dot"></span> Chancen/Risiken einschaetzen</div>
+          <div class="pill"><span class="dot"></span> Prompting und Quellenkritik</div>
+        </div>
+
+        <div class="progress" id="progressChips">
+          <div class="chip" data-chip="b1">Block 1</div>
+          <div class="chip" data-chip="b2">Block 2</div>
+          <div class="chip" data-chip="b3">Block 3</div>
+          <div class="chip" data-chip="b4">Block 4</div>
+          <div class="chip" data-chip="final">Ueberpruefung</div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn" id="btnRestore">Letzten Stand laden</button>
+          <button class="btn danger" id="btnReset">Zuruecksetzen</button>
+        </div>
+        <p class="muted" style="margin-top:10px">
+          Hinweis: Antworten werden lokal im Browser gespeichert (nur auf diesem Geraet).
+        </p>
+      </section>
+
+      <!-- BLOCK 1 -->
+      <section class="card" id="block1">
+        <h2>Block 1: Was ist KI (und was nicht)?</h2>
+
+        <div class="callout">
+          <b>Kernidee:</b> KI ist ein Sammelbegriff fuer Systeme, die Aufgaben loesen, die sonst menschliche
+          Intelligenz benoetigen (z.B. Muster erkennen, Sprache verarbeiten, Entscheidungen vorschlagen).
+          Viele moderne KI-Systeme basieren auf <b>Machine Learning</b>: sie lernen aus Beispielen (Daten).
+        </div>
+
+        <div class="row two" style="margin-top:14px">
+          <div class="rule">
+            <h3>Begriffe (praezise)</h3>
+            <ul>
+              <li><b>KI:</b> Oberbegriff fuer intelligente Systeme.</li>
+              <li><b>Machine Learning (ML):</b> Modelle lernen Regeln aus Daten statt fixe Regeln zu bekommen.</li>
+              <li><b>Deep Learning:</b> ML mit vielen Schichten (Neural Networks).</li>
+              <li><b>Modell:</b> Gelernte Struktur/Funktion, die Eingaben in Ausgaben uebersetzt.</li>
+              <li><b>Training:</b> Modell wird anhand von Beispielen angepasst.</li>
+              <li><b>Inference:</b> Anwendung des trainierten Modells auf neue Daten.</li>
+            </ul>
+          </div>
+
+          <div class="svgbox">
+            <svg viewBox="0 0 900 360" role="img" aria-label="KI Begriffe als Ebenen">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset="1" stop-color="#f8fafc"/>
+                </linearGradient>
+              </defs>
+              <rect x="20" y="20" width="860" height="320" rx="24" fill="url(#g1)" stroke="#e5e7eb"/>
+              <rect x="60" y="70" width="780" height="90" rx="18" fill="#faf5ff" stroke="#e9d5ff"/>
+              <rect x="110" y="180" width="680" height="70" rx="18" fill="#f3e8ff" stroke="#e9d5ff"/>
+              <rect x="170" y="265" width="560" height="55" rx="18" fill="#ede9fe" stroke="#e9d5ff"/>
+
+              <text x="90" y="125" font-size="28" font-family="system-ui" fill="#111827">KI (Artificial Intelligence)</text>
+              <text x="140" y="225" font-size="26" font-family="system-ui" fill="#111827">Machine Learning</text>
+              <text x="200" y="302" font-size="24" font-family="system-ui" fill="#111827">Deep Learning</text>
+
+              <text x="60" y="55" font-size="16" font-family="system-ui" fill="#6b7280">
+                Deep Learning ist Teil von ML, ML ist Teil von KI.
+              </text>
+            </svg>
+            <div class="svgcaption">Grafik: Begriffe als Ebenen (kein Extra-Plugin, reines SVG).</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Mini-Check 1</h3>
+        <div class="q" data-quiz="b1q1">
+          <p class="qtitle">1) Was beschreibt Machine Learning am besten?</p>
+          <label class="opt"><input type="radio" name="b1q1" value="a"> Ein Programm folgt ausschliesslich festen Wenn-Dann-Regeln.</label>
+          <label class="opt"><input type="radio" name="b1q1" value="b"> Ein Modell lernt Muster aus Beispielen und generalisiert auf neue Daten.</label>
+          <label class="opt"><input type="radio" name="b1q1" value="c"> Ein Computer wird schneller, indem man mehr RAM einbaut.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="b1q2">
+          <p class="qtitle">2) Ordne zu: Training vs. Inference</p>
+          <label class="opt"><input type="radio" name="b1q2" value="a"> Training = Modell wird genutzt, um neue Eingaben vorherzusagen.</label>
+          <label class="opt"><input type="radio" name="b1q2" value="b"> Inference = Modellparameter werden anhand von Beispielen angepasst.</label>
+          <label class="opt"><input type="radio" name="b1q2" value="c"> Training = Anpassen; Inference = Anwenden.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" data-check="block1">Mini-Check auswerten</button>
+        </div>
+        <div class="feedback" id="fbBlock1" aria-live="polite"></div>
+      </section>
+
+      <!-- BLOCK 2 -->
+      <section class="card" id="block2">
+        <h2>Block 2: Daten, Features, Labels</h2>
+
+        <div class="row two" style="margin-top:10px">
+          <div class="rule">
+            <h3>Warum Datenqualitaet entscheidend ist</h3>
+            <ul>
+              <li><b>Garbage in, garbage out:</b> Schlechte Daten -> schlechtes Modell.</li>
+              <li><b>Bias:</b> Systematische Verzerrung in Daten oder Auswahl (z.B. unfaire Abbildung von Gruppen).</li>
+              <li><b>Labels:</b> Zielwerte (z.B. "Spam" / "Kein Spam") muessen korrekt sein.</li>
+              <li><b>Features:</b> Messbare Merkmale (z.B. Worthaeufigkeit, Laenge, Klickrate).</li>
+            </ul>
+            <div class="callout" style="margin-top:10px">
+              <b>Merksatz:</b> Ein Modell ist nur so fair und so gut wie die Daten, die es sieht.
+            </div>
+          </div>
+
+          <div class="svgbox">
+            <svg viewBox="0 0 900 380" role="img" aria-label="ML Pipeline">
+              <rect x="20" y="20" width="860" height="340" rx="24" fill="#ffffff" stroke="#e5e7eb"/>
+              <g font-family="system-ui" fill="#111827">
+                <rect x="60" y="90" width="160" height="70" rx="16" fill="#f8fafc" stroke="#e5e7eb"/>
+                <text x="95" y="132" font-size="20">Daten</text>
+
+                <rect x="260" y="90" width="190" height="70" rx="16" fill="#faf5ff" stroke="#e9d5ff"/>
+                <text x="292" y="132" font-size="20">Aufbereitung</text>
+
+                <rect x="490" y="90" width="160" height="70" rx="16" fill="#f3e8ff" stroke="#e9d5ff"/>
+                <text x="520" y="132" font-size="20">Training</text>
+
+                <rect x="690" y="90" width="150" height="70" rx="16" fill="#ede9fe" stroke="#e9d5ff"/>
+                <text x="720" y="132" font-size="20">Modell</text>
+
+                <rect x="360" y="220" width="200" height="70" rx="16" fill="#f8fafc" stroke="#e5e7eb"/>
+                <text x="408" y="262" font-size="20">Inference</text>
+
+                <rect x="600" y="220" width="220" height="70" rx="16" fill="#f8fafc" stroke="#e5e7eb"/>
+                <text x="628" y="262" font-size="20">Vorhersage</text>
+
+                <path d="M220 125 H260" stroke="#111827" stroke-width="2"/>
+                <path d="M450 125 H490" stroke="#111827" stroke-width="2"/>
+                <path d="M650 125 H690" stroke="#111827" stroke-width="2"/>
+
+                <path d="M765 160 C760 205, 610 205, 560 230" fill="none" stroke="#111827" stroke-width="2"/>
+                <path d="M560 255 H600" stroke="#111827" stroke-width="2"/>
+
+                <text x="60" y="60" font-size="16" fill="#6b7280">ML-Pipeline: Von Rohdaten zur Vorhersage.</text>
+              </g>
+            </svg>
+            <div class="svgcaption">Grafik: typische ML-Pipeline (Daten -> Training -> Modell -> Inference).</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Mini-Check 2</h3>
+
+        <div class="q" data-quiz="b2q1">
+          <p class="qtitle">1) Was ist ein "Label" in einem Ueberwachtem-Lernen-Datensatz?</p>
+          <label class="opt"><input type="radio" name="b2q1" value="a"> Eine zufaellige ID pro Zeile.</label>
+          <label class="opt"><input type="radio" name="b2q1" value="b"> Der Zielwert, den das Modell lernen soll (z.B. Klasse).</label>
+          <label class="opt"><input type="radio" name="b2q1" value="c"> Eine Grafik, die das Modell zeichnet.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="b2q2">
+          <p class="qtitle">2) Bias bedeutet hier am ehesten ...</p>
+          <label class="opt"><input type="radio" name="b2q2" value="a"> mehr Rechenleistung.</label>
+          <label class="opt"><input type="radio" name="b2q2" value="b"> eine systematische Verzerrung, die Ergebnisse unfair oder ungenau machen kann.</label>
+          <label class="opt"><input type="radio" name="b2q2" value="c"> dass Daten immer objektiv sind.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" data-check="block2">Mini-Check auswerten</button>
+        </div>
+        <div class="feedback" id="fbBlock2" aria-live="polite"></div>
+      </section>
+
+      <!-- BLOCK 3 -->
+      <section class="card" id="block3">
+        <h2>Block 3: Neuronale Netze (Grundidee) und Bewertung</h2>
+
+        <div class="row two" style="margin-top:10px">
+          <div class="rule">
+            <h3>Intuition</h3>
+            <p>
+              Ein neuronales Netz besteht aus "Schichten". Jede Verbindung hat ein <b>Gewicht</b>.
+              Beim Training werden Gewichte so angepasst, dass die Ausgabe besser passt.
+            </p>
+            <ul>
+              <li><b>Eingaben</b>: Features (Zahlenwerte)</li>
+              <li><b>Gewichte</b>: "Wichtigkeit" von Verbindungen</li>
+              <li><b>Aktivierung</b>: Nichtlinearitaet (macht komplexere Muster moeglich)</li>
+              <li><b>Loss</b>: Fehlerwert, der minimiert wird</li>
+            </ul>
+
+            <div class="callout" style="margin-top:10px">
+              <b>Achtung:</b> Ein Modell "versteht" nicht wie ein Mensch. Es erkennt Muster in Daten.
+            </div>
+          </div>
+
+          <div class="svgbox">
+            <svg viewBox="0 0 900 360" role="img" aria-label="Neuronales Netz">
+              <rect x="20" y="20" width="860" height="320" rx="24" fill="#ffffff" stroke="#e5e7eb"/>
+              <g fill="#111827" font-family="system-ui">
+                <text x="60" y="60" font-size="16" fill="#6b7280">Vereinfachtes Netz: Input -> Hidden -> Output</text>
+
+                <!-- Nodes -->
+                <g>
+                  <circle cx="150" cy="120" r="18" fill="#f8fafc" stroke="#e5e7eb"/>
+                  <circle cx="150" cy="190" r="18" fill="#f8fafc" stroke="#e5e7eb"/>
+                  <circle cx="150" cy="260" r="18" fill="#f8fafc" stroke="#e5e7eb"/>
+
+                  <circle cx="420" cy="105" r="18" fill="#faf5ff" stroke="#e9d5ff"/>
+                  <circle cx="420" cy="170" r="18" fill="#faf5ff" stroke="#e9d5ff"/>
+                  <circle cx="420" cy="235" r="18" fill="#faf5ff" stroke="#e9d5ff"/>
+                  <circle cx="420" cy="300" r="18" fill="#faf5ff" stroke="#e9d5ff"/>
+
+                  <circle cx="700" cy="150" r="18" fill="#ede9fe" stroke="#e9d5ff"/>
+                  <circle cx="700" cy="230" r="18" fill="#ede9fe" stroke="#e9d5ff"/>
+                </g>
+
+                <!-- Edges -->
+                <g stroke="#111827" stroke-width="1.5" opacity="0.85">
+                  <path d="M168 120 L402 105"/>
+                  <path d="M168 120 L402 170"/>
+                  <path d="M168 120 L402 235"/>
+                  <path d="M168 120 L402 300"/>
+
+                  <path d="M168 190 L402 105"/>
+                  <path d="M168 190 L402 170"/>
+                  <path d="M168 190 L402 235"/>
+                  <path d="M168 190 L402 300"/>
+
+                  <path d="M168 260 L402 105"/>
+                  <path d="M168 260 L402 170"/>
+                  <path d="M168 260 L402 235"/>
+                  <path d="M168 260 L402 300"/>
+
+                  <path d="M438 105 L682 150"/>
+                  <path d="M438 170 L682 150"/>
+                  <path d="M438 235 L682 150"/>
+                  <path d="M438 300 L682 150"/>
+
+                  <path d="M438 105 L682 230"/>
+                  <path d="M438 170 L682 230"/>
+                  <path d="M438 235 L682 230"/>
+                  <path d="M438 300 L682 230"/>
+                </g>
+
+                <text x="120" y="305" font-size="14" fill="#6b7280">Input</text>
+                <text x="395" y="336" font-size="14" fill="#6b7280">Hidden</text>
+                <text x="680" y="305" font-size="14" fill="#6b7280">Output</text>
+              </g>
+            </svg>
+            <div class="svgcaption">Grafik: Knoten/Verbindungen (Gewichte) werden im Training angepasst.</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row two">
+          <div class="rule">
+            <h3>Bewertung: Genauigkeit reicht oft nicht</h3>
+            <p>
+              Bei unausgeglichenen Klassen (z.B. seltene Betrugsfaelle) kann "Accuracy" taeuschen.
+              Wichtige Begriffe:
+            </p>
+            <ul>
+              <li><b>Precision:</b> Von den als positiv erkannten Faellen: wie viele sind wirklich positiv?</li>
+              <li><b>Recall:</b> Von allen echten positiven Faellen: wie viele wurden gefunden?</li>
+              <li><b>Confusion Matrix:</b> Tabelle mit TP, FP, TN, FN.</li>
+            </ul>
+          </div>
+
+          <div class="svgbox">
+            <svg viewBox="0 0 900 360" role="img" aria-label="Confusion Matrix">
+              <rect x="20" y="20" width="860" height="320" rx="24" fill="#ffffff" stroke="#e5e7eb"/>
+              <g font-family="system-ui">
+                <text x="60" y="60" font-size="16" fill="#6b7280">Confusion Matrix (Beispiel)</text>
+
+                <rect x="170" y="95" width="520" height="220" rx="16" fill="#f8fafc" stroke="#e5e7eb"/>
+                <line x1="430" y1="95" x2="430" y2="315" stroke="#e5e7eb"/>
+                <line x1="170" y1="205" x2="690" y2="205" stroke="#e5e7eb"/>
+
+                <text x="260" y="125" font-size="14" fill="#6b7280">Vorhergesagt: Positiv</text>
+                <text x="500" y="125" font-size="14" fill="#6b7280">Vorhergesagt: Negativ</text>
+
+                <text x="85" y="185" font-size="14" fill="#6b7280" transform="rotate(-90 85,185)">Tatsaechlich</text>
+
+                <text x="85" y="205" font-size="14" fill="#6b7280">Positiv</text>
+                <text x="85" y="315" font-size="14" fill="#6b7280">Negativ</text>
+
+                <text x="285" y="185" font-size="24" fill="#111827">TP</text>
+                <text x="545" y="185" font-size="24" fill="#111827">FN</text>
+                <text x="285" y="295" font-size="24" fill="#111827">FP</text>
+                <text x="545" y="295" font-size="24" fill="#111827">TN</text>
+
+                <text x="60" y="345" font-size="14" fill="#6b7280">TP: richtig positiv, FP: falsch positiv, FN: falsch negativ, TN: richtig negativ</text>
+              </g>
+            </svg>
+            <div class="svgcaption">Grafik: Confusion Matrix als Basis fuer Precision/Recall.</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Mini-Check 3</h3>
+
+        <div class="q" data-quiz="b3q1">
+          <p class="qtitle">1) Recall ist hoch, wenn ...</p>
+          <label class="opt"><input type="radio" name="b3q1" value="a"> sehr wenige echte Positive gefunden werden.</label>
+          <label class="opt"><input type="radio" name="b3q1" value="b"> ein grosser Anteil der echten Positiven erkannt wird.</label>
+          <label class="opt"><input type="radio" name="b3q1" value="c"> das Modell keine Fehler macht.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="b3q2">
+          <p class="qtitle">2) Welcher Satz passt am besten?</p>
+          <label class="opt"><input type="radio" name="b3q2" value="a"> Neural Networks sind nur schnellere Datenbanken.</label>
+          <label class="opt"><input type="radio" name="b3q2" value="b"> Ein Modell lernt durch Anpassen von Gewichten, um den Loss zu reduzieren.</label>
+          <label class="opt"><input type="radio" name="b3q2" value="c"> Training und Inference sind dasselbe.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" data-check="block3">Mini-Check auswerten</button>
+        </div>
+        <div class="feedback" id="fbBlock3" aria-live="polite"></div>
+      </section>
+
+      <!-- BLOCK 4 -->
+      <section class="card" id="block4">
+        <h2>Block 4: Generative KI, Prompting, Sicherheit</h2>
+
+        <div class="row two" style="margin-top:10px">
+          <div class="rule">
+            <h3>Was generative KI macht</h3>
+            <p>
+              Generative KI erzeugt neue Inhalte (Text, Bilder, Code) anhand von gelernten Mustern.
+              Wichtig: Sie kann plausibel klingen, auch wenn etwas falsch ist.
+            </p>
+            <h3>Prompting: 4-Schritt-Check</h3>
+            <ol>
+              <li><b>Rolle + Ziel:</b> Wer soll das Modell sein, was soll herauskommen?</li>
+              <li><b>Kontext:</b> Welche Infos sind relevant (Niveau, Format, Begriffe)?</li>
+              <li><b>Constraints:</b> Laenge, Struktur, Beispiele, Quellenhinweise.</li>
+              <li><b>Pruefen:</b> Fakten checken, Unsicherheiten markieren, Quellen vergleichen.</li>
+            </ol>
+          </div>
+
+          <div class="svgbox">
+            <svg viewBox="0 0 900 360" role="img" aria-label="Prompt Loop">
+              <rect x="20" y="20" width="860" height="320" rx="24" fill="#ffffff" stroke="#e5e7eb"/>
+              <g font-family="system-ui">
+                <text x="60" y="60" font-size="16" fill="#6b7280">Iterativer Prompt-Workflow</text>
+
+                <rect x="80" y="110" width="180" height="70" rx="16" fill="#faf5ff" stroke="#e9d5ff"/>
+                <text x="110" y="152" font-size="20" fill="#111827">Prompt</text>
+
+                <rect x="320" y="110" width="200" height="70" rx="16" fill="#f3e8ff" stroke="#e9d5ff"/>
+                <text x="350" y="152" font-size="20" fill="#111827">Antwort</text>
+
+                <rect x="580" y="110" width="240" height="70" rx="16" fill="#f8fafc" stroke="#e5e7eb"/>
+                <text x="605" y="152" font-size="20" fill="#111827">Pruefen/Verbessern</text>
+
+                <path d="M260 145 H320" stroke="#111827" stroke-width="2"/>
+                <path d="M520 145 H580" stroke="#111827" stroke-width="2"/>
+                <path d="M700 180 C700 260, 200 260, 170 180" fill="none" stroke="#111827" stroke-width="2"/>
+
+                <text x="260" y="300" font-size="14" fill="#6b7280">Loop: erst Ergebnis, dann Qualitaet sichern</text>
+              </g>
+            </svg>
+            <div class="svgcaption">Grafik: Prompting ist ein Prozess (nicht "einmal tippen und fertig").</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="callout">
+          <b>Sicherheits- und Ethikpunkte (praxisnah):</b>
+          <ul>
+            <li><b>Datenschutz:</b> Keine privaten Daten in Prompts (Namen, Adressen, Gesundheitsinfos).</li>
+            <li><b>Urheberrecht:</b> Inhalte koennen geschuetzt sein; Ergebnisse kritisch verwenden.</li>
+            <li><b>Halluzinationen:</b> Plausibel klingende Fehler moeglich -> immer gegenpruefen.</li>
+            <li><b>Bias/Fairness:</b> Modelle koennen Vorurteile aus Daten uebernehmen.</li>
+          </ul>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Mini-Check 4</h3>
+
+        <div class="q" data-quiz="b4q1">
+          <p class="qtitle">1) Warum ist Quellencheck bei generativer KI wichtig?</p>
+          <label class="opt"><input type="radio" name="b4q1" value="a"> Weil KI immer die Wahrheit sagt.</label>
+          <label class="opt"><input type="radio" name="b4q1" value="b"> Weil Antworten plausibel wirken koennen, auch wenn sie falsch sind.</label>
+          <label class="opt"><input type="radio" name="b4q1" value="c"> Weil man sonst schneller tippt.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="b4q2">
+          <p class="qtitle">2) Welcher Prompt ist voraussichtlich besser?</p>
+          <label class="opt"><input type="radio" name="b4q2" value="a"> "Erklaer KI."</label>
+          <label class="opt"><input type="radio" name="b4q2" value="b"> "Erklaere KI in 8 Bulletpoints, mit 1 Beispiel fuer ML und 1 Beispiel fuer generative KI. Markiere Unsicherheiten."</label>
+          <label class="opt"><input type="radio" name="b4q2" value="c"> "Mach irgendwas mit Computern."</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" data-check="block4">Mini-Check auswerten</button>
+        </div>
+        <div class="feedback" id="fbBlock4" aria-live="polite"></div>
+      </section>
+
+      <!-- FINAL -->
+      <section class="card" id="final">
+        <h2>Ueberpruefung: KI anwenden und beurteilen</h2>
+        <p class="muted">
+          Beantworte zuerst die Fragen. Danach kannst du (optional) deine Antworten als Text exportieren.
+        </p>
+
+        <div class="row two" style="margin-top:10px">
+          <div class="rule">
+            <h3>Teil A: Begriffe (kurz, praezise)</h3>
+
+            <div class="field">
+              <label for="a1">1) Erklaere in 2-3 Saetzen den Unterschied zwischen Training und Inference.</label>
+              <textarea id="a1" placeholder="Antwort ..."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="a2">2) Nenne 2 Beispiele fuer Features und 1 Beispiel fuer ein Label (beliebige Anwendung).</label>
+              <textarea id="a2" placeholder="Antwort ..."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="a3">3) Wann kann Accuracy taeuschen? Erklaere kurz.</label>
+              <textarea id="a3" placeholder="Antwort ..."></textarea>
+            </div>
+          </div>
+
+          <div class="rule">
+            <h3>Teil B: Fallbeispiel (kritisch denken)</h3>
+            <p class="muted">
+              Ein Chatbot soll Schuelerfragen beantworten. Manche Antworten sind hilfreich, manche falsch aber sehr ueberzeugend.
+            </p>
+
+            <div class="field">
+              <label for="b1">4) Nenne 3 konkrete Massnahmen, um die Qualitaet/Sicherheit der Antworten zu verbessern.</label>
+              <textarea id="b1" placeholder="Antwort ..."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="b2">5) Welche Datenschutz-Regel wuerdest du bei Prompts festlegen (1 Satz)?</label>
+              <input id="b2" type="text" placeholder="Antwort ...">
+            </div>
+
+            <div class="field">
+              <label for="b3">6) Schreibe einen guten Prompt, um eine Erklaerung zu einem Thema zu bekommen (mit Struktur/Constraints).</label>
+              <textarea id="b3" placeholder="Prompt ..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Teil C: Multiple-Choice</h3>
+
+        <div class="q" data-quiz="f1">
+          <p class="qtitle">7) Bias in Daten kann dazu fuehren, dass ...</p>
+          <label class="opt"><input type="radio" name="f1" value="a"> das Modell fairer wird.</label>
+          <label class="opt"><input type="radio" name="f1" value="b"> bestimmte Gruppen systematisch benachteiligt werden.</label>
+          <label class="opt"><input type="radio" name="f1" value="c"> die CPU weniger Strom braucht.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="f2">
+          <p class="qtitle">8) Deep Learning ist ...</p>
+          <label class="opt"><input type="radio" name="f2" value="a"> ein Teilbereich von Machine Learning mit vielen Schichten.</label>
+          <label class="opt"><input type="radio" name="f2" value="b"> das gleiche wie "Internet".</label>
+          <label class="opt"><input type="radio" name="f2" value="c"> ein neues Betriebssystem.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="q" data-quiz="f3">
+          <p class="qtitle">9) Precision ist besonders wichtig, wenn ...</p>
+          <label class="opt"><input type="radio" name="f3" value="a"> falsche Positive sehr teuer/schaedlich sind.</label>
+          <label class="opt"><input type="radio" name="f3" value="b"> man gerne raten moechte.</label>
+          <label class="opt"><input type="radio" name="f3" value="c"> Daten immer perfekt sind.</label>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="mini-actions">
+          <button class="btn primary" id="btnEvaluateFinal">Ueberpruefung auswerten</button>
+          <button class="btn" id="btnExport">Antworten exportieren (Text)</button>
+        </div>
+        <div class="feedback" id="fbFinal" aria-live="polite"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    (function(){
+      "use strict";
+
+      var KEY = "hos_pms_ki_v1";
+
+      var ANSWERS = {
+        b1q1: "b",
+        b1q2: "c",
+        b2q1: "b",
+        b2q2: "b",
+        b3q1: "b",
+        b3q2: "b",
+        b4q1: "b",
+        b4q2: "b",
+        f1: "b",
+        f2: "a",
+        f3: "a"
+      };
+
+      function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+      function $(sel, root){ return (root||document).querySelector(sel); }
+
+      function loadState(){
+        try{
+          var raw = localStorage.getItem(KEY);
+          return raw ? JSON.parse(raw) : {};
+        }catch(e){ return {}; }
+      }
+      function saveState(state){
+        try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+      }
+
+      function setChip(id, mode){
+        var el = document.querySelector('[data-chip="'+id+'"]');
+        if(!el) return;
+        el.classList.remove("ok","warn");
+        if(mode === "ok") el.classList.add("ok");
+        if(mode === "warn") el.classList.add("warn");
+      }
+
+      function updateChips(state){
+        setChip("b1", state.block1 && state.block1.pass ? "ok" : (state.block1 ? "warn" : ""));
+        setChip("b2", state.block2 && state.block2.pass ? "ok" : (state.block2 ? "warn" : ""));
+        setChip("b3", state.block3 && state.block3.pass ? "ok" : (state.block3 ? "warn" : ""));
+        setChip("b4", state.block4 && state.block4.pass ? "ok" : (state.block4 ? "warn" : ""));
+        setChip("final", state.final && state.final.done ? "ok" : (state.final ? "warn" : ""));
+      }
+
+      function setFeedback(box, ok, msg){
+        if(!box) return;
+        box.classList.remove("good","bad");
+        box.textContent = msg || "";
+        if(ok === true) box.classList.add("good");
+        if(ok === false) box.classList.add("bad");
+      }
+
+      function evalQuiz(groupId){
+        var correct = ANSWERS[groupId];
+        var sel = document.querySelector('input[name="'+groupId+'"]:checked');
+        var fb = document.querySelector('[data-quiz="'+groupId+'"] [data-feedback]');
+        if(!sel){
+          setFeedback(fb, false, "Bitte waehle eine Antwort.");
+          return { ok:false, chosen:null };
+        }
+        var ok = (sel.value === correct);
+        setFeedback(fb, ok, ok ? "Richtig." : "Noch nicht. Versuche es nochmal.");
+        return { ok: ok, chosen: sel.value };
+      }
+
+      function attachOptionClick(){
+        $all(".opt").forEach(function(lbl){
+          lbl.addEventListener("click", function(){
+            var input = lbl.querySelector("input");
+            if(input && input.type === "radio"){
+              input.checked = true;
+              persistAll();
+            }
+          });
+        });
+      }
+
+      function persistAll(){
+        var state = loadState();
+
+        // radios
+        Object.keys(ANSWERS).forEach(function(k){
+          var sel = document.querySelector('input[name="'+k+'"]:checked');
+          if(sel){
+            state.radios = state.radios || {};
+            state.radios[k] = sel.value;
+          }
+        });
+
+        // text fields
+        var a1 = $("#a1"), a2 = $("#a2"), a3 = $("#a3"), b1 = $("#b1"), b2 = $("#b2"), b3 = $("#b3");
+        state.text = state.text || {};
+        if(a1) state.text.a1 = a1.value;
+        if(a2) state.text.a2 = a2.value;
+        if(a3) state.text.a3 = a3.value;
+        if(b1) state.text.b1 = b1.value;
+        if(b2) state.text.b2 = b2.value;
+        if(b3) state.text.b3 = b3.value;
+
+        saveState(state);
+      }
+
+      function restoreAll(){
+        var state = loadState();
+
+        if(state.radios){
+          Object.keys(state.radios).forEach(function(k){
+            var v = state.radios[k];
+            var input = document.querySelector('input[name="'+k+'"][value="'+v+'"]');
+            if(input) input.checked = true;
+          });
+        }
+
+        if(state.text){
+          if($("#a1")) $("#a1").value = state.text.a1 || "";
+          if($("#a2")) $("#a2").value = state.text.a2 || "";
+          if($("#a3")) $("#a3").value = state.text.a3 || "";
+          if($("#b1")) $("#b1").value = state.text.b1 || "";
+          if($("#b2")) $("#b2").value = state.text.b2 || "";
+          if($("#b3")) $("#b3").value = state.text.b3 || "";
+        }
+
+        // restore per-question feedback silently (no)
+        updateChips(state);
+      }
+
+      function scoreBlock(blockKey, quizIds){
+        var okCount = 0;
+        quizIds.forEach(function(q){
+          var res = evalQuiz(q);
+          if(res.ok) okCount++;
+        });
+        var pass = okCount >= Math.max(1, Math.ceil(quizIds.length * 0.75));
+        var state = loadState();
+        state[blockKey] = { pass: pass, score: okCount, total: quizIds.length };
+        saveState(state);
+        updateChips(state);
+        return { pass: pass, score: okCount, total: quizIds.length };
+      }
+
+      function bindMiniChecks(){
+        $all("[data-check]").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var id = btn.getAttribute("data-check");
+            if(id === "block1"){
+              var r = scoreBlock("block1", ["b1q1","b1q2"]);
+              setFeedback($("#fbBlock1"), r.pass, r.pass
+                ? ("Mini-Check bestanden ("+r.score+"/"+r.total+").")
+                : ("Noch nicht ("+r.score+"/"+r.total+"). Ueberarbeite deine Antworten.")
+              );
+            }
+            if(id === "block2"){
+              var r2 = scoreBlock("block2", ["b2q1","b2q2"]);
+              setFeedback($("#fbBlock2"), r2.pass, r2.pass
+                ? ("Mini-Check bestanden ("+r2.score+"/"+r2.total+").")
+                : ("Noch nicht ("+r2.score+"/"+r2.total+"). Ueberarbeite deine Antworten.")
+              );
+            }
+            if(id === "block3"){
+              var r3 = scoreBlock("block3", ["b3q1","b3q2"]);
+              setFeedback($("#fbBlock3"), r3.pass, r3.pass
+                ? ("Mini-Check bestanden ("+r3.score+"/"+r3.total+").")
+                : ("Noch nicht ("+r3.score+"/"+r3.total+"). Ueberarbeite deine Antworten.")
+              );
+            }
+            if(id === "block4"){
+              var r4 = scoreBlock("block4", ["b4q1","b4q2"]);
+              setFeedback($("#fbBlock4"), r4.pass, r4.pass
+                ? ("Mini-Check bestanden ("+r4.score+"/"+r4.total+").")
+                : ("Noch nicht ("+r4.score+"/"+r4.total+"). Ueberarbeite deine Antworten.")
+              );
+            }
+          });
+        });
+      }
+
+      function bindFinal(){
+        var btn = $("#btnEvaluateFinal");
+        if(!btn) return;
+        btn.addEventListener("click", function(){
+          var okCount = 0, total = 3;
+
+          var r1 = evalQuiz("f1"); if(r1.ok) okCount++;
+          var r2 = evalQuiz("f2"); if(r2.ok) okCount++;
+          var r3 = evalQuiz("f3"); if(r3.ok) okCount++;
+
+          // require text fields filled (soft check)
+          var missing = [];
+          [["a1","4)"],["a2","5)"],["a3","6)"],["b1","7)"],["b2","8)"],["b3","9)"]].forEach(function(pair){
+            var el = document.getElementById(pair[0]);
+            if(el){
+              var v = (el.value || "").trim();
+              if(v.length < (pair[0]==="b2" ? 6 : 12)) missing.push(pair[1]);
+            }
+          });
+
+          var state = loadState();
+          state.final = { done:true, mc: { score: okCount, total: total }, missing: missing };
+          saveState(state);
+          updateChips(state);
+
+          var msg = "MC: "+okCount+"/"+total+". ";
+          if(missing.length){
+            msg += "Offene Antworten: bitte ergaenzen bei " + missing.join(" ") + ".";
+            setFeedback($("#fbFinal"), false, msg);
+          }else{
+            msg += "Offene Antworten wirken vollstaendig.";
+            setFeedback($("#fbFinal"), true, msg);
+          }
+        });
+
+        var exp = $("#btnExport");
+        if(exp){
+          exp.addEventListener("click", function(){
+            persistAll();
+            var state = loadState();
+
+            function v(id){ var el = document.getElementById(id); return el ? (el.value||"").trim() : ""; }
+            function r(name){
+              var sel = document.querySelector('input[name="'+name+'"]:checked');
+              return sel ? sel.value : "";
+            }
+
+            var lines = [];
+            lines.push("KI - Grundlagen und Anwendung (Antwortexport)");
+            lines.push("------------------------------------------------");
+            lines.push("");
+            lines.push("Mini-Checks (ausgewaehlte Antworten):");
+            ["b1q1","b1q2","b2q1","b2q2","b3q1","b3q2","b4q1","b4q2"].forEach(function(k){
+              lines.push("- "+k+": "+(r(k)||"(keine)"));
+            });
+            lines.push("");
+            lines.push("Ueberpruefung (offene Antworten):");
+            lines.push("1) Training vs Inference: " + v("a1"));
+            lines.push("2) Features/Label: " + v("a2"));
+            lines.push("3) Accuracy taeuscht: " + v("a3"));
+            lines.push("4) Massnahmen: " + v("b1"));
+            lines.push("5) Datenschutz-Regel: " + v("b2"));
+            lines.push("6) Beispiel-Prompt: " + v("b3"));
+            lines.push("");
+            lines.push("Ueberpruefung (MC):");
+            ["f1","f2","f3"].forEach(function(k){
+              lines.push("- "+k+": "+(r(k)||"(keine)"));
+            });
+
+            var blob = new Blob([lines.join("\n")], {type:"text/plain;charset=utf-8"});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "KI_Antworten.txt";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+          });
+        }
+      }
+
+      function bindPersistInputs(){
+        $all("textarea, input[type='text']").forEach(function(el){
+          el.addEventListener("input", function(){ persistAll(); });
+        });
+        $all("input[type='radio']").forEach(function(el){
+          el.addEventListener("change", function(){ persistAll(); });
+        });
+      }
+
+      function bindReset(){
+        var btn = $("#btnReset");
+        if(!btn) return;
+        btn.addEventListener("click", function(){
+          try{ localStorage.removeItem(KEY); }catch(e){}
+          location.reload();
+        });
+      }
+
+      function bindRestore(){
+        var btn = $("#btnRestore");
+        if(!btn) return;
+        btn.addEventListener("click", function(){
+          restoreAll();
+          setFeedback($("#fbFinal"), null, "Stand geladen.");
+        });
+      }
+
+      // Init
+      attachOptionClick();
+      bindMiniChecks();
+      bindFinal();
+      bindPersistInputs();
+      bindReset();
+      bindRestore();
+      restoreAll();
+    })();
+  </script>
+</body>
+</html>
 
