@@ -20,6 +20,13 @@
             --ma-accent: #3b82f6; /* Blau für Mathe */
             --ma-bg: #eff6ff;     /* Sehr helles Blau */
 
+
+--en-accent: #22c55e; /* Gruen fuer Englisch */
+--en-bg: #f0fdf4;     /* Sehr helles Gruen */
+
+--ot-accent: #f59e0b; /* Gelb fuer Andere */
+--ot-bg: #fffbeb;     /* Sehr helles Gelb */
+
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.03);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
@@ -140,6 +147,13 @@
         .sec-ma .section-header { border-color: rgba(59, 130, 246, 0.2); }
         .sec-ma h2 { color: var(--ma-accent); }
 
+
+.sec-en .section-header { border-color: rgba(34, 197, 94, 0.2); }
+.sec-en h2 { color: var(--en-accent); }
+
+.sec-ot .section-header { border-color: rgba(245, 158, 11, 0.25); }
+.sec-ot h2 { color: var(--ot-accent); }
+
         /* --- Grid & Cards --- */
         .grid {
             display: grid;
@@ -189,6 +203,27 @@
         }
 
 
+
+/* Englisch: Gruener Hintergrund + Rahmen bei Hover */
+.card.en:hover {
+    background-color: var(--en-bg);
+    border-color: var(--en-accent);
+}
+.card.en:hover .icon-box {
+    background: white;
+    border-color: var(--en-accent);
+}
+
+/* Andere: Gelber Hintergrund + Rahmen bei Hover */
+.card.ot:hover {
+    background-color: var(--ot-bg);
+    border-color: var(--ot-accent);
+}
+.card.ot:hover .icon-box {
+    background: white;
+    border-color: var(--ot-accent);
+}
+
         .card-top {
             display: flex; justify-content: space-between; align-items: flex-start;
         }
@@ -206,6 +241,9 @@
         .card.de .icon-box { background: var(--de-bg); color: var(--de-accent); border-color: rgba(239, 68, 68, 0.1); }
         .card.ma .icon-box { background: var(--ma-bg); color: var(--ma-accent); border-color: rgba(59, 130, 246, 0.1); }
 
+
+.card.en .icon-box { background: var(--en-bg); color: var(--en-accent); border-color: rgba(34, 197, 94, 0.12); }
+.card.ot .icon-box { background: var(--ot-bg); color: var(--ot-accent); border-color: rgba(245, 158, 11, 0.14); }
         .card h3 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.3; }
         .card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
 
@@ -272,7 +310,27 @@
             <div class="grid" id="grid-mathe"></div>
         </div>
 
+    
+
+<div class="section sec-en" id="sec-englisch">
+    <div class="section-header">
+        <h2>Englisch</h2>
+        <span class="count-badge" id="count-en">0</span>
     </div>
+
+    <div class="grid" id="grid-englisch"></div>
+</div>
+
+<div class="section sec-ot" id="sec-andere">
+    <div class="section-header">
+        <h2>Andere</h2>
+        <span class="count-badge" id="count-ot">0</span>
+    </div>
+
+    <div class="grid" id="grid-andere"></div>
+</div>
+
+</div>
 
     <footer>
         HoS Apps • Entwickelt für die PMS Dobl
@@ -368,7 +426,20 @@
                     description: "Volumen & Oberfläche berechnen – üben und prüfen.",
                     keywords: "volumen oberfläche formeln 3d raum"
                 }
-            ]
+            ],
+            englisch: [
+],
+andere: [
+    {
+        href: "KI.html",
+        icon: "KI",
+        title: "KI (Informatik)",
+        description: "Grundlagen, Daten/Training, Bewertung (Precision/Recall) und generative KI mit Ueberpruefung.",
+        keywords: "ki kuenstliche intelligenz machine learning deep learning daten training inference prompting bias precision recall",
+        isNew: true
+    }
+]
+
         };
 
         function buildCard(card, category) {
@@ -405,11 +476,16 @@
         function renderCards() {
             const germanGrid = document.getElementById('grid-deutsch');
             const mathGrid = document.getElementById('grid-mathe');
+            const englishGrid = document.getElementById('grid-englisch');
+            const otherGrid = document.getElementById('grid-andere');
             germanGrid.innerHTML = '';
             mathGrid.innerHTML = '';
-
+            englishGrid.innerHTML = '';
+            otherGrid.innerHTML = '';
             APP_CARDS.deutsch.forEach(card => germanGrid.appendChild(buildCard(card, 'de')));
             APP_CARDS.mathe.forEach(card => mathGrid.appendChild(buildCard(card, 'ma')));
+            APP_CARDS.englisch.forEach(card => englishGrid.appendChild(buildCard(card, 'en')));
+            APP_CARDS.andere.forEach(card => otherGrid.appendChild(buildCard(card, 'ot')));
         }
 
         // --- Suchfunktion ---
