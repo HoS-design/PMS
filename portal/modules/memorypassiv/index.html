@@ -71,7 +71,7 @@
     .topbar{
       display:flex;flex-wrap:wrap;gap:10px;
       align-items:center;justify-content:space-between;
-      margin:14px 0 0;
+      margin:0;
     }
     .controls{
       display:flex;flex-wrap:wrap;gap:10px;align-items:center;
@@ -137,6 +137,7 @@
     }
     .panel .hd h2{margin:0;font-size:16px}
     .panel .hd p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .memory-panel .hd p:not(.intro){display:none}
     .panel .bd{padding:14px 16px}
     .hint{
       font-size:13px;color:var(--muted);
@@ -277,6 +278,7 @@
 </header>
 
   <div class="wrap">
+    <!--
     <div class="app-intro">
       <img src="/chatisthisreal.png" onerror="this.onerror=null;this.src='/chatisthisreal.png';"
            class="meme" alt="Chat is this real?">
@@ -314,17 +316,46 @@
         <div class="toast" id="toast"></div>
       </div>
     </div>
+    -->
 
     <main>
-      <section class="panel" aria-label="Memory">
+      <section class="panel memory-panel" aria-label="Memory">
         <div class="hd">
           <div>
-            <h2>Spielbrett</h2>
+            <h2>Aktiv & Passiv Memory</h2>
+            <p class="intro">Finde jeweils das passende Paar: <b>Aktivsatz</b> und seine <b>Passiv-Umformung</b>.</p>
             <p>Klicke 2 Karten → passt es, bleibt es offen. Sonst drehen sie sich wieder um.</p>
           </div>
           <div style="text-align:right;color:var(--muted);font-size:12px;font-weight:700">
             Tastatur: <span class="kbd">N</span> neu • <span class="kbd">P</span> peek
           </div>
+        </div>
+        <div class="bd">
+          <div class="topbar">
+            <div class="controls">
+              <button class="btn ghost" id="homeBtn" title="Zur zentralen Startseite">Startseite</button>
+
+              <div class="select" title="Schwierigkeit">
+                <span style="color:var(--muted);font-weight:800;font-size:12px">Level</span>
+                <select id="level">
+                  <option value="easy">Einfach (8 Paare)</option>
+                  <option value="mid" selected>Mittel (10 Paare)</option>
+                  <option value="hard">Schwer (12 Paare)</option>
+                </select>
+              </div>
+
+              <button class="btn primary" id="newBtn">Neu mischen</button>
+              <button class="btn" id="peekBtn" title="Kurz alle Karten ansehen (2 Sekunden)">Peek</button>
+            </div>
+
+            <div class="stats">
+              <span class="pill">Zeit: <strong id="time">0:00</strong></span>
+              <span class="pill">Zuege: <strong id="moves">0</strong></span>
+              <span class="pill">Paare: <strong id="pairs">0</strong>/<strong id="pairsTotal">0</strong></span>
+            </div>
+          </div>
+
+          <div class="toast" id="toast"></div>
         </div>
         <div class="grid" id="grid"></div>
       </section>
