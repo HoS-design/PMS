@@ -8,123 +8,448 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
 
-  <style>
+<style>
     :root{
-      --subject-color:#7c3aed;
-      --ink:#111827; --muted:#6b7280; --line:#e5e7eb; --soft:#f8fafc; --card:#ffffff;
-      --good:#10b981; --bad:#ef4444; --shadow:0 12px 30px rgba(0,0,0,.08); --radius:18px; --max:1100px;
+      /* HoS Palette - Modernisiert */
+      --brand: #6366f1; /* Ein etwas seriöseres Indigo statt knalligem Violett */
+      --brand-light: #e0e7ff;
+      --brand-dark: #4338ca;
+      
+      --ink: #0f172a;       /* Sehr dunkles Blau-Grau statt hartem Schwarz */
+      --muted: #64748b;     /* Slate-Grau für Nebentexte */
+      --line: #e2e8f0;      /* Weiche Grenzlinien */
+      --bg-app: #f1f5f9;    /* Heller Slate-Hintergrund für die Seite */
+      --bg-card: #ffffff;
+      
+      --good: #10b981; 
+      --good-bg: #d1fae5;
+      --bad: #ef4444; 
+      --bad-bg: #fee2e2;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      
+      --max-w: 1050px;
     }
-    *{box-sizing:border-box}
-    body{margin:0; color:var(--ink)}
-    main{max-width:var(--max); margin:0 auto; padding:16px 14px 80px;}
-    .wrap{display:grid; gap:14px;}
-    .row{display:grid; gap:14px;}
-    @media(min-width:920px){ .row.two{grid-template-columns: 1.15fr .85fr;} }
 
-    .card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:16px;}
-    .card h2{margin:0 0 8px; font-size:1.12rem}
-    .card h3{margin:14px 0 6px; font-size:1.02rem}
-    .muted{color:var(--muted)}
-    .hr{height:1px; background:var(--line); margin:14px 0}
-
-    .pillbar{display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 0}
-    .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:linear-gradient(180deg,#fff,var(--soft)); border-radius:999px; padding:7px 10px; font-size:.92rem;}
-    .dot{width:10px; height:10px; border-radius:50%; background:var(--subject-color); box-shadow:0 0 0 3px rgba(124,58,237,.10);}
-
-    .callout{border-left:4px solid var(--subject-color); background:linear-gradient(180deg,#fff,#faf5ff); padding:10px 12px; border-radius:14px; border:1px solid rgba(124,58,237,.20);}
-    .rule{background:linear-gradient(180deg,#fff,var(--soft)); border:1px solid var(--line); border-radius:14px; padding:10px 12px;}
-
-    .svgbox{border:1px dashed rgba(17,24,39,.25); border-radius:16px; padding:10px; background:linear-gradient(180deg,#fff,#fbfbff); overflow:auto;}
-    svg{max-width:100%; height:auto; display:block}
-    .svgcaption{margin-top:8px; font-size:.92rem; color:var(--muted)}
-
-    .q{border:1px solid var(--line); border-radius:16px; padding:12px; background:#fff}
-    .q + .q{margin-top:10px}
-    .qtitle{font-weight:700; margin:0 0 10px}
-    .opt{display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border-radius:12px; border:1px solid var(--line); background:linear-gradient(180deg,#fff,var(--soft)); cursor:pointer}
-    .opt input{margin-top:2px}
-    .opt:hover{border-color:rgba(124,58,237,.35)}
-
-    .feedback{margin-top:10px; padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:var(--soft)}
-    .feedback.good{border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.08)}
-    .feedback.bad{border-color:rgba(239,68,68,.08); background:rgba(239,68,68,.06)}
-    .mini-actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
-
-    .field{display:grid; gap:6px; margin-top:10px}
-    .field label{font-weight:600}
-    .field input[type="text"], .field textarea, .field select{
-      width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:14px; background:#fff; color:var(--ink); outline:none;
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--bg-app);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif; /* Cleaner als Rounded */
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
-    .field textarea{min-height:92px; resize:vertical}
 
-    .btn{
-      appearance:none; border:1px solid var(--line); background:linear-gradient(180deg,#fff,var(--soft));
-      color:var(--ink); border-radius:14px; padding:10px 12px; cursor:pointer; font-weight:650; box-shadow:0 6px 18px rgba(0,0,0,.06);
+    /* Layout Main */
+    main {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 24px 16px 80px;
     }
-    .btn:hover{border-color:rgba(124,58,237,.35)}
-    .btn.primary{border-color:rgba(124,58,237,.35); background:linear-gradient(180deg,#faf5ff,#f3e8ff);}
-    .btn.danger{border-color:rgba(239,68,68,.35); background:linear-gradient(180deg,#fff1f2,#ffe4e6);}
-    .btn:disabled{opacity:.55; cursor:not-allowed}
 
-    .progress{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
-    .chip{border:1px solid var(--line); background:#fff; border-radius:999px; padding:6px 10px; font-size:.9rem; color:var(--muted);}
-    .chip.ok{color:var(--ink); border-color:rgba(16,185,129,.35); background:rgba(16,185,129,.08)}
-    .chip.warn{color:var(--ink); border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.10)}
+    .wrap { display: grid; gap: 24px; }
+    .row { display: grid; gap: 24px; }
+    
+    @media(min-width: 920px){ 
+      .row.two { grid-template-columns: 1fr 1fr; align-items: start; } 
+    }
 
-    .lock{
-      position:relative;
-      opacity:.75;
-      filter:saturate(.9);
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
     }
-    .lock .lock-overlay{
-      position:absolute; inset:0;
-      border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(248,250,252,.85));
-      display:flex; align-items:center; justify-content:center;
-      padding:18px;
-      text-align:center;
-      border:1px solid rgba(229,231,235,.9);
+    
+    /* Subtle Interaction for Cards */
+    .card:hover { box-shadow: var(--shadow-md); }
+
+    /* Typography */
+    h2 { margin: 0 0 16px; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+    h3 { margin: 24px 0 12px; font-size: 1.15rem; font-weight: 600; color: var(--ink); }
+    p { margin: 0 0 16px; }
+    .muted { color: var(--muted); font-size: 0.95rem; }
+    
+    .hr {
+      height: 1px;
+      background: var(--line);
+      margin: 24px 0;
+      border: none;
     }
-    .lock .lock-overlay .lock-card{
-      max-width:560px;
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:16px;
-      box-shadow:0 10px 22px rgba(0,0,0,.08);
-      padding:14px 14px;
+
+    /* UI Components: Pills */
+    .pillbar { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 0; }
+    .pill {
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px; 
+      border: 1px solid var(--line); 
+      background: #fff; 
+      border-radius: 99px; 
+      padding: 6px 14px; 
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      box-shadow: var(--shadow-sm);
     }
-    .tiny-hint{
-      margin-top:8px;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-size:.92rem;
-      color:var(--muted);
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%; 
+      background: var(--brand);
     }
-    .hint-dot{
-      width:8px; height:8px; border-radius:50%;
-      background:rgba(124,58,237,.35);
-      box-shadow:0 0 0 3px rgba(124,58,237,.08);
+
+    /* Callouts & Rules */
+    .callout {
+      background: var(--brand-light);
+      border-left: 4px solid var(--brand);
+      padding: 16px 20px;
+      border-radius: 4px var(--radius-md) var(--radius-md) 4px;
+      color: var(--brand-dark);
+      margin-bottom: 16px;
     }
+    .callout .qtitle { color: var(--brand-dark); margin-bottom: 4px; }
+    .callout ul { margin: 8px 0 0; padding-left: 20px; }
+
+    .rule {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      height: 100%;
+    }
+
+    /* SVG Visuals */
+    .svgbox {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .svgcaption { margin-top: 12px; font-size: 0.85rem; color: var(--muted); font-style: italic;}
+
+    /* Forms & Questions */
+    .q {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      background: #fff;
+      transition: border-color 0.2s;
+    }
+    .q:focus-within { border-color: var(--brand); ring: 2px solid var(--brand-light); }
+    .q + .q { margin-top: 16px; }
+    
+    .qtitle { font-weight: 600; margin: 0 0 12px; display: block; }
+
+    /* Options (Radio/Checkbox) */
+    .opt {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
+    }
+    .opt:hover { background: var(--bg-app); border-color: var(--muted); }
+    .opt:has(input:checked) {
+      border-color: var(--brand);
+      background: var(--brand-light);
+      color: var(--brand-dark);
+      font-weight: 500;
+    }
+    .opt input { margin-top: 5px; accent-color: var(--brand); }
+
+    /* Feedback Box */
+    .feedback {
+      margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-sm);
+      font-size: 0.95rem; display: none; /* hidden by default if empty */
+    }
+    .feedback:not(:empty) { display: block; animation: fadeIn 0.3s ease; }
+    .feedback.good { background: var(--good-bg); color: #065f46; border: 1px solid var(--good); }
+    .feedback.bad { background: var(--bad-bg); color: #991b1b; border: 1px solid var(--bad); }
+
+    /* Inputs */
+    .field { display: grid; gap: 8px; margin-top: 16px; }
+    .field label { font-size: 0.9rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .field input[type="text"], .field textarea, .field select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--ink);
+      transition: all 0.2s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px var(--brand-light);
+    }
+    .field textarea { min-height: 120px; resize: vertical; }
+
+    /* Buttons */
+    .mini-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    
+    .btn {
+      appearance: none;
+      display: inline-flex; justify-content: center; align-items: center;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn:active:not(:disabled) { transform: translateY(0); }
+    
+    .btn.primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+    .btn.primary:hover:not(:disabled) { background: var(--brand-dark); }
+    
+    .btn.danger {
+      background: #fff; color: var(--bad); border-color: var(--bad-bg);
+    }
+    .btn.danger:hover { background: var(--bad-bg); }
+    
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(1); }
+
+    /* Chips / Progress */
+    .progress { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; padding-bottom: 4px;}
+    .chip {
+      background: var(--bg-app);
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .chip.ok { background: var(--good); color: #fff; }
+    .chip.warn { background: #f59e0b; color: #fff; }
+
+    /* Lock Screen */
+    .lock { position: relative; overflow: hidden; }
+    .lock .lock-overlay {
+      position: absolute; inset: 0; z-index: 10;
+      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,0.6);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .lock .lock-overlay .lock-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      text-align: center;
+      max-width: 400px;
+    }
+
+    /* Layout Sidebar */
+    .layout { display: grid; gap: 24px; align-items: start; }
+    @media(min-width: 980px){ .layout { grid-template-columns: 280px 1fr; } }
+
+    .side-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      position: sticky; top: 100px; /* Header offset */
+    }
+
+    .nav { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    .nav-btn {
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .nav-icon { width: 20px; height: 20px; opacity: 0.7; }
+    
+    /* Interactive Sidebar States */
+    .nav-btn:hover:not(.locked) { background: var(--bg-app); color: var(--ink); }
+    
+    .nav-btn.active {
+      background: var(--brand-light);
+      color: var(--brand-dark);
+      font-weight: 700;
+    }
+    .nav-btn.active .nav-icon { opacity: 1; }
+    .nav-btn.active .dot { fill: var(--brand); }
+
+    .nav-btn.ok { color: var(--good); }
+    .nav-btn.ok .check { fill: var(--good); }
+
+    .nav-btn.locked { color: var(--line); cursor: not-allowed; }
+    .nav-btn.locked:hover { background: transparent; }
+    
+    /* Mobile Nav */
+    .mobile-navbar {
+      display: flex; gap: 10px; margin-bottom: 20px;
+      background: #fff; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--line);
+    }
+    @media(min-width: 980px){ .mobile-navbar { display: none; } }
+
+    /* Utilities */
+    .tiny-hint { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-top: 8px;}
+    .hint-dot { width: 6px; height: 6px; background: var(--brand); border-radius: 50%; opacity: 0.5; }
+    
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Copy Protection (Functional, not visual) */
+    .qtitle, .rule, .callout, .svgcaption, .opt, .pillbar, .progress, .badge-main, .section-header, .mini-actions .btn {
+      user-select: none; -webkit-user-select: none;
+    }
+    textarea, input, select { user-select: text; -webkit-user-select: text; }
+	.panel{ display:none !important; }
+	.panel.active{ display:block !important; }
   </style>
-</head>
+  
+  </head>
 
 <body>
   <header class="app-header">
-    <div class="brand-row">
-      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-      <div class="brand-title">
-        <div class="badge-main">Informatik</div>
-        <h1>KI - Grundlagen und Anwendung</h1>
-      </div>
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="brand-title">
+      <div class="badge-main">Informatik</div>
+      <h1>KI</h1>
     </div>
-    <div class="header-actions">
-      <a href="/index.html" class="header-link">Startseite</a>
-    </div>
-  </header>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
+  </div>
+</header>
 
   <main>
-    <div class="wrap">
+
+    <div class="layout">
+      <div class="mobile-navbar">
+        <select id="mobileNavSelect" aria-label="Navigation">
+          <option value="block1">Block 1</option>
+          <option value="block2">Block 2</option>
+          <option value="block3">Block 3</option>
+          <option value="block4">Block 4</option>
+          <option value="finalCard">Ueberpruefung</option>
+        </select>
+        <button class="btn" id="mobileNavGo" type="button">Anzeigen</button>
+      </div>
+
+      <aside class="side">
+        <div class="side-card">
+          <div class="nav-title">Uebersicht</div>
+          <ul class="nav" id="sideNav">
+            <li>
+              <button class="nav-btn" type="button" data-nav="block1">
+                <span class="nav-left">
+                  <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><circle class="dot" cx="12" cy="12" r="6"/></svg>
+                  </span>
+                  <span class="nav-label">Block 1</span>
+                </span>
+                <span class="nav-state" data-navstate="block1"></span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-btn locked" type="button" data-nav="block2" aria-disabled="true">
+                <span class="nav-left">
+                  <span class="nav-icon" aria-hidden="true" data-icon="lock">
+                    <svg viewBox="0 0 24 24">
+                      <path class="lock" d="M17 10h-1V8a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 114 0v2h-4V8z"/>
+                    </svg>
+                  </span>
+                  <span class="nav-label">Block 2</span>
+                </span>
+                <span class="nav-state" data-navstate="block2"></span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-btn locked" type="button" data-nav="block3" aria-disabled="true">
+                <span class="nav-left">
+                  <span class="nav-icon" aria-hidden="true" data-icon="lock">
+                    <svg viewBox="0 0 24 24">
+                      <path class="lock" d="M17 10h-1V8a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 114 0v2h-4V8z"/>
+                    </svg>
+                  </span>
+                  <span class="nav-label">Block 3</span>
+                </span>
+                <span class="nav-state" data-navstate="block3"></span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-btn locked" type="button" data-nav="block4" aria-disabled="true">
+                <span class="nav-left">
+                  <span class="nav-icon" aria-hidden="true" data-icon="lock">
+                    <svg viewBox="0 0 24 24">
+                      <path class="lock" d="M17 10h-1V8a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 114 0v2h-4V8z"/>
+                    </svg>
+                  </span>
+                  <span class="nav-label">Block 4</span>
+                </span>
+                <span class="nav-state" data-navstate="block4"></span>
+              </button>
+            </li>
+            <li>
+              <button class="nav-btn locked" type="button" data-nav="finalCard" aria-disabled="true">
+                <span class="nav-left">
+                  <span class="nav-icon" aria-hidden="true" data-icon="lock">
+                    <svg viewBox="0 0 24 24">
+                      <path class="lock" d="M17 10h-1V8a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 114 0v2h-4V8z"/>
+                    </svg>
+                  </span>
+                  <span class="nav-label">Ueberpruefung</span>
+                </span>
+                <span class="nav-state" data-navstate="finalCard"></span>
+              </button>
+            </li>
+          </ul>
+
+          <div class="hr"></div>
+          <div class="mini-actions">
+            <button class="btn" id="navJumpTop" type="button">Nach oben</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="content">
+        <div class="wrap">
+
 
       <section class="card">
         <h2>Uebersicht</h2>
@@ -157,8 +482,44 @@
       </section>
 
       <!-- BLOCK 1 -->
-      <section class="card" id="block1">
+      <section class="card panel" id="block1" data-panel="block1">
         <h2>Block 1: Was ist KI (und was nicht)?</h2>
+<div class="callout">
+  <p class="qtitle">Merkhilfe: Grundbegriffe (KI, Training, Feature, Label)</p>
+
+  <ul>
+    <li><b>Regelbasierte Systeme:</b> Menschen schreiben Regeln (Wenn-Dann). Das System <i>lernt nicht</i> aus Beispielen.</li>
+    <li><b>Machine Learning:</b> Ein Modell lernt Muster aus Beispielen und macht danach <i>Vorhersagen</i>.</li>
+  </ul>
+
+  <p class="qtitle" style="margin-top:10px">Training vs Inference</p>
+  <ul>
+    <li><b>Training:</b> Das Modell wird mit Beispieldaten angepasst (Parameter/Gewichte werden gelernt).</li>
+    <li><b>Inference:</b> Das trainierte Modell wird auf neue Eingaben angewendet (es gibt eine Vorhersage aus).</li>
+  </ul>
+
+  <p class="qtitle" style="margin-top:10px">Feature und Label</p>
+  <ul>
+    <li><b>Feature:</b> Ein messbares Merkmal der Eingabe (z.B. Textlaenge, Anzahl Links, Worthaeufigkeit).</li>
+    <li><b>Label:</b> Die Zielklasse/Antwort, die das Modell ausgeben soll (z.B. Spam oder Kein Spam).</li>
+  </ul>
+
+  <p class="muted" style="margin-top:8px">
+    Mini-Beispiel: E-Mail-Text (Features) &rarr; Modell &rarr; Ausgabe (Label: Spam/Kein Spam)
+  </p>
+</div>
+
+        <div class="callout">
+          <p class="qtitle">Merkhilfe: Was ist hier "KI"?</p>
+          <ul>
+            <li><b>Regelbasierte Systeme:</b> Menschen schreiben Regeln (Wenn-Dann). Kein Lernen aus Daten.</li>
+            <li><b>Machine Learning:</b> Das System lernt Muster aus Beispielen und macht danach Vorhersagen.</li>
+            <li><b>Training:</b> Lernen/Anpassen der Parameter mit Beispieldaten.</li>
+            <li><b>Inference:</b> Anwenden des gelernten Modells auf neue Eingaben (Output/Vorhersage).</li>
+          </ul>
+          <p class="muted">Tipp: Frage dich: "Aendert sich das Modell durch Daten?"</p>
+        </div>
+
 
         <div class="callout">
           <b>Kernidee:</b> KI ist ein Sammelbegriff. Viele moderne KI-Systeme basieren auf <b>Machine Learning</b>:
@@ -239,6 +600,36 @@
           </div>
         </div>
 
+        <div class="hr"></div>
+
+        <h3>Uebung 1b: Transfer</h3>
+        <div class="q" id="b1_case">
+          <p class="qtitle">Du sollst ein System bauen, das "Spam" erkennt. Nenne (1) ein moegliches Label und (2) zwei moegliche Features. Begruende kurz, warum die Features helfen koennten.</p>
+          <div class="field">
+            <textarea id="b1_case_text" placeholder="Antwort ..."></textarea>
+          </div>
+          <div class="mini-actions">
+            <button class="btn primary" data-check-free="b1_case">Pruefen</button>
+            <button class="btn" data-solution="b1_case" disabled>Loesung</button>
+          </div>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>Mini-Check 1 (MC) - Zusatzfrage</h3>
+        <div class="q" data-quiz="b1q3">
+          <p class="qtitle">3) Ein System sortiert Bewerbungen nur nach festen Wenn-Dann-Regeln (ohne Lernen aus Daten). Das ist ...</p>
+          <label class="opt"><input type="radio" name="b1q3" value="a"> immer Deep Learning.</label>
+          <label class="opt"><input type="radio" name="b1q3" value="b"> regelbasiert, nicht zwingend Machine Learning.</label>
+          <label class="opt"><input type="radio" name="b1q3" value="c"> immer ein trainiertes Modell.</label>
+          <div class="feedback" data-feedback></div>
+          <div class="mini-actions">
+            <button class="btn" data-solution="b1q3" disabled>Loesung</button>
+          </div>
+        </div>
+
+
         <div class="mini-actions">
           <button class="btn primary" data-check-block="block1">Mini-Check auswerten</button>
         </div>
@@ -246,8 +637,31 @@
       </section>
 
       <!-- BLOCK 2 -->
-      <section class="card" id="block2">
+      <section class="card panel" id="block2" data-panel="block2">
         <h2>Block 2: Daten, Features, Labels, Bias</h2>
+		
+		<div class="callout">
+  <p class="qtitle">Merkhilfe: Accuracy (Trefferquote)</p>
+  <p><b>Accuracy</b> ist der Anteil der <b>insgesamt richtigen</b> Vorhersagen.</p>
+
+  <p style="margin-top:10px"><b>Warum kann das taeuschen?</b></p>
+  <p>Wenn eine Klasse sehr haeufig ist, wirkt ein Modell schnell "gut", auch wenn es die seltene, wichtige Klasse verpasst.</p>
+
+  <div class="must" style="margin-top:10px">
+    <b>Mini-Beispiel</b>
+    <ul>
+      <li>100 Faelle: 98x "kein Betrug", 2x "Betrug"</li>
+      <li>Modell sagt immer "kein Betrug"</li>
+      <li><b>Accuracy = 98%</b> (wirkt gut) - aber es findet <b>0 von 2</b> Betrugsfaellen</li>
+    </ul>
+  </div>
+
+  <p class="muted" style="margin-top:10px">
+    Darum schaut man bei seltenen Faellen zusaetzlich darauf, ob die wichtigen Faelle wirklich gefunden werden
+    (das kommt bei uns im naechsten Block mit Precision/Recall).
+  </p>
+</div>
+
 
         <div class="row two" style="margin-top:10px">
           <div class="rule">
@@ -336,6 +750,22 @@
 
         <div class="hr"></div>
 
+        <h3>Uebung 2b: Datensatz-Check</h3>
+        <div class="q" id="b2_case">
+          <p class="qtitle">Ein Modell soll "Betrug" erkennen. Im Datensatz sind 98% der Faelle "kein Betrug". Erklaere kurz, warum Accuracy hier taeuschen kann und nenne zwei bessere Schritte, um das System zu beurteilen oder zu verbessern.</p>
+          <div class="field">
+            <textarea id="b2_case_text" placeholder="Antwort ..."></textarea>
+          </div>
+          <div class="mini-actions">
+            <button class="btn primary" data-check-free="b2_case">Pruefen</button>
+            <button class="btn" data-solution="b2_case" disabled>Loesung</button>
+          </div>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+
+        <div class="hr"></div>
+
         <h3>Mini-Check 2 (MC)</h3>
         <div class="q" data-quiz="b2q1">
           <p class="qtitle">1) Was ist ein Label in einem ueberwachten Datensatz?</p>
@@ -366,7 +796,7 @@
       </section>
 
       <!-- BLOCK 3 -->
-      <section class="card" id="block3">
+      <section class="card panel" id="block3" data-panel="block3">
         <h2>Block 3: Modelle, Training, Bewertung</h2>
 
         <div class="row two" style="margin-top:10px">
@@ -443,6 +873,27 @@
 
         <div class="hr"></div>
 
+        <h3>Uebung 3b: Precision und Recall berechnen</h3>
+        <div class="q" id="b3_calc">
+          <p class="qtitle">Ein System meldet "Betrug". Es gab: TP=36, FP=12, FN=24, TN=928. Berechne Precision und Recall (als Dezimalzahl, z.B. 0.75)     Formel: (TP + TN) / (TP + TN + FP + FN).</p>
+          <div class="field">
+            <label for="b3_prec">Precision</label>
+            <input id="b3_prec" type="text" inputmode="decimal" placeholder="z.B. 0.75">
+          </div>
+          <div class="field">
+            <label for="b3_rec">Recall</label>
+            <input id="b3_rec" type="text" inputmode="decimal" placeholder="z.B. 0.60">
+          </div>
+          <div class="mini-actions">
+            <button class="btn primary" data-check-calc="b3_calc">Pruefen</button>
+            <button class="btn" data-solution="b3_calc" disabled>Loesung</button>
+          </div>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+
+        <div class="hr"></div>
+
         <h3>Mini-Check 3 (MC)</h3>
         <div class="q" data-quiz="b3q1">
           <p class="qtitle">1) Recall ist hoch, wenn ...</p>
@@ -473,7 +924,7 @@
       </section>
 
       <!-- BLOCK 4 -->
-      <section class="card" id="block4">
+      <section class="card panel" id="block4" data-panel="block4">
         <h2>Block 4: Generative KI, Prompting, Quellencheck</h2>
 
         <div class="row two" style="margin-top:10px">
@@ -531,6 +982,24 @@
 
         <div class="hr"></div>
 
+        <h3>Uebung 4b: Antwort-Qualitaet absichern</h3>
+        <div class="q" id="b4_multi">
+          <p class="qtitle">Welche Schritte helfen typischerweise, die Qualitaet einer KI-Antwort abzusichern? Waehle alle passenden.</p>
+          <label class="opt"><input type="checkbox" name="b4m" value="a"> Quellen vergleichen oder Belege verlangen.</label>
+          <label class="opt"><input type="checkbox" name="b4m" value="b"> Nie nachfragen, damit es schneller geht.</label>
+          <label class="opt"><input type="checkbox" name="b4m" value="c"> Unsicherheiten markieren lassen / Grenzen nennen lassen.</label>
+          <label class="opt"><input type="checkbox" name="b4m" value="d"> Prompt praezisieren (Format, Laenge, Ziel).</label>
+          <label class="opt"><input type="checkbox" name="b4m" value="e"> Sensible Daten eingeben, damit es genauer wird.</label>
+          <div class="mini-actions">
+            <button class="btn primary" data-check-multi="b4_multi">Pruefen</button>
+            <button class="btn" data-solution="b4_multi" disabled>Loesung</button>
+          </div>
+          <div class="feedback" data-feedback></div>
+        </div>
+
+
+        <div class="hr"></div>
+
         <h3>Mini-Check 4 (MC)</h3>
         <div class="q" data-quiz="b4q1">
           <p class="qtitle">1) Warum ist Quellencheck wichtig?</p>
@@ -561,7 +1030,7 @@
       </section>
 
       <!-- FINAL (LOCKED UNTIL ALL MINI-CHECKS PASS) -->
-      <section class="card lock" id="finalCard">
+      <section class="card lock panel" id="finalCard" data-panel="finalCard">
         <div class="lock-overlay" id="finalOverlay" aria-hidden="false">
           <div class="lock-card">
             <h2 style="margin:0 0 6px;">Ueberpruefung gesperrt</h2>
@@ -634,8 +1103,13 @@
         <div class="feedback" id="fbFinal" aria-live="polite"></div>
       </section>
 
+    
+        </div>
+      </div>
     </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>
+
 
   <script>
     (function(){
@@ -645,6 +1119,7 @@
 
       var ANSWERS = {
         b1q1: "b", b1q2: "c",
+        b1q3: "b",
         b2q1: "b", b2q2: "b",
         b3q1: "b", b3q2: "a",
         b4q1: "b", b4q2: "b",
@@ -655,6 +1130,18 @@
       var MATCH = {
         b2_match: { b2_m1:"b", b2_m2:"a", b2_m3:"c" },
         b3_match: { b3_m1:"b", b3_m2:"c" }
+      };
+
+
+
+      // Multi-select solutions (set of required options, no extras)
+      var MULTI = {
+        b4_multi: { need: ["a","c","d"], avoid: ["b","e"] }
+      };
+
+      // Calculation solutions (tolerance)
+      var CALC = {
+        b3_calc: { precision: 36/(36+12), recall: 36/(36+24) }
       };
 
       // Free-text soft checks (subtle output)
@@ -695,6 +1182,8 @@
         setChip("b3", isBlockPassed(state,"block3") ? "ok" : (state.blocks && state.blocks.block3 ? "warn" : ""));
         setChip("b4", isBlockPassed(state,"block4") ? "ok" : (state.blocks && state.blocks.block4 ? "warn" : ""));
         setChip("final", state.final && state.final.done ? "ok" : (state.final ? "warn" : ""));
+      
+        try{ updateNav(); }catch(e){}
       }
 
       function setFeedback(el, ok, msg){
@@ -790,18 +1279,31 @@
         var ok = true;
 
         if(taskId === "b1_free"){
-          // require both concepts present + some length
+          // training vs inference: require both concepts
           var hasTrain = /(train|anpass|lernen|parameter|gewicht)/.test(t);
           var hasInfer = /(infer|anwenden|vorhersag|nutzen|output)/.test(t);
-          ok = (t.length >= 120 && hasTrain && hasInfer);
+          ok = (t.length >= 70 && hasTrain && hasInfer);
+
+        } else if(taskId === "b1_case"){
+          // label + features + short reasoning
+          var hasLabel = /(label|ziel|klasse|spam|kein\s*spam|0\s*\/\s*1|positiv|negativ)/.test(t);
+          var hasFeat = /(feature|merkmal|laenge|wort|link|gross|haeufig|pixel|zeit|anzahl)/.test(t);
+          ok = (t.length >= 90 && hasLabel && hasFeat);
+
+        } else if(taskId === "b2_case"){
+          // accuracy trap in imbalanced data + better steps
+          var hasAcc = /(accuracy|genauigkeit)/.test(t);
+          var hasImb = /(unausgeglichen|imbalan|98|2|selten|klasse)/.test(t);
+          var hasStep = /(precision|recall|f1|confusion|matrix|threshold|schwelle|gewicht|sampling|ausbalanc|mehr\s*daten|metr)/.test(t);
+          ok = (t.length >= 110 && (hasAcc || hasImb) && hasStep);
+
         } else if(taskId === "b4_free"){
-          // prompt contains role+constraints signals
-          var hasRole = /(rolle|du bist|agier|verhalte)/.test(t);
-          var hasFormat = /(bullet|stichpunkt|absatz|tabelle|format|struktur)/.test(t);
-          var hasConstraint = /(max|mind|saetze|woerter|laenge|kurz|8|10)/.test(t);
-          ok = (t.length >= 140 && hasRole && (hasFormat || hasConstraint));
+          // measures: quality + safety
+          var hasMeasure = /(quellen|beleg|vergleich|fakten|nachfrag|begruend|beispiel|unsicher|markier|datenschutz|prompt|rolle|format|struktur)/.test(t);
+          ok = (t.length >= 100 && hasMeasure);
+
         } else {
-          ok = (t.length >= 80);
+          ok = (t.length >= 60);
         }
 
         setFeedback(fb, ok ? null : null, ok ? "Ok." : "Nochmals pruefen.");
@@ -838,10 +1340,16 @@
         });
 
         st.text = st.text || {};
-        ["b1_free_text","b4_free_text","f_a1","f_a2","f_b1","f_b2"].forEach(function(id){
+        ["b1_free_text","b1_case_text","b2_case_text","b4_free_text","f_a1","f_a2","f_b1","f_b2","b3_prec","b3_rec"].forEach(function(id){
           var el = document.getElementById(id);
           if(el) st.text[id] = el.value || "";
         });
+
+        
+        st.checks = st.checks || {};
+        var b4 = $all('input[name="b4m"]:checked').map(function(x){ return x.value; }).sort().join("");
+        st.checks.b4m = b4;
+
 
         saveState(st);
         updateChips(st);
@@ -875,8 +1383,12 @@
         updateChips(st);
         refreshSolutionButtons();
         updateFinalLock(st);
-      }
 
+        if(st.checks && typeof st.checks.b4m === "string"){
+          var want = st.checks.b4m.split("");
+          $all('input[name="b4m"]').forEach(function(c){ c.checked = want.indexOf(c.value) !== -1; });
+        }
+      }
       function scoreBlock(blockKey){
         var st = loadState();
         st.blocks = st.blocks || {};
@@ -885,13 +1397,16 @@
         var total = 0;
 
         if(blockKey === "block1"){
-          total += 2;
+          total += 3;
           if(evalQuiz("b1q1", true).ok) okCount++;
           if(evalQuiz("b1q2", true).ok) okCount++;
+          if(evalQuiz("b1q3", true).ok) okCount++;
           var freeOk = evalFree("b1_free").ok;
+          var caseOk = evalFree("b1_case").ok;
           // require the free text to be non-empty (soft)
           var freeText = norm((document.getElementById("b1_free_text")||{}).value || "");
-          var pass = (okCount >= 2) && freeOk && (freeText.length >= 40);
+          var caseText = norm((document.getElementById("b1_case_text")||{}).value || "");
+          var pass = (okCount >= 3) && freeOk && caseOk && (freeText.length >= 80) && (caseText.length >= 120);
           st.blocks.block1 = { pass: pass };
           saveState(st);
           updateChips(st);
@@ -930,8 +1445,9 @@
           if(evalQuiz("b4q1", true).ok) okCount++;
           if(evalQuiz("b4q2", true).ok) okCount++;
           var freeOk4 = evalFree("b4_free").ok;
+          var multiOk4 = evalMulti("b4_multi").ok;
           var freeText4 = norm((document.getElementById("b4_free_text")||{}).value || "");
-          var pass4 = (okCount >= 2) && freeOk4 && (freeText4.length >= 60);
+          var pass4 = (okCount >= 2) && freeOk4 && multiOk4 && (freeText4.length >= 180);
           st.blocks.block4 = { pass: pass4 };
           saveState(st);
           updateChips(st);
@@ -969,6 +1485,7 @@
 
         // solution gating refresh after lock application
         refreshSolutionButtons();
+        try{ updateNav(); }catch(e){}
         // keep final solution buttons gated + also require unlocked
         if(!unlocked){
           $all("#finalCard [data-solution]").forEach(function(b){ b.disabled = true; });
@@ -1006,6 +1523,27 @@
         });
       }
 
+      function bindCalcChecks(){
+        $all("[data-check-calc]").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var tid = btn.getAttribute("data-check-calc");
+            evalCalc(tid);
+            persistAll();
+          });
+        });
+      }
+
+      function bindMultiChecks(){
+        $all("[data-check-multi]").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var tid = btn.getAttribute("data-check-multi");
+            evalMulti(tid);
+            persistAll();
+          });
+        });
+      }
+
+
       function bindSolutions(){
         $all("[data-solution]").forEach(function(btn){
           btn.addEventListener("click", function(){
@@ -1015,6 +1553,22 @@
             // solution rendering is minimal and only on demand
             if(taskId === "b1_free"){
               alert("Training: Modell wird anhand von Beispielen angepasst (Parameter/Gewichte werden optimiert). Inference: das trainierte Modell wird auf neue Eingaben angewendet und liefert eine Vorhersage.");
+              return;
+            }
+            if(taskId === "b1_case"){
+              alert("Beispiel:\nLabel: Spam/Kein Spam.\nFeatures: Textlaenge, Anzahl Links, Worthaeufigkeit, Grossschreibung.\nKurz: Diese Merkmale unterscheiden oft Spam von normalen Nachrichten.");
+              return;
+            }
+            if(taskId === "b2_case"){
+              alert("Kernaussage: Bei 98% 'kein Betrug' kann ein Modell mit 98% Accuracy fast nichts finden. Besser: Confusion Matrix ansehen, Precision/Recall (oder F1) nutzen, Schwelle anpassen, Daten ausbalancieren (Sampling/Weights), mehr positive Beispiele sammeln.");
+              return;
+            }
+            if(taskId === "b3_calc"){
+              alert("Precision = TP/(TP+FP) = 36/(36+12) = 0.75\nRecall = TP/(TP+FN) = 36/(36+24) = 0.60");
+              return;
+            }
+            if(taskId === "b4_multi"){
+              alert("Richtig: a, c, d");
               return;
             }
             if(taskId === "b4_free"){
@@ -1109,22 +1663,236 @@
         }
       }
 
+      
+      function toast(msg){
+        var t = document.getElementById("toast");
+        if(!t) return;
+        t.textContent = msg || "";
+        t.classList.add("show");
+        window.clearTimeout(toast._tm);
+        toast._tm = window.setTimeout(function(){ t.classList.remove("show"); }, 1300);
+      }
+
+      function isUnlocked(panelId, st){
+        st = st || loadState();
+        var b = (st.blocks||{});
+        if(panelId === "block1") return true;
+        if(panelId === "block2") return !!(b.block1 && b.block1.pass);
+        if(panelId === "block3") return !!(b.block2 && b.block2.pass);
+        if(panelId === "block4") return !!(b.block3 && b.block3.pass);
+        if(panelId === "finalCard") return !!(b.block4 && b.block4.pass);
+        return false;
+      }
+
+      function firstUnlocked(st){
+        if(isUnlocked("block4", st)) return "block4";
+        if(isUnlocked("block3", st)) return "block3";
+        if(isUnlocked("block2", st)) return "block2";
+        return "block1";
+      }
+
+      function showPanel(panelId, silent){
+        var st = loadState();
+        if(!isUnlocked(panelId, st)){
+          if(!silent) toast("Noch gesperrt.");
+          panelId = firstUnlocked(st);
+        }
+        $all(".panel").forEach(function(p){ p.classList.remove("active"); });
+        var el = document.getElementById(panelId);
+        if(el) el.classList.add("active");
+
+        // sidebar active state
+        $all("[data-nav]").forEach(function(b){ b.classList.remove("active"); });
+        var btn = document.querySelector('[data-nav="'+panelId+'"]');
+        if(btn) btn.classList.add("active");
+
+        // sync mobile select
+        var sel = document.getElementById("mobileNavSelect");
+        if(sel) sel.value = panelId;
+
+        // hash for deep-link
+        if(!silent){
+          try{ history.replaceState(null, "", "#" + panelId); }catch(e){}
+        }
+      }
+
+      function setNavState(id, st){
+        var btn = document.querySelector('[data-nav="'+id+'"]');
+        var lab = document.querySelector('[data-navstate="'+id+'"]');
+        if(!btn) return;
+
+        var unlocked = isUnlocked(id, st);
+        btn.classList.toggle("locked", !unlocked);
+        btn.setAttribute("aria-disabled", unlocked ? "false" : "true");
+
+        // ok marker when block passed
+        var passed = false;
+        if(id === "block1") passed = !!(st.blocks && st.blocks.block1 && st.blocks.block1.pass);
+        if(id === "block2") passed = !!(st.blocks && st.blocks.block2 && st.blocks.block2.pass);
+        if(id === "block3") passed = !!(st.blocks && st.blocks.block3 && st.blocks.block3.pass);
+        if(id === "block4") passed = !!(st.blocks && st.blocks.block4 && st.blocks.block4.pass);
+        if(id === "finalCard") passed = !!(st.final && st.final.done);
+
+        btn.classList.toggle("ok", passed);
+
+        if(lab){
+          lab.textContent = passed ? "OK" : (unlocked ? "" : "");
+        }
+
+        // swap icon: lock / check / dot
+        var iconWrap = btn.querySelector(".nav-icon");
+        if(iconWrap){
+          if(!unlocked){
+            iconWrap.innerHTML = '<svg viewBox="0 0 24 24"><path class="lock" fill="#6b7280" d="M17 10h-1V8a4 4 0 10-8 0v2H7a2 2 0 00-2 2v8a2 2 0 002 2h10a2 2 0 002-2v-8a2 2 0 00-2-2zm-7-2a2 2 0 114 0v2h-4V8z"/></svg>';
+          }else if(passed){
+            iconWrap.innerHTML = '<svg viewBox="0 0 24 24"><path class="check" fill="#10b981" d="M9.0 16.2l-3.5-3.5a1 1 0 00-1.4 1.4l4.2 4.2a1 1 0 001.4 0l10-10a1 1 0 10-1.4-1.4L9.0 16.2z"/></svg>';
+          }else{
+            iconWrap.innerHTML = '<svg viewBox="0 0 24 24"><circle class="dot" fill="#7c3aed" cx="12" cy="12" r="6"/></svg>';
+          }
+        }
+      }
+
+      function updateNav(){
+        var st = loadState();
+        ["block1","block2","block3","block4","finalCard"].forEach(function(id){ setNavState(id, st); });
+      }
+
+      function bindNav(){
+        $all("[data-nav]").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            var id = btn.getAttribute("data-nav");
+            if(!isUnlocked(id, loadState())){
+              toast("Noch gesperrt.");
+              return;
+            }
+            showPanel(id);
+          });
+        });
+
+        var jump = document.getElementById("navJumpTop");
+        if(jump){
+          jump.addEventListener("click", function(){
+            window.scrollTo({top:0, behavior:"smooth"});
+          });
+        }
+
+        var mGo = document.getElementById("mobileNavGo");
+        if(mGo){
+          mGo.addEventListener("click", function(){
+            var sel = document.getElementById("mobileNavSelect");
+            if(!sel) return;
+            showPanel(sel.value);
+          });
+        }
+      }
+
+      // Copy/Paste reduction: allow normal typing, but prevent copying task text and pasting into inputs.
+      function bindCopyGuard(){
+        function isEditable(el){
+          if(!el) return false;
+          var tag = (el.tagName||"").toLowerCase();
+          if(tag === "textarea") return true;
+          if(tag === "input") return true;
+          if(el.isContentEditable) return true;
+          return false;
+        }
+
+        document.addEventListener("copy", function(e){
+          if(isEditable(document.activeElement)) return;
+          e.preventDefault();
+          toast("Kopieren deaktiviert.");
+        });
+
+        document.addEventListener("cut", function(e){
+          if(isEditable(document.activeElement)) return;
+          e.preventDefault();
+          toast("Ausschneiden deaktiviert.");
+        });
+
+        document.addEventListener("paste", function(e){
+          // prevent paste everywhere (forces typing)
+          e.preventDefault();
+          toast("Einfügen deaktiviert.");
+        });
+
+        document.addEventListener("contextmenu", function(e){
+          // block right click to reduce copy menu
+          e.preventDefault();
+        });
+
+        document.addEventListener("keydown", function(e){
+          var k = (e.key||"").toLowerCase();
+          var mod = e.ctrlKey || e.metaKey;
+          if(mod && (k === "c" || k === "x" || k === "v")){
+            // allow copy/cut inside inputs, but block paste everywhere
+            if(k === "v"){
+              e.preventDefault();
+              toast("Einfügen deaktiviert.");
+              return;
+            }
+            if(isEditable(document.activeElement)) return;
+            e.preventDefault();
+            toast("Kopieren deaktiviert.");
+          }
+        });
+      }
+
+      function bindHardPasteBlock(){
+        function cancel(e){
+          try{ e.preventDefault(); }catch(_){}
+          toast("Einfügen deaktiviert.");
+          return false;
+        }
+
+        document.addEventListener("beforeinput", function(e){
+          if(e && (e.inputType === "insertFromPaste" || e.inputType === "insertFromDrop")){
+            cancel(e);
+          }
+        }, true);
+
+        document.addEventListener("keydown", function(e){
+          var k = (e.key||"").toLowerCase();
+          var mod = e.ctrlKey || e.metaKey;
+          if(mod && k === "v"){
+            cancel(e);
+          }
+        }, true);
+
+        $all("textarea, input[type='text'], input:not([type])").forEach(function(el){
+          el.addEventListener("paste", cancel, true);
+          el.addEventListener("drop", cancel, true);
+        });
+      }
+
       // Init
       bindOptionClick();
       bindMiniChecks();
       bindMatchChecks();
       bindFreeChecks();
+      bindCalcChecks();
+      bindMultiChecks();
       bindSolutions();
       bindFinal();
       bindPersistInputs();
       bindReset();
       bindRestore();
       restoreAll();
+      bindNav();
+      bindCopyGuard();
+      bindHardPasteBlock();
+      updateNav();
       // Ensure lock state applied on load
       updateFinalLock(loadState());
+      // Panel start
+      (function(){
+        var h = (window.location.hash || '').replace('#','');
+        if(!h) h = 'block1';
+        showPanel(h, true);
+      })();
       // Solution buttons hidden-gated
       refreshSolutionButtons();
+
     })();
-  </script>
+</script>
 </body>
 </html>
