@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Datei-Explorer & Speicherorte (Rettungsmission)</title>
+
+  <!-- Pflicht-Stylesheets -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+
+  <style>
+    :root{
+      /* For badge-main (other subject) */
+      --subject-color:#0ea5e9;
+
+      /* Gemini-ish tokens */
+      --bg0:#ffffff;
+      --bg1:#f6f8ff;
+      --ink:#0b1220;
+      --muted:#5b6476;
+      --line:rgba(15,23,42,.10);
+
+      --card:rgba(255,255,255,.70);
+      --card-strong:rgba(255,255,255,.86);
+
+      --shadow:0 20px 60px rgba(2,6,23,.10);
+      --shadow-soft:0 10px 30px rgba(2,6,23,.08);
+
+      --radius:22px;
+
+      --accent:#2563eb;
+      --accent2:#7c3aed;
+      --good:#16a34a;
+      --bad:#dc2626;
+
+      --focus:0 0 0 4px rgba(37,99,235,.18);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    body{
+      margin:0;
+      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124,58,237,.16), transparent 60%),
+        radial-gradient(1100px 650px at 85% 15%, rgba(37,99,235,.16), transparent 62%),
+        radial-gradient(900px 600px at 50% 95%, rgba(14,165,233,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .app-header{backdrop-filter:saturate(140%) blur(10px)}
+
+    .app-wrap{max-width:1120px;margin:0 auto;padding:18px 14px 64px}
+    .app-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px}
+    @media (max-width:900px){
+      .app-grid{grid-template-columns:1fr}
+      .app-wrap{padding:14px 12px 56px}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .pad{padding:18px}
+    @media (max-width:900px){.pad{padding:16px}}
+
+    .kicker{
+      font-size:12px;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.10em;
+    }
+    .title{
+      font-size:20px;font-weight:780;
+      margin:6px 0 2px;letter-spacing:-.01em;
+    }
+    .muted{color:var(--muted)}
+    .mini{font-size:12px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+    .pill{
+      display:inline-flex;gap:8px;align-items:center;
+      padding:8px 12px;border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--card-strong);
+      box-shadow:var(--shadow-soft);
+    }
+
+    .progress{
+      height:10px;background:rgba(2,6,23,.06);
+      border-radius:999px;overflow:hidden;border:1px solid var(--line);
+    }
+    .bar{
+      height:100%;width:0;
+      background:linear-gradient(90deg, rgba(37,99,235,.65), rgba(124,58,237,.65));
+      border-radius:999px;
+      transition:width .25s ease;
+    }
+
+    ol.steps{margin:12px 0 0 18px}
+    ol.steps li{margin:7px 0;line-height:1.45}
+
+    .check{
+      margin-top:14px;padding:14px;
+      border:1px dashed rgba(37,99,235,.35);
+      border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.35));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+    }
+
+    label{font-size:13px;color:var(--muted);display:block;margin:10px 0 6px}
+    input[type="text"], textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:11px 12px;
+      font-size:14px;
+      background:rgba(255,255,255,.86);
+      color:var(--ink);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+      outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease, transform .06s ease;
+    }
+    textarea{min-height:92px;resize:vertical}
+    input[type="text"]:focus, textarea:focus, select:focus{
+      border-color:rgba(37,99,235,.45);
+      box-shadow:var(--focus);
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.82);
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:999px;
+      font-weight:720;
+      cursor:pointer;
+      transition:transform .06s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+      box-shadow:var(--shadow-soft);
+    }
+    .btn:hover{border-color:rgba(15,23,42,.18);background:rgba(255,255,255,.92)}
+    .btn:active{transform:translateY(1px)}
+    .btn:focus{outline:none;box-shadow:var(--shadow-soft), var(--focus)}
+    .btn.primary{
+      border-color:rgba(37,99,235,.35);
+      background:linear-gradient(180deg, rgba(37,99,235,.14), rgba(37,99,235,.08));
+      color:#1d4ed8;
+    }
+    .btn.good{
+      border-color:rgba(22,163,74,.35);
+      background:linear-gradient(180deg, rgba(22,163,74,.14), rgba(22,163,74,.08));
+      color:#166534;
+    }
+    .btn.bad{
+      border-color:rgba(220,38,38,.35);
+      background:linear-gradient(180deg, rgba(220,38,38,.14), rgba(220,38,38,.08));
+      color:#991b1b;
+    }
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .list{
+      margin:10px 0 0;padding:0;list-style:none;
+      border:1px solid var(--line);
+      border-radius:18px;overflow:hidden;
+      background:rgba(255,255,255,.55);
+    }
+    .list li{
+      padding:12px 12px;
+      border-top:1px solid var(--line);
+      display:flex;justify-content:space-between;gap:10px;
+      cursor:pointer;
+      transition:background .12s ease, opacity .12s ease;
+    }
+    .list li:first-child{border-top:none}
+    .list li:hover{background:rgba(255,255,255,.72)}
+    .list li.locked{opacity:.45;cursor:not-allowed}
+    .list li.locked:hover{background:rgba(255,255,255,.55)}
+
+    .ok{color:var(--good);font-weight:800}
+    .no{color:var(--bad);font-weight:800}
+    .hidden{display:none}
+
+    @media (prefers-reduced-motion: no-preference){
+      .card:hover{box-shadow:0 24px 70px rgba(2,6,23,.12)}
+    }
+
+    /* ===== Screenshots ===== */
+    .shots{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin-top:12px}
+    @media (max-width:900px){.shots{grid-template-columns:1fr}}
+
+    .shot{
+      grid-column:span 12;
+      border:1px solid var(--line, rgba(15,23,42,.10));
+      border-radius:18px;
+      background:rgba(255,255,255,.65);
+      box-shadow:var(--shadow-soft, 0 10px 30px rgba(2,6,23,.08));
+      overflow:hidden;
+    }
+    .shot-head{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(15,23,42,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.55));
+    }
+    .shot-title{font-size:13px;font-weight:780}
+    .shot-hint{font-size:12px;color:var(--muted,#5b6476)}
+    .shot-btn{
+      appearance:none;border:1px solid rgba(15,23,42,.10);
+      background:rgba(255,255,255,.80);
+      border-radius:999px;padding:6px 10px;
+      font-weight:720;cursor:pointer;
+    }
+    .shot-body{padding:12px}
+    .shot-img{
+      width:100%;height:auto;display:block;
+      border-radius:14px;
+      border:1px solid rgba(15,23,42,.10);
+      cursor:zoom-in;
+    }
+
+    /* Lightbox */
+    .lb{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;z-index:9999}
+    .lb.open{display:flex;align-items:center;justify-content:center;padding:18px}
+    .lb-card{
+      width:min(1100px, 96vw);
+      max-height:92vh;
+      background:rgba(255,255,255,.90);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:18px;
+      box-shadow:0 30px 90px rgba(2,6,23,.35);
+      overflow:hidden;
+    }
+    .lb-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(15,23,42,.10)}
+    .lb-title{font-weight:800;font-size:13px}
+    .lb-close{appearance:none;border:1px solid rgba(15,23,42,.10);background:#fff;border-radius:999px;padding:8px 12px;font-weight:750;cursor:pointer}
+    .lb-body{padding:12px;overflow:auto;max-height:calc(92vh - 52px)}
+    .lb-img{width:100%;height:auto;display:block;border-radius:14px;border:1px solid rgba(15,23,42,.10);cursor:zoom-out}
+
+/* ===== FULLSCREEN RED ALARM ===== */
+.alarm{
+  position:fixed; inset:0;
+  z-index:10000;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  /* Red full-screen backdrop */
+  background:
+    radial-gradient(900px 600px at 30% 20%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(900px 600px at 70% 80%, rgba(0,0,0,.18), transparent 60%),
+    linear-gradient(180deg, #b91c1c, #7f1d1d);
+}
+
+.alarm.hidden{display:none}
+
+/* Big center panel (still readable) */
+.alarm-card{
+  width:min(980px, 96vw);
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:22px;
+  box-shadow:0 30px 90px rgba(0,0,0,.40);
+  overflow:hidden;
+  transform:translateY(0);
+}
+
+/* Slow pulse (NOT hard blinking) */
+@media (prefers-reduced-motion: no-preference){
+  .alarm{
+    animation: alarmPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes alarmPulse{
+    0%   { filter: brightness(1); }
+    50%  { filter: brightness(1.08); }
+    100% { filter: brightness(1); }
+  }
+}
+
+/* More “alarm” head */
+.alarm-head{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+  padding:16px 18px;
+  border-bottom:1px solid rgba(15,23,42,.12);
+  background:linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.86));
+}
+
+.alarm-kicker{
+  font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#b91c1c;
+  font-weight:900;
+}
+
+.alarm-title{
+  font-size:18px;
+  font-weight:900;
+  letter-spacing:-.01em;
+}
+
+/* HUGE WIN+L */
+.big-hotkey{
+  margin-top:10px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:12px 14px;
+  border-radius:18px;
+  border:2px solid rgba(185,28,28,.35);
+  background:rgba(254,242,242,.85);
+}
+
+.big-hotkey .label{
+  font-weight:900;
+  color:#7f1d1d;
+}
+
+.big-hotkey .key{
+  font-size:44px;
+  font-weight:1000;
+  letter-spacing:.06em;
+  color:#7f1d1d;
+  line-height:1;
+  padding:10px 14px;
+  border-radius:16px;
+  border:2px solid rgba(127,29,29,.35);
+  background:#fff;
+}
+
+/* Countdown bigger too */
+#alarmCountdown{
+  margin-top:6px;
+  font-weight:900;
+  color:#7f1d1d;
+}
+
+    @media print{
+      .noprint{display:none !important}
+      body{background:#fff}
+      .app-wrap{padding:0}
+      .card{box-shadow:none;background:#fff}
+      .app-grid{grid-template-columns:1fr}
+    }
+	/* ===== MAKE ALARM TEXT BIGGER + "SOFORT WIN+L" POP ===== */
+
+/* overall alarm copy bigger */
+.alarm-body{padding:18px}
+.alarm-body p{font-size:18px; line-height:1.45}
+.alarm-body .mini{font-size:14px}
+
+/* headline bigger */
+.alarm-title{font-size:24px; font-weight:1000}
+
+/* countdown bigger */
+#alarmCountdown{font-size:18px}
+
+/* the hotkey callout: BIG and impossible to miss */
+.big-hotkey{
+  margin-top:14px;
+  padding:16px 18px;
+  border-radius:22px;
+}
+
+.big-hotkey .label{
+  font-size:20px;
+  font-weight:1000;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+
+.big-hotkey .key{
+  font-size:64px;            /* <-- main eye-catcher */
+  font-weight:1100;
+  letter-spacing:.08em;
+  padding:14px 18px;
+  border-width:3px;
+}
+
+/* Optional: make "SOFORT" even louder if you include it in label */
+.big-hotkey .label strong{
+  color:#b91c1c;
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- Standard-Header (EXAKT) -->
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main">IT</div>
+        <h1>Rettungsmission: SCHATZ.txt</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="app-wrap">
+    <div class="app-grid">
+      <!-- Main -->
+      <section class="card">
+        <div class="pad">
+          <div class="row" style="justify-content:space-between">
+            <div>
+              <div class="kicker">Aktuelle Mission</div>
+              <div class="title" id="mTitle">-</div>
+              <div class="muted mini" id="mGoal">-</div>
+            </div>
+            <div class="pill mini">
+              <span class="muted">Fortschritt</span>
+              <strong id="pTxt">0/0</strong>
+            </div>
+          </div>
+
+          <div class="progress" style="margin-top:10px"><div class="bar" id="pBar"></div></div>
+
+          <ol class="steps" id="mSteps" style="margin-top:14px"></ol>
+
+          <!-- Screenshots -->
+          <div id="shotHolder"></div>
+
+          <div class="check">
+            <div class="row" style="justify-content:space-between">
+              <strong>Mini-Check</strong>
+              <span class="mini muted" id="mType"></span>
+            </div>
+
+            <div id="checkArea" style="margin-top:10px"></div>
+
+            <div class="row noprint" style="margin-top:10px;justify-content:space-between">
+              <div class="row">
+                <button class="btn" id="btnPrev" type="button">← Zurueck</button>
+                <button class="btn primary" id="btnNext" type="button">Weiter →</button>
+              </div>
+              <button class="btn good" id="btnDone" type="button">Mission erledigt ✓</button>
+            </div>
+
+            <div class="mini muted" style="margin-top:10px;line-height:1.45">
+              Merke: <strong>Pfad</strong> steht oben in der Adressleiste. Wenn etwas "weg" ist: <strong>Suche</strong> nutzen.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar -->
+      <aside class="card">
+        <div class="pad">
+          <div class="kicker">Setup</div>
+
+          <label>Dein Name</label>
+          <input type="text" id="studentName" placeholder="Vorname Nachname" />
+
+          <div class="row noprint" style="margin-top:12px">
+            <button class="btn primary" id="btnStart" type="button">Start / Fortsetzen</button>
+            <button class="btn" id="btnReset" type="button">Zuruecksetzen</button>
+            <button class="btn" id="btnExport" type="button">Rettungsprotokoll</button>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="kicker">Missionen (freigeschaltet)</div>
+            <ul class="list" id="missionList"></ul>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="kicker">Kurzinfo</div>
+            <div class="mini muted" style="line-height:1.55">
+              <strong>Lokale Orte:</strong> Downloads, Dokumente, Desktop.<br>
+              <strong>Cloud:</strong> Google Drive (Drive for Desktop).<br>
+              <strong>Ausschneiden + Einfuegen</strong> = verschieben.<br>
+              <strong>Suche</strong> hilft, wenn der Ort unklar ist.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Export -->
+    <section class="card hidden" id="exportCard" style="margin-top:14px">
+      <div class="pad">
+        <div class="row" style="justify-content:space-between">
+          <div>
+            <div class="kicker">Rettungsprotokoll</div>
+            <div class="title">Rettungsmission: SCHATZ.txt</div>
+            <div class="mini muted" id="exportMeta"></div>
+          </div>
+          <div class="row noprint">
+            <button class="btn" id="btnCloseExport" type="button">Schliessen</button>
+            <button class="btn primary" type="button" onclick="window.print()">Drucken/PDF</button>
+          </div>
+        </div>
+        <div id="exportBody" style="margin-top:10px"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lb" class="lb" aria-hidden="true">
+    <div class="lb-card" role="dialog" aria-modal="true">
+      <div class="lb-top">
+        <div class="lb-title" id="lbTitle">Bild</div>
+        <button class="lb-close noprint" type="button" id="lbClose">Schliessen</button>
+      </div>
+      <div class="lb-body">
+        <img class="lb-img" id="lbImg" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- Alarm Overlay -->
+  <div id="alarm" class="alarm hidden" role="dialog" aria-modal="true">
+    <div class="alarm-card">
+      <div class="alarm-head">
+        <div>
+          <div class="alarm-kicker">KRITISCH</div>
+          <div class="alarm-title">KRITISCHER FEHLER: Datei-Transport</div>
+          <div class="mini muted" id="alarmCountdown">Systemcheck startet in: 5</div>
+        </div>
+        <button class="alarm-close noprint" id="btnAlarmClose" type="button">Ich bin wieder da</button>
+      </div>
+
+      <div class="alarm-body">
+        <p>
+          <strong>SCHATZ.txt</strong> ist <strong>nicht</strong> im Ziel angekommen.
+          Letzter bekannter Schritt: <strong>Ausschneiden</strong>.
+        </p>
+
+        <div class="alarm-steps">
+          <div class="mini muted" style="margin-bottom:6px">Systemprotokoll</div>
+          <div class="mini" style="font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; line-height:1.6">
+            [OK] Datei markiert (Ausschneiden)<br>
+            [WARN] Zwischenablage-Status unklar<br>
+            [FAIL] Einfuegen nicht erfolgt
+          </div>
+        </div>
+
+<div class="big-hotkey">
+  <div class="label"><strong>SOFORT</strong> sperren & wieder anmelden:</div>
+  <div class="key">WIN + L</div>
+</div>
+
+
+        <p class="mini muted">
+          Danach: Explorer oeffnen, nach <strong>SCHATZ</strong> suchen, Fundort eintragen, dann Transport sauber abschliessen
+          (Ausschneiden + Einfuegen).
+        </p>
+
+        <div class="alarm-form">
+          <label>Wo hast du SCHATZ.txt gefunden? (Fundort-Pfad)</label>
+          <input id="foundPath" type="text" placeholder="z. B. Dokumente > ... oder Google Drive > ..." />
+
+          <div class="row noprint" style="margin-top:12px;justify-content:space-between">
+            <button class="btn primary" id="btnAlarmCheck" type="button">Pruefen & weitermachen</button>
+            <span class="mini muted" id="alarmHint">Tipp: Fundort enthaelt oft Dokumente/Downloads/Google Drive.</span>
+          </div>
+
+          <div class="mini" id="alarmFeedback" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const LS_KEY = "hos_file_explorer_rescue_only_v1";
+    const ASSET_BASE = "/portal/modules/file-explorer-speicherorte/assets/";
+
+    const MISSIONS = [
+      {
+        id:"m1",
+        title:"Orientierung: Orte im Explorer",
+        goal:"Du erkennst lokale Speicherorte und Google Drive und findest den Pfad (Adressleiste).",
+        steps:[
+          "Oeffne den Datei-Explorer (Win + E).",
+          "Klicke links auf: Downloads, Dokumente, Desktop.",
+          "Suche links den Eintrag: Google Drive (Drive for Desktop).",
+          "Schau oben in die Adressleiste: Das ist der Pfad (Ort)."
+        ],
+        check:{ type:"mc", q:"Wo siehst du den Ort (Pfad) eines Ordners?", options:[
+          "Im Dateinamen","In der Adressleiste (oben)","Im Papierkorb"
+        ], a:1 }
+      },
+      {
+        id:"m2",
+        title:"Basislager im Drive bauen",
+        goal:"Du erstellst deinen Trainingsordner im Drive und 3 Unterordner.",
+        steps:[
+          "Gehe im Explorer links auf Google Drive.",
+          "Oeffne My Drive (oder Mein Drive, je nach Sprache).",
+          "Erstelle einen Ordner: Explorer-Training.",
+          "Erstelle darin 3 Unterordner: Bilder, Texte, Sonstiges."
+        ],
+        check:{ type:"text", q:"Schreibe den Pfad zu deinem Ordner (z. B. Google Drive > My Drive > Explorer-Training).", key:"path_drive_training" }
+      },
+      {
+        id:"m3",
+        title:"SCHATZ.txt erstellen (lokal!)",
+        goal:"Du erstellst die Schatzdatei lokal, damit sie spaeter wirklich gesucht werden muss.",
+        steps:[
+          "Oeffne den Editor (Notepad).",
+          "Schreibe: Ich bin der Schatz.",
+          "Speichern unter: Dokumente (lokal), Dateiname: SCHATZ.txt",
+          "Pruefe: Du siehst SCHATZ.txt in Dokumente."
+        ],
+        check:{ type:"mc", q:"Wo liegt SCHATZ.txt jetzt?", options:[
+          "Downloads","Dokumente (lokal)","Schon im Google Drive Ordner Texte"
+        ], a:1 }
+      },
+      {
+        id:"m4",
+        title:"Transport starten (Ausschneiden)",
+        goal:"Du startest den Transport. Wichtig: Ausschneiden ist erst fertig nach Einfuegen.",
+        steps:[
+          "Gehe zu Dokumente und finde SCHATZ.txt.",
+          "Rechtsklick auf SCHATZ.txt -> Ausschneiden.",
+          "Noch NICHT einfuegen. Markiere jetzt diese Mission als erledigt."
+        ],
+        check:{ type:"mc", q:"Was bedeutet Ausschneiden?", options:[
+          "Datei wird kopiert (doppelt)",
+          "Datei ist zum Verschieben vorbereitet (Transport startet)",
+          "Datei wird geloescht"
+        ], a:1 }
+      },
+      {
+        id:"m5",
+        title:"Rettung: Datei wiederfinden",
+        goal:"Du findest SCHATZ.txt wieder, auch wenn du den Ort nicht mehr weisst.",
+        steps:[
+          "Oeffne den Explorer (Win + E).",
+          "Nutze die Suche und suche nach SCHATZ.",
+          "Oeffne den Treffer und lies den Fundort (Pfad) ab.",
+          "Jetzt bist du bereit, den Transport sauber zu beenden."
+        ],
+        check:{ type:"mc", q:"Was hilft, wenn du den Ort einer Datei nicht mehr weisst?", options:[
+          "Nur raten",
+          "Explorer-Suche nutzen",
+          "Papierkorb oeffnen"
+        ], a:1 }
+      },
+      {
+        id:"m6",
+        title:"Transport beenden: Ausschneiden + Einfuegen",
+        goal:"Du verschiebst SCHATZ.txt in den richtigen Zielordner im Drive.",
+        steps:[
+          "Gehe zu dem Ordner, wo SCHATZ.txt gerade liegt (Fundort).",
+          "Rechtsklick auf SCHATZ.txt -> Ausschneiden.",
+          "Wechsle zu Google Drive > My Drive > Explorer-Training > Texte.",
+          "Rechtsklick im Ordner -> Einfuegen.",
+          "Pruefe: SCHATZ.txt liegt jetzt im Ordner Texte."
+        ],
+        check:{ type:"mc", q:"Was ist nach dem Verschieben richtig?", options:[
+          "Die Datei ist am alten Ort weg und am neuen Ort da",
+          "Die Datei ist an beiden Orten gleichzeitig",
+          "Die Datei wird automatisch umbenannt"
+        ], a:0 }
+      },
+      {
+        id:"m7",
+        title:"Beweis: Zielpfad nennen",
+        goal:"Du gibst den Zielpfad korrekt an (damit die Rettung nachweisbar ist).",
+        steps:[
+          "Oeffne den Zielordner: Google Drive > My Drive > Explorer-Training > Texte.",
+          "Klicke SCHATZ.txt an und lies den Pfad oben ab.",
+          "Schreibe den Zielpfad in das Textfeld im Mini-Check."
+        ],
+        check:{ type:"text", q:"Schreibe den Zielpfad (inkl. SCHATZ.txt).", key:"final_path" }
+      }
+    ];
+
+    function escapeHtml(str){
+      return String(str).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+
+    function load(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || null; } catch(e){ return null; } }
+    function save(state){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+    function freshState(){
+      return {
+        name:"",
+        idx:0,
+        unlockedIndex:0,
+        done: Object.fromEntries(MISSIONS.map(m=>[m.id,false])),
+        answers:{},
+        startedAt: new Date().toISOString(),
+        rescue:{
+          alarmActive:false,
+          alarmAcknowledged:false,
+          resetFromMissionId:"m4",
+          foundPath:"",
+          alarmTriggeredOnce:false
+        }
+      };
+    }
+
+    let STATE = load() || freshState();
+    const el = (id)=>document.getElementById(id);
+
+    function missionIndexById(id){
+      return MISSIONS.findIndex(m => m.id === id);
+    }
+
+    function resetFromTransport(){
+      const startId = (STATE.rescue && STATE.rescue.resetFromMissionId) ? STATE.rescue.resetFromMissionId : "m4";
+      const startIdx = missionIndexById(startId);
+      if(startIdx < 0) return;
+
+      for(let i=startIdx;i<MISSIONS.length;i++){
+        const mid = MISSIONS[i].id;
+        STATE.done[mid] = false;
+        if(STATE.answers && Object.prototype.hasOwnProperty.call(STATE.answers, mid)){
+          delete STATE.answers[mid];
+        }
+      }
+      // Keep earlier general text answers, but clear rescue proof
+      STATE.rescue.foundPath = "";
+      if(STATE.answers && Object.prototype.hasOwnProperty.call(STATE.answers, "final_path")){
+        delete STATE.answers["final_path"];
+      }
+
+      // Lock progression back to startIdx (but keep earlier unlocked)
+      STATE.unlockedIndex = Math.min(STATE.unlockedIndex, startIdx);
+      STATE.idx = Math.min(STATE.idx, STATE.unlockedIndex);
+    }
+
+    /* ===== Screenshots ===== */
+    function shotsForMission(missionId){
+      const map = {
+        m1: [
+          { file:"01_explorer_sidebar.png", title:"Explorer: Orte (Sidebar)", hint:"Downloads, Dokumente, Desktop, Google Drive" },
+          { file:"02_path_addressbar.png", title:"Pfad: Adressleiste", hint:"Hier siehst du den Ort" }
+        ],
+        m2: [
+          { file:"03_drive_my_drive.png", title:"Google Drive: My Drive", hint:"Hier Ordner anlegen" },
+          { file:"04_drive_training_subfolders.png", title:"Ordnerstruktur", hint:"Bilder / Texte / Sonstiges" }
+        ],
+        m3: [
+          { file:"05_rename_f2.png", title:"Dateiname (Beispiel Umbenennen)", hint:"Name ist nicht der Ort" }
+        ],
+        m4: [
+          { file:"06_context_copy_cut.png", title:"Kontextmenue: Ausschneiden", hint:"Transport startet hier" }
+        ],
+        m5: [
+          { file:"08_search_schatz.png", title:"Suche: SCHATZ", hint:"Trefferliste im Explorer" }
+        ],
+        m6: [
+          { file:"07_paste_target_folder.png", title:"Zielordner: Einfuegen", hint:"Drive > ... > Texte" }
+        ],
+        m7: [
+          { file:"10_drive_sync_status.png", title:"Drive Hinweis", hint:"Cloud/Sync (je nach Setup)" }
+        ]
+      };
+      return map[missionId] || [];
+    }
+
+    function renderShots(m){
+      const holder = el("shotHolder");
+      if(!holder) return;
+      const shots = shotsForMission(m.id);
+      holder.innerHTML = "";
+      if(shots.length === 0) return;
+
+      const grid = document.createElement("div");
+      grid.className = "shots";
+
+      shots.forEach((s)=>{
+        const card = document.createElement("div");
+        card.className = "shot";
+
+        const head = document.createElement("div");
+        head.className = "shot-head";
+        head.innerHTML =
+          "<div><div class='shot-title'>"+escapeHtml(s.title)+"</div><div class='shot-hint'>"+escapeHtml(s.hint||"")+"</div></div>" +
+          "<button class='shot-btn noprint' type='button'>Vergroessern</button>";
+
+        const body = document.createElement("div");
+        body.className = "shot-body";
+
+        const img = document.createElement("img");
+        img.className = "shot-img";
+        img.alt = s.title;
+        img.loading = "lazy";
+        img.src = ASSET_BASE + s.file;
+
+        const open = ()=>openLightbox(s.title, ASSET_BASE + s.file);
+        head.querySelector("button").onclick = open;
+        img.onclick = open;
+
+        body.appendChild(img);
+        card.appendChild(head);
+        card.appendChild(body);
+        grid.appendChild(card);
+      });
+
+      holder.appendChild(grid);
+    }
+
+    function openLightbox(title, src){
+      el("lbTitle").textContent = title;
+      const img = el("lbImg");
+      img.src = src;
+      img.alt = title;
+      el("lb").classList.add("open");
+      el("lb").setAttribute("aria-hidden","false");
+    }
+
+    el("lbClose").onclick = ()=>{ el("lb").classList.remove("open"); el("lb").setAttribute("aria-hidden","true"); };
+    el("lb").addEventListener("click", (e)=>{ if(e.target === el("lb")) el("lbClose").click(); });
+    window.addEventListener("keydown", (e)=>{ if(e.key === "Escape"){ el("lbClose").click(); } });
+
+    /* ===== Alarm + Countdown ===== */
+    let alarmTimer = null;
+
+    function startAlarmCountdown(){
+      const cd = el("alarmCountdown");
+      const btnClose = el("btnAlarmClose");
+      const btnCheck = el("btnAlarmCheck");
+
+      let t = 40;
+
+      if(btnClose) btnClose.disabled = true;
+      if(btnCheck) btnCheck.disabled = true;
+
+      if(cd) cd.textContent = "Systemcheck startet in: " + t;
+
+      if(alarmTimer) clearInterval(alarmTimer);
+      alarmTimer = setInterval(()=>{
+        t--;
+        if(t > 0){
+          if(cd) cd.textContent = "Systemcheck startet in: " + t;
+          return;
+        }
+        clearInterval(alarmTimer);
+        alarmTimer = null;
+
+        if(cd) cd.textContent = "Systemcheck: jetzt ausfuehren.";
+        if(btnClose) btnClose.disabled = false;
+        if(btnCheck) btnCheck.disabled = false;
+      }, 1000);
+    }
+
+    function validateFoundPath(found){
+      const f = (found || "").trim().toLowerCase();
+      if(f.length < 10) return "Fundort-Pfad ist zu kurz.";
+      const mustAny = ["dokumente","downloads","google drive"];
+      const okAny = mustAny.some(k => f.includes(k));
+      if(!okAny) return "Fundort sollte z. B. Dokumente, Downloads oder Google Drive enthalten.";
+      // Optional: encourage "schatz"
+      if(!f.includes("schatz")) return "Tipp: Fundort sollte auch SCHATZ enthalten (wenn sichtbar).";
+      return true;
+    }
+
+    function openAlarm(){
+      const a = el("alarm");
+      if(!a) return;
+      a.classList.remove("hidden");
+
+      // Prefill
+      const fp = el("foundPath");
+      if(fp) fp.value = STATE.rescue.foundPath || "";
+
+      el("alarmFeedback").innerHTML = "";
+
+      el("btnAlarmClose").onclick = ()=>{
+        // Allow closing, but they still cannot proceed unless validated (btnDone disabled while alarmActive)
+        STATE.rescue.alarmAcknowledged = true;
+        STATE.rescue.alarmActive = false;
+        save(STATE);
+        a.classList.add("hidden");
+        render();
+      };
+
+      el("btnAlarmCheck").onclick = ()=>{
+        const found = (el("foundPath")?.value || "").trim();
+        STATE.rescue.foundPath = found;
+
+        const fb = el("alarmFeedback");
+        const ok = validateFoundPath(found);
+
+        if(ok === true){
+          if(fb) fb.innerHTML = "<span class='ok'>OK. Rettung fortsetzen.</span>";
+          STATE.rescue.alarmAcknowledged = true;
+          STATE.rescue.alarmActive = false;
+          save(STATE);
+          a.classList.add("hidden");
+          render();
+        } else {
+          if(fb) fb.innerHTML = "<span class='no'>Noch nicht:</span> <span class='mini muted'>"+escapeHtml(ok)+"</span>";
+          save(STATE);
+        }
+      };
+
+      startAlarmCountdown();
+    }
+
+    function progress(){
+      const total = MISSIONS.length;
+      const done = MISSIONS.filter(m=>STATE.done[m.id]).length;
+      el("pTxt").textContent = done + "/" + total;
+      el("pBar").style.width = Math.round((done/total)*100) + "%";
+    }
+
+    function renderMissionList(){
+      const ul = el("missionList");
+      ul.innerHTML = "";
+
+      MISSIONS.forEach((m,i)=>{
+        const li = document.createElement("li");
+        const locked = i > STATE.unlockedIndex;
+        li.className = locked ? "locked" : "";
+
+        const left = document.createElement("div");
+        left.innerHTML = "<strong>"+(i+1)+". "+escapeHtml(m.title)+"</strong><div class='mini muted'>"+escapeHtml(m.goal)+"</div>";
+
+        const right = document.createElement("div");
+        right.innerHTML = STATE.done[m.id] ? "<span class='ok'>✓</span>" : (locked ? "<span class='muted'>🔒</span>" : "<span class='muted'>-</span>");
+
+        li.appendChild(left);
+        li.appendChild(right);
+
+        if(!locked){
+          li.onclick = ()=>{ STATE.idx=i; save(STATE); render(); };
+        } else {
+          li.onclick = ()=>{};
+        }
+
+        ul.appendChild(li);
+      });
+    }
+
+    function renderCheck(m){
+      const area = el("checkArea");
+      area.innerHTML = "";
+      el("mType").textContent = (m.check.type === "mc") ? "Multiple Choice" : "Kurzantwort";
+
+      if(m.check.type==="mc"){
+        const q = document.createElement("div");
+        q.innerHTML = "<div class='mini muted'>Frage</div><div style='font-weight:750;margin-top:2px'>"+escapeHtml(m.check.q)+"</div>";
+        area.appendChild(q);
+
+        const chosen = (STATE.answers[m.id] ?? null);
+
+        m.check.options.forEach((opt,idx)=>{
+          const wrap = document.createElement("div");
+          wrap.className = "row";
+          wrap.style.marginTop = "10px";
+
+          const input = document.createElement("input");
+          input.type="radio";
+          input.name="mc";
+          input.value=idx;
+          input.checked = (chosen===idx);
+          input.onchange = ()=>{
+            STATE.answers[m.id]=idx;
+            save(STATE);
+            render();
+          };
+
+          const label = document.createElement("div");
+          label.textContent = opt;
+
+          wrap.appendChild(input);
+          wrap.appendChild(label);
+          area.appendChild(wrap);
+        });
+
+        const fb = document.createElement("div");
+        fb.style.marginTop="10px";
+        if(chosen===null){
+          fb.innerHTML = "<span class='mini muted'>Waehle eine Antwort.</span>";
+        } else if(chosen===m.check.a){
+          fb.innerHTML = "<span class='ok'>Richtig.</span>";
+        } else {
+          fb.innerHTML = "<span class='no'>Noch nicht.</span> <span class='mini muted'>Lies die Mission kurz nochmal.</span>";
+        }
+        area.appendChild(fb);
+      }
+
+      if(m.check.type==="text"){
+        const q = document.createElement("div");
+        q.innerHTML = "<div class='mini muted'>Aufgabe</div><div style='font-weight:750;margin-top:2px'>"+escapeHtml(m.check.q)+"</div>";
+        area.appendChild(q);
+
+        const inp = document.createElement("textarea");
+        inp.placeholder = "Hier eintippen...";
+        inp.value = STATE.answers[m.check.key] || "";
+        inp.oninput = ()=>{
+          STATE.answers[m.check.key]=inp.value;
+          save(STATE);
+        };
+
+        area.appendChild(document.createElement("div")).style.height="8px";
+        area.appendChild(inp);
+
+        const fb = document.createElement("div");
+        fb.style.marginTop="10px";
+        fb.innerHTML = "<span class='mini muted'>Tipp: Verwende ' > ' zwischen den Ordnern.</span>";
+        area.appendChild(fb);
+      }
+    }
+
+    function render(){
+      el("studentName").value = STATE.name;
+
+      const m = MISSIONS[STATE.idx];
+
+      // If alarm is active, force overlay and block normal actions
+      if(STATE.rescue && STATE.rescue.alarmActive){
+        // disable buttons while alarm open
+        el("btnPrev").disabled = true;
+        el("btnNext").disabled = true;
+        el("btnDone").disabled = true;
+        openAlarm();
+        return;
+      }
+
+      el("mTitle").textContent = (STATE.idx+1) + ". " + m.title;
+      el("mGoal").textContent = m.goal;
+
+      const steps = el("mSteps");
+      steps.innerHTML = "";
+      m.steps.forEach(s=>{
+        const li=document.createElement("li");
+        li.textContent=s;
+        steps.appendChild(li);
+      });
+
+      renderShots(m);
+      renderCheck(m);
+      renderMissionList();
+      progress();
+
+      el("exportCard").classList.add("hidden");
+
+      // Navigation logic (locked progression, back allowed)
+      el("btnPrev").disabled = (STATE.idx===0);
+      el("btnNext").disabled = (STATE.idx >= STATE.unlockedIndex);
+
+      // done button always enabled unless locked by alarm
+      el("btnDone").disabled = false;
+    }
+
+    function isCheckPassed(m){
+      if(m.check.type==="mc"){
+        const chosen = STATE.answers[m.id];
+        return (chosen === m.check.a);
+      }
+      if(m.check.type==="text"){
+        const key = m.check.key;
+        const v = (STATE.answers[key]||"").trim();
+        return v.length >= 6;
+      }
+      return false;
+    }
+
+    function markDone(){
+      const m = MISSIONS[STATE.idx];
+
+      if(!isCheckPassed(m)){
+        alert("Mini-Check noch nicht geschafft. Bitte korrigieren 🙂");
+        return;
+      }
+
+      STATE.done[m.id]=true;
+
+      // Auto-trigger alarm after transport mission m4 (only once)
+      if(m.id === "m4" && STATE.rescue && !STATE.rescue.alarmTriggeredOnce){
+        STATE.rescue.alarmTriggeredOnce = true;
+
+        // Reset from transport mission onward to force real searching
+        STATE.rescue.resetFromMissionId = "m4";
+        resetFromTransport();
+
+        // Activate alarm overlay
+        STATE.rescue.alarmActive = true;
+        STATE.rescue.alarmAcknowledged = false;
+
+        // Jump to search mission m5 after alarm closes
+        const idx5 = missionIndexById("m5");
+        if(idx5 >= 0){
+          STATE.idx = idx5;
+          STATE.unlockedIndex = Math.max(STATE.unlockedIndex, idx5); // allow reaching it
+        }
+
+        save(STATE);
+        render();
+        return;
+      }
+
+      // Unlock next mission
+      STATE.unlockedIndex = Math.max(STATE.unlockedIndex, Math.min(MISSIONS.length-1, STATE.idx + 1));
+
+      // Auto-advance if possible
+      if(STATE.idx < STATE.unlockedIndex){
+        STATE.idx++;
+      }
+
+      save(STATE);
+      render();
+    }
+
+    function exportProtocol(){
+      const meta = [
+        "Name: " + (STATE.name || "-"),
+        "Datum: " + new Date().toLocaleString("de-AT")
+      ].join(" • ");
+      el("exportMeta").textContent = meta;
+
+      const body = document.createElement("div");
+      body.innerHTML = "";
+
+      // Found path evidence
+      const evidence = document.createElement("div");
+      evidence.style.padding="12px 0";
+      evidence.style.borderTop="1px solid var(--line)";
+      evidence.innerHTML =
+        "<div style='display:flex;justify-content:space-between;gap:10px'>" +
+          "<strong>Nachweis (Fundort)</strong>" +
+          "<span class='mini muted'>"+(STATE.rescue.alarmTriggeredOnce ? "Alarm ausgelost" : "-")+"</span>" +
+        "</div>" +
+        "<div style='margin-top:8px'><span class='mini muted'>Fundort-Pfad:</span><br>" +
+          escapeHtml((STATE.rescue && STATE.rescue.foundPath) ? STATE.rescue.foundPath : "-") +
+        "</div>";
+      body.appendChild(evidence);
+
+      MISSIONS.forEach((m,i)=>{
+        const block = document.createElement("div");
+        block.style.padding="12px 0";
+        block.style.borderTop="1px solid var(--line)";
+
+        const done = STATE.done[m.id] ? "✓ erledigt" : "- offen";
+
+        let ans = "";
+        if(m.check.type==="mc"){
+          const chosen = STATE.answers[m.id];
+          ans = (chosen==null) ? "-" : m.check.options[chosen];
+        } else {
+          ans = (STATE.answers[m.check.key]||"-");
+        }
+
+        block.innerHTML =
+          "<div style='display:flex;justify-content:space-between;gap:10px'>" +
+            "<strong>"+(i+1)+". "+escapeHtml(m.title)+"</strong>" +
+            "<span class='mini muted'>"+done+"</span>" +
+          "</div>" +
+          "<div class='mini muted' style='margin-top:4px'>"+escapeHtml(m.goal)+"</div>" +
+          "<div style='margin-top:8px'><span class='mini muted'>Mini-Check Antwort:</span><br>"+escapeHtml(ans)+"</div>";
+
+        body.appendChild(block);
+      });
+
+      el("exportBody").innerHTML = "";
+      el("exportBody").appendChild(body);
+
+      el("exportCard").classList.remove("hidden");
+      window.scrollTo({top: document.body.scrollHeight, behavior:"smooth"});
+    }
+
+    // Events
+    el("studentName").addEventListener("input", (e)=>{ STATE.name=e.target.value; save(STATE); });
+    el("btnStart").onclick = ()=>{ save(STATE); render(); };
+
+    el("btnPrev").onclick = ()=>{
+      if(STATE.idx>0){
+        STATE.idx--;
+        save(STATE);
+        render();
+      }
+    };
+
+    el("btnNext").onclick = ()=>{
+      // only move forward if unlocked
+      if(STATE.idx < STATE.unlockedIndex){
+        STATE.idx++;
+        save(STATE);
+        render();
+      }
+    };
+
+    el("btnDone").onclick = markDone;
+
+    el("btnReset").onclick = ()=>{
+      if(confirm("Wirklich alles zuruecksetzen?")){
+        localStorage.removeItem(LS_KEY);
+        STATE = freshState();
+        save(STATE);
+        render();
+      }
+    };
+
+    el("btnExport").onclick = exportProtocol;
+    el("btnCloseExport").onclick = ()=> el("exportCard").classList.add("hidden");
+
+    render();
+  </script>
+</body>
+</html>
