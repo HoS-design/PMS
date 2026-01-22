@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kleines Einmaleins (adaptiv) • HoS</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+
+  <style>
+    :root{
+      --subject-color:#2563eb;
+      --ink:#0f172a;
+      --muted:rgba(15,23,42,.70);
+      --line:rgba(15,23,42,.10);
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.62);
+      --shadow:0 18px 50px rgba(2,6,23,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;color:var(--ink);
+      background:
+        radial-gradient(1100px 520px at 18% -10%, rgba(37,99,235,.12), transparent 60%),
+        radial-gradient(900px 460px at 95% 10%, rgba(56,189,248,.12), transparent 58%),
+        linear-gradient(180deg,#ffffff,#f7fafc);
+    }
+    .wrap{max-width:1120px;margin:0 auto;padding:18px 14px 56px}
+    .shell{
+      border:1px solid var(--line);background:var(--card);
+      border-radius:22px;box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);overflow:hidden
+    }
+    .top{
+      padding:14px;border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.55));
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
+    }
+    .title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+    .title h2{margin:0;font-size:1.05rem;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:.92rem}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .tab{
+      appearance:none;border:1px solid var(--line);
+      background:rgba(255,255,255,.65);
+      padding:9px 12px;border-radius:999px;cursor:pointer;
+      font-weight:650;letter-spacing:.1px;
+      box-shadow:0 10px 26px rgba(2,6,23,.06);
+      transition:transform .06s ease, box-shadow .12s ease
+    }
+    .tab:hover{transform:translateY(-1px)}
+    .tab[aria-selected="true"]{
+      border-color:rgba(37,99,235,.35);
+      box-shadow:0 12px 30px rgba(37,99,235,.12);
+      background:rgba(255,255,255,.80)
+    }
+    .content{padding:14px}
+    .grid{display:grid;gap:12px}
+    @media (min-width:960px){.grid{grid-template-columns:1.2fr .8fr}}
+    .card{
+      border:1px solid var(--line);background:var(--card2);
+      border-radius:var(--radius);padding:14px;
+      box-shadow:0 12px 32px rgba(2,6,23,.06);
+      backdrop-filter:blur(10px)
+    }
+    .card h3{margin:0 0 8px;font-size:1rem}
+    .muted{color:var(--muted)}
+    .small{font-size:.92rem}
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .kpis{display:flex;flex-wrap:wrap;gap:8px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid var(--line);background:rgba(255,255,255,.70);
+      font-size:.92rem
+    }
+    .pill strong{font-weight:750}
+    .problem{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:14px;border-radius:18px;
+      border:1px dashed rgba(15,23,42,.18);
+      background:rgba(255,255,255,.66)
+    }
+    .problem .expr{
+      font-size:1.55rem;font-weight:800;letter-spacing:.2px;
+      display:flex;align-items:baseline;gap:10px;flex-wrap:wrap
+    }
+    .problem .expr .tiny{font-size:.85rem;font-weight:650;color:var(--muted)}
+    .answer{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;min-width:240px}
+    input[type="text"]{
+      width:120px;padding:10px 12px;border-radius:14px;
+      border:1px solid var(--line);background:rgba(255,255,255,.80);
+      outline:none;font-size:1rem;font-weight:700
+    }
+    input[type="text"]:focus{
+      border-color:rgba(37,99,235,.35);
+      box-shadow:0 0 0 4px rgba(37,99,235,.12)
+    }
+    .btn{
+      appearance:none;border:1px solid var(--line);
+      background:rgba(255,255,255,.75);
+      padding:10px 12px;border-radius:14px;cursor:pointer;font-weight:700;
+      box-shadow:0 10px 26px rgba(2,6,23,.06);
+      transition:transform .06s ease, box-shadow .12s ease
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{border-color:rgba(37,99,235,.35);box-shadow:0 12px 30px rgba(37,99,235,.12)}
+    .btn.danger{border-color:rgba(239,68,68,.30);box-shadow:0 12px 30px rgba(239,68,68,.10)}
+    .btn.ghost{background:rgba(255,255,255,.55)}
+    .feedback{
+      margin-top:10px;padding:10px 12px;border-radius:14px;
+      border:1px solid var(--line);background:rgba(255,255,255,.70)
+    }
+    .feedback.ok{border-color:rgba(16,185,129,.30);box-shadow:0 10px 24px rgba(16,185,129,.10)}
+    .feedback.bad{border-color:rgba(239,68,68,.30);box-shadow:0 10px 24px rgba(239,68,68,.10)}
+    .heatwrap{overflow:auto;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.60)}
+    table.heat{border-collapse:collapse;width:100%;min-width:560px}
+    .heat th,.heat td{border:1px solid rgba(15,23,42,.08);padding:8px;text-align:center}
+    .heat th{
+      position:sticky;top:0;background:rgba(255,255,255,.90);z-index:1;
+      font-weight:800;letter-spacing:.2px
+    }
+    .heat th.sticky-left{position:sticky;left:0;z-index:2;background:rgba(255,255,255,.90)}
+    .cell{
+      width:46px;height:44px;background:rgba(255,255,255,.75);
+      cursor:pointer;user-select:none;
+      transition:transform .06s ease, box-shadow .12s ease
+    }
+    .cell:hover{transform:translateY(-1px);box-shadow:0 10px 18px rgba(2,6,23,.06)}
+    .cell .mini{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+    .cell.is-new{opacity:.55}
+    .cell.is-wobbly{outline:3px solid rgba(239,68,68,.14)}
+    .cell.is-ok{outline:3px solid rgba(16,185,129,.14)}
+    .row2{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .switch{
+      display:flex;gap:8px;align-items:center;border:1px solid var(--line);
+      background:rgba(255,255,255,.60);padding:10px 12px;border-radius:16px
+    }
+    .switch input{transform:translateY(1px)}
+    .note{padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.65)}
+    .sr-only{position:absolute;left:-9999px}
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-mathe">Mathe</div>
+        <h1>Kleines Einmaleins (adaptiv)</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="shell" aria-label="Kleines Einmaleins Trainer">
+      <div class="top">
+        <div class="title">
+          <h2>Training</h2>
+          <span class="sub" id="modeLine">Modus: adaptiv (1 bis 10)</span>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Ansichten">
+          <button class="tab" type="button" role="tab" id="tab-train" aria-selected="true" aria-controls="panel-train">Training</button>
+          <button class="tab" type="button" role="tab" id="tab-overview" aria-selected="false" aria-controls="panel-overview">Uebersicht</button>
+          <button class="tab" type="button" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">Einstellungen</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div id="panel-train" role="tabpanel" aria-labelledby="tab-train">
+          <div class="grid">
+            <section class="card" aria-label="Aufgabe">
+              <h3>Aufgabe</h3>
+              <p class="muted small" style="margin:0 0 10px;">
+                Tipp: <strong>Enter</strong> prueft. Danach kommt automatisch die naechste Aufgabe.
+              </p>
+
+              <div class="problem">
+                <div class="expr">
+                  <span id="a">1</span><span aria-hidden="true">×</span><span id="b">1</span><span aria-hidden="true">=</span>
+                  <span class="tiny" id="focusTag"></span>
+                </div>
+                <div class="answer">
+                  <label class="sr-only" for="ans">Antwort</label>
+                  <input id="ans" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="?" />
+                  <button class="btn primary" type="button" id="checkBtn">Pruefen</button>
+                  <button class="btn ghost" type="button" id="skipBtn" title="Aufgabe ueberspringen">Weiter</button>
+                </div>
+              </div>
+
+              <div id="fb" class="feedback" aria-live="polite" style="display:none;"></div>
+
+              <div class="sep"></div>
+
+              <div class="kpis" aria-label="Status">
+                <div class="pill"><span class="muted">Streak:</span> <strong id="streak">0</strong></div>
+                <div class="pill"><span class="muted">Gesamtquote:</span> <strong id="acc">-</strong></div>
+                <div class="pill"><span class="muted">Geuebt:</span> <strong id="covered">0/55</strong></div>
+                <div class="pill"><span class="muted">Zuletzt gespeichert:</span> <strong id="savedAt">-</strong></div>
+              </div>
+            </section>
+
+            <aside class="card" aria-label="Hilfen und Fokus">
+              <h3>Fokus</h3>
+              <p class="muted small" style="margin:0 0 10px;">
+                Standard: alles 1 bis 10. In der Uebersicht kannst du Felder anklicken und gezielt trainieren.
+              </p>
+              <div class="note small" id="focusNote"><strong>Aktuell:</strong> alles gemischt (adaptiv)</div>
+              <div class="sep"></div>
+              <div class="row2">
+                <button class="btn" type="button" id="showSolutionBtn" title="Zeigt die Loesung (zaehlt optional als falsch)">Loesung zeigen</button>
+                <button class="btn" type="button" id="clearFocusBtn">Fokus loeschen</button>
+              </div>
+
+              <div class="sep"></div>
+              <h3>Top-Probleme</h3>
+              <div id="topList" class="muted small">-</div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" hidden>
+          <div class="grid">
+            <section class="card" aria-label="Uebersicht">
+              <h3>Uebersicht (1 bis 10)</h3>
+              <p class="muted small" style="margin:0 0 10px;">
+                Klicke ein Feld, um genau diese Aufgabe zu trainieren. (Statistik ist kommutativ: a×b = b×a)
+              </p>
+              <div class="heatwrap">
+                <table class="heat" id="heat"></table>
+              </div>
+              <div class="sep"></div>
+              <div class="row2">
+                <div class="pill"><span class="muted">Legende:</span> <strong>neu</strong> / <strong>wacklig</strong> / <strong>sicher</strong></div>
+                <button class="btn" type="button" id="refreshOverviewBtn">Aktualisieren</button>
+              </div>
+            </section>
+
+            <aside class="card" aria-label="Auswertung">
+              <h3>Auswertung</h3>
+              <div class="kpis">
+                <div class="pill"><span class="muted">Gesamt:</span> <strong id="ovAcc">-</strong></div>
+                <div class="pill"><span class="muted">Versuche:</span> <strong id="ovAttempts">0</strong></div>
+                <div class="pill"><span class="muted">Richtig:</span> <strong id="ovCorrect">0</strong></div>
+              </div>
+              <div class="sep"></div>
+              <h3>Problemfelder</h3>
+              <div id="ovProblems" class="muted small">-</div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+          <div class="grid">
+            <section class="card" aria-label="Einstellungen">
+              <h3>Einstellungen</h3>
+              <div class="switch">
+                <input type="checkbox" id="timeToggle" />
+                <label for="timeToggle"><strong>Zeit messen</strong> (macht die Auswahl noch adaptiver)</label>
+              </div>
+              <div class="sep"></div>
+              <div class="switch">
+                <input type="checkbox" id="helpCountsWrong" checked />
+                <label for="helpCountsWrong"><strong>Loesung zeigen</strong> zaehlt als falsch</label>
+              </div>
+              <div class="sep"></div>
+              <div class="row2">
+                <button class="btn" type="button" id="saveBtn">Speichern</button>
+                <button class="btn danger" type="button" id="resetBtn">Statistik loeschen</button>
+              </div>
+              <div class="sep"></div>
+              <div class="note small"><strong>Hinweis:</strong> Alles laeuft lokal (localStorage).</div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  (function(){
+    "use strict";
+    var STORAGE_KEY = "hos_kleines_einmaleins_adaptiv_v1";
+    var A_MIN = 1, A_MAX = 10;
+
+    function keyFor(a,b){
+      var x = Math.min(a,b), y = Math.max(a,b);
+      return x + "x" + y;
+    }
+    function nowStamp(){
+      try{
+        var d = new Date();
+        var pad = function(n){ return (n < 10 ? "0":"") + n; };
+        return pad(d.getDate()) + "." + pad(d.getMonth()+1) + "." + d.getFullYear() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+      }catch(e){ return "-"; }
+    }
+
+    var state = { v:1, streak:0, focus:null, stats:{}, settings:{useTime:false, helpCountsWrong:true}, savedAt:"-" };
+    var tabTrain = document.getElementById("tab-train");
+    var tabOverview = document.getElementById("tab-overview");
+    var tabSettings = document.getElementById("tab-settings");
+    var panelTrain = document.getElementById("panel-train");
+    var panelOverview = document.getElementById("panel-overview");
+    var panelSettings = document.getElementById("panel-settings");
+
+    var elA = document.getElementById("a");
+    var elB = document.getElementById("b");
+    var ans = document.getElementById("ans");
+    var checkBtn = document.getElementById("checkBtn");
+    var skipBtn = document.getElementById("skipBtn");
+    var fb = document.getElementById("fb");
+    var streakEl = document.getElementById("streak");
+    var accEl = document.getElementById("acc");
+    var coveredEl = document.getElementById("covered");
+    var savedAtEl = document.getElementById("savedAt");
+    var topList = document.getElementById("topList");
+    var focusNote = document.getElementById("focusNote");
+    var focusTag = document.getElementById("focusTag");
+    var modeLine = document.getElementById("modeLine");
+    var showSolutionBtn = document.getElementById("showSolutionBtn");
+    var clearFocusBtn = document.getElementById("clearFocusBtn");
+
+    var heat = document.getElementById("heat");
+    var refreshOverviewBtn = document.getElementById("refreshOverviewBtn");
+    var ovAcc = document.getElementById("ovAcc");
+    var ovAttempts = document.getElementById("ovAttempts");
+    var ovCorrect = document.getElementById("ovCorrect");
+    var ovProblems = document.getElementById("ovProblems");
+
+    var timeToggle = document.getElementById("timeToggle");
+    var helpCountsWrong = document.getElementById("helpCountsWrong");
+    var saveBtn = document.getElementById("saveBtn");
+    var resetBtn = document.getElementById("resetBtn");
+
+    var cur = {a:1,b:1,startTs:0};
+
+    function load(){
+      try{
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return;
+        var p = JSON.parse(raw);
+        if(!p || p.v !== 1) return;
+        state.streak = p.streak || 0;
+        state.focus = p.focus || null;
+        state.stats = p.stats || {};
+        state.settings = p.settings || state.settings;
+        state.savedAt = p.savedAt || "-";
+      }catch(e){}
+    }
+    function save(){
+      try{
+        state.savedAt = nowStamp();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        savedAtEl.textContent = state.savedAt;
+      }catch(e){ savedAtEl.textContent = "Speichern fehlgeschlagen"; }
+    }
+    function resetAll(){
+      if(!confirm("Wirklich Statistik loeschen?")) return;
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+      state.streak=0; state.focus=null; state.stats={}; state.savedAt="-";
+      renderAll(); nextQuestion();
+    }
+    function getStat(k){
+      if(!state.stats[k]) state.stats[k] = {attempts:0, correct:0, wrong:0, lastTs:0, avgMs:0};
+      return state.stats[k];
+    }
+    function allPairs(){
+      var pairs=[];
+      for(var a=A_MIN;a<=A_MAX;a++) for(var b=A_MIN;b<=A_MAX;b++) if(a<=b) pairs.push({a:a,b:b,k:keyFor(a,b)});
+      return pairs;
+    }
+    function weightForPair(pair){
+      var s = getStat(pair.k);
+      var attempts = s.attempts||0, wrong = s.wrong||0;
+      var errRate = attempts ? (wrong/attempts) : 0.0;
+      var errBoost = 1 + (errRate*3.2);
+      var novelty = (attempts===0) ? 1.9 : 1.0;
+      var now = Date.now();
+      var ageMin = s.lastTs ? Math.min(720, Math.max(0, (now - s.lastTs)/60000)) : 720;
+      var spacing = 1 + Math.min(2.0, ageMin/240);
+      var timeBoost = 1.0;
+      if(state.settings.useTime && attempts>=2 && s.avgMs){
+        var t=s.avgMs;
+        timeBoost = 1 + Math.min(1.5, Math.max(0,(t-3000)/4000));
+      }
+      return 1.0 * errBoost * novelty * spacing * timeBoost;
+    }
+    function pickWeighted(pairs){
+      var sum=0, w=[], i;
+      for(i=0;i<pairs.length;i++){ w[i]=weightForPair(pairs[i]); sum+=w[i]; }
+      var r=Math.random()*sum, acc=0;
+      for(i=0;i<pairs.length;i++){ acc+=w[i]; if(r<=acc) return pairs[i]; }
+      return pairs[pairs.length-1];
+    }
+    function nextQuestion(){
+      var pair;
+      if(state.focus && state.focus.a && state.focus.b){
+        var x=Math.min(state.focus.a,state.focus.b), y=Math.max(state.focus.a,state.focus.b);
+        pair={a:x,b:y,k:keyFor(x,y)};
+      } else {
+        pair = pickWeighted(allPairs());
+      }
+      var showA=pair.a, showB=pair.b;
+      if(Math.random()<0.5){ showA=pair.b; showB=pair.a; }
+      cur.a=showA; cur.b=showB; cur.startTs=Date.now();
+      elA.textContent=String(cur.a); elB.textContent=String(cur.b);
+      ans.value=""; ans.focus();
+      focusTag.textContent = (state.focus ? ("Fokus: "+state.focus.a+"×"+state.focus.b) : "");
+    }
+    function parseAnswer(v){
+      var s=String(v||"").trim();
+      if(!s) return null;
+      if(!/^-?\d+$/.test(s)) return null;
+      return parseInt(s,10);
+    }
+    function setFeedback(kind, html){
+      fb.style.display="block";
+      fb.className="feedback"+(kind?(" "+kind):"");
+      fb.innerHTML=html;
+    }
+    function clearFeedback(){ fb.style.display="none"; fb.className="feedback"; fb.innerHTML=""; }
+    function recordResult(ok, ms, counts){
+      if(!counts) return;
+      var k=keyFor(cur.a,cur.b);
+      var st=getStat(k);
+      st.attempts += 1;
+      if(ok) st.correct += 1; else st.wrong += 1;
+      st.lastTs = Date.now();
+      if(state.settings.useTime){
+        var prev = st.avgMs||0;
+        st.avgMs = prev ? Math.round(prev*0.8 + ms*0.2) : ms;
+      }
+    }
+    function overallKpis(){
+      var pairs=allPairs(), attempts=0, correct=0, covered=0, i;
+      for(i=0;i<pairs.length;i++){
+        var st=getStat(pairs[i].k);
+        attempts += st.attempts||0;
+        correct += st.correct||0;
+        if((st.attempts||0)>0) covered++;
+      }
+      var acc = attempts ? Math.round((correct/attempts)*100) : 0;
+      return {attempts:attempts, correct:correct, acc:acc, covered:covered, total:pairs.length};
+    }
+    function topProblems(limit){
+      var pairs=allPairs(), scored=[], i;
+      for(i=0;i<pairs.length;i++){
+        var p=pairs[i], st=getStat(p.k);
+        var a=st.attempts||0, w=st.wrong||0, c=st.correct||0;
+        var err=a?(w/a):1.0;
+        var score=(err*1.6) + (a===0?1.2:Math.max(0,0.8-Math.min(0.8,a/10)));
+        var pct=a?Math.round((c/a)*100):0;
+        scored.push({p:p, score:score, attempts:a, pct:pct});
+      }
+      scored.sort(function(x,y){return y.score-x.score;});
+      return scored.slice(0,limit||6).map(function(s){
+        var mini = s.attempts===0 ? "neu" : (s.pct+"%");
+        return "<button class='btn ghost' type='button' data-focus='"+s.p.a+","+s.p.b+"' style='margin:6px 6px 0 0;'>" +
+          s.p.a + "×" + s.p.b + " <span class='muted' style='font-weight:650;'>(" + mini + ")</span></button>";
+      }).join("") || "-";
+    }
+    function setFocus(a,b){
+      state.focus={a:a,b:b};
+      focusNote.innerHTML="<strong>Aktuell:</strong> Fokus "+a+"×"+b+" (kommutativ)";
+      modeLine.textContent="Modus: adaptiv (Fokus "+a+"×"+b+")";
+      focusTag.textContent="Fokus: "+a+"×"+b;
+    }
+    function clearFocus(){
+      state.focus=null;
+      focusNote.innerHTML="<strong>Aktuell:</strong> alles gemischt (adaptiv)";
+      modeLine.textContent="Modus: adaptiv (1 bis 10)";
+      focusTag.textContent="";
+    }
+    function renderTrainKpis(){
+      var k=overallKpis();
+      streakEl.textContent=String(state.streak||0);
+      accEl.textContent = k.attempts ? (k.acc+"%") : "-";
+      coveredEl.textContent = k.covered + "/" + k.total;
+      savedAtEl.textContent = state.savedAt || "-";
+      topList.innerHTML = topProblems(6);
+      topList.querySelectorAll("[data-focus]").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var parts=String(btn.getAttribute("data-focus")).split(",");
+          setFocus(parseInt(parts[0],10), parseInt(parts[1],10));
+          save(); openTab("train"); nextQuestion();
+        });
+      });
+    }
+    function statusForPair(a,b){
+      var st=getStat(keyFor(a,b));
+      var attempts=st.attempts||0;
+      if(attempts===0) return {cls:"is-new", pct:null};
+      var pct=Math.round((st.correct/attempts)*100);
+      if(attempts<3) return {cls:"is-wobbly", pct:pct};
+      if(pct>=85) return {cls:"is-ok", pct:pct};
+      return {cls:"is-wobbly", pct:pct};
+    }
+    function buildHeatmap(){
+      var html="";
+      html += "<tr><th class='sticky-left'>×</th>";
+      for(var c=A_MIN;c<=A_MAX;c++) html += "<th>"+c+"</th>";
+      html += "</tr>";
+      for(var r=A_MIN;r<=A_MAX;r++){
+        html += "<tr><th class='sticky-left'>"+r+"</th>";
+        for(var c2=A_MIN;c2<=A_MAX;c2++){
+          var s=statusForPair(r,c2);
+          var st=getStat(keyFor(r,c2));
+          var attempts=st.attempts||0;
+          var mini = attempts===0 ? "neu" : (s.pct+"%");
+          html += "<td class='cell "+s.cls+"' data-pair='"+r+","+c2+"' title='"+r+"×"+c2+" • "+mini+"'>";
+          html += "<strong>"+(r*c2)+"</strong><span class='mini'>"+mini+"</span></td>";
+        }
+        html += "</tr>";
+      }
+      heat.innerHTML = html;
+      heat.querySelectorAll("[data-pair]").forEach(function(td){
+        td.addEventListener("click", function(){
+          var parts=String(td.getAttribute("data-pair")).split(",");
+          setFocus(parseInt(parts[0],10), parseInt(parts[1],10));
+          save(); openTab("train"); nextQuestion();
+        });
+      });
+    }
+    function renderOverview(){
+      buildHeatmap();
+      var k=overallKpis();
+      ovAttempts.textContent=String(k.attempts);
+      ovCorrect.textContent=String(k.correct);
+      ovAcc.textContent = k.attempts ? (k.acc+"%") : "-";
+      // simple top 10 problems
+      var pairs=allPairs(), scored=[];
+      pairs.forEach(function(p){
+        var st=getStat(p.k);
+        var a=st.attempts||0, w=st.wrong||0, c=st.correct||0;
+        var pct=a?Math.round((c/a)*100):0;
+        var err=a?(w/a):1.0;
+        var score=(err*1.7) + (a===0?1.1:Math.max(0,0.7-Math.min(0.7,a/10)));
+        scored.push({p:p,score:score,attempts:a,pct:pct});
+      });
+      scored.sort(function(x,y){return y.score-x.score;});
+      var top=scored.slice(0,10);
+      ovProblems.innerHTML = top.map(function(s){
+        var mini = s.attempts===0 ? "neu" : (s.pct+"%");
+        return "<div style='margin:6px 0; display:flex; justify-content:space-between; gap:10px; align-items:center;'>" +
+          "<span><strong>"+s.p.a+"×"+s.p.b+"</strong> <span class='muted'>("+mini+")</span></span>" +
+          "<button class='btn ghost' type='button' data-focus='"+s.p.a+","+s.p.b+"'>Trainieren</button></div>";
+      }).join("") || "-";
+      ovProblems.querySelectorAll("[data-focus]").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var parts=String(btn.getAttribute("data-focus")).split(",");
+          setFocus(parseInt(parts[0],10), parseInt(parts[1],10));
+          save(); openTab("train"); nextQuestion();
+        });
+      });
+    }
+    function renderSettings(){
+      timeToggle.checked=!!state.settings.useTime;
+      helpCountsWrong.checked=!!state.settings.helpCountsWrong;
+    }
+    function renderAll(){
+      if(state.focus && state.focus.a && state.focus.b) setFocus(state.focus.a,state.focus.b);
+      else clearFocus();
+      renderTrainKpis();
+      renderSettings();
+    }
+    function openTab(which){
+      var isTrain=(which==="train"), isOv=(which==="overview"), isSet=(which==="settings");
+      tabTrain.setAttribute("aria-selected", isTrain?"true":"false");
+      tabOverview.setAttribute("aria-selected", isOv?"true":"false");
+      tabSettings.setAttribute("aria-selected", isSet?"true":"false");
+      panelTrain.hidden=!isTrain;
+      panelOverview.hidden=!isOv;
+      panelSettings.hidden=!isSet;
+      if(isOv) renderOverview();
+      if(isSet) renderSettings();
+      if(isTrain) ans.focus();
+    }
+    function checkAnswer(counts){
+      clearFeedback();
+      var v=parseAnswer(ans.value);
+      if(v===null){ setFeedback("bad","<strong>Bitte eine ganze Zahl eingeben.</strong>"); state.streak=0; renderTrainKpis(); return; }
+      var correct = cur.a*cur.b;
+      var ms = Math.max(0, Date.now() - (cur.startTs||Date.now()));
+      var ok = (v===correct);
+      recordResult(ok, ms, counts);
+      if(ok){ state.streak=(state.streak||0)+1; setFeedback("ok","<strong>Richtig.</strong> "+cur.a+"×"+cur.b+" = "+correct+"."); }
+      else { state.streak=0; setFeedback("bad","<strong>Nicht ganz.</strong> "+cur.a+"×"+cur.b+" = <strong>"+correct+"</strong>."); }
+      renderTrainKpis(); save();
+      setTimeout(function(){ nextQuestion(); clearFeedback(); }, 650);
+    }
+
+    tabTrain.addEventListener("click", function(){ openTab("train"); });
+    tabOverview.addEventListener("click", function(){ openTab("overview"); });
+    tabSettings.addEventListener("click", function(){ openTab("settings"); });
+
+    checkBtn.addEventListener("click", function(){ checkAnswer(true); });
+    skipBtn.addEventListener("click", function(){ nextQuestion(); clearFeedback(); });
+    ans.addEventListener("keydown", function(e){
+      if(e.key==="Enter"){ e.preventDefault(); checkAnswer(true); }
+      else if(e.key==="Escape"){ ans.value=""; }
+    });
+
+    showSolutionBtn.addEventListener("click", function(){
+      var correct=cur.a*cur.b;
+      setFeedback("bad","<strong>Loesung:</strong> "+cur.a+"×"+cur.b+" = <strong>"+correct+"</strong>.");
+      if(state.settings.helpCountsWrong){ recordResult(false, 0, true); state.streak=0; renderTrainKpis(); save(); }
+      setTimeout(function(){ nextQuestion(); clearFeedback(); }, 850);
+    });
+
+    clearFocusBtn.addEventListener("click", function(){ clearFocus(); save(); nextQuestion(); });
+
+    refreshOverviewBtn.addEventListener("click", function(){ renderOverview(); });
+
+    timeToggle.addEventListener("change", function(){ state.settings.useTime=!!timeToggle.checked; });
+    helpCountsWrong.addEventListener("change", function(){ state.settings.helpCountsWrong=!!helpCountsWrong.checked; });
+
+    saveBtn.addEventListener("click", function(){ save(); renderTrainKpis(); });
+    resetBtn.addEventListener("click", resetAll);
+
+    load();
+    renderAll();
+    save();
+    nextQuestion();
+  })();
+  </script>
+</body>
+</html>
