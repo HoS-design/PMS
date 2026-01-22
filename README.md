@@ -1,4 +1,4 @@
-PMS_beta - HoS Lern-Apps Portal
+PMS_beta - HoS Lern-Apps Portal.
 
 Ziel
 Dieses Repo enthaelt eine Sammlung von Lern-Apps (Module) und zwei Einstiegsseiten:
