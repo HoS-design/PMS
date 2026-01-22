@@ -1,211 +1,310 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tenses Builder • HoS</title>
-
-  <!-- Pflicht-Stylesheets -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tenses Builder</title>
+  
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
 
   <style>
-    /* Other subject badge: use badge-main and set --subject-color */
-    :root{
-      --subject-color:#14b8a6; /* English teal */
-      --ink:#0f172a;
-      --muted:rgba(15,23,42,.70);
-      --line:rgba(15,23,42,.10);
-      --card:rgba(255,255,255,.78);
-      --card2:rgba(255,255,255,.62);
-      --shadow:0 18px 50px rgba(2,6,23,.10);
-      --radius:18px;
-      --ok:rgba(16,185,129,.14);
-      --bad:rgba(239,68,68,.14);
+    /* HoS-Design Variablen */
+    :root {
+      --subject-color: #0ea5e9; /* Sky Blue für Englisch */
+      --accent: #0ea5e9;
+      --accent-light: #e0f2fe;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;color:var(--ink);
-      background:
-        radial-gradient(1100px 520px at 18% -10%, rgba(20,184,166,.12), transparent 60%),
-        radial-gradient(900px 460px at 95% 10%, rgba(37,99,235,.10), transparent 58%),
-        linear-gradient(180deg,#ffffff,#f7fafc);
-    }
-    .wrap{max-width:1120px;margin:0 auto;padding:18px 14px 56px}
-    .shell{
-      border:1px solid var(--line);background:var(--card);
-      border-radius:22px;box-shadow:var(--shadow);
-      backdrop-filter:blur(12px);overflow:hidden
-    }
-    .top{
-      padding:14px;border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg,rgba(255,255,255,.75),rgba(255,255,255,.55));
-      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap
-    }
-    .title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-    .title h2{margin:0;font-size:1.05rem;letter-spacing:.2px}
-    .sub{color:var(--muted);font-size:.92rem}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .tab{
-      appearance:none;border:1px solid var(--line);
-      background:rgba(255,255,255,.65);
-      padding:9px 12px;border-radius:999px;cursor:pointer;
-      font-weight:650;letter-spacing:.1px;
-      box-shadow:0 10px 26px rgba(2,6,23,.06);
-      transition:transform .06s ease, box-shadow .12s ease
-    }
-    .tab:hover{transform:translateY(-1px)}
-    .tab[aria-selected="true"]{
-      border-color:rgba(20,184,166,.35);
-      box-shadow:0 12px 30px rgba(20,184,166,.12);
-      background:rgba(255,255,255,.80)
-    }
-    .content{padding:14px}
-    .grid{display:grid;gap:12px}
-    @media (min-width:960px){.grid{grid-template-columns:1.25fr .75fr}}
-    .card{
-      border:1px solid var(--line);background:var(--card2);
-      border-radius:var(--radius);padding:14px;
-      box-shadow:0 12px 32px rgba(2,6,23,.06);
-      backdrop-filter:blur(10px)
-    }
-    .card h3{margin:0 0 8px;font-size:1rem}
-    .muted{color:var(--muted)}
-    .small{font-size:.92rem}
-    .sep{height:1px;background:var(--line);margin:12px 0}
 
-    .kpis{display:flex;flex-wrap:wrap;gap:8px}
-    .pill{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      border:1px solid var(--line);background:rgba(255,255,255,.70);
-      font-size:.92rem
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding-bottom: 40px;
     }
-    .pill strong{font-weight:750}
 
-    .task{
-      padding:14px;border-radius:18px;
-      border:1px dashed rgba(15,23,42,.18);
-      background:rgba(255,255,255,.66)
+    /* Layout Wrapper */
+    .app-wrapper {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 16px;
     }
-    .taskline{
-      display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap
-    }
-    .tense-name{
-      font-size:1.25rem;font-weight:850;letter-spacing:.2px;
-      display:flex;gap:10px;align-items:baseline;flex-wrap:wrap
-    }
-    .tense-name .hint{font-size:.85rem;font-weight:650;color:var(--muted)}
-    .btn{
-      appearance:none;border:1px solid var(--line);
-      background:rgba(255,255,255,.75);
-      padding:10px 12px;border-radius:14px;cursor:pointer;font-weight:700;
-      box-shadow:0 10px 26px rgba(2,6,23,.06);
-      transition:transform .06s ease, box-shadow .12s ease
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn.primary{border-color:rgba(20,184,166,.35);box-shadow:0 12px 30px rgba(20,184,166,.12)}
-    .btn.ghost{background:rgba(255,255,255,.55)}
-    .btn.danger{border-color:rgba(239,68,68,.30);box-shadow:0 12px 30px rgba(239,68,68,.10)}
-    .btn.mini{padding:6px 8px;border-radius:12px;font-weight:750;font-size:.85rem;box-shadow:none}
 
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .chip{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.80);
-      padding:8px 10px;border-radius:999px;
-      cursor:pointer;user-select:none;
-      font-weight:700;
-      box-shadow:0 10px 22px rgba(2,6,23,.05);
-      transition:transform .06s ease
+    /* Grid Layout */
+    .hos-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
     }
-    .chip:hover{transform:translateY(-1px)}
-    .chip.disabled{opacity:.45;cursor:not-allowed;transform:none}
+    @media (min-width: 800px) {
+      .hos-grid {
+        grid-template-columns: 2fr 1fr;
+        align-items: start;
+      }
+    }
 
-    .formula{
-      margin-top:10px;
-      display:flex;
-      align-items:center;
-      gap:10px;
+    /* Cards */
+    .hos-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      margin-bottom: 20px;
     }
-    .dropzone{
-      flex: 1;
-      min-height: 70px;
-      padding: 12px;
-      border-radius: 16px;
-      border: 1px dashed rgba(15,23,42,.22);
-      background: rgba(255,255,255,.58);
+    .hos-card h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.1rem;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
     }
-    .dropzone.is-over{
-      outline: 3px solid rgba(20,184,166,.14);
-      background: rgba(255,255,255,.74);
+
+    /* Typography */
+    .text-muted { color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; }
+    .text-small { font-size: 0.85rem; }
+    .mono { font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace; background: #f1f5f9; padding: 2px 4px; border-radius: 4px; }
+
+    /* Tabs */
+    .hos-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      overflow-x: auto;
     }
-    .formula-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    .formula-empty{
-      color: var(--muted);
-      font-size: .92rem;
-      font-weight: 650;
+    .hos-tab {
+      background: transparent;
+      border: none;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .slot{
-      display:inline-flex;align-items:center;gap:8px;
-      border:1px solid rgba(15,23,42,.10);
-      background:rgba(255,255,255,.85);
-      border-radius:999px;
-      padding:8px 10px;
-      box-shadow:0 10px 20px rgba(2,6,23,.04);
+    .hos-tab:hover { background: var(--border); color: var(--text-main); }
+    .hos-tab[aria-selected="true"] {
+      background: var(--accent);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Task Area */
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tense-display {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Formula Dropzone */
+    .formula-area {
+      background: #f1f5f9;
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius);
+      padding: 20px;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 16px 0;
+      transition: background 0.2s;
+    }
+    .formula-area.is-over {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+    .formula-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    .formula-placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* Chips & Slots */
+    .chip, .slot {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      user-select: none;
       cursor: grab;
+      transition: transform 0.1s, box-shadow 0.1s;
+      border: 1px solid var(--border);
+      background: white;
+      box-shadow: var(--shadow-sm);
     }
-    .slot .txt{font-weight:800}
-    .slot .controls{display:flex;gap:6px;align-items:center}
-    .plus{color:var(--muted);font-weight:850;padding:0 2px}
+    .chip:hover, .slot:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+    .chip:active, .slot:active {
+      cursor: grabbing;
+    }
+    .chip.dragging, .slot.dragging {
+      opacity: 0.5;
+    }
 
-    /* Drag & Drop */
-    .chip[draggable="true"]{ cursor: grab; }
-    .chip.dragging{ opacity: .55; transform: scale(.99); }
-    .slot.dragging{ opacity:.6; }
+    /* Pool */
+    .pool-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
 
-    .feedback{
-      margin-top:10px;padding:10px 12px;border-radius:14px;
-      border:1px solid var(--line);background:rgba(255,255,255,.70)
+    /* Controls inside Slot */
+    .slot {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e3a8a;
+      gap: 8px;
+      padding-right: 6px; /* Space for buttons */
     }
-    .feedback.ok{border-color:rgba(16,185,129,.30);box-shadow:0 10px 24px rgba(16,185,129,.10);background:linear-gradient(180deg,rgba(16,185,129,.10),rgba(255,255,255,.70))}
-    .feedback.bad{border-color:rgba(239,68,68,.30);box-shadow:0 10px 24px rgba(239,68,68,.10);background:linear-gradient(180deg,rgba(239,68,68,.10),rgba(255,255,255,.70))}
-    .feedback .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    .slot-controls {
+      display: flex;
+      gap: 2px;
+    }
+    .mini-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #3b82f6;
+      font-weight: bold;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .mini-btn:hover { background: rgba(59,130,246,0.1); }
+    .plus-sign { color: var(--text-muted); font-weight: bold; margin: 0 4px; }
 
-    .list{display:grid;gap:10px}
-    .tense-card{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.65);
-      border-radius:18px;
-      padding:12px;
-      box-shadow:0 10px 26px rgba(2,6,23,.05);
-      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
-      cursor:pointer;
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      font-size: 0.95rem;
+      text-decoration: none;
     }
-    .tense-card:hover{outline:3px solid rgba(20,184,166,.10)}
-    .status{
-      display:inline-flex;align-items:center;gap:8px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.70);
-      border-radius:999px;
-      padding:8px 10px;
-      font-size:.92rem;
-      font-weight:750;
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 2px 4px rgba(14, 165, 233, 0.3);
     }
-    .status.new{opacity:.60}
-    .status.ok{outline:3px solid var(--ok)}
-    .status.bad{outline:3px solid var(--bad)}
+    .btn-primary:hover { background: #0284c7; }
+    
+    .btn-secondary {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+    .btn-secondary:hover { background: #f1f5f9; border-color: #cbd5e1; }
 
-    .note{
-      padding:10px 12px;border-radius:16px;border:1px solid var(--line);
-      background:rgba(255,255,255,.65)
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
     }
-    .sr-only{position:absolute;left:-9999px}
+    .btn-ghost:hover { color: var(--text-main); background: rgba(0,0,0,0.05); }
+
+    .btn-danger {
+      background: #fff;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+    .btn-danger:hover { background: #fef2f2; }
+
+    /* Feedback */
+    .feedback-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .feedback-box.ok { background: var(--success-bg); color: var(--success-text); border: 1px solid #bbf7d0; }
+    .feedback-box.bad { background: var(--error-bg); color: var(--error-text); border: 1px solid #fecaca; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Overview List */
+    .tense-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .tense-list-item:hover { background: #f8fafc; }
+    .tense-list-item:last-child { border-bottom: none; }
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-new { background: #f1f5f9; color: var(--text-muted); }
+    .status-ok { background: var(--success-bg); color: var(--success-text); }
+    .status-bad { background: #fff7ed; color: #c2410c; }
+
+    /* KPI Pills */
+    .kpi-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+    .kpi-pill {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .kpi-pill strong { color: var(--text-main); }
   </style>
 </head>
 <body>
 
-  <!-- Standard-Header (exakt, nur Text angepasst) -->
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -219,201 +318,148 @@
     </div>
   </header>
 
-  <main class="wrap">
-    <section class="shell" aria-label="Tenses Builder">
-      <div class="top">
-        <div class="title">
-          <h2>Forming als Formel</h2>
-          <span class="sub" id="modeLine">Build by selecting summands (order matters). No slots shown.</span>
-        </div>
-        <div class="tabs" role="tablist" aria-label="Ansichten">
-          <button class="tab" type="button" role="tab" id="tab-train" aria-selected="true" aria-controls="panel-train">Training</button>
-          <button class="tab" type="button" role="tab" id="tab-overview" aria-selected="false" aria-controls="panel-overview">Uebersicht</button>
-          <button class="tab" type="button" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">Einstellungen</button>
+  <div class="app-wrapper">
+    
+    <div class="hos-tabs" role="tablist">
+      <button class="hos-tab" type="button" role="tab" id="tab-train" aria-selected="true">Training</button>
+      <button class="hos-tab" type="button" role="tab" id="tab-overview" aria-selected="false">Übersicht</button>
+      <button class="hos-tab" type="button" role="tab" id="tab-settings" aria-selected="false">Einstellungen</button>
+    </div>
+
+    <main>
+      
+      <div id="panel-train" role="tabpanel">
+        <div class="hos-grid">
+          
+          <section>
+            <div class="hos-card">
+              <div class="task-header">
+                <div>
+                  <span class="text-muted text-small" style="display:block; margin-bottom:4px;">Bilde die Zeitform:</span>
+                  <div class="tense-display">
+                    <span id="tenseName">Loading...</span>
+                    <span id="focusTag" style="font-size:0.8rem; font-weight:normal; color:#64748b; margin-left:8px;"></span>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn btn-secondary" type="button" id="randomBtn">Skip / Next</button>
+                </div>
+              </div>
+
+              <div class="formula-area" id="dropzone">
+                <div class="formula-row" id="formulaRow">
+                  <span class="formula-placeholder">Bausteine hierher ziehen</span>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-ghost text-small" type="button" id="undoBtn">Rückgängig</button>
+                  <button class="btn btn-ghost text-small" type="button" id="clearBtn">Leeren</button>
+                </div>
+                <div style="display:flex; gap:8px;">
+                   <button class="btn btn-secondary text-small" type="button" id="hintBtn" style="display:none;">Tipp?</button>
+                   <button class="btn btn-secondary text-small" type="button" id="showBtn" style="display:none;">Lösung</button>
+                   <button class="btn btn-primary" type="button" id="checkBtn">Prüfen</button>
+                </div>
+              </div>
+
+              <div id="fb" class="feedback-box"></div>
+              <p class="text-muted text-small" id="helpGateLine" style="margin-top:12px; text-align:right; min-height:1.2em;"></p>
+            </div>
+
+            <div class="hos-card">
+              <h3>Bausteine</h3>
+              <p class="text-muted text-small">Klicken oder Ziehen zum Hinzufügen.</p>
+              <div class="pool-area" id="pool"></div>
+            </div>
+          </section>
+
+          <aside>
+            <div class="hos-card">
+              <h3>Fortschritt</h3>
+              <div class="kpi-row">
+                <div class="kpi-pill">Streak: <strong id="streak">0</strong></div>
+                <div class="kpi-pill">Genauigkeit: <strong id="acc">-</strong></div>
+                <div class="kpi-pill">Gelernt: <strong id="covered">0/10</strong></div>
+              </div>
+              <p class="text-muted text-small" style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px;">
+                Gespeichert: <span id="savedAt">-</span>
+              </p>
+            </div>
+
+            <div class="hos-card">
+              <h3>Modus</h3>
+              <div id="focusNote" class="text-muted text-small" style="margin-bottom:12px;">Adaptiv (alles gemischt)</div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="btn btn-secondary text-small" id="clearFocusBtn">Fokus aufheben</button>
+                <button class="btn btn-ghost text-small" id="saveBtn2">Jetzt speichern</button>
+              </div>
+            </div>
+
+            <div class="hos-card" style="background:#f0fdf4; border-color:#bbf7d0;">
+              <h3 style="border-color:#86efac; color:#166534;">Pro-Tipp</h3>
+              <p class="text-small" style="color:#14532d; margin:0;">
+                Bei <strong>Present simple</strong> (he/she/it) kommt oft ein <strong>-s</strong> dazu. Wir üben hier die allgemeine Struktur.
+              </p>
+            </div>
+          </aside>
+
         </div>
       </div>
 
-      <div class="content">
-        <!-- TRAIN -->
-        <div id="panel-train" role="tabpanel" aria-labelledby="tab-train">
-          <div class="grid">
-            <section class="card" aria-label="Aufgabe">
-              <h3>Aufgabe</h3>
-              <p class="muted small" style="margin:0 0 10px;">
-                Ziehe Summanden in die Formel (oder klicke im Pool). Reihenfolge ist wichtig.
-                Bei falschen Antworten gibt es erst spaeter Hilfe.
-              </p>
-
-              <div class="task">
-                <div class="taskline">
-                  <div class="tense-name">
-                    <span id="tenseName">Present progressive</span>
-                    <span class="hint" id="focusTag"></span>
-                  </div>
-                  <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
-                    <button class="btn ghost" type="button" id="randomBtn" title="Naechste Aufgabe">Next</button>
-                    <button class="btn primary" type="button" id="checkBtn">Check</button>
-                  </div>
-                </div>
-
-                <div class="sep"></div>
-
-                <div>
-                  <strong class="small">Summanden-Pool</strong>
-                  <div class="chips" id="pool"></div>
-                </div>
-
-                <div class="sep"></div>
-
-                <div>
-                  <strong class="small">Deine Formel</strong>
-                  <div class="formula" id="formulaBox">
-                    <div class="dropzone" id="dropzone" aria-label="Formel Dropzone">
-                      <div class="formula-row" id="formulaRow">
-                        <span class="formula-empty">Ziehe Summanden hierher (oder klicke im Pool).</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-                    <button class="btn" type="button" id="undoBtn">Undo</button>
-                    <button class="btn" type="button" id="clearBtn">Clear</button>
-
-                    <!-- Help buttons appear only after repeated wrong attempts -->
-                    <button class="btn" type="button" id="hintBtn" style="display:none;">Hint</button>
-                    <button class="btn" type="button" id="showBtn" style="display:none;">Show solution</button>
-                  </div>
-
-                  <div class="muted small" id="helpGateLine" style="margin-top:8px;">
-                    Hilfe wird erst nach mehreren falschen Versuchen eingeblendet.
-                  </div>
-                </div>
-
-                <div id="fb" class="feedback" aria-live="polite" style="display:none;"></div>
-
-                <div class="sep"></div>
-
-                <div class="kpis" aria-label="Status">
-                  <div class="pill"><span class="muted">Streak:</span> <strong id="streak">0</strong></div>
-                  <div class="pill"><span class="muted">Accuracy:</span> <strong id="acc">-</strong></div>
-                  <div class="pill"><span class="muted">Tenses practiced:</span> <strong id="covered">0/10</strong></div>
-                  <div class="pill"><span class="muted">Saved:</span> <strong id="savedAt">-</strong></div>
-                </div>
-              </div>
-            </section>
-
-            <aside class="card" aria-label="Fokus und Infos">
-              <h3>Fokus</h3>
-              <p class="muted small" style="margin:0 0 10px;">
-                Standard: adaptiv gemischt. In der Uebersicht kannst du eine Zeitform anklicken (Fokus).
-              </p>
-              <div class="note small" id="focusNote">
-                <strong>Aktuell:</strong> alles gemischt (adaptiv)
-              </div>
-
-              <div class="sep"></div>
-
-              <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button class="btn" type="button" id="clearFocusBtn">Fokus loeschen</button>
-                <button class="btn" type="button" id="saveBtn2">Speichern</button>
-              </div>
-
-              <div class="sep"></div>
-
-              <h3>Hinweis</h3>
-              <p class="muted small" style="margin:0;">
-                Present simple hat eine Besonderheit: bei <strong>he/she/it</strong> kommt oft <strong>-s</strong> dazu.
-                In dieser App trainieren wir nur die Summanden-Struktur (forming).
-              </p>
-            </aside>
-          </div>
+      <div id="panel-overview" role="tabpanel" hidden>
+        <div class="hos-grid">
+          <section class="hos-card">
+            <h3>Alle Zeitformen</h3>
+            <p class="text-muted text-small">Klicke auf eine Form, um sie gezielt zu üben.</p>
+            <div id="tenseList"></div>
+          </section>
+          
+          <aside class="hos-card">
+            <h3>Gesamtstatistik</h3>
+            <div style="display:grid; gap:10px;">
+              <div class="kpi-pill">Versuche: <strong id="ovAttempts">0</strong></div>
+              <div class="kpi-pill">Korrekt: <strong id="ovCorrect">0</strong></div>
+              <div class="kpi-pill">Quote: <strong id="ovAcc">-</strong></div>
+            </div>
+            <button class="btn btn-secondary text-small" id="refreshBtn" style="margin-top:16px; width:100%;">Aktualisieren</button>
+          </aside>
         </div>
+      </div>
 
-        <!-- OVERVIEW -->
-        <div id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" hidden>
-          <div class="grid">
-            <section class="card" aria-label="Uebersicht">
-              <h3>Uebersicht</h3>
-              <p class="muted small" style="margin:0 0 10px;">
-                Klick auf eine Zeitform startet Fokus-Training fuer genau diese Zeitform.
-              </p>
-              <div class="list" id="tenseList"></div>
-            </section>
-
-            <aside class="card" aria-label="Auswertung">
-              <h3>Auswertung</h3>
-              <div class="kpis">
-                <div class="pill"><span class="muted">Overall:</span> <strong id="ovAcc">-</strong></div>
-                <div class="pill"><span class="muted">Attempts:</span> <strong id="ovAttempts">0</strong></div>
-                <div class="pill"><span class="muted">Correct:</span> <strong id="ovCorrect">0</strong></div>
-              </div>
-              <div class="sep"></div>
-              <button class="btn" type="button" id="refreshBtn">Aktualisieren</button>
-            </aside>
+      <div id="panel-settings" role="tabpanel" hidden>
+        <div class="hos-card" style="max-width:600px;">
+          <h3>Einstellungen</h3>
+          
+          <div style="margin-bottom:20px;">
+            <label style="display:flex; gap:12px; align-items:center; cursor:pointer;">
+              <input type="checkbox" id="showCountsWrong" checked style="width:18px; height:18px;">
+              <span class="text-muted">"Lösung anzeigen" zählt als Fehler</span>
+            </label>
           </div>
-        </div>
 
-        <!-- SETTINGS -->
-        <div id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
-          <div class="grid">
-            <section class="card" aria-label="Einstellungen">
-              <h3>Einstellungen</h3>
+          <h3>Schwierige Formen</h3>
+          <p class="text-muted text-small">Diese Formen bereiten dir Probleme. Klick für Fokus-Training.</p>
+          <div id="topListSettings" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;">-</div>
 
-              <div class="row" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-                <div style="flex:1;min-width:260px;border:1px solid var(--line);background:rgba(255,255,255,.60);padding:10px 12px;border-radius:16px;">
-                  <label style="display:flex;gap:10px;align-items:center;">
-                    <input type="checkbox" id="showCountsWrong" checked />
-                    <span><strong>Show solution</strong> zaehlt als falsch</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="sep"></div>
-
-              <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button class="btn" type="button" id="saveBtn">Speichern</button>
-                <button class="btn danger" type="button" id="resetBtn">Statistik loeschen</button>
-              </div>
-
-              <div class="sep"></div>
-
-              <h3>Top problems</h3>
-              <p class="muted small" style="margin:0 0 8px;">
-                Klick setzt Fokus. Diese Zeitformen werden dann gezielt oefter trainiert.
-              </p>
-              <div id="topListSettings" class="muted small">-</div>
-
-              <div class="sep"></div>
-
-              <div class="note small">
-                <strong>Hinweis:</strong> Alles laeuft lokal (localStorage). Keine externen Dependencies.
-              </div>
-            </section>
-
-            <aside class="card" aria-label="Bedienung">
-              <h3>Bedienung</h3>
-              <ul class="muted small" style="margin:8px 0 0 18px;">
-                <li>Drag: Pool -> Formel</li>
-                <li>Klick-Fallback: Pool-Chip klicken fuegt hinzu</li>
-                <li>Formel-Chip klicken entfernt</li>
-                <li>Pfeile am Chip oder Drag: Reihenfolge anpassen</li>
-                <li>Hilfe erscheint erst nach mehreren Fehlern</li>
-              </ul>
-            </aside>
+          <div style="border-top:1px solid var(--border); padding-top:20px; display:flex; gap:12px;">
+            <button class="btn btn-primary" id="saveBtn">Speichern</button>
+            <button class="btn btn-danger" id="resetBtn">Alle Daten löschen</button>
           </div>
         </div>
       </div>
-    </section>
-  </main>
+
+    </main>
+  </div>
 
   <script>
   (function(){
     "use strict";
 
     var STORAGE_KEY = "hos_tenses_builder_v2";
-    var FEEDBACK_MS = 2200; // laenger sichtbar
+    var FEEDBACK_MS = 2200; 
 
-    // Summanden (ASCII only)
     var POOL = [
       "Person",
       "base form (I)",
@@ -427,10 +473,9 @@
       "will",
       "going to",
       "ing",
-      "base form (I) + s (he/she/it)" // present simple hint variant
+      "base form (I) + s (he/she/it)" 
     ];
 
-    // Tenses: only forming (no questions/negation)
     var TENSES = [
       { id:"present_simple", name:"Present simple", formula:["Person","base form (I)"], note:"he/she/it often: +s" },
       { id:"present_progressive", name:"Present progressive", formula:["Person","be (am/is/are)","base form (I)","ing"] },
@@ -444,17 +489,15 @@
       { id:"going_to_future", name:"Going-to future", formula:["Person","be (am/is/are)","going to","base form (I)"] }
     ];
 
-    // State
     var state = {
       v: 2,
       streak: 0,
       focusId: null,
-      stats: {}, // tenseId -> {attempts, correct, wrong, lastTs, failStreak}
+      stats: {}, 
       settings: { showCountsWrong: true },
       savedAt: "-"
     };
 
-    // Elements
     var tabTrain = document.getElementById("tab-train");
     var tabOverview = document.getElementById("tab-overview");
     var tabSettings = document.getElementById("tab-settings");
@@ -464,7 +507,6 @@
 
     var tenseName = document.getElementById("tenseName");
     var focusTag = document.getElementById("focusTag");
-    var modeLine = document.getElementById("modeLine");
     var poolEl = document.getElementById("pool");
     var formulaRow = document.getElementById("formulaRow");
     var dropzone = document.getElementById("dropzone");
@@ -498,10 +540,7 @@
 
     var topListSettings = document.getElementById("topListSettings");
 
-    // Drag state
     var dragging = { from: null, index: -1, token: null };
-
-    // Current task
     var cur = { id: TENSES[1].id, built: [], history: [] };
     var nextTimer = null;
 
@@ -568,7 +607,6 @@
       renderAll();
     }
 
-    // Adaptive weight per tense
     function weightForTense(t){
       var s = getStat(t.id);
       var attempts = s.attempts || 0;
@@ -581,8 +619,6 @@
       var now = Date.now();
       var ageMin = s.lastTs ? Math.min(720, Math.max(0, (now - s.lastTs)/60000)) : 720;
       var spacing = 1 + Math.min(1.8, ageMin/240);
-
-      // If a tense is currently in failStreak, show it a bit more often
       var failBoost = 1 + Math.min(1.6, (s.failStreak || 0) * 0.18);
 
       return 1.0 * errBoost * novelty * spacing * failBoost;
@@ -607,46 +643,37 @@
       state.focusId = id;
       var t = getTenseById(id);
       focusNote.innerHTML = "<strong>Aktuell:</strong> Fokus " + t.name;
-      focusTag.textContent = "Fokus: " + t.name;
-      modeLine.textContent = "Mode: adaptive (Focus: " + t.name + ")";
+      focusTag.textContent = "(Fokus)";
     }
 
     function clearFocus(){
       state.focusId = null;
-      focusNote.innerHTML = "<strong>Aktuell:</strong> alles gemischt (adaptiv)";
+      focusNote.innerHTML = "Adaptiv (alles gemischt)";
       focusTag.textContent = "";
-      modeLine.textContent = "Mode: adaptive (all tenses)";
     }
 
     function updateHelpGateUI(){
       var st = getStat(cur.id);
       var fs = st.failStreak || 0;
-
-      // rule:
-      // - wrong 1: no help
-      // - wrong 2-4: hint button visible
-      // - wrong >=5: solution button visible (and hint still visible)
       if(fs >= 2) hintBtn.style.display = "";
       else hintBtn.style.display = "none";
 
       if(fs >= 5) showBtn.style.display = "";
       else showBtn.style.display = "none";
 
-      if(fs <= 1) helpGateLine.textContent = "Noch keine Hilfe. Versuche es nochmals.";
-      else if(fs <= 4) helpGateLine.textContent = "Hint ist freigeschaltet (nach mehreren Fehlversuchen).";
-      else helpGateLine.textContent = "Show solution ist jetzt verfuegbar (nach 5 Fehlversuchen).";
+      if(fs <= 1) helpGateLine.textContent = "";
+      else if(fs <= 4) helpGateLine.textContent = "Tipp verfügbar.";
+      else helpGateLine.textContent = "Lösung verfügbar.";
     }
 
     function pickNext(){
       clearNextTimer();
-
       var t;
       if(state.focusId){
         t = getTenseById(state.focusId);
       } else {
         t = pickWeighted(TENSES);
       }
-
       cur.id = t.id;
       cur.built = [];
       cur.history = [];
@@ -659,12 +686,12 @@
 
     function setFeedback(kind, html){
       fb.style.display = "block";
-      fb.className = "feedback" + (kind ? (" " + kind) : "");
+      fb.className = "feedback-box" + (kind ? (" " + kind) : "");
       fb.innerHTML = html;
     }
     function clearFeedback(){
       fb.style.display = "none";
-      fb.className = "feedback";
+      fb.className = "feedback-box";
       fb.innerHTML = "";
     }
 
@@ -676,11 +703,9 @@
     function renderPool(){
       poolEl.innerHTML = "";
       POOL.forEach(function(token){
-        var btn = document.createElement("button");
-        btn.type = "button";
+        var btn = document.createElement("div");
         btn.className = "chip";
         btn.textContent = token;
-
         btn.setAttribute("draggable", "true");
 
         btn.addEventListener("dragstart", function(e){
@@ -698,14 +723,12 @@
           dragging.token = null;
         });
 
-        // Click fallback (touch etc.)
         btn.addEventListener("click", function(){
           cur.history.push(cur.built.slice());
           cur.built.push(token);
           renderFormula();
           clearFeedback();
         });
-
         poolEl.appendChild(btn);
       });
     }
@@ -730,11 +753,10 @@
 
     function renderFormula(){
       formulaRow.innerHTML = "";
-
       if(cur.built.length === 0){
         var span = document.createElement("span");
-        span.className = "formula-empty";
-        span.textContent = "Ziehe Summanden hierher (oder klicke im Pool).";
+        span.className = "formula-placeholder";
+        span.textContent = "Bausteine hierher ziehen";
         formulaRow.appendChild(span);
         return;
       }
@@ -742,7 +764,7 @@
       cur.built.forEach(function(token, idx){
         if(idx > 0){
           var plus = document.createElement("span");
-          plus.className = "plus";
+          plus.className = "plus-sign";
           plus.textContent = "+";
           formulaRow.appendChild(plus);
         }
@@ -767,13 +789,11 @@
           dragging.token = null;
         });
 
-        // Reorder by dropping onto a token
         slot.addEventListener("dragover", function(e){ e.preventDefault(); });
         slot.addEventListener("drop", function(e){
           e.preventDefault();
           if(dragging.from !== "formula") return;
           if(dragging.index === idx) return;
-
           cur.history.push(cur.built.slice());
           var moved = cur.built.splice(dragging.index, 1)[0];
           var target = idx;
@@ -784,35 +804,28 @@
         });
 
         var txt = document.createElement("span");
-        txt.className = "txt";
         txt.textContent = token;
 
         var controls = document.createElement("span");
-        controls.className = "controls";
+        controls.className = "slot-controls";
 
         var left = document.createElement("button");
         left.type = "button";
-        left.className = "btn mini ghost";
+        left.className = "mini-btn";
         left.textContent = "←";
-        left.title = "Nach links";
         left.addEventListener("click", function(e){ e.stopPropagation(); moveToken(idx, -1); });
 
         var right = document.createElement("button");
         right.type = "button";
-        right.className = "btn mini ghost";
+        right.className = "mini-btn";
         right.textContent = "→";
-        right.title = "Nach rechts";
         right.addEventListener("click", function(e){ e.stopPropagation(); moveToken(idx, +1); });
 
         controls.appendChild(left);
         controls.appendChild(right);
-
         slot.appendChild(txt);
         slot.appendChild(controls);
-
-        // Click removes
         slot.addEventListener("click", function(){ removeToken(idx); });
-
         formulaRow.appendChild(slot);
       });
     }
@@ -828,7 +841,7 @@
       st.attempts += 1;
       if(ok){
         st.correct += 1;
-        st.failStreak = 0; // reset help gate when solved
+        st.failStreak = 0;
       } else {
         st.wrong += 1;
         st.failStreak = (st.failStreak || 0) + 1;
@@ -846,8 +859,6 @@
     function check(){
       var t = getTenseById(cur.id);
       var expected = t.formula.slice();
-
-      // Special handling: present simple can optionally accept base form + s token as alternative representation
       var ok = false;
       if(cur.id === "present_simple"){
         var alt = ["Person","base form (I) + s (he/she/it)"];
@@ -861,83 +872,58 @@
 
       if(ok){
         state.streak = (state.streak || 0) + 1;
-        setFeedback("ok", "<strong>Correct.</strong>");
+        setFeedback("ok", "<strong>Richtig!</strong> Sehr gut.");
         save();
         renderAll();
         scheduleNext();
         return;
       }
 
-      // Wrong: no solution shown yet (by requirement)
       state.streak = 0;
-
-      // Give minimal feedback without revealing length
-      var msg = "<strong>Not quite.</strong> ";
+      var msg = "<strong>Nicht ganz.</strong> ";
       if(cur.built.length === 0){
-        msg += "Build a formula first.";
+        msg += "Bitte baue zuerst die Formel zusammen.";
       } else {
-        msg += "Try a different order or summand choice.";
+        msg += "Versuche eine andere Reihenfolge oder andere Bausteine.";
       }
-
-      // If they already unlocked hint/solution, remind them (without revealing expected)
-      var st = getStat(cur.id);
-      if(st.failStreak >= 2 && st.failStreak < 5){
-        msg += "<div class='muted small' style='margin-top:8px;'>Hint is available now.</div>";
-      } else if(st.failStreak >= 5){
-        msg += "<div class='muted small' style='margin-top:8px;'>Show solution is available now.</div>";
-      }
-
       setFeedback("bad", msg);
       save();
       renderAll();
-      // Do NOT auto-advance on wrong; keep same tense so they can retry
-      // (You can still press Next manually.)
     }
 
     function hint(){
       var st = getStat(cur.id);
       if((st.failStreak || 0) < 2){
-        setFeedback("", "<strong>Hint:</strong> Noch gesperrt. Erst nach mehreren Fehlversuchen.");
+        setFeedback("", "Noch kein Tipp verfügbar.");
         return;
       }
-
       var t = getTenseById(cur.id);
       var expected = t.formula;
-
-      // Give a "next-step" hint (does not show full solution)
       var i = cur.built.length;
       var nextTok = expected[Math.min(i, expected.length - 1)];
-
-      // If length already beyond expected, hint to remove something
       if(cur.built.length > expected.length){
-        setFeedback("", "<strong>Hint:</strong> You probably have too many summands. Remove one and try again.");
+        setFeedback("", "<strong>Tipp:</strong> Zu viele Bausteine.");
         return;
       }
-
-      setFeedback("", "<strong>Hint:</strong> Next summand could be <span class='mono'>" + nextTok + "</span>.");
+      setFeedback("", "<strong>Tipp:</strong> Nächster Baustein könnte sein: <span class='mono'>" + nextTok + "</span>.");
     }
 
     function showSolution(){
       var st = getStat(cur.id);
       if((st.failStreak || 0) < 5){
-        setFeedback("", "<strong>Show solution:</strong> Noch gesperrt. Erst nach 5 Fehlversuchen.");
+        setFeedback("", "Lösung noch gesperrt.");
         return;
       }
-
       var t = getTenseById(cur.id);
       var expected = t.formula.slice();
-
-      setFeedback("bad", "<strong>Solution:</strong> <span class='mono'>" + expected.join(" + ") + "</span>");
-
+      setFeedback("bad", "<strong>Lösung:</strong> <span class='mono'>" + expected.join(" + ") + "</span>");
       if(state.settings.showCountsWrong){
-        // Counts as an additional wrong attempt (optional setting)
         recordAttempt(false);
         state.streak = 0;
         updateHelpGateUI();
         save();
         renderAll();
       }
-
       scheduleNext();
     }
 
@@ -976,64 +962,53 @@
         var err = a ? (w/a) : 1.0;
         var pct = a ? Math.round((c/a)*100) : 0;
         var score = (err*1.7) + (a===0 ? 1.1 : Math.max(0, 0.7 - Math.min(0.7, a/8)));
-        return { t:t, score:score, attempts:a, pct:pct, fail:(st.failStreak||0) };
+        return { t:t, score:score, attempts:a, pct:pct };
       });
       scored.sort(function(x,y){ return y.score - x.score; });
       return scored.slice(0, limit || 6).map(function(s){
-        var mini = (s.attempts === 0) ? "new" : (s.pct + "%");
-        var extra = s.fail >= 2 ? (" • help:" + s.fail) : "";
-        return "<button class='btn ghost' type='button' data-focus='" + s.t.id + "' style='margin:6px 6px 0 0;'>" +
-          s.t.name + " <span class='muted' style='font-weight:650;'>(" + mini + extra + ")</span></button>";
+        var info = (s.attempts === 0) ? "Neu" : (s.pct + "%");
+        return "<button class='btn btn-ghost text-small' type='button' data-focus='" + s.t.id + "'>" +
+          s.t.name + " (" + info + ")</button>";
       }).join("") || "-";
     }
 
     function statusForTense(t){
       var st = getStat(t.id);
       var a = st.attempts || 0;
-      if(a === 0) return { cls:"new", label:"new" };
+      if(a === 0) return { cls:"status-new", label:"Neu" };
       var pct = Math.round((st.correct/a)*100);
-      if(a < 3) return { cls:"bad", label:"wobbly (" + pct + "%)" };
-      if(pct >= 85) return { cls:"ok", label:"solid (" + pct + "%)" };
-      return { cls:"bad", label:"wobbly (" + pct + "%)" };
+      if(a < 3) return { cls:"status-bad", label:"Wackelig (" + pct + "%)" };
+      if(pct >= 85) return { cls:"status-ok", label:"Sicher (" + pct + "%)" };
+      return { cls:"status-bad", label:"Üben (" + pct + "%)" };
     }
 
     function renderOverview(){
       tenseList.innerHTML = "";
       TENSES.forEach(function(t){
         var st = statusForTense(t);
-
         var row = document.createElement("div");
-        row.className = "tense-card";
-        row.setAttribute("role","button");
-        row.setAttribute("tabindex","0");
-        row.title = "Fokus: " + t.name;
+        row.className = "tense-list-item";
+        
+        var content = document.createElement("div");
+        content.innerHTML = "<strong>" + t.name + "</strong><div class='text-muted text-small'>" +
+          t.formula.join(" + ") + "</div>";
+        
+        var badge = document.createElement("span");
+        badge.className = "status-badge " + st.cls;
+        badge.textContent = st.label;
 
-        var left = document.createElement("div");
-        left.innerHTML = "<strong>" + t.name + "</strong><div class='muted small' style='margin-top:2px;'>" +
-          "<span class='mono'>" + t.formula.join(" + ") + "</span></div>";
+        row.appendChild(content);
+        row.appendChild(badge);
 
-        var status = document.createElement("div");
-        status.className = "status " + st.cls;
-        status.textContent = st.label;
-
-        row.appendChild(left);
-        row.appendChild(status);
-
-        function activate(){
+        row.addEventListener("click", function(){
           setFocus(t.id);
           save();
           openTab("train");
           pickNext();
           renderAll();
-        }
-        row.addEventListener("click", activate);
-        row.addEventListener("keydown", function(e){
-          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); activate(); }
         });
-
         tenseList.appendChild(row);
       });
-
       var k = overallKpis();
       ovAttempts.textContent = String(k.attempts);
       ovCorrect.textContent = String(k.correct);
@@ -1052,7 +1027,7 @@
       panelTrain.hidden = !isTrain;
       panelOverview.hidden = !isOv;
       panelSettings.hidden = !isSet;
-
+      
       if(isOv) renderOverview();
       if(isSet) showCountsWrong.checked = !!state.settings.showCountsWrong;
     }
@@ -1067,10 +1042,9 @@
       coveredEl.textContent = k.covered + "/" + k.total;
       savedAtEl.textContent = state.savedAt || "-";
 
-      // Top problems in settings only
       if(topListSettings){
         topListSettings.innerHTML = topProblems(6);
-        topListSettings.querySelectorAll("[data-focus]").forEach(function(btn){
+        topListSettings.querySelectorAll("button").forEach(function(btn){
           btn.addEventListener("click", function(){
             setFocus(btn.getAttribute("data-focus"));
             save();
@@ -1080,12 +1054,10 @@
           });
         });
       }
-
       showCountsWrong.checked = !!state.settings.showCountsWrong;
       updateHelpGateUI();
     }
 
-    // Dropzone handlers (Pool -> Formula, Formula -> end)
     dropzone.addEventListener("dragover", function(e){
       e.preventDefault();
       dropzone.classList.add("is-over");
@@ -1096,23 +1068,18 @@
     dropzone.addEventListener("drop", function(e){
       e.preventDefault();
       dropzone.classList.remove("is-over");
-
       if(!dragging.token) return;
-
       cur.history.push(cur.built.slice());
-
       if(dragging.from === "pool"){
         cur.built.push(dragging.token);
       } else if(dragging.from === "formula"){
         var moved = cur.built.splice(dragging.index, 1)[0];
         cur.built.push(moved);
       }
-
       renderFormula();
       clearFeedback();
     });
 
-    // Wire UI
     tabTrain.addEventListener("click", function(){ openTab("train"); });
     tabOverview.addEventListener("click", function(){ openTab("overview"); });
     tabSettings.addEventListener("click", function(){ openTab("settings"); });
@@ -1134,17 +1101,13 @@
 
     saveBtn.addEventListener("click", function(){ save(); renderAll(); });
     saveBtn2.addEventListener("click", function(){ save(); renderAll(); });
-
     resetBtn.addEventListener("click", function(){ resetAll(); });
-
     showCountsWrong.addEventListener("change", function(){
       state.settings.showCountsWrong = !!showCountsWrong.checked;
       save();
     });
-
     refreshBtn.addEventListener("click", function(){ renderOverview(); });
 
-    // Init
     load();
     renderTask();
     renderFormula();
