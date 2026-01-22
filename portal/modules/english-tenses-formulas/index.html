@@ -121,17 +121,31 @@
     }
     .chip:hover{transform:translateY(-1px)}
     .chip.disabled{opacity:.45;cursor:not-allowed;transform:none}
-    .chip b{font-weight:850}
-    .chip .meta{font-weight:650;color:var(--muted);margin-left:6px}
 
     .formula{
       margin-top:10px;
-      padding:12px;border-radius:16px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.62);
-      min-height:64px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dropzone{
+      flex: 1;
+      min-height: 70px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(15,23,42,.22);
+      background: rgba(255,255,255,.58);
+    }
+    .dropzone.is-over{
+      outline: 3px solid rgba(20,184,166,.14);
+      background: rgba(255,255,255,.74);
     }
     .formula-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .formula-empty{
+      color: var(--muted);
+      font-size: .92rem;
+      font-weight: 650;
+    }
     .slot{
       display:inline-flex;align-items:center;gap:8px;
       border:1px solid rgba(15,23,42,.10);
@@ -139,10 +153,16 @@
       border-radius:999px;
       padding:8px 10px;
       box-shadow:0 10px 20px rgba(2,6,23,.04);
+      cursor: grab;
     }
     .slot .txt{font-weight:800}
     .slot .controls{display:flex;gap:6px;align-items:center}
     .plus{color:var(--muted);font-weight:850;padding:0 2px}
+
+    /* Drag & Drop */
+    .chip[draggable="true"]{ cursor: grab; }
+    .chip.dragging{ opacity: .55; transform: scale(.99); }
+    .slot.dragging{ opacity:.6; }
 
     .feedback{
       margin-top:10px;padding:10px 12px;border-radius:14px;
@@ -175,6 +195,11 @@
     .status.new{opacity:.60}
     .status.ok{outline:3px solid var(--ok)}
     .status.bad{outline:3px solid var(--bad)}
+
+    .note{
+      padding:10px 12px;border-radius:16px;border:1px solid var(--line);
+      background:rgba(255,255,255,.65)
+    }
     .sr-only{position:absolute;left:-9999px}
   </style>
 </head>
@@ -199,7 +224,7 @@
       <div class="top">
         <div class="title">
           <h2>Forming als Formel</h2>
-          <span class="sub" id="modeLine">Build the tense by selecting summands (order matters).</span>
+          <span class="sub" id="modeLine">Build by selecting summands (order matters). No slots shown.</span>
         </div>
         <div class="tabs" role="tablist" aria-label="Ansichten">
           <button class="tab" type="button" role="tab" id="tab-train" aria-selected="true" aria-controls="panel-train">Training</button>
@@ -215,7 +240,8 @@
             <section class="card" aria-label="Aufgabe">
               <h3>Aufgabe</h3>
               <p class="muted small" style="margin:0 0 10px;">
-                Waehle Summanden aus dem Pool. Reihenfolge ist wichtig. Klick auf einen Summanden in der Formel entfernt ihn.
+                Ziehe Summanden in die Formel (oder klicke im Pool). Reihenfolge ist wichtig.
+                Bei falschen Antworten gibt es erst spaeter Hilfe.
               </p>
 
               <div class="task">
@@ -242,15 +268,24 @@
                 <div>
                   <strong class="small">Deine Formel</strong>
                   <div class="formula" id="formulaBox">
-                    <div class="formula-row" id="formulaRow">
-                      <span class="muted small">Noch leer. Klicke Summanden oben.</span>
+                    <div class="dropzone" id="dropzone" aria-label="Formel Dropzone">
+                      <div class="formula-row" id="formulaRow">
+                        <span class="formula-empty">Ziehe Summanden hierher (oder klicke im Pool).</span>
+                      </div>
                     </div>
                   </div>
+
                   <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
                     <button class="btn" type="button" id="undoBtn">Undo</button>
                     <button class="btn" type="button" id="clearBtn">Clear</button>
-                    <button class="btn" type="button" id="hintBtn" title="Zeigt den naechsten richtigen Summanden">Hint</button>
-                    <button class="btn" type="button" id="showBtn" title="Zeigt die Loesung (zaehlt optional als falsch)">Show solution</button>
+
+                    <!-- Help buttons appear only after repeated wrong attempts -->
+                    <button class="btn" type="button" id="hintBtn" style="display:none;">Hint</button>
+                    <button class="btn" type="button" id="showBtn" style="display:none;">Show solution</button>
+                  </div>
+
+                  <div class="muted small" id="helpGateLine" style="margin-top:8px;">
+                    Hilfe wird erst nach mehreren falschen Versuchen eingeblendet.
                   </div>
                 </div>
 
@@ -272,7 +307,7 @@
               <p class="muted small" style="margin:0 0 10px;">
                 Standard: adaptiv gemischt. In der Uebersicht kannst du eine Zeitform anklicken (Fokus).
               </p>
-              <div class="note small" id="focusNote" style="padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.65);">
+              <div class="note small" id="focusNote">
                 <strong>Aktuell:</strong> alles gemischt (adaptiv)
               </div>
 
@@ -285,15 +320,10 @@
 
               <div class="sep"></div>
 
-              <h3>Top-Probleme</h3>
-              <div id="topList" class="muted small">-</div>
-
-              <div class="sep"></div>
-
               <h3>Hinweis</h3>
               <p class="muted small" style="margin:0;">
                 Present simple hat eine Besonderheit: bei <strong>he/she/it</strong> kommt oft <strong>-s</strong> dazu.
-                In dieser App bleibt das als Hinweis in der Loesung, aber wir trainieren nur die Summanden-Struktur.
+                In dieser App trainieren wir nur die Summanden-Struktur (forming).
               </p>
             </aside>
           </div>
@@ -347,7 +377,15 @@
 
               <div class="sep"></div>
 
-              <div class="note small" style="padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.65);">
+              <h3>Top problems</h3>
+              <p class="muted small" style="margin:0 0 8px;">
+                Klick setzt Fokus. Diese Zeitformen werden dann gezielt oefter trainiert.
+              </p>
+              <div id="topListSettings" class="muted small">-</div>
+
+              <div class="sep"></div>
+
+              <div class="note small">
                 <strong>Hinweis:</strong> Alles laeuft lokal (localStorage). Keine externen Dependencies.
               </div>
             </section>
@@ -355,10 +393,11 @@
             <aside class="card" aria-label="Bedienung">
               <h3>Bedienung</h3>
               <ul class="muted small" style="margin:8px 0 0 18px;">
-                <li>Pool-Chip klicken: Summand zur Formel hinzufuegen</li>
-                <li>Formel-Chip klicken: Summand entfernen</li>
-                <li>Pfeile am Chip: Summand nach links/rechts schieben</li>
-                <li>Check: vergleicht Summanden + Reihenfolge</li>
+                <li>Drag: Pool -> Formel</li>
+                <li>Klick-Fallback: Pool-Chip klicken fuegt hinzu</li>
+                <li>Formel-Chip klicken entfernt</li>
+                <li>Pfeile am Chip oder Drag: Reihenfolge anpassen</li>
+                <li>Hilfe erscheint erst nach mehreren Fehlern</li>
               </ul>
             </aside>
           </div>
@@ -371,7 +410,8 @@
   (function(){
     "use strict";
 
-    var STORAGE_KEY = "hos_tenses_builder_v1";
+    var STORAGE_KEY = "hos_tenses_builder_v2";
+    var FEEDBACK_MS = 2200; // laenger sichtbar
 
     // Summanden (ASCII only)
     var POOL = [
@@ -406,10 +446,10 @@
 
     // State
     var state = {
-      v: 1,
+      v: 2,
       streak: 0,
       focusId: null,
-      stats: {}, // tenseId -> {attempts, correct, wrong, lastTs}
+      stats: {}, // tenseId -> {attempts, correct, wrong, lastTs, failStreak}
       settings: { showCountsWrong: true },
       savedAt: "-"
     };
@@ -427,6 +467,7 @@
     var modeLine = document.getElementById("modeLine");
     var poolEl = document.getElementById("pool");
     var formulaRow = document.getElementById("formulaRow");
+    var dropzone = document.getElementById("dropzone");
     var fb = document.getElementById("fb");
 
     var randomBtn = document.getElementById("randomBtn");
@@ -435,6 +476,8 @@
     var clearBtn = document.getElementById("clearBtn");
     var hintBtn = document.getElementById("hintBtn");
     var showBtn = document.getElementById("showBtn");
+    var helpGateLine = document.getElementById("helpGateLine");
+
     var clearFocusBtn = document.getElementById("clearFocusBtn");
     var saveBtn = document.getElementById("saveBtn");
     var saveBtn2 = document.getElementById("saveBtn2");
@@ -445,7 +488,6 @@
     var accEl = document.getElementById("acc");
     var coveredEl = document.getElementById("covered");
     var savedAtEl = document.getElementById("savedAt");
-    var topList = document.getElementById("topList");
     var focusNote = document.getElementById("focusNote");
 
     var tenseList = document.getElementById("tenseList");
@@ -454,8 +496,14 @@
     var ovCorrect = document.getElementById("ovCorrect");
     var refreshBtn = document.getElementById("refreshBtn");
 
+    var topListSettings = document.getElementById("topListSettings");
+
+    // Drag state
+    var dragging = { from: null, index: -1, token: null };
+
     // Current task
     var cur = { id: TENSES[1].id, built: [], history: [] };
+    var nextTimer = null;
 
     function nowStamp(){
       try{
@@ -471,7 +519,8 @@
     }
 
     function getStat(id){
-      if(!state.stats[id]) state.stats[id] = {attempts:0, correct:0, wrong:0, lastTs:0};
+      if(!state.stats[id]) state.stats[id] = {attempts:0, correct:0, wrong:0, lastTs:0, failStreak:0};
+      if(typeof state.stats[id].failStreak !== "number") state.stats[id].failStreak = 0;
       return state.stats[id];
     }
 
@@ -480,7 +529,7 @@
         var raw = localStorage.getItem(STORAGE_KEY);
         if(!raw) return;
         var p = JSON.parse(raw);
-        if(!p || p.v !== 1) return;
+        if(!p || p.v !== 2) return;
         state.streak = p.streak || 0;
         state.focusId = p.focusId || null;
         state.stats = p.stats || {};
@@ -499,6 +548,11 @@
       }
     }
 
+    function clearNextTimer(){
+      if(nextTimer){ try{ clearTimeout(nextTimer); }catch(e){} }
+      nextTimer = null;
+    }
+
     function resetAll(){
       if(!confirm("Wirklich Statistik loeschen?")) return;
       try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
@@ -508,6 +562,8 @@
       state.savedAt = "-";
       cur.built = [];
       cur.history = [];
+      clearFeedback();
+      clearNextTimer();
       pickNext();
       renderAll();
     }
@@ -519,14 +575,17 @@
       var wrong = s.wrong || 0;
 
       var errRate = attempts ? (wrong/attempts) : 0.0;
-      var errBoost = 1 + (errRate * 3.0);     // up to +3
+      var errBoost = 1 + (errRate * 3.0);
       var novelty = (attempts === 0) ? 2.0 : 1.0;
 
       var now = Date.now();
       var ageMin = s.lastTs ? Math.min(720, Math.max(0, (now - s.lastTs)/60000)) : 720;
-      var spacing = 1 + Math.min(1.8, ageMin/240); // up to +1.8
+      var spacing = 1 + Math.min(1.8, ageMin/240);
 
-      return 1.0 * errBoost * novelty * spacing;
+      // If a tense is currently in failStreak, show it a bit more often
+      var failBoost = 1 + Math.min(1.6, (s.failStreak || 0) * 0.18);
+
+      return 1.0 * errBoost * novelty * spacing * failBoost;
     }
 
     function pickWeighted(list){
@@ -559,13 +618,35 @@
       modeLine.textContent = "Mode: adaptive (all tenses)";
     }
 
+    function updateHelpGateUI(){
+      var st = getStat(cur.id);
+      var fs = st.failStreak || 0;
+
+      // rule:
+      // - wrong 1: no help
+      // - wrong 2-4: hint button visible
+      // - wrong >=5: solution button visible (and hint still visible)
+      if(fs >= 2) hintBtn.style.display = "";
+      else hintBtn.style.display = "none";
+
+      if(fs >= 5) showBtn.style.display = "";
+      else showBtn.style.display = "none";
+
+      if(fs <= 1) helpGateLine.textContent = "Noch keine Hilfe. Versuche es nochmals.";
+      else if(fs <= 4) helpGateLine.textContent = "Hint ist freigeschaltet (nach mehreren Fehlversuchen).";
+      else helpGateLine.textContent = "Show solution ist jetzt verfuegbar (nach 5 Fehlversuchen).";
+    }
+
     function pickNext(){
+      clearNextTimer();
+
       var t;
       if(state.focusId){
         t = getTenseById(state.focusId);
       } else {
         t = pickWeighted(TENSES);
       }
+
       cur.id = t.id;
       cur.built = [];
       cur.history = [];
@@ -573,6 +654,7 @@
       renderTask();
       renderFormula();
       renderPool();
+      updateHelpGateUI();
     }
 
     function setFeedback(kind, html){
@@ -593,21 +675,34 @@
 
     function renderPool(){
       poolEl.innerHTML = "";
-      var used = {};
-      for(var i=0;i<cur.built.length;i++) used[cur.built[i]] = (used[cur.built[i]]||0) + 1;
-
-      // show pool chips (we allow duplicates in principle, but our formulas do not require duplicates)
       POOL.forEach(function(token){
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "chip";
         btn.textContent = token;
 
+        btn.setAttribute("draggable", "true");
+
+        btn.addEventListener("dragstart", function(e){
+          dragging.from = "pool";
+          dragging.index = -1;
+          dragging.token = token;
+          btn.classList.add("dragging");
+          try { e.dataTransfer.setData("text/plain", token); } catch(err){}
+        });
+
+        btn.addEventListener("dragend", function(){
+          btn.classList.remove("dragging");
+          dragging.from = null;
+          dragging.index = -1;
+          dragging.token = null;
+        });
+
+        // Click fallback (touch etc.)
         btn.addEventListener("click", function(){
           cur.history.push(cur.built.slice());
           cur.built.push(token);
           renderFormula();
-          renderPool();
           clearFeedback();
         });
 
@@ -630,7 +725,6 @@
       cur.history.push(cur.built.slice());
       cur.built.splice(idx, 1);
       renderFormula();
-      renderPool();
       clearFeedback();
     }
 
@@ -639,8 +733,8 @@
 
       if(cur.built.length === 0){
         var span = document.createElement("span");
-        span.className = "muted small";
-        span.textContent = "Noch leer. Klicke Summanden oben.";
+        span.className = "formula-empty";
+        span.textContent = "Ziehe Summanden hierher (oder klicke im Pool).";
         formulaRow.appendChild(span);
         return;
       }
@@ -656,6 +750,38 @@
         var slot = document.createElement("div");
         slot.className = "slot";
         slot.title = "Klicken zum Entfernen";
+        slot.setAttribute("draggable", "true");
+
+        slot.addEventListener("dragstart", function(e){
+          dragging.from = "formula";
+          dragging.index = idx;
+          dragging.token = token;
+          slot.classList.add("dragging");
+          try { e.dataTransfer.setData("text/plain", token); } catch(err){}
+        });
+
+        slot.addEventListener("dragend", function(){
+          slot.classList.remove("dragging");
+          dragging.from = null;
+          dragging.index = -1;
+          dragging.token = null;
+        });
+
+        // Reorder by dropping onto a token
+        slot.addEventListener("dragover", function(e){ e.preventDefault(); });
+        slot.addEventListener("drop", function(e){
+          e.preventDefault();
+          if(dragging.from !== "formula") return;
+          if(dragging.index === idx) return;
+
+          cur.history.push(cur.built.slice());
+          var moved = cur.built.splice(dragging.index, 1)[0];
+          var target = idx;
+          if(dragging.index < idx) target -= 1;
+          cur.built.splice(target, 0, moved);
+          renderFormula();
+          clearFeedback();
+        });
 
         var txt = document.createElement("span");
         txt.className = "txt";
@@ -684,6 +810,7 @@
         slot.appendChild(txt);
         slot.appendChild(controls);
 
+        // Click removes
         slot.addEventListener("click", function(){ removeToken(idx); });
 
         formulaRow.appendChild(slot);
@@ -699,9 +826,21 @@
     function recordAttempt(ok){
       var st = getStat(cur.id);
       st.attempts += 1;
-      if(ok) st.correct += 1;
-      else st.wrong += 1;
+      if(ok){
+        st.correct += 1;
+        st.failStreak = 0; // reset help gate when solved
+      } else {
+        st.wrong += 1;
+        st.failStreak = (st.failStreak || 0) + 1;
+      }
       st.lastTs = Date.now();
+    }
+
+    function scheduleNext(){
+      clearNextTimer();
+      nextTimer = setTimeout(function(){
+        pickNext();
+      }, FEEDBACK_MS);
     }
 
     function check(){
@@ -711,7 +850,6 @@
       // Special handling: present simple can optionally accept base form + s token as alternative representation
       var ok = false;
       if(cur.id === "present_simple"){
-        // Accept either ["Person","base form (I)"] or ["Person","base form (I) + s (he/she/it)"]
         var alt = ["Person","base form (I) + s (he/she/it)"];
         ok = arraysEqual(cur.built, expected) || arraysEqual(cur.built, alt);
       } else {
@@ -719,79 +857,94 @@
       }
 
       recordAttempt(ok);
+      updateHelpGateUI();
 
       if(ok){
         state.streak = (state.streak || 0) + 1;
-        setFeedback("ok",
-          "<strong>Correct.</strong> " +
-          "<span class='mono'>" + expected.join(" + ") + "</span>"
-        );
-      } else {
-        state.streak = 0;
-
-        // Find first mismatch
-        var firstBad = -1;
-        for(var i=0;i<Math.max(cur.built.length, expected.length);i++){
-          if(cur.built[i] !== expected[i]) { firstBad = i; break; }
-        }
-
-        var msg = "<strong>Not quite.</strong> ";
-        if(firstBad >= 0){
-          msg += "First difference at position <strong>" + (firstBad+1) + "</strong>.";
-        }
-        msg += "<div style='margin-top:8px;' class='mono'><span class='muted'>Expected:</span> " + expected.join(" + ") + "</div>";
-        msg += "<div class='mono'><span class='muted'>Yours:</span> " + (cur.built.length ? cur.built.join(" + ") : "—") + "</div>";
-
-        if(t.note){
-          msg += "<div class='muted small' style='margin-top:8px;'><strong>Note:</strong> " + t.note + "</div>";
-        }
-
-        setFeedback("bad", msg);
+        setFeedback("ok", "<strong>Correct.</strong>");
+        save();
+        renderAll();
+        scheduleNext();
+        return;
       }
 
+      // Wrong: no solution shown yet (by requirement)
+      state.streak = 0;
+
+      // Give minimal feedback without revealing length
+      var msg = "<strong>Not quite.</strong> ";
+      if(cur.built.length === 0){
+        msg += "Build a formula first.";
+      } else {
+        msg += "Try a different order or summand choice.";
+      }
+
+      // If they already unlocked hint/solution, remind them (without revealing expected)
+      var st = getStat(cur.id);
+      if(st.failStreak >= 2 && st.failStreak < 5){
+        msg += "<div class='muted small' style='margin-top:8px;'>Hint is available now.</div>";
+      } else if(st.failStreak >= 5){
+        msg += "<div class='muted small' style='margin-top:8px;'>Show solution is available now.</div>";
+      }
+
+      setFeedback("bad", msg);
       save();
       renderAll();
-
-      // Next after short delay
-      setTimeout(function(){
-        pickNext();
-      }, 850);
+      // Do NOT auto-advance on wrong; keep same tense so they can retry
+      // (You can still press Next manually.)
     }
 
     function hint(){
-      var t = getTenseById(cur.id);
-      var expected = t.formula;
-      var i = cur.built.length;
-      if(i >= expected.length){
-        setFeedback("", "<strong>Hint:</strong> You already have enough summands. Try <strong>Check</strong>.");
+      var st = getStat(cur.id);
+      if((st.failStreak || 0) < 2){
+        setFeedback("", "<strong>Hint:</strong> Noch gesperrt. Erst nach mehreren Fehlversuchen.");
         return;
       }
-      setFeedback("", "<strong>Hint:</strong> Next summand: <span class='mono'>" + expected[i] + "</span>");
+
+      var t = getTenseById(cur.id);
+      var expected = t.formula;
+
+      // Give a "next-step" hint (does not show full solution)
+      var i = cur.built.length;
+      var nextTok = expected[Math.min(i, expected.length - 1)];
+
+      // If length already beyond expected, hint to remove something
+      if(cur.built.length > expected.length){
+        setFeedback("", "<strong>Hint:</strong> You probably have too many summands. Remove one and try again.");
+        return;
+      }
+
+      setFeedback("", "<strong>Hint:</strong> Next summand could be <span class='mono'>" + nextTok + "</span>.");
     }
 
     function showSolution(){
+      var st = getStat(cur.id);
+      if((st.failStreak || 0) < 5){
+        setFeedback("", "<strong>Show solution:</strong> Noch gesperrt. Erst nach 5 Fehlversuchen.");
+        return;
+      }
+
       var t = getTenseById(cur.id);
       var expected = t.formula.slice();
 
       setFeedback("bad", "<strong>Solution:</strong> <span class='mono'>" + expected.join(" + ") + "</span>");
 
       if(state.settings.showCountsWrong){
+        // Counts as an additional wrong attempt (optional setting)
         recordAttempt(false);
         state.streak = 0;
+        updateHelpGateUI();
         save();
         renderAll();
       }
 
-      setTimeout(function(){
-        pickNext();
-      }, 900);
+      scheduleNext();
     }
 
     function undo(){
       if(!cur.history.length) return;
       cur.built = cur.history.pop();
       renderFormula();
-      renderPool();
       clearFeedback();
     }
 
@@ -799,7 +952,6 @@
       cur.history.push(cur.built.slice());
       cur.built = [];
       renderFormula();
-      renderPool();
       clearFeedback();
     }
 
@@ -824,13 +976,14 @@
         var err = a ? (w/a) : 1.0;
         var pct = a ? Math.round((c/a)*100) : 0;
         var score = (err*1.7) + (a===0 ? 1.1 : Math.max(0, 0.7 - Math.min(0.7, a/8)));
-        return { t:t, score:score, attempts:a, pct:pct };
+        return { t:t, score:score, attempts:a, pct:pct, fail:(st.failStreak||0) };
       });
       scored.sort(function(x,y){ return y.score - x.score; });
-      return scored.slice(0, limit || 5).map(function(s){
+      return scored.slice(0, limit || 6).map(function(s){
         var mini = (s.attempts === 0) ? "new" : (s.pct + "%");
+        var extra = s.fail >= 2 ? (" • help:" + s.fail) : "";
         return "<button class='btn ghost' type='button' data-focus='" + s.t.id + "' style='margin:6px 6px 0 0;'>" +
-          s.t.name + " <span class='muted' style='font-weight:650;'>(" + mini + ")</span></button>";
+          s.t.name + " <span class='muted' style='font-weight:650;'>(" + mini + extra + ")</span></button>";
       }).join("") || "-";
     }
 
@@ -914,19 +1067,50 @@
       coveredEl.textContent = k.covered + "/" + k.total;
       savedAtEl.textContent = state.savedAt || "-";
 
-      topList.innerHTML = topProblems(6);
-      topList.querySelectorAll("[data-focus]").forEach(function(btn){
-        btn.addEventListener("click", function(){
-          setFocus(btn.getAttribute("data-focus"));
-          save();
-          openTab("train");
-          pickNext();
-          renderAll();
+      // Top problems in settings only
+      if(topListSettings){
+        topListSettings.innerHTML = topProblems(6);
+        topListSettings.querySelectorAll("[data-focus]").forEach(function(btn){
+          btn.addEventListener("click", function(){
+            setFocus(btn.getAttribute("data-focus"));
+            save();
+            openTab("train");
+            pickNext();
+            renderAll();
+          });
         });
-      });
+      }
 
       showCountsWrong.checked = !!state.settings.showCountsWrong;
+      updateHelpGateUI();
     }
+
+    // Dropzone handlers (Pool -> Formula, Formula -> end)
+    dropzone.addEventListener("dragover", function(e){
+      e.preventDefault();
+      dropzone.classList.add("is-over");
+    });
+    dropzone.addEventListener("dragleave", function(){
+      dropzone.classList.remove("is-over");
+    });
+    dropzone.addEventListener("drop", function(e){
+      e.preventDefault();
+      dropzone.classList.remove("is-over");
+
+      if(!dragging.token) return;
+
+      cur.history.push(cur.built.slice());
+
+      if(dragging.from === "pool"){
+        cur.built.push(dragging.token);
+      } else if(dragging.from === "formula"){
+        var moved = cur.built.splice(dragging.index, 1)[0];
+        cur.built.push(moved);
+      }
+
+      renderFormula();
+      clearFeedback();
+    });
 
     // Wire UI
     tabTrain.addEventListener("click", function(){ openTab("train"); });
@@ -937,10 +1121,16 @@
     checkBtn.addEventListener("click", function(){ check(); });
     undoBtn.addEventListener("click", function(){ undo(); });
     clearBtn.addEventListener("click", function(){ clearFormula(); });
+
     hintBtn.addEventListener("click", function(){ hint(); });
     showBtn.addEventListener("click", function(){ showSolution(); });
 
-    clearFocusBtn.addEventListener("click", function(){ clearFocus(); save(); pickNext(); renderAll(); });
+    clearFocusBtn.addEventListener("click", function(){
+      clearFocus();
+      save();
+      pickNext();
+      renderAll();
+    });
 
     saveBtn.addEventListener("click", function(){ save(); renderAll(); });
     saveBtn2.addEventListener("click", function(){ save(); renderAll(); });
