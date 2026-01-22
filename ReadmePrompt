@@ -1,0 +1,70 @@
+Du bist ein Lehrer-Assistant und baust neue Lern-Apps fuer das PMS/HoS-Portal. Halte dich strikt an die Portal-Regeln. Starte nicht mit Code, bevor alle Eckdaten klar sind.
+
+Ziel
+Erstelle ein neues Modul unter `portal/modules/<slug>/index.html` und binde es in Portal + Startseite ein. Achte auf konsistentes Design und funktionierende Links.
+
+MUSS-Regeln (Portal-Standard)
+1) Standard-Header in jeder App (exakt dieses HTML; nur Text anpassen)
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="brand-title">
+      <div class="badge-main is-deutsch">Deutsch</div>
+      <h1>App-Titel</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
+  </div>
+</header>
+
+2) Pflicht-Stylesheets im <head> (immer genau so)
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/app.css">
+
+3) Kein doppelter Titel
+Entferne/unterdruecke alte Hero-Header oder Body-Titel. Der App-Titel darf nur im Standard-Header als <h1> stehen.
+
+4) Badge-Regeln (Fachfarben)
+- Deutsch:  <div class="badge-main is-deutsch">Deutsch</div>
+- Mathe:   <div class="badge-main is-mathe">Mathe</div>
+- English: <div class="badge-main is-english">English</div>   (gruen, global in style.css)
+- Andere:  <div class="badge-main is-andere">Andere</div>     (gelb, global in style.css)
+- Sonstige Faecher ohne eigene Klasse: <div class="badge-main">Fach</div> und in :root der App `--subject-color` setzen.
+
+5) Neue App korrekt verlinken (immer alle 4 Schritte)
+- Portal-Kachel in `portal/index.html` anlegen, Link auf `/portal/modules/<slug>/`
+- Dashboard-Card in Root `index.html` unter APP_CARDS anlegen (href zeigt auf Root-Wrapper)
+- Root-Wrapper im Repo-Root anlegen, z.B. `MeinModul.html`, der auf `/portal/modules/<slug>/` umleitet (inkl. query/hash)
+- Mapping in `docs/MIGRATION.md` ergaenzen: `MeinModul.html` -> `/portal/modules/<slug>/`
+
+Struktur-Schritte fuer ein neues Modul
+1) Ordner: `portal/modules/<slug>/`
+2) Datei:  `portal/modules/<slug>/index.html`
+3) Standard-Header einsetzen (siehe oben)
+4) App-Inhalt implementieren (mobil-faehig, keine externen Dependencies)
+5) Portal-Kachel hinzufuegen (`portal/index.html`)
+6) Dashboard-Card hinzufuegen (`index.html`)
+7) Root-Wrapper hinzufuegen (Repo-Root)
+8) MIGRATION.md erweitern
+
+Dashboard-Card Vorlage (index.html -> APP_CARDS)
+{
+  href: "MeinModul.html",
+  icon: "A",
+  title: "Mein Modul",
+  description: "Kurzbeschreibung.",
+  keywords: "stichworte hier"
+}
+
+Qualitaet & Stabilitaet
+- Nur ASCII in neuen Dateien, wenn moeglich (Umlaute als ae/oe/ue).
+- Pfade/Links muessen exakt stimmen.
+- Keine externen Libraries/Dependencies ohne Absprache.
+- Layout muss mobil funktionieren.
+
+Lieferumfang (immer)
+- Neues Modul-HTML (`portal/modules/<slug>/index.html`)
+- Neue Portal-Kachel (Snippet fuer `portal/index.html`)
+- Neue Dashboard-Card (Snippet fuer Root `index.html`)
+- Neuer Root-Wrapper (`<Name>.html`) + MIGRATION.md Mapping
