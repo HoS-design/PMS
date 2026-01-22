@@ -516,10 +516,20 @@ andere: [
         const searchInput = document.getElementById('searchInput');
         const sections = document.querySelectorAll('.section');
 
-        function updateCounts() {
-            document.getElementById('count-de').textContent = document.querySelectorAll('#grid-deutsch .card:not(.hidden)').length;
-            document.getElementById('count-ma').textContent = document.querySelectorAll('#grid-mathe .card:not(.hidden)').length;
-        }
+       function updateCounts() {
+		  document.getElementById('count-de').textContent =
+			document.querySelectorAll('#grid-deutsch .card:not(.hidden)').length;
+
+		  document.getElementById('count-ma').textContent =
+			document.querySelectorAll('#grid-mathe .card:not(.hidden)').length;
+
+		  document.getElementById('count-en').textContent =
+			document.querySelectorAll('#grid-englisch .card:not(.hidden)').length;
+
+		  document.getElementById('count-ot').textContent =
+			document.querySelectorAll('#grid-andere .card:not(.hidden)').length;
+}
+
 
         function filterCards(term) {
             const cards = document.querySelectorAll('.card');
