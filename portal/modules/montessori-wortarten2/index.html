@@ -394,7 +394,6 @@
     </div>
 
     <main>
-      <!-- LEFT -->
       <section class="card">
         <h2>
           <span>Satz</span>
@@ -430,7 +429,6 @@
         </div>
       </section>
 
-      <!-- RIGHT -->
       <aside class="card">
         <h2>
           <span>Symbol-Auswahl</span>
@@ -471,9 +469,10 @@ function svgFor(sym, size=34){
   const s = size;
   const view = `0 0 100 100`;
 
-  const tri = (scale=1, yOffset=0) => {
+  // widthScale hinzugefügt für schmalere Dreiecke (Pronomen)
+  const tri = (scale=1, yOffset=0, widthScale=1.0) => {
     const cx=50, cy=52+yOffset;
-    const w=70*scale, h=64*scale;
+    const w=70*scale*widthScale, h=64*scale;
     const p1 = `${cx},${cy-h/2}`;
     const p2 = `${cx-w/2},${cy+h/2}`;
     const p3 = `${cx+w/2},${cy+h/2}`;
@@ -482,15 +481,18 @@ function svgFor(sym, size=34){
 
   const circle = (r=34) => `<circle cx="50" cy="52" r="${r}" fill="${color}" />`;
 
+  // Halbmond gedreht (270 Grad, damit er in die andere Richtung schaut)
   const crescent = () => `
-    <path d="M63 20
-             A30 30 0 1 0 63 84
-             A22 30 0 1 1 63 20 Z"
-          fill="${color}" opacity="1"/>
-    <path d="M71 24
-             A24 28 0 1 0 71 80
-             A18 28 0 1 1 71 24 Z"
-          fill="white" opacity="0.92"/>
+    <g transform="rotate(270 50 50)">
+      <path d="M63 20
+               A30 30 0 1 0 63 84
+               A22 30 0 1 1 63 20 Z"
+            fill="${color}" opacity="1"/>
+      <path d="M71 24
+               A24 28 0 1 0 71 80
+               A18 28 0 1 1 71 24 Z"
+            fill="white" opacity="0.92"/>
+    </g>
   `;
 
   const bar = () => `<rect x="18" y="44" width="64" height="18" rx="9" fill="${color}" />`;
@@ -512,7 +514,8 @@ function svgFor(sym, size=34){
     case "triangle":       shape = tri(1.0, 0); break;
     case "triangleSmall":  shape = tri(0.72, 4); break;
     case "triangleMid":    shape = tri(0.86, 2); break;
-    case "trianglePron":   shape = tri(0.86, 2); break;
+    // Hier Pronomen angepasst: widthScale = 0.6 (schmaler)
+    case "trianglePron":   shape = tri(0.86, 2, 0.6); break;
     case "circle":         shape = circle(32); break;
     case "circleSmall":    shape = circle(24); break;
     case "crescent":       shape = crescent(); break;
