@@ -481,7 +481,6 @@
         </p>
       </section>
 
-      <!-- BLOCK 1 -->
       <section class="card panel" id="block1" data-panel="block1">
         <h2>Block 1: Was ist KI (und was nicht)?</h2>
 <div class="callout">
@@ -636,7 +635,6 @@
         <div class="feedback" id="fbBlock1" aria-live="polite"></div>
       </section>
 
-      <!-- BLOCK 2 -->
       <section class="card panel" id="block2" data-panel="block2">
         <h2>Block 2: Daten, Features, Labels, Bias</h2>
 		
@@ -795,7 +793,6 @@
         <div class="feedback" id="fbBlock2" aria-live="polite"></div>
       </section>
 
-      <!-- BLOCK 3 -->
       <section class="card panel" id="block3" data-panel="block3">
         <h2>Block 3: Modelle, Training, Bewertung</h2>
 
@@ -923,7 +920,6 @@
         <div class="feedback" id="fbBlock3" aria-live="polite"></div>
       </section>
 
-      <!-- BLOCK 4 -->
       <section class="card panel" id="block4" data-panel="block4">
         <h2>Block 4: Generative KI, Prompting, Quellencheck</h2>
 
@@ -1029,7 +1025,6 @@
         <div class="feedback" id="fbBlock4" aria-live="polite"></div>
       </section>
 
-      <!-- FINAL (LOCKED UNTIL ALL MINI-CHECKS PASS) -->
       <section class="card lock panel" id="finalCard" data-panel="finalCard">
         <div class="lock-overlay" id="finalOverlay" aria-hidden="false">
           <div class="lock-card">
@@ -1275,40 +1270,88 @@
 
         bumpAttempt(taskId, "free:"+taskId+":"+t);
 
-        // soft checks (subtle)
+        // soft checks (RELAXED constraints now)
         var ok = true;
 
         if(taskId === "b1_free"){
           // training vs inference: require both concepts
           var hasTrain = /(train|anpass|lernen|parameter|gewicht)/.test(t);
           var hasInfer = /(infer|anwenden|vorhersag|nutzen|output)/.test(t);
-          ok = (t.length >= 70 && hasTrain && hasInfer);
+          // NEW: length >= 20 only
+          ok = (t.length >= 20 && hasTrain && hasInfer);
 
         } else if(taskId === "b1_case"){
           // label + features + short reasoning
           var hasLabel = /(label|ziel|klasse|spam|kein\s*spam|0\s*\/\s*1|positiv|negativ)/.test(t);
           var hasFeat = /(feature|merkmal|laenge|wort|link|gross|haeufig|pixel|zeit|anzahl)/.test(t);
-          ok = (t.length >= 90 && hasLabel && hasFeat);
+          // NEW: length >= 20 only
+          ok = (t.length >= 20 && hasLabel && hasFeat);
 
         } else if(taskId === "b2_case"){
           // accuracy trap in imbalanced data + better steps
           var hasAcc = /(accuracy|genauigkeit)/.test(t);
           var hasImb = /(unausgeglichen|imbalan|98|2|selten|klasse)/.test(t);
           var hasStep = /(precision|recall|f1|confusion|matrix|threshold|schwelle|gewicht|sampling|ausbalanc|mehr\s*daten|metr)/.test(t);
-          ok = (t.length >= 110 && (hasAcc || hasImb) && hasStep);
+          // NEW: length >= 20 only
+          ok = (t.length >= 20 && (hasAcc || hasImb) && hasStep);
 
         } else if(taskId === "b4_free"){
           // measures: quality + safety
           var hasMeasure = /(quellen|beleg|vergleich|fakten|nachfrag|begruend|beispiel|unsicher|markier|datenschutz|prompt|rolle|format|struktur)/.test(t);
-          ok = (t.length >= 100 && hasMeasure);
+          // NEW: length >= 30 only
+          ok = (t.length >= 30 && hasMeasure);
 
         } else {
-          ok = (t.length >= 60);
+          // Generic
+          ok = (t.length >= 20);
         }
 
         setFeedback(fb, ok ? null : null, ok ? "Ok." : "Nochmals pruefen.");
         refreshSolutionButtons();
         return { ok: ok };
+      }
+      
+      function evalMulti(taskId){
+          var sol = MULTI[taskId];
+          var box = document.getElementById(taskId);
+          var fb = box ? box.querySelector("[data-feedback]") : null;
+          
+          var checked = $all('input[name="b4m"]:checked').map(function(c){ return c.value; });
+          var sig = "multi:"+taskId+":"+checked.sort().join(",");
+          bumpAttempt(taskId, sig);
+          
+          var ok = true;
+          // check needed
+          sol.need.forEach(function(v){ if(checked.indexOf(v) === -1) ok = false; });
+          // check avoid
+          sol.avoid.forEach(function(v){ if(checked.indexOf(v) !== -1) ok = false; });
+          
+          setFeedback(fb, ok ? null : null, ok ? "Ok." : "Nochmals pruefen.");
+          refreshSolutionButtons();
+          return { ok: ok };
+      }
+      
+      function evalCalc(taskId){
+          // b3_calc
+          var box = document.getElementById(taskId);
+          var fb = box ? box.querySelector("[data-feedback]") : null;
+          
+          var v1 = document.getElementById("b3_prec").value.replace(",",".");
+          var v2 = document.getElementById("b3_rec").value.replace(",",".");
+          
+          bumpAttempt(taskId, "calc:"+v1+"/"+v2);
+          
+          var p = parseFloat(v1);
+          var r = parseFloat(v2);
+          
+          // sol: p=0.75, r=0.60
+          var okP = Math.abs(p - 0.75) < 0.05;
+          var okR = Math.abs(r - 0.60) < 0.05;
+          
+          var ok = (okP && okR);
+          setFeedback(fb, ok ? null : null, ok ? "Ok." : "Nochmals pruefen.");
+          refreshSolutionButtons();
+          return { ok: ok };
       }
 
       function bindOptionClick(){
@@ -1389,73 +1432,108 @@
           $all('input[name="b4m"]').forEach(function(c){ c.checked = want.indexOf(c.value) !== -1; });
         }
       }
+
+      /* --- NEW SCOREBLOCK FUNCTION (RELAXED) --- */
       function scoreBlock(blockKey){
         var st = loadState();
         st.blocks = st.blocks || {};
 
         var okCount = 0;
-        var total = 0;
+        var details = []; // Sammelt Gründe für das Scheitern
 
         if(blockKey === "block1"){
-          total += 3;
+          // MC Check
           if(evalQuiz("b1q1", true).ok) okCount++;
           if(evalQuiz("b1q2", true).ok) okCount++;
           if(evalQuiz("b1q3", true).ok) okCount++;
+          
+          // Free Text Check
           var freeOk = evalFree("b1_free").ok;
           var caseOk = evalFree("b1_case").ok;
-          // require the free text to be non-empty (soft)
+          
+          // Relaxed Length Check (nur 20 Zeichen statt 80/120)
           var freeText = norm((document.getElementById("b1_free_text")||{}).value || "");
           var caseText = norm((document.getElementById("b1_case_text")||{}).value || "");
-          var pass = (okCount >= 3) && freeOk && caseOk && (freeText.length >= 80) && (caseText.length >= 120);
+          var lenOk = (freeText.length >= 20) && (caseText.length >= 20);
+
+          var pass = (okCount >= 3) && freeOk && caseOk && lenOk;
+          
+          if(okCount < 3) details.push("MC-Fragen nicht komplett.");
+          if(!freeOk || !caseOk) details.push("Freitext inhaltlich prüfen.");
+          if(!lenOk) details.push("Texte etwas zu kurz.");
+          
           st.blocks.block1 = { pass: pass };
           saveState(st);
           updateChips(st);
           updateFinalLock(st);
-          return { pass: pass };
+          return { pass: pass, msg: details.join(" ") };
         }
 
         if(blockKey === "block2"){
-          total += 2;
           if(evalQuiz("b2q1", true).ok) okCount++;
           if(evalQuiz("b2q2", true).ok) okCount++;
           var matchOk = evalMatch("b2_match").ok;
-          var pass2 = (okCount >= 2) && matchOk;
+          
+          // Fallback für Text (falls User Übung 2b macht)
+          var t2 = norm((document.getElementById("b2_case_text")||{}).value || "");
+          // Relaxed length for block 2 case
+          var textOk = t2.length >= 10; 
+
+          var pass2 = (okCount >= 2) && matchOk && textOk;
+          
+          if(okCount < 2) details.push("MC-Fragen prüfen.");
+          if(!matchOk) details.push("Zuordnung falsch.");
+          if(!textOk) details.push("Textaufgabe fehlt.");
+
           st.blocks.block2 = { pass: pass2 };
           saveState(st);
           updateChips(st);
           updateFinalLock(st);
-          return { pass: pass2 };
+          return { pass: pass2, msg: details.join(" ") };
         }
 
         if(blockKey === "block3"){
-          total += 2;
           if(evalQuiz("b3q1", true).ok) okCount++;
           if(evalQuiz("b3q2", true).ok) okCount++;
           var matchOk3 = evalMatch("b3_match").ok;
-          var pass3 = (okCount >= 2) && matchOk3;
+          // Calc Check toleranter machen
+          var cVal = document.getElementById("b3_prec").value;
+          var calcFilled = cVal && cVal.length > 0;
+
+          var pass3 = (okCount >= 2) && matchOk3 && calcFilled;
+          
+          if(!calcFilled) details.push("Rechnung fehlt.");
+          if(!matchOk3) details.push("Zuordnung prüfen.");
+
           st.blocks.block3 = { pass: pass3 };
           saveState(st);
           updateChips(st);
           updateFinalLock(st);
-          return { pass: pass3 };
+          return { pass: pass3, msg: details.join(" ") };
         }
 
         if(blockKey === "block4"){
-          total += 2;
           if(evalQuiz("b4q1", true).ok) okCount++;
           if(evalQuiz("b4q2", true).ok) okCount++;
           var freeOk4 = evalFree("b4_free").ok;
           var multiOk4 = evalMulti("b4_multi").ok;
+          // Länge drastisch reduziert (von 180 auf 30)
           var freeText4 = norm((document.getElementById("b4_free_text")||{}).value || "");
-          var pass4 = (okCount >= 2) && freeOk4 && multiOk4 && (freeText4.length >= 180);
+          var lenOk4 = freeText4.length >= 30;
+
+          var pass4 = (okCount >= 2) && freeOk4 && multiOk4 && lenOk4;
+          
+          if(!lenOk4) details.push("Prompt zu kurz.");
+          if(!multiOk4) details.push("Checkboxen prüfen.");
+
           st.blocks.block4 = { pass: pass4 };
           saveState(st);
           updateChips(st);
           updateFinalLock(st);
-          return { pass: pass4 };
+          return { pass: pass4, msg: details.join(" ") };
         }
 
-        return { pass:false };
+        return { pass:false, msg: "Fehler." };
       }
 
       function updateFinalLock(st){
@@ -1492,13 +1570,21 @@
         }
       }
 
+      /* --- NEW MINI CHECK BINDING (WITH FEEDBACK) --- */
       function bindMiniChecks(){
         $all("[data-check-block]").forEach(function(btn){
           btn.addEventListener("click", function(){
             var id = btn.getAttribute("data-check-block");
             var r = scoreBlock(id);
             var out = document.getElementById("fb" + id.charAt(0).toUpperCase() + id.slice(1));
-            setFeedback(out, null, r.pass ? "Ok." : "Nochmals pruefen.");
+            
+            if(r.pass){
+              setFeedback(out, true, "Klasse! Block abgeschlossen.");
+              toast("Block freigeschaltet!");
+            } else {
+              setFeedback(out, false, "Noch nicht ganz: " + (r.msg || "Bitte alles ausfüllen."));
+              toast(r.msg || "Prüfung fehlgeschlagen");
+            }
           });
         });
       }
