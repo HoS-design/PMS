@@ -1,1 +1,886 @@
-test
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lernunterlage Verben - 8. Schulstufe</title>
+    
+    <!-- 1. Tailwind CSS für das Design laden -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. React und ReactDOM laden -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. Babel laden -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        /* Zusätzliche Druck-Optimierungen */
+        @media print {
+            @page { size: A4; margin: 2cm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Zugriff auf die globalen Bibliotheken
+        const { useState, useEffect } = React;
+        
+        // --- INTERNE ICON DEFINITIONEN (Damit es keine Ladefehler mehr gibt) ---
+        const IconBase = ({ size = 24, children, ...props }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        const BookOpen = (props) => <IconBase {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></IconBase>;
+        const Printer = (props) => <IconBase {...props}><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></IconBase>;
+        const ChevronRight = (props) => <IconBase {...props}><polyline points="9 18 15 12 9 6"/></IconBase>;
+        const Bookmark = (props) => <IconBase {...props}><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></IconBase>;
+        const Info = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></IconBase>;
+        const PenTool = (props) => <IconBase {...props}><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></IconBase>;
+        const Layout = (props) => <IconBase {...props}><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="9" y2="21"/></IconBase>;
+        const Clock = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></IconBase>;
+        const RefreshCw = (props) => <IconBase {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></IconBase>;
+        const MessageCircle = (props) => <IconBase {...props}><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></IconBase>;
+        const FileText = (props) => <IconBase {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></IconBase>;
+        const GraduationCap = (props) => <IconBase {...props}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></IconBase>;
+
+        // --- HIER BEGINNT DEIN APP CODE ---
+
+        const VerbLearningApp = () => {
+            const [activeTab, setActiveTab] = useState('basics');
+            const [viewMode, setViewMode] = useState('theory'); // 'theory' or 'worksheet'
+
+            // HoS-Style Color Palette & Design Tokens
+            const styles = {
+                appContainer: "min-h-screen bg-white text-slate-800 font-sans selection:bg-red-100",
+                sidebar: "w-64 bg-slate-50 border-r border-slate-200 flex-shrink-0 hidden md:block print:hidden",
+                mainContent: "flex-1 p-8 md:p-12 max-w-5xl mx-auto w-full print:p-0 print:max-w-none",
+                header: "mb-8 border-b border-slate-200 pb-4 flex justify-between items-end print:hidden",
+                title: "text-3xl font-bold text-slate-900 tracking-tight",
+                subtitle: "text-slate-500 mt-1",
+                navItem: "w-full text-left px-4 py-3 rounded-lg mb-1 flex items-center transition-colors duration-200",
+                navItemActive: "bg-white shadow-sm border border-slate-200 text-red-700 font-medium",
+                navItemInactive: "text-slate-600 hover:bg-slate-100",
+                card: "bg-white border border-slate-200 shadow-sm rounded-xl p-8 mb-8 print:shadow-none print:border-0 print:p-0",
+                sectionTitle: "text-xl font-bold text-slate-800 mb-4 flex items-center gap-2 border-b border-slate-100 pb-2",
+                paragraph: "text-slate-700 leading-relaxed mb-4",
+                table: "w-full text-left border-collapse mb-6",
+                th: "border-b-2 border-slate-200 p-3 text-slate-700 font-semibold bg-slate-50",
+                td: "border-b border-slate-100 p-3 text-slate-600",
+                merkbox: "bg-red-50 border-l-4 border-red-600 p-4 rounded-r-lg my-6 print:bg-slate-50 print:border-slate-800",
+                merkTitle: "text-red-800 font-bold mb-1 block flex items-center gap-2 print:text-slate-900",
+                printBtn: "flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors print:hidden shadow-sm",
+                printHeader: "hidden print:block mb-8 border-b-2 border-black pb-4",
+                
+                // Worksheet specific styles
+                wsHeader: "hidden print:flex justify-between mb-8 border-b border-slate-300 pb-4",
+                wsLine: "border-b border-slate-400 w-full h-8 mb-2",
+                wsTask: "mb-8 print:mb-6 border-b border-slate-100 pb-6 last:border-0",
+                wsTaskTitle: "font-bold text-lg mb-3 flex items-center gap-2 text-slate-800",
+                wsInput: "inline-block border-b border-slate-400 min-w-[120px] px-2 text-blue-600 print:text-black print:border-black/30 bg-blue-50/30 print:bg-transparent",
+                wsBox: "border border-slate-300 rounded p-4 mb-4 min-h-[100px]",
+                modeSwitch: "flex gap-2 mb-6 bg-slate-100 p-1 rounded-lg w-fit print:hidden"
+            };
+
+            const handlePrint = () => {
+                window.print();
+            };
+
+            const content = {
+                basics: {
+                title: "Grundbegriffe & Verbformen",
+                icon: <Layout size={20} />,
+                theory: (
+                    <>
+                    <p className={styles.paragraph}>
+                        Das Verb (Zeitwort) ist die wichtigste Wortart im Satz. Es bestimmt das Geschehen und regiert die anderen Satzglieder. Man unterscheidet zwischen finiten (gebeugten) und infiniten (ungebeugten) Formen.
+                    </p>
+
+                    <h3 className={styles.sectionTitle}>Infinite Formen (Ungebeugt)</h3>
+                    <p className={styles.paragraph}>
+                        Diese Formen verändern sich nicht nach Person oder Zahl. Sie sind die Grundbausteine für die zusammengesetzten Zeiten.
+                    </p>
+                    <ul className="list-disc pl-5 mb-6 space-y-2 text-slate-700">
+                        <li><strong>Infinitiv (Nennform):</strong> Die Grundform des Verbs. <br/><em className="text-slate-500">Beispiele: gehen, lachen, sein</em></li>
+                        <li><strong>Partizip I (Mittelwort der Gegenwart):</strong> Drückt eine Gleichzeitigkeit aus. Bildung: Infinitiv + "d". <br/><em className="text-slate-500">Beispiele: gehend, lachend, seiend</em></li>
+                        <li><strong>Partizip II (Mittelwort der Vergangenheit):</strong> Wird für die Perfekt-Zeiten und das Passiv benötigt. Meist mit Vorsilbe "ge-". <br/><em className="text-slate-500">Beispiele: gegangen, gelacht, gewesen</em></li>
+                    </ul>
+
+                    <div className={styles.merkbox}>
+                        <span className={styles.merkTitle}><Bookmark size={18}/> Merke</span>
+                        <p className="text-slate-700">
+                        Die <strong>finiten Formen</strong> (Personalformen) sind an die Person (ich, du, er/sie/es...) und die Zeit angepasst. <br/>
+                        <em>Beispiel: ich gehe (1. Person Sg., Präsens), wir lachten (1. Person Pl., Präteritum).</em>
+                        </p>
+                    </div>
+                    </>
+                ),
+                worksheet: (
+                    <>
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 1: Finit oder Infinit?</h4>
+                        <p className="mb-2">Bestimme, ob die unterstrichenen Verbformen <strong>finit</strong> (F) oder <strong>infinit</strong> (I) sind. Trage den Buchstaben in die Klammer ein.</p>
+                        <ul className="space-y-4">
+                        <li>1. Wir <u>laufen</u> schnell nach Hause. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        <li>2. Das <u>laufende</u> Kind lacht. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        <li>3. Er hat laut <u>gelacht</u>. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        <li>4. Ihr <u>seid</u> heute sehr pünktlich. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        <li>5. Das Haus wurde <u>gebaut</u>. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        <li>6. Ich werde morgen <u>lernen</u>. (<span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>)</li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 2: Bestimmung von Verbformen</h4>
+                        <p className="mb-2">Bestimme Person, Zahl und Zeit der folgenden Formen so genau wie möglich.</p>
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th className={styles.th}>Verbform</th>
+                            <th className={styles.th}>Person & Zahl (z.B. 1. P. Sg.)</th>
+                            <th className={styles.th}>Zeitform</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td className={styles.td}>du liest</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>wir dachten</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>sie (Pl.) sind</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>er ist geschwommen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>ihr werdet sehen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 3: Bildung der Partizipien</h4>
+                        <p className="mb-2">Bilde aus den Infinitiven die beiden Mittelwörter (Partizipien).</p>
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th className={styles.th}>Infinitiv</th>
+                            <th className={styles.th}>Partizip I (Gegenwart)</th>
+                            <th className={styles.th}>Partizip II (Vergangenheit)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td className={styles.td}>singen</td>
+                            <td className={styles.td}>singend</td>
+                            <td className={styles.td}>gesungen</td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>laufen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>studieren</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>verstehen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    </>
+                )
+                },
+                stems: {
+                title: "Starke & Schwache Verben",
+                icon: <PenTool size={20} />,
+                theory: (
+                    <>
+                    <p className={styles.paragraph}>
+                        Im Deutschen unterscheiden wir zwei Hauptgruppen von Verben, je nachdem, wie sie ihre Stammformen bilden.
+                    </p>
+
+                    <h3 className={styles.sectionTitle}>1. Schwache Verben (Regelmäßig)</h3>
+                    <p className={styles.paragraph}>
+                        Schwache Verben verändern ihren Stammvokal <strong>nicht</strong>. Im Präteritum und Partizip II wird ein <strong>-t-</strong> oder <strong>-et-</strong> eingefügt.
+                    </p>
+                    <div className="bg-slate-50 p-4 rounded-lg mb-6 border border-slate-200">
+                        <p className="font-mono text-slate-700">sagen – sag<strong>te</strong> – geSag<strong>t</strong></p>
+                        <p className="font-mono text-slate-700">kaufen – kauf<strong>te</strong> – geKauf<strong>t</strong></p>
+                    </div>
+
+                    <h3 className={styles.sectionTitle}>2. Starke Verben (Unregelmäßig)</h3>
+                    <p className={styles.paragraph}>
+                        Starke Verben ändern ihren <strong>Stammvokal</strong> (Ablaut) in den verschiedenen Zeitformen. Das Partizip II endet meist auf <strong>-en</strong>.
+                    </p>
+                    <div className="bg-slate-50 p-4 rounded-lg mb-6 border border-slate-200">
+                        <p className="font-mono text-slate-700">s<strong>i</strong>ngen – s<strong>a</strong>ng – ges<strong>u</strong>ngen</p>
+                        <p className="font-mono text-slate-700">f<strong>a</strong>hren – f<strong>u</strong>hr – gef<strong>a</strong>hren</p>
+                    </div>
+
+                    <h3 className={styles.sectionTitle}>3. Die Stammformen</h3>
+                    <p className={styles.paragraph}>
+                        Um ein Verb sicher bestimmen zu können, musst du die drei Stammformen kennen.
+                    </p>
+                    
+                    <table className={styles.table}>
+                        <thead>
+                        <tr>
+                            <th className={styles.th}>Infinitiv</th>
+                            <th className={styles.th}>Präteritum (3. Pers.)</th>
+                            <th className={styles.th}>Partizip II</th>
+                            <th className={styles.th}>Art</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td className={styles.td}>lernen</td>
+                            <td className={styles.td}>lernte</td>
+                            <td className={styles.td}>gelernt</td>
+                            <td className={styles.td}>schwach</td>
+                        </tr>
+                        <tr>
+                            <td className={styles.td}>sprechen</td>
+                            <td className={styles.td}>sprach</td>
+                            <td className={styles.td}>gesprochen</td>
+                            <td className={styles.td}>stark</td>
+                        </tr>
+                        <tr>
+                            <td className={styles.td}>rennen</td>
+                            <td className={styles.td}>rannte</td>
+                            <td className={styles.td}>gerannt</td>
+                            <td className={styles.td}>gemischt</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div className={styles.merkbox}>
+                        <span className={styles.merkTitle}><Info size={18}/> Tipp für die 8. Schulstufe</span>
+                        <p className="text-slate-700">
+                        Bei Unsicherheit hilft die <strong>Präteritum-Probe</strong>: Hörst du ein "-te" am Ende des Stammes? Dann ist es (meist) schwach. Ändert sich der Vokal? Dann ist es stark.
+                        </p>
+                    </div>
+                    </>
+                ),
+                worksheet: (
+                    <>
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 1: Stammformen-Tabelle</h4>
+                        <p className="mb-2">Fülle die Tabelle vollständig aus. Achte besonders auf den Vokalwechsel bei starken Verben.</p>
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th className={styles.th}>Infinitiv</th>
+                            <th className={styles.th}>Präteritum (er/sie/es)</th>
+                            <th className={styles.th}>Partizip II</th>
+                            <th className={styles.th}>S / W?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td className={styles.td}>malen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}>W</td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>schreiben</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}>S</td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>fliegen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>arbeiten</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>denken</td>
+                            <td className={styles.td}>dachte</td>
+                            <td className={styles.td}>gedacht</td>
+                            <td className={styles.td}>gemischt</td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>nehmen</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}>schneiden</td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            <td className={styles.td}></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 2: Präteritum im Kontext</h4>
+                        <p className="mb-2">Setze die Verben in der Klammer im <strong>Präteritum</strong> ein. Achtung: Es sind starke Verben dabei!</p>
+                        <div className="leading-loose">
+                        Gestern <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (gehen) ich in den Park. Dort <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (treffen) ich meinen Freund. Wir <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (sprechen) lange über die Schule. Plötzlich <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (beginnen) es zu regnen. Wir <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (laufen) schnell nach Hause und <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> (trinken) dort einen heißen Tee.
+                        </div>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 3: Die Präteritum-Probe</h4>
+                        <p className="mb-2">Stark oder Schwach? Bilde im Kopf das Präteritum und entscheide.</p>
+                        <ul className="space-y-2">
+                        <li>• lachen (lachte / loch?) → <span className={styles.wsInput}>schwach</span></li>
+                        <li>• tragen (tragte / trug?) → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>• bellen (bellte / boll?) → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>• schlafen (schlafte / schlief?) → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>• rufen (rufte / rief?) → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        </ul>
+                    </div>
+                    </>
+                )
+                },
+                tenses: {
+                title: "Die Zeitformen (Tempora)",
+                icon: <Clock size={20} />,
+                theory: (
+                    <>
+                    <p className={styles.paragraph}>
+                        Das Deutsche kennt sechs Zeitformen. Sie drücken aus, wann etwas geschieht (Gegenwart, Vergangenheit, Zukunft).
+                    </p>
+
+                    <div className="overflow-x-auto">
+                        <table className={styles.table}>
+                        <thead>
+                            <tr>
+                            <th className={styles.th}>Zeitform</th>
+                            <th className={styles.th}>Verwendung</th>
+                            <th className={styles.th}>Bildung / Beispiel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                            <td className={styles.td}><strong>Präsens</strong><br/>(Gegenwart)</td>
+                            <td className={styles.td}>Aktuelles Geschehen, Fakten, Zukünftiges (mit Zeitangabe).</td>
+                            <td className={styles.td}>Stamm + Endung<br/><em>Ich gehe in die Schule.</em></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}><strong>Präteritum</strong><br/>(Mitvergangenheit)</td>
+                            <td className={styles.td}>Schriftliche Erzählungen, Berichte.</td>
+                            <td className={styles.td}>Zweite Stammform + Endung<br/><em>Ich ging / Ich lernte.</em></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}><strong>Perfekt</strong><br/>(Vergangenheit)</td>
+                            <td className={styles.td}>Mündliche Erzählungen, abgeschlossene Handlungen.</td>
+                            <td className={styles.td}>haben/sein + Partizip II<br/><em>Ich bin gegangen.</em></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}><strong>Plusquamperfekt</strong><br/>(Vorvergangenheit)</td>
+                            <td className={styles.td}>Handlung passierte VOR einer anderen Handlung in der Vergangenheit.</td>
+                            <td className={styles.td}>hatten/waren + Partizip II<br/><em>Ich war gegangen.</em></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}><strong>Futur I</strong><br/>(Zukunft)</td>
+                            <td className={styles.td}>Zukunftsabsicht oder Vermutung.</td>
+                            <td className={styles.td}>werden + Infinitiv<br/><em>Ich werde gehen.</em></td>
+                            </tr>
+                            <tr>
+                            <td className={styles.td}><strong>Futur II</strong><br/>(Vorzukunft)</td>
+                            <td className={styles.td}>Handlung, die in der Zukunft abgeschlossen sein wird (selten).</td>
+                            <td className={styles.td}>werden + Partizip II + haben/sein<br/><em>Ich werde gegangen sein.</em></td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+
+                    <div className={styles.merkbox}>
+                        <span className={styles.merkTitle}><Bookmark size={18}/> Zeitenfolge beachten</span>
+                        <p className="text-slate-700">
+                        Wenn du im Präteritum erzählst und etwas erwähnst, das <strong>noch weiter zurückliegt</strong>, musst du das <strong>Plusquamperfekt</strong> verwenden.<br/>
+                        <em>"Als er ankam (Präteritum), hatte der Zug bereits den Bahnhof verlassen (Plusquamperfekt)."</em>
+                        </p>
+                    </div>
+                    </>
+                ),
+                worksheet: (
+                    <>
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 1: Zeiten bestimmen</h4>
+                        <p className="mb-2">Bestimme die Zeitform (Tempus) der folgenden Sätze.</p>
+                        <ul className="space-y-3">
+                        <li>1. Wir werden morgen ins Kino gehen. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>2. Sie hatte das Buch schon gelesen. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>3. Der Hund bellte laut. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>4. Ich habe meine Hausaufgaben gemacht. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>5. Um 8 Uhr fährt der Zug ab. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 2: Zeiten transformieren</h4>
+                        <p className="mb-2">Setze den Satz "Der Schüler schreibt einen Test" in alle geforderten Zeiten.</p>
+                        <div className="space-y-4">
+                        <div>
+                            <strong>Präteritum:</strong><br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            <strong>Perfekt:</strong><br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            <strong>Futur I:</strong><br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            <strong>Plusquamperfekt:</strong><br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 3: Die Zeitenfolge (Wichtig!)</h4>
+                        <p className="mb-2">Verbinde die Sätze mit "nachdem". Beachte: Die Handlung, die zuerst passierte, muss im <strong>Plusquamperfekt</strong> stehen, die andere im <strong>Präteritum</strong>.</p>
+                        <div className="space-y-4 p-4 bg-slate-50 border border-slate-200 rounded">
+                            <p className="text-sm italic mb-2">Beispiel: Er aß. Dann ging er. → Nachdem er gegessen hatte, ging er.</p>
+                            <div>
+                                1. Sie machte die Übung. Dann packte sie ihre Tasche.<br/>
+                                Nachdem sie die Übung <span className={styles.wsInput}>gemacht hatte</span>, <span className={styles.wsInput}>packte</span> sie ihre Tasche.
+                            </div>
+                            <div className="mt-4">
+                                2. Der Regen hörte auf. Dann gingen wir spazieren.<br/>
+                                Nachdem der Regen <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>, <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> wir spazieren.
+                            </div>
+                            <div className="mt-4">
+                                3. Er lernte Vokabeln. Dann schrieb er eine gute Note.<br/>
+                                <div className={styles.wsLine}></div>
+                            </div>
+                        </div>
+                    </div>
+                    </>
+                )
+                },
+                voice: {
+                title: "Aktiv & Passiv",
+                icon: <RefreshCw size={20} />,
+                theory: (
+                    <>
+                    <p className={styles.paragraph}>
+                        Das Genus Verbi gibt an, ob das Subjekt handelt (Täter) oder ob mit dem Subjekt etwas geschieht (Opfer/Ziel).
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div className="bg-green-50 p-6 rounded-lg border border-green-100 print:border-slate-300 print:bg-white">
+                        <h4 className="font-bold text-green-800 mb-2 text-lg">Aktiv (Tätigkeitsform)</h4>
+                        <p className="text-sm text-green-900 mb-4">Das Subjekt handelt selbst. WICHTIG: Wer tut es?</p>
+                        <p className="font-mono bg-white p-2 rounded border border-green-200 text-slate-700">
+                            Der Arzt untersucht den Patienten.
+                        </p>
+                        </div>
+                        
+                        <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 print:border-slate-300 print:bg-white">
+                        <h4 className="font-bold text-blue-800 mb-2 text-lg">Passiv (Leideform)</h4>
+                        <p className="text-sm text-blue-900 mb-4">Das Geschehen steht im Vordergrund. WICHTIG: Was geschieht?</p>
+                        <p className="font-mono bg-white p-2 rounded border border-blue-200 text-slate-700">
+                            Der Patient wird (vom Arzt) untersucht.
+                        </p>
+                        </div>
+                    </div>
+
+                    <h3 className={styles.sectionTitle}>Bildung des Vorgangspassivs</h3>
+                    <p className={styles.paragraph}>
+                        Man bildet das Passiv mit einer Form von <strong>werden</strong> und dem <strong>Partizip II</strong> des Vollverbs.
+                    </p>
+
+                    <table className={styles.table}>
+                        <thead>
+                        <tr>
+                            <th className={styles.th}>Zeitform</th>
+                            <th className={styles.th}>Aktiv Satz</th>
+                            <th className={styles.th}>Passiv Satz</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td className={styles.td}>Präsens</td>
+                            <td className={styles.td}>Ich <strong>suche</strong> den Schlüssel.</td>
+                            <td className={styles.td}>Der Schlüssel <strong>wird gesucht</strong>.</td>
+                        </tr>
+                        <tr>
+                            <td className={styles.td}>Präteritum</td>
+                            <td className={styles.td}>Ich <strong>suchte</strong> den Schlüssel.</td>
+                            <td className={styles.td}>Der Schlüssel <strong>wurde gesucht</strong>.</td>
+                        </tr>
+                        <tr>
+                            <td className={styles.td}>Perfekt</td>
+                            <td className={styles.td}>Ich <strong>habe</strong> den Schlüssel <strong>gesucht</strong>.</td>
+                            <td className={styles.td}>Der Schlüssel <strong>ist gesucht worden</strong>.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div className={styles.merkbox}>
+                        <span className={styles.merkTitle}><Info size={18}/> Achtung beim Perfekt & Plusquamperfekt</span>
+                        <p className="text-slate-700">
+                        Im Passiv Perfekt/Plusquamperfekt fällt das "ge-" beim Hilfsverb weg. Es heißt nicht "geworden", sondern nur <strong>worden</strong>.<br/>
+                        <em>Richtig: Er ist operiert worden.</em>
+                        </p>
+                    </div>
+                    </>
+                ),
+                worksheet: (
+                    <>
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 1: Umformung Aktiv zu Passiv</h4>
+                        <p className="mb-2">Forme die Sätze ins Passiv um. Achte darauf, dass du die Zeitform beibehältst! Das Subjekt des Aktivsatzes kann im Passivsatz oft weggelassen werden.</p>
+                        <div className="space-y-4">
+                        <div>
+                            1. Der Mechaniker repariert das Auto. (Präsens)<br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            2. Die Polizei suchte den Dieb. (Präteritum)<br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            3. Oma hat den Kuchen gebacken. (Perfekt - Achtung: 'worden')<br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        <div>
+                            4. Wir werden das Haus streichen. (Futur I)<br/>
+                            <div className={styles.wsLine}></div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 2: Subjekt oder Objekt?</h4>
+                        <p className="mb-2">Im Aktivsatz ist das Subjekt der Täter. Im Passivsatz wird das Opfer zum Subjekt. Bestimme das Subjekt (Wer oder was?).</p>
+                        <ul className="space-y-2">
+                        <li>1. Der Lehrer lobt den Schüler. Subjekt: <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>2. Der Schüler wird vom Lehrer gelobt. Subjekt: <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 3: Passiv-Zeitformen erkennen</h4>
+                        <p className="mb-2">Bestimme die Zeitform der folgenden Passivsätze.</p>
+                        <ul className="space-y-3">
+                        <li>1. Der Brief wurde geschrieben. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>2. Das Auto ist verkauft worden. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>3. Der Text wird gelesen. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        <li>4. Das Haus war gebaut worden. → <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 4: Rückumwandlung (Profi-Aufgabe)</h4>
+                        <p className="mb-2">Forme den Passivsatz zurück in einen Aktivsatz. Erfinde ein passendes Subjekt (Täter), wenn keines da ist.</p>
+                        <div>
+                        Passiv: Der Apfel wurde gegessen. (Präteritum)<br/>
+                        Aktiv: <span className={styles.wsInput} style={{width: '300px'}}>&nbsp;</span>
+                        </div>
+                    </div>
+                    </>
+                )
+                },
+                konjunktiv: {
+                title: "Konjunktiv I & II (Möglichkeitsform)",
+                icon: <MessageCircle size={20} />,
+                theory: (
+                    <>
+                    <p className={styles.paragraph}>
+                        Im Deutschen unterscheiden wir verschiedene Aussageweisen (Modi). Neben der Wirklichkeitsform (Indikativ) gibt es die Möglichkeitsform (Konjunktiv).
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 className="font-bold text-slate-800 mb-1">Konjunktiv I</h4>
+                        <p className="text-sm text-slate-600 mb-2">Verwendung: Indirekte Rede, Zitieren.</p>
+                        <p className="font-mono text-sm bg-white p-2 border border-slate-100 text-slate-600">Er sagt, er <strong>habe</strong> keine Zeit.</p>
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h4 className="font-bold text-slate-800 mb-1">Konjunktiv II</h4>
+                        <p className="text-sm text-slate-600 mb-2">Verwendung: Wünsche, Träume, Höflichkeit, Unmögliches.</p>
+                        <p className="font-mono text-sm bg-white p-2 border border-slate-100 text-slate-600">Wenn ich reich <strong>wäre</strong>...</p>
+                        </div>
+                    </div>
+
+                    <h3 className={styles.sectionTitle}>1. Der Konjunktiv I</h3>
+                    <p className={styles.paragraph}>
+                        Wird meist in Nachrichtensendungen oder Zeitungsberichten verwendet, um Aussagen anderer wiederzugeben, ohne sich diese zu eigen zu machen.
+                    </p>
+                    <ul className="list-disc pl-5 mb-6 space-y-2 text-slate-700">
+                        <li><strong>Bildung:</strong> Verbstamm des Präsens + Konjunktiv-Endungen (<strong>-e, -est, -e, -en, -et, -en</strong>).</li>
+                        <li><strong>Wichtig:</strong> Oft unterscheidet sich nur die 3. Person Singular (er/sie/es) vom Indikativ.</li>
+                        <li><em>Beispiel: er geht (Indikativ) → er geh<strong>e</strong> (Konjunktiv I).</em></li>
+                    </ul>
+
+                    <h3 className={styles.sectionTitle}>2. Der Konjunktiv II</h3>
+                    <p className={styles.paragraph}>
+                        Drückt Dinge aus, die nicht real sind (Irrealis) oder besonders höflich gemeint sind.
+                    </p>
+                    <ul className="list-disc pl-5 mb-6 space-y-2 text-slate-700">
+                        <li><strong>Bildung:</strong> Präteritum-Stamm + Umlaut (bei a, o, u) + Endungen.</li>
+                        <li><em>Beispiel: er kam (Präteritum) → er k<strong>ä</strong>m<strong>e</strong> (Konjunktiv II).</em></li>
+                        <li><em>Beispiel: er war (Präteritum) → er w<strong>ä</strong>r<strong>e</strong> (Konjunktiv II).</em></li>
+                    </ul>
+
+                    <h3 className={styles.sectionTitle}>3. Die "würde"-Ersatzform</h3>
+                    <p className={styles.paragraph}>
+                        Wenn der Konjunktiv II genauso aussieht wie das Präteritum (oft bei schwachen Verben: "ich sagte"), verwendet man die Umschreibung mit <strong>würde + Infinitiv</strong>. Dies ist im mündlichen Sprachgebrauch sehr häufig.
+                    </p>
+
+                    <table className={styles.table}>
+                        <thead>
+                        <tr>
+                            <th className={styles.th}>Infinitiv</th>
+                            <th className={styles.th}>Präteritum (Indikativ)</th>
+                            <th className={styles.th}>Konjunktiv II (Original)</th>
+                            <th className={styles.th}>Konjunktiv II (Ersatzform)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td className={styles.td}>machen</td>
+                            <td className={styles.td}>ich machte</td>
+                            <td className={styles.td}>ich machte (undeutlich!)</td>
+                            <td className={styles.td}>ich <strong>würde machen</strong></td>
+                        </tr>
+                        <tr>
+                            <td className={styles.td}>kommen</td>
+                            <td className={styles.td}>ich kam</td>
+                            <td className={styles.td}>ich k<strong>ä</strong>me (klar erkennbar)</td>
+                            <td className={styles.td}>(ich würde kommen)</td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div className={styles.merkbox}>
+                        <span className={styles.merkTitle}><Bookmark size={18}/> Wichtig für Schularbeiten</span>
+                        <p className="text-slate-700">
+                        In der gehobenen Schriftsprache (Aufsatz!) solltest du bei starken Verben die <strong>Originalform</strong> des Konjunktiv II bevorzugen, wenn sie nicht zu veraltet klingt.<br/>
+                        <em>Besser: "Wenn er käme..." statt "Wenn er kommen würde..."</em>
+                        </p>
+                    </div>
+                    </>
+                ),
+                worksheet: (
+                    <>
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 1: Indirekte Rede (Konjunktiv I)</h4>
+                        <p className="mb-2">Ein Reporter berichtet. Gib die Aussagen in der indirekten Rede wieder. Achte auf die Endung -e in der 3. Person Singular.</p>
+                        <div className="space-y-4">
+                        <div>
+                            1. Der Politiker sagt: "Ich <strong>mache</strong> alles richtig."<br/>
+                            Er sagt, er <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> alles richtig.
+                        </div>
+                        <div>
+                            2. Sie meint: "Wir <strong>haben</strong> keine Zeit."<br/>
+                            Sie meint, sie <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> keine Zeit.
+                        </div>
+                        <div>
+                            3. Der Arzt erklärt: "Der Patient <strong>muss</strong> ruhen."<br/>
+                            Der Arzt erklärt, der Patient <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> ruhen.
+                        </div>
+                        </div>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 2: Wünsche & Träume (Konjunktiv II)</h4>
+                        <p className="mb-2">Bilde Sätze im Konjunktiv II (Originalform oder würde-Form).</p>
+                        <ul className="space-y-3">
+                        <li>1. (sein) Wenn ich doch reich <span className={styles.wsInput}>wäre</span>!</li>
+                        <li>2. (haben) Wenn wir doch Ferien <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>!</li>
+                        <li>3. (kommen) Wenn er doch pünktlich <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>!</li>
+                        <li>4. (wissen) Wenn ich die Antwort doch <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>!</li>
+                        <li>5. (kaufen) Ich <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> mir ein neues Auto <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.wsTask}>
+                        <h4 className={styles.wsTaskTitle}>Aufgabe 3: Stil-Check ("würde" vermeiden)</h4>
+                        <p className="mb-2">In Aufsätzen klingt die ständige Wiederholung von "würde" unschön. Ersetze die würde-Form durch die echte Konjunktiv II Form, wo es möglich ist.</p>
+                        <div className="space-y-3">
+                            <p>1. Er würde gehen. → Er <span className={styles.wsInput}>ginge</span>.</p>
+                            <p>2. Wir würden kommen. → Wir <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
+                            <p>3. Sie würde geben. → Sie <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
+                            <p>4. Ich würde wissen. → Ich <span className={styles.wsInput}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.</p>
+                        </div>
+                    </div>
+                    </>
+                )
+                }
+            };
+
+            const navItems = [
+                { id: 'basics', label: 'Grundbegriffe' },
+                { id: 'stems', label: 'Starke/Schwache Verben' },
+                { id: 'tenses', label: 'Zeitformen' },
+                { id: 'voice', label: 'Aktiv & Passiv' },
+                { id: 'konjunktiv', label: 'Konjunktiv I & II' },
+            ];
+
+            // Helper function to reset view when changing tabs
+            const handleTabChange = (tabId) => {
+                setActiveTab(tabId);
+                setViewMode('theory'); // Reset to theory view on tab change
+            };
+
+            return (
+                <div className={styles.appContainer}>
+                <div className="flex flex-col md:flex-row min-h-screen">
+                    
+                    {/* Sidebar Navigation - Hidden on Print */}
+                    <aside className={styles.sidebar}>
+                    <div className="p-6 border-b border-slate-200">
+                        <div className="flex items-center gap-2 text-red-700 font-bold text-xl">
+                        <BookOpen size={24} />
+                        <span>Deutsch 8.</span>
+                        </div>
+                    </div>
+                    <nav className="p-4">
+                        {navItems.map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => handleTabChange(item.id)}
+                            className={`${styles.navItem} ${activeTab === item.id ? styles.navItemActive : styles.navItemInactive}`}
+                        >
+                            <span className="flex-1">{item.label}</span>
+                            {activeTab === item.id && <ChevronRight size={16} />}
+                        </button>
+                        ))}
+                    </nav>
+                    
+                    <div className="p-6 mt-auto text-xs text-slate-400">
+                        <p>© HoS-Lernmaterial</p>
+                        <p>Stand: 2026</p>
+                    </div>
+                    </aside>
+
+                    {/* Main Content Area */}
+                    <main className={styles.mainContent}>
+                    {/* Header */}
+                    <header className={styles.header}>
+                        <div>
+                        <h1 className={styles.title}>Das Verb (Zeitwort)</h1>
+                        <p className={styles.subtitle}>Lernunterlage für die 8. Schulstufe</p>
+                        </div>
+                        <button 
+                        onClick={handlePrint} 
+                        className={styles.printBtn}
+                        title="Aktuelle Seite drucken"
+                        >
+                        <Printer size={18} />
+                        <span>{viewMode === 'theory' ? 'Lernkartei drucken' : 'Arbeitsblatt drucken'}</span>
+                        </button>
+                    </header>
+
+                    {/* Print specific header (only visible when printing) */}
+                    <div className={styles.printHeader}>
+                        <div className="flex justify-between items-end">
+                            <div>
+                                <h1 className="text-2xl font-bold">{viewMode === 'theory' ? 'Lernkartei' : 'Arbeitsblatt'}: {content[activeTab].title}</h1>
+                                <p className="text-sm text-slate-600">Thema: Verben • 8. Schulstufe • Deutsch</p>
+                            </div>
+                            {/* Print Logo/Date area if it's a worksheet */}
+                            {viewMode === 'worksheet' && (
+                                <div className="text-right text-sm">
+                                    <p>Name: ______________________</p>
+                                    <p className="mt-2">Datum: ______________________</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Active Card Content */}
+                    <div className={styles.card}>
+                        {/* View Mode Switcher (Theory vs Worksheet) */}
+                        <div className={styles.modeSwitch}>
+                            <button 
+                                onClick={() => setViewMode('theory')}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'theory' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <GraduationCap size={16}/>
+                                    Lernstoff
+                                </div>
+                            </button>
+                            <button 
+                                onClick={() => setViewMode('worksheet')}
+                                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${viewMode === 'worksheet' ? 'bg-white text-red-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <FileText size={16}/>
+                                    Übungsblatt
+                                </div>
+                            </button>
+                        </div>
+
+                        {/* Inner Card Header */}
+                        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100 print:border-0">
+                        <div className="p-2 bg-red-100 text-red-700 rounded-lg print:hidden">
+                            {content[activeTab].icon}
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-800">
+                            {content[activeTab].title} {viewMode === 'worksheet' && <span className="text-slate-400 font-normal text-lg ml-2">(Übungen)</span>}
+                        </h2>
+                        </div>
+                        
+                        {/* Content Body */}
+                        <div>
+                        {viewMode === 'theory' ? content[activeTab].theory : content[activeTab].worksheet}
+                        </div>
+                    </div>
+                    </main>
+                </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<VerbLearningApp />);
+    </script>
+</body>
+</html>
