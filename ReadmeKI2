@@ -1,14 +1,12 @@
-PMS_beta - HoS Lern-Apps Portal.
+Du bist eine KI, die dieses Repo und das HoS Lern-Apps Portal versteht. Nutze die folgenden Informationen, um Fragen zur Funktionsweise zu beantworten und neue Module korrekt zu integrieren. Antworte klar, strukturiert und mit konkreten Dateipfaden/Schritten.
 
-Ziel
-Dieses Repo enthaelt eine Sammlung von Lern-Apps (Module) und zwei Einstiegsseiten:
-- `index.html` (Dashboard-Startseite)
-- `portal/index.html` (Portal-Ansicht)
-- `ReadmeKI2` (Prompt fuer KI-Anleitungen zur Funktionsweise und Modul-Erweiterung)
+## Kontext & Zweck
+Dieses Repo (PMS_beta) enthaelt eine Sammlung von Lern-Apps (Module) und zwei Einstiegsseiten:
+- `index.html`: Dashboard-Startseite (Karten werden per JavaScript aus `APP_CARDS` erzeugt)
+- `portal/index.html`: Portal-Ansicht mit statischen Kacheln
+Module liegen unter `portal/modules/<slug>/index.html`. Alte Root-Links bleiben aktiv und leiten auf das jeweilige Modul um.
 
-Die Module liegen unter `portal/modules/<slug>/index.html`. Alte Root-Links bleiben aktiv und leiten auf das jeweilige Modul um.
-
-Struktur (wichtig fuer neue Module)
+## Struktur & wichtige Dateien
 - `portal/modules/<slug>/index.html`: eigentliche App
 - `portal/index.html`: Portal-Kacheln (statische Links)
 - `index.html`: Dashboard (Karten werden per JS aus `APP_CARDS` erzeugt)
@@ -16,8 +14,8 @@ Struktur (wichtig fuer neue Module)
 - `css/style.css` + `css/app.css`: globale Styles inkl. Header-Layout
 - `docs/MIGRATION.md`: Mapping Alt -> Neu (Root-Link zu Modul)
 
-Standard-Header (alle Apps gleich)
-Jede App soll oben den gleichen Kopfbereich verwenden:
+## Standard-Header fuer alle Apps
+Jede App muss oben den gleichen Kopfbereich verwenden:
 - Logo `chatisthisreal.png`
 - Fach-Badge (Deutsch rot, Mathe blau)
 - Titel in der Kopfzeile
@@ -42,22 +40,22 @@ Pflicht in jedem Modul-HTML:
   </div>
 </header>
 ```
-Varianten fuer das Badge:
+Badge-Varianten:
 - Deutsch: `badge-main is-deutsch`
 - Mathe: `badge-main is-mathe`
 - Englisch: `badge-main is-english` (gruen, siehe `--subject-english`)
 - Anderes Fach: `badge-main` oder `badge-main is-andere` und in `:root` `--subject-color` setzen (z.B. `#10b981` fuer Geschichte/Medien).
 
-Wichtig: Falls es im alten Layout bereits einen Titel-Header gab, diesen entfernen oder ausblenden, damit der Titel nicht doppelt erscheint.
+Wichtig: Falls im alten Layout bereits ein Titel-Header existiert, diesen entfernen oder ausblenden, damit der Titel nicht doppelt erscheint.
 
-Neue App hinzufuegen (Schritt-fuer-Schritt)
+## Neue App hinzufuegen (Schritt-fuer-Schritt)
 1) Modul-Ordner anlegen
    - Pfad: `portal/modules/<slug>/index.html`
    - `slug` klein, nur a-z, 0-9, `-` (Beispiel: `zeitformenquiz`)
 2) HTML-Grundgeruest
    - Standard-Header wie oben einbauen
    - Inhalte darunter platzieren
-   - Wenn die App ein Vollbild-Layout hat: `body` als flex column, Inhalte in einem Container mit `flex: 1 1 auto; min-height: 0;`
+   - Falls Vollbild-Layout: `body` als flex column, Inhalte in einem Container mit `flex: 1 1 auto; min-height: 0;`
 3) Portal-Link hinzufuegen
    - Datei: `portal/index.html`
    - Neue Kachel anlegen (copy/paste einer bestehenden `portal-card`)
@@ -86,7 +84,7 @@ Neue App hinzufuegen (Schritt-fuer-Schritt)
 }
 ```
 5) Root-Wrapper (Redirect) erstellen
-   - Datei in Repo-Root, z.B. `MeinModul.html`
+   - Datei im Repo-Root, z.B. `MeinModul.html`
    - Aufgabe: auf `/portal/modules/<slug>/` umleiten
    - Vorlage:
 ```
@@ -122,25 +120,20 @@ Neue App hinzufuegen (Schritt-fuer-Schritt)
    - Datei: `docs/MIGRATION.md`
    - Neue Zeile fuer `/<RootLink>.html` -> `/portal/modules/<slug>/`
 
-Buttons auf der Startseite (Dashboard)
-- `index.html` nutzt `APP_CARDS` (JS) und erzeugt die Kacheln dynamisch.
-- Neue Module in `APP_CARDS.deutsch` oder `APP_CARDS.mathe` eintragen.
-- `href` zeigt auf den Root-Wrapper (z.B. `MeinModul.html`) damit alte Links stabil bleiben.
+## Buttons & Navigation
+- Dashboard (`index.html`): Kacheln werden aus `APP_CARDS` generiert. `href` zeigt auf den Root-Wrapper, damit alte Links stabil bleiben.
+- Portal (`portal/index.html`): statische `portal-card` Links, manuell pflegen.
 
-Buttons im Portal
-- `portal/index.html` ist statisch und enthaelt `<a class="portal-card" ...>`.
-- Neuen `portal-card` Eintrag manuell hinzufuegen.
-
-Qualitaetsregeln fuer neue Module (fuer KI wichtig)
+## Qualitaetsregeln fuer neue Module
 - Einheitlicher Header: `app-header` und Logo `chatisthisreal.png`.
 - Kein doppelter Titel: Titel gehoert in den Header, nicht in einen zweiten Hero.
 - Fach-Badge korrekt:
   - Deutsch: rotes Feld "Deutsch"
   - Mathe: blaues Feld "Mathe"
-- ASCII-Text bevorzugen, Datei als UTF-8 speichern (keine kaputten Sonderzeichen).
+- ASCII-Text bevorzugen, Datei als UTF-8 speichern.
 - Assets der App in `portal/modules/<slug>/` halten (keine Namens-Kollisionen).
 
-Mini-Checkliste (schnell)
+## Mini-Checkliste
 - [ ] Modul in `portal/modules/<slug>/index.html` angelegt
 - [ ] Header nach Standard (Logo + Badge + Titel + Startseite)
 - [ ] Portal-Kachel in `portal/index.html`
