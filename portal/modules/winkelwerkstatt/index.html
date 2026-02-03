@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winkelwerkstatt</title>
+
+    <!-- 1) Pflicht-Stylesheets für das Portal -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/app.css">
+
+    <!-- 2) Dependencies für die App (React + Tailwind) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- KaTeX für Formeln (optional, hier nutzen wir Unicode für Einfachheit) -->
+
+    <style>
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+        }
+        body { background-color: #f8f9fa; }
+    </style>
+</head>
+<body>
+
+    <!-- 3) Standard-Header -->
+    <header class="app-header">
+        <div class="brand-row">
+            <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <div class="brand-title">
+                <div class="badge-main is-mathe">Mathe</div>
+                <h1>Winkelwerkstatt</h1>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="/index.html" class="header-link">Startseite</a>
+        </div>
+    </header>
+
+    <!-- 4) React Mount Point -->
+    <div id="root" class="app-container"></div>
+
+    <!-- 5) Die React App Logik -->
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons ---
+        const IconRuler = ({ size = 20, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+        );
+        const IconCheck = ({ size = 20, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        );
+        const IconHelp = ({ size = 20, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        );
+        const IconRotate = ({ size = 20, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        );
+        const IconRight = ({ size = 20, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"/></svg>
+        );
+
+        // --- UI Components ---
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Button = ({ onClick, children, variant = "primary", className = "", disabled = false }) => {
+            const baseStyle = "px-5 py-2.5 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+            const variants = {
+                primary: "bg-slate-800 text-white hover:bg-slate-700 shadow-sm hover:shadow",
+                secondary: "bg-white border border-slate-300 text-slate-700 hover:bg-slate-50",
+                success: "bg-green-600 text-white hover:bg-green-700",
+                outline: "border-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800"
+            };
+            return (
+                <button onClick={onClick} disabled={disabled} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                    {children}
+                </button>
+            );
+        };
+
+        const Badge = ({ children, color = "blue" }) => {
+            const colors = {
+                blue: "bg-blue-50 text-blue-700 border-blue-100",
+                green: "bg-green-50 text-green-700 border-green-100",
+                slate: "bg-slate-100 text-slate-600 border-slate-200",
+                orange: "bg-orange-50 text-orange-700 border-orange-100",
+                purple: "bg-purple-50 text-purple-700 border-purple-100"
+            };
+            return (
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${colors[color]}`}>
+                    {children}
+                </span>
+            );
+        };
+
+        // --- Math Helpers ---
+        const toRad = (deg) => (deg * Math.PI) / 180;
+        const toDeg = (rad) => (rad * 180) / Math.PI;
+
+        const getCoord = (cx, cy, r, deg) => {
+            const rad = toRad(deg);
+            return {
+                x: cx + r * Math.cos(rad),
+                y: cy - r * Math.sin(rad)
+            };
+        };
+
+        const getAngleType = (deg) => {
+            if (deg === 0) return "Nullwinkel";
+            if (deg > 0 && deg < 90) return "Spitzer Winkel";
+            if (deg === 90) return "Rechter Winkel";
+            if (deg > 90 && deg < 180) return "Stumpfer Winkel";
+            if (deg === 180) return "Gestreckter Winkel";
+            if (deg > 180 && deg < 360) return "Überstumpfer Winkel";
+            if (deg === 360) return "Vollwinkel";
+            return "Unbekannt";
+        };
+
+        // --- Angle Visualization for Explore/Quiz ---
+        const AngleView = ({ angle, showProtractor = false, size = 300, interactive = false, onAngleChange }) => {
+            const cx = size / 2;
+            const cy = size / 2; // Centered vertically to allow full 360 rotation without clipping
+            const r = size * 0.35;
+            const arcR = size * 0.15;
+
+            const end = getCoord(cx, cy, r, angle);
+            const start = getCoord(cx, cy, r, 0);
+
+            const largeArcFlag = angle > 180 ? 1 : 0;
+            const arcEnd = getCoord(cx, cy, arcR, angle);
+            const arcStart = getCoord(cx, cy, arcR, 0);
+            const arcPath = `M ${arcStart.x} ${arcStart.y} A ${arcR} ${arcR} 0 ${largeArcFlag} 0 ${arcEnd.x} ${arcEnd.y}`;
+            const dotPos = getCoord(cx, cy, arcR * 0.6, 45);
+
+            const svgRef = useRef(null);
+            const handleInteraction = (e) => {
+                if (!interactive) return;
+                const svg = svgRef.current;
+                const pt = svg.createSVGPoint();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                pt.x = clientX;
+                pt.y = clientY;
+                const cursorPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+                const dx = cursorPt.x - cx;
+                const dy = cy - cursorPt.y;
+                let newAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+                if (newAngle < 0) newAngle += 360;
+
+                // Snap Logic
+                const snapThreshold = 3;
+                if (Math.abs(newAngle - 90) < snapThreshold) newAngle = 90;
+                else if (Math.abs(newAngle - 180) < snapThreshold) newAngle = 180;
+                else if (Math.abs(newAngle - 270) < snapThreshold) newAngle = 270;
+                else if (newAngle < snapThreshold || newAngle > 360 - snapThreshold) newAngle = 0;
+
+                onAngleChange(Math.round(newAngle));
+            };
+
+            return (
+                <div className="relative flex justify-center items-center select-none">
+                    <svg
+                        ref={svgRef}
+                        width={size}
+                        height={size} // Full height square
+                        viewBox={`0 0 ${size} ${size}`}
+                        onMouseMove={(e) => e.buttons === 1 && handleInteraction(e)}
+                        onMouseDown={(e) => handleInteraction(e)}
+                        onTouchMove={(e) => handleInteraction(e)}
+                        className={interactive ? "cursor-crosshair touch-none" : ""}
+                    >
+                        {showProtractor && (
+                            <g opacity="0.6" style={{ pointerEvents: 'none' }}>
+                                <path d={`M ${cx-r} ${cy} L ${cx+r} ${cy}`} stroke="#94a3b8" strokeWidth="1" />
+                                <path d={`M ${cx} ${cy-r} L ${cx} ${cy}`} stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4"/>
+                                <circle cx={cx} cy={cy} r={r} fill="none" stroke="#cbd5e1" strokeWidth="20" strokeDasharray="1 3" />
+                                <text x={cx} y={cy - r - 15} textAnchor="middle" className="text-[10px] fill-slate-400">90°</text>
+                                <text x={cx + r + 10} y={cy} textAnchor="middle" className="text-[10px] fill-slate-400">0°</text>
+                            </g>
+                        )}
+                        <path d={`M ${cx} ${cy} L ${arcStart.x} ${arcStart.y} A ${arcR} ${arcR} 0 ${largeArcFlag} 0 ${arcEnd.x} ${arcEnd.y} Z`} fill="rgba(59, 130, 246, 0.1)" />
+                        <path d={arcPath} fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" />
+                        {angle === 90 && <circle cx={dotPos.x} cy={dotPos.y} r="3" fill="#2563eb" />}
+                        <line x1={cx} y1={cy} x2={start.x} y2={start.y} stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+                        <line x1={cx} y1={cy} x2={end.x} y2={end.y} stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
+                        <circle cx={cx} cy={cy} r="4" fill="#1e293b" />
+                        <circle cx={start.x} cy={start.y} r="3" fill="#1e293b" />
+                        <circle cx={end.x} cy={end.y} r={interactive ? 6 : 3} fill={interactive ? "#ef4444" : "#1e293b"} />
+                    </svg>
+                    {!interactive && !showProtractor && (
+                        <div className="absolute bottom-4 right-4 bg-slate-100 px-2 py-1 rounded text-xs text-slate-500">
+                        Abb. nicht maßstabsgetreu
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Calculation Visualizations ---
+
+        // 1. Lines (Supplementary/Complementary)
+        const CalcLinesView = ({ task, size = 280 }) => {
+            const cx = size / 2;
+            const cy = size / 2; // Centered vertically for full circles
+            const r = size * 0.35;
+            const arcR = size * 0.15;
+
+            const base = getCoord(cx, cy, r, 0);
+            const limit = getCoord(cx, cy, r, task.total === 360 ? 359.9 : task.total);
+            const split = getCoord(cx, cy, r, task.given);
+
+            const givenArcEnd = getCoord(cx, cy, arcR, task.given);
+            const givenArcStart = getCoord(cx, cy, arcR, 0);
+            const givenPath = `M ${givenArcStart.x} ${givenArcStart.y} A ${arcR} ${arcR} 0 0 0 ${givenArcEnd.x} ${givenArcEnd.y}`;
+
+            const missingR = arcR + 15;
+            const missingStart = getCoord(cx, cy, missingR, task.given);
+            const missingEnd = getCoord(cx, cy, missingR, task.total === 360 ? 359.9 : task.total);
+            const largeArc = (task.total - task.given) > 180 ? 1 : 0;
+            const missingPath = `M ${missingStart.x} ${missingStart.y} A ${missingR} ${missingR} 0 ${largeArc} 0 ${missingEnd.x} ${missingEnd.y}`;
+
+            return (
+                <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+                    <line x1={cx} y1={cy} x2={base.x} y2={base.y} stroke="#cbd5e1" strokeWidth="3" />
+                    <line x1={cx} y1={cy} x2={limit.x} y2={limit.y} stroke="#cbd5e1" strokeWidth="3" />
+                    <line x1={cx} y1={cy} x2={split.x} y2={split.y} stroke="#1e293b" strokeWidth="3" />
+                    {task.type === "right" && <circle cx={getCoord(cx,cy,arcR*0.6, 45).x} cy={getCoord(cx,cy,arcR*0.6, 45).y} r="2" fill="#94a3b8" />}
+                    <path d={givenPath} fill="none" stroke="#2563eb" strokeWidth="2" />
+                    <text x={getCoord(cx, cy, arcR+15, task.given/2).x} y={getCoord(cx, cy, arcR+15, task.given/2).y} textAnchor="middle" fill="#2563eb" className="text-xs font-bold">{task.given}°</text>
+                    <path d={missingPath} fill="none" stroke="#f97316" strokeWidth="2" strokeDasharray="4 2" />
+                    <text x={getCoord(cx, cy, missingR+20, task.given + (task.total-task.given)/2).x} y={getCoord(cx, cy, missingR+20, task.given + (task.total-task.given)/2).y} textAnchor="middle" fill="#f97316" className="text-sm font-bold">?</text>
+                    <circle cx={cx} cy={cy} r="4" fill="#1e293b" />
+                </svg>
+            );
+        };
+
+        // 2. Triangle View
+        const CalcTriangleView = ({ task, size = 280 }) => {
+            // Task has angles [a, b, c], missingIndex
+            const angles = task.angles;
+            const missingIdx = task.missingIndex;
+
+            // Generate visual coordinates based on angles (simplified construction)
+            // Base line at bottom
+            const w = size * 0.7;
+            const h = size * 0.5;
+            const padX = (size - w) / 2;
+            const padY = size * 0.7; // bottom Y
+
+            const A = { x: padX, y: padY };
+            const B = { x: padX + w, y: padY };
+
+            // Calculate C using angles at A and B
+            // tan(alpha) = y / x_a, tan(beta) = y / x_b
+            // This is complex to render perfectly scaled, so we approximate a visual triangle
+            // but use correct labels.
+            // BETTER: Use actual trigonometry to find C.
+            // C.x = (w * tan(beta)) / (tan(alpha) + tan(beta))
+            // C.y = C.x * tan(alpha)
+
+            const rA = toRad(angles[0]);
+            const rB = toRad(angles[1]);
+
+            // Handle right angle specifically for simpler math or edge cases
+            // We use standard construction
+            const h_calc = (w * Math.tan(rB) * Math.tan(rA)) / (Math.tan(rA) + Math.tan(rB));
+            const x_calc = h_calc / Math.tan(rA);
+
+            // Scale down if too tall
+            let scale = 1;
+            if (h_calc > size * 0.6) scale = (size * 0.6) / h_calc;
+
+            const C = {
+                x: A.x + x_calc * scale,
+                y: A.y - h_calc * scale
+            };
+
+            const labels = ["α", "β", "γ"];
+
+            const renderAngle = (p1, pCenter, p2, val, idx) => {
+                // Simplified Angle arc drawing would go here
+                // For now, just placing text near the corner is enough for HoS style clarity
+                // Calculate label position slightly inwards
+                const dx = (p1.x + p2.x)/2 - pCenter.x;
+                const dy = (p1.y + p2.y)/2 - pCenter.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const offset = 25;
+                const lx = pCenter.x + (dx/dist) * offset;
+                const ly = pCenter.y + (dy/dist) * offset;
+
+                const isMissing = idx === missingIdx;
+                const text = isMissing ? "?" : val + "°";
+                const color = isMissing ? "#f97316" : "#2563eb";
+
+                return (
+                    <g key={idx}>
+                        <text x={lx} y={ly} textAnchor="middle" dominantBaseline="middle" fill={color} className="text-xs font-bold">{text}</text>
+                        {val === 90 && !isMissing && (
+                             <circle cx={lx} cy={ly} r="2" fill={color} />
+                        )}
+                    </g>
+                );
+            };
+
+            return (
+                <svg width={size} height={size * 0.8} viewBox={`0 0 ${size} ${size * 0.8}`}>
+                    <polygon points={`${A.x},${A.y} ${B.x},${B.y} ${C.x},${C.y}`} fill="none" stroke="#1e293b" strokeWidth="2" strokeLinejoin="round" />
+                    {renderAngle(C, A, B, angles[0], 0)}
+                    {renderAngle(A, B, C, angles[1], 1)}
+                    {renderAngle(B, C, A, angles[2], 2)}
+                </svg>
+            );
+        };
+
+        // 3. Quadrilateral View
+        const CalcQuadView = ({ task, size = 280 }) => {
+            const angles = task.angles;
+            const missingIdx = task.missingIndex;
+
+            // Draw a generic irregular convex quadrilateral
+            // Hard to generate from angles alone perfectly without a solver.
+            // We draw a generic shape and label it.
+            const pts = [
+                {x: 50, y: 180},
+                {x: 230, y: 180},
+                {x: 200, y: 50},
+                {x: 80, y: 30}
+            ];
+
+            const center = {x: 140, y: 110};
+
+            return (
+                <svg width={size} height={200} viewBox={`0 0 ${size} 200`}>
+                     <polygon points={`${pts[0].x},${pts[0].y} ${pts[1].x},${pts[1].y} ${pts[2].x},${pts[2].y} ${pts[3].x},${pts[3].y}`} fill="none" stroke="#1e293b" strokeWidth="2" strokeLinejoin="round" />
+                     {pts.map((p, i) => {
+                         // Label pos
+                         const dx = center.x - p.x;
+                         const dy = center.y - p.y;
+                         const lx = p.x + dx * 0.2;
+                         const ly = p.y + dy * 0.2;
+
+                         const isMissing = i === missingIdx;
+                         const text = isMissing ? "?" : angles[i] + "°";
+                         const color = isMissing ? "#f97316" : "#2563eb";
+
+                         return (
+                             <text key={i} x={lx} y={ly} textAnchor="middle" fill={color} className="text-xs font-bold">{text}</text>
+                         )
+                     })}
+                     <text x="140" y="20" textAnchor="middle" className="text-[10px] fill-slate-400">Skizze nicht maßstabsgetreu</text>
+                </svg>
+            );
+        };
+
+
+        // --- Modul 1-3 (Unchanged) ---
+        const ModuleExplore = () => {
+            const [angle, setAngle] = useState(45);
+            const [showProtractor, setShowProtractor] = useState(false);
+            const type = getAngleType(angle);
+            return (
+                <div className="space-y-6">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-slate-800">Winkel erforschen</h2>
+                        <Badge color="blue">Interaktiv</Badge>
+                    </div>
+                    <Card className="p-6 bg-slate-50 border-slate-200">
+                        <div className="text-center mb-4">
+                            <p className="text-slate-500 text-sm uppercase tracking-wide font-semibold mb-1">Aktuelle Winkelart</p>
+                            <div className="text-3xl font-bold text-blue-700">{type}</div>
+                            <div className="text-xl font-mono text-slate-600 mt-1">{angle}°</div>
+                        </div>
+                        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-inner mb-6 relative">
+                            <div className="absolute top-2 right-2 flex gap-2">
+                                <button onClick={() => setShowProtractor(!showProtractor)} className={`p-2 rounded-lg text-sm transition-colors ${showProtractor ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`} title="Geodreieck Hilfe"><IconRuler size={18} /></button>
+                            </div>
+                            <AngleView angle={angle} interactive={true} onAngleChange={setAngle} showProtractor={showProtractor} />
+                            <p className="text-center text-xs text-slate-400 mt-2">Ziehe am roten Punkt (rastet bei 90° ein)</p>
+                        </div>
+                        <input type="range" min="0" max="360" value={angle} onChange={(e) => setAngle(parseInt(e.target.value))} className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                    </Card>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className={`p-4 rounded-lg border-l-4 ${angle < 90 && angle > 0 ? 'bg-blue-50 border-blue-500' : 'bg-white border-slate-200 opacity-50'}`}>
+                            <h4 className="font-bold text-slate-800">Spitzer Winkel</h4>
+                            <p className="text-sm text-slate-600">&lt; 90°</p>
+                        </div>
+                        <div className={`p-4 rounded-lg border-l-4 ${angle === 90 ? 'bg-blue-50 border-blue-500' : 'bg-white border-slate-200 opacity-50'}`}>
+                            <h4 className="font-bold text-slate-800">Rechter Winkel</h4>
+                            <p className="text-sm text-slate-600">= 90° (mit Punkt)</p>
+                        </div>
+                        <div className={`p-4 rounded-lg border-l-4 ${angle > 90 && angle < 180 ? 'bg-blue-50 border-blue-500' : 'bg-white border-slate-200 opacity-50'}`}>
+                            <h4 className="font-bold text-slate-800">Stumpfer Winkel</h4>
+                            <p className="text-sm text-slate-600">90° - 180°</p>
+                        </div>
+                        <div className={`p-4 rounded-lg border-l-4 ${angle > 180 && angle < 360 ? 'bg-blue-50 border-blue-500' : 'bg-white border-slate-200 opacity-50'}`}>
+                            <h4 className="font-bold text-slate-800">Überstumpfer W.</h4>
+                            <p className="text-sm text-slate-600">&gt; 180°</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const ModuleQuiz = () => {
+            const [currentAngle, setCurrentAngle] = useState(0);
+            const [options, setOptions] = useState([]);
+            const [status, setStatus] = useState("guessing");
+            const [score, setScore] = useState(0);
+            const [feedback, setFeedback] = useState("");
+            const generateTask = () => {
+                const angle = Math.floor(Math.random() * 340) + 10;
+                setCurrentAngle(angle);
+                setOptions(["Spitzer Winkel", "Rechter Winkel", "Stumpfer Winkel", "Überstumpfer Winkel"]);
+                setStatus("guessing");
+                setFeedback("");
+            };
+            useEffect(() => { generateTask(); }, []);
+            const handleGuess = (guessType) => {
+                const correctType = getAngleType(currentAngle);
+                if (guessType === correctType) {
+                    setStatus("correct");
+                    setScore(s => s + 1);
+                    setFeedback(`Richtig! Es ist ein ${correctType}.`);
+                } else {
+                    setStatus("wrong");
+                    setFeedback(`Leider falsch. Es ist ein ${correctType} (${currentAngle}°).`);
+                }
+            };
+            return (
+                <div className="space-y-6 max-w-xl mx-auto">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-slate-800">Winkel bestimmen</h2>
+                        <Badge color="green">Punkte: {score}</Badge>
+                    </div>
+                    <Card className="p-8 flex flex-col items-center justify-center bg-white min-h-[250px]">
+                        <AngleView angle={currentAngle} size={280} />
+                    </Card>
+                    {status === "guessing" ? (
+                        <div className="grid grid-cols-2 gap-3">
+                            {options.map((opt) => (
+                                <button key={opt} onClick={() => handleGuess(opt)} className="p-4 rounded-lg bg-white border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 font-medium transition-all text-sm md:text-base">
+                                    {opt}
+                                </button>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className={`p-4 rounded-lg text-center ${status === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            <div className="flex items-center justify-center gap-2 mb-2 font-bold text-lg">
+                                {status === 'correct' ? <IconCheck /> : <IconHelp />}
+                                {status === 'correct' ? 'Sehr gut!' : 'Knapp daneben'}
+                            </div>
+                            <p className="mb-4">{feedback}</p>
+                            <Button onClick={generateTask} className="w-full">
+                                Nächster Winkel <IconRight size={18} />
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const ModuleEstimate = () => {
+            const [targetAngle, setTargetAngle] = useState(0);
+            const [userGuess, setUserGuess] = useState(90);
+            const [status, setStatus] = useState("input");
+            const [diff, setDiff] = useState(0);
+            const nextTask = () => {
+                setTargetAngle(Math.floor(Math.random() * 340) + 10);
+                setUserGuess(90);
+                setStatus("input");
+            };
+            useEffect(() => { nextTask(); }, []);
+            const handleSubmit = () => {
+                const d = Math.abs(targetAngle - userGuess);
+                setDiff(d);
+                setStatus("result");
+            };
+            const getRating = (d) => {
+                if (d <= 5) return { text: "Perfekt!", color: "text-green-600" };
+                if (d <= 15) return { text: "Sehr gut!", color: "text-green-500" };
+                if (d <= 30) return { text: "Guter Versuch.", color: "text-blue-600" };
+                return { text: "Geht noch genauer.", color: "text-slate-500" };
+            };
+            const rating = getRating(diff);
+            return (
+                <div className="space-y-6 max-w-xl mx-auto">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-slate-800">Schätzen</h2>
+                        <Badge color="orange">Training</Badge>
+                    </div>
+                    <Card className="p-8 flex flex-col items-center justify-center bg-white min-h-[250px] relative">
+                        <AngleView angle={targetAngle} size={280} />
+                        {status === "result" && (
+                            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-30">
+                                <AngleView angle={userGuess} size={280} />
+                            </div>
+                        )}
+                    </Card>
+                    {status === "input" ? (
+                        <div className="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <label className="block text-center text-slate-600 font-medium mb-4">Stelle den Winkel ein:</label>
+                            <div className="flex items-center gap-4 mb-6">
+                                <span className="text-xs text-slate-400">0°</span>
+                                <input type="range" min="0" max="360" value={userGuess} onChange={(e) => setUserGuess(parseInt(e.target.value))} className="flex-1 h-3 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                                <span className="text-xs text-slate-400">360°</span>
+                            </div>
+                            <div className="text-center mb-6">
+                                <span className="text-3xl font-bold text-blue-700">{userGuess}°</span>
+                            </div>
+                            <Button onClick={handleSubmit} className="w-full py-3 text-lg">Überprüfen</Button>
+                        </div>
+                    ) : (
+                        <div className="bg-white border-2 border-slate-100 p-6 rounded-xl text-center space-y-4 shadow-sm">
+                            <div className="text-lg font-medium text-slate-800">{rating.text}</div>
+                            <div className="flex justify-center gap-4 text-sm">
+                                <div><div className="text-slate-400 text-xs">Dein Tipp</div><div className="text-xl font-bold text-slate-700">{userGuess}°</div></div>
+                                <div><div className="text-slate-400 text-xs">Echt</div><div className="text-xl font-bold text-green-600">{targetAngle}°</div></div>
+                                <div><div className="text-slate-400 text-xs">Abw.</div><div className="text-xl font-bold text-red-500">{diff}°</div></div>
+                            </div>
+                            <Button onClick={nextTask} variant="secondary" className="w-full mt-4">Weiter <IconRotate size={16} /></Button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Modul 4: Rechnen (UPDATED) ---
+        const ModuleCalculate = () => {
+            const [mode, setMode] = useState("lines"); // lines, triangle, quad
+            const [task, setTask] = useState(null);
+            const [input, setInput] = useState("");
+            const [status, setStatus] = useState("input");
+
+            // Generators
+            const generateLineTask = () => {
+                const types = [
+                    { type: "right", total: 90, label: "Rechter Winkel" },
+                    { type: "straight", total: 180, label: "Gestreckter Winkel" },
+                    { type: "full", total: 360, label: "Vollwinkel" }
+                ];
+                const selected = types[Math.floor(Math.random() * types.length)];
+                const given = Math.floor(Math.random() * (selected.total - 20)) + 10;
+                return { mode: "lines", ...selected, given, answer: selected.total - given };
+            };
+
+            const generateTriangleTask = () => {
+                // Generate 2 random angles that sum < 180
+                // We use integer values for school level simplicity
+                const a = Math.floor(Math.random() * 80) + 20;
+                const b = Math.floor(Math.random() * (160 - a)) + 10;
+                const c = 180 - a - b;
+                const angles = [a, b, c];
+                const missingIndex = Math.floor(Math.random() * 3);
+                return { mode: "triangle", label: "Winkelsumme Dreieck", angles, missingIndex, answer: angles[missingIndex] };
+            };
+
+            const generateQuadTask = () => {
+                // Generate 3 random angles summing < 360
+                const a = Math.floor(Math.random() * 80) + 40;
+                const b = Math.floor(Math.random() * 80) + 40;
+                const c = Math.floor(Math.random() * 80) + 40;
+                const d = 360 - a - b - c;
+
+                // Ensure d is convex-ish (not negative or overly huge, though math is correct either way)
+                if (d <= 0 || d > 180) return generateQuadTask(); // retry
+
+                const angles = [a, b, c, d];
+                const missingIndex = Math.floor(Math.random() * 4);
+                return { mode: "quad", label: "Winkelsumme Viereck", angles, missingIndex, answer: angles[missingIndex] };
+            };
+
+            const nextTask = (selectedMode) => {
+                const m = selectedMode || mode;
+                let t;
+                if (m === "lines") t = generateLineTask();
+                else if (m === "triangle") t = generateTriangleTask();
+                else if (m === "quad") t = generateQuadTask();
+
+                setTask(t);
+                setInput("");
+                setStatus("input");
+            };
+
+            // Switch mode
+            const handleModeChange = (newMode) => {
+                setMode(newMode);
+                nextTask(newMode);
+            };
+
+            useEffect(() => { nextTask(); }, []);
+
+            const checkAnswer = () => {
+                const val = parseInt(input);
+                if (isNaN(val)) return;
+
+                if (val === task.answer) {
+                    setStatus("correct");
+                } else {
+                    setStatus("wrong");
+                }
+            };
+
+            if (!task) return <div>Laden...</div>;
+
+            return (
+                <div className="space-y-6 max-w-xl mx-auto">
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-slate-800">Winkel berechnen</h2>
+                        <Badge color="purple">Rechnen</Badge>
+                    </div>
+
+                    {/* Mode Selector */}
+                    <div className="flex gap-2 justify-center mb-4">
+                        <button onClick={() => handleModeChange("lines")} className={`px-3 py-1 rounded text-xs font-semibold ${mode === 'lines' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-white border border-slate-200 text-slate-500'}`}>Winkelarten</button>
+                        <button onClick={() => handleModeChange("triangle")} className={`px-3 py-1 rounded text-xs font-semibold ${mode === 'triangle' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-white border border-slate-200 text-slate-500'}`}>Dreiecke (7.)</button>
+                        <button onClick={() => handleModeChange("quad")} className={`px-3 py-1 rounded text-xs font-semibold ${mode === 'quad' ? 'bg-purple-100 text-purple-700 border border-purple-200' : 'bg-white border border-slate-200 text-slate-500'}`}>Vierecke (8.)</button>
+                    </div>
+
+                    <Card className="p-4 bg-slate-50 border-slate-200">
+                         <div className="text-center mb-2">
+                            <span className="text-sm uppercase tracking-wide text-slate-500 font-semibold">{task.label}</span>
+                            <div className="text-xs text-slate-400">
+                                {mode === "lines" && `Gesamt: ${task.total}°`}
+                                {mode === "triangle" && `Winkelsumme: 180°`}
+                                {mode === "quad" && `Winkelsumme: 360°`}
+                            </div>
+                        </div>
+
+                        <div className="flex justify-center bg-white rounded-xl border border-slate-200 py-4 mb-4">
+                            {mode === "lines" && <CalcLinesView task={task} />}
+                            {mode === "triangle" && <CalcTriangleView task={task} />}
+                            {mode === "quad" && <CalcQuadView task={task} />}
+                        </div>
+
+                        {status === "input" ? (
+                            <div className="space-y-4">
+                                <p className="text-center text-slate-700 text-sm">
+                                    Berechne den fehlenden Winkel <span className="text-orange-500 font-bold">?</span>
+                                </p>
+                                <div className="flex gap-2 max-w-[200px] mx-auto">
+                                    <input
+                                        type="number"
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && checkAnswer()}
+                                        placeholder="?"
+                                        className="w-full px-4 py-2 border-2 border-slate-300 rounded-lg text-center font-bold text-lg focus:border-purple-500 focus:outline-none"
+                                    />
+                                    <Button onClick={checkAnswer} variant="primary">Prüfen</Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className={`p-4 rounded-lg text-center ${status === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                                <div className="flex items-center justify-center gap-2 mb-2 font-bold text-lg">
+                                    {status === 'correct' ? <IconCheck /> : <IconHelp />}
+                                    {status === 'correct' ? 'Richtig!' : 'Leider falsch'}
+                                </div>
+                                <p className="mb-4 font-mono bg-white/50 inline-block px-3 py-1 rounded">
+                                    {mode === "lines" && `${task.total}° - ${task.given}° = ${task.answer}°`}
+                                    {mode === "triangle" && `180° - ${task.angles.filter((_,i)=>i!==task.missingIndex).join("° - ")}° = ${task.answer}°`}
+                                    {mode === "quad" && `360° - ${task.angles.filter((_,i)=>i!==task.missingIndex).join("° - ")}° = ${task.answer}°`}
+                                </p>
+                                <Button onClick={() => nextTask()} className="w-full">
+                                    Nächste Aufgabe <IconRight size={18} />
+                                </Button>
+                            </div>
+                        )}
+                    </Card>
+                </div>
+            );
+        };
+
+        // --- Main App Container ---
+        const App = () => {
+            const [activeTab, setActiveTab] = useState("explore");
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case "explore": return <ModuleExplore />;
+                    case "quiz": return <ModuleQuiz />;
+                    case "estimate": return <ModuleEstimate />;
+                    case "calculate": return <ModuleCalculate />;
+                    default: return <ModuleExplore />;
+                }
+            };
+
+            return (
+                <div>
+                    {/* Navigation Tabs (Responsive) */}
+                    <div className="flex justify-center mb-8">
+                        <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm inline-flex w-full md:w-auto overflow-x-auto">
+                             <button onClick={() => setActiveTab("explore")} className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === "explore" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>Erforschen</button>
+                             <button onClick={() => setActiveTab("quiz")} className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === "quiz" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>Bestimmen</button>
+                             <button onClick={() => setActiveTab("estimate")} className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === "estimate" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>Schätzen</button>
+                             <button onClick={() => setActiveTab("calculate")} className={`flex-1 md:flex-none px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === "calculate" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>Rechnen</button>
+                        </div>
+                    </div>
+
+                    {renderContent()}
+
+                    <footer className="mt-12 text-center">
+                        <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4"></div>
+                        <p className="text-slate-300 text-xs">© 2024 WinkelWerkstatt • HoS-Standard</p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
