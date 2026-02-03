@@ -5,37 +5,38 @@
   <link rel="stylesheet" href="/css/app.css">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Montessori – Wortarten-Symbole zuordnen (HoS · 30 Sätze)</title>
-  
+  <title>Montessori – Wortarten-Symbole zuordnen</title>
+
   <style>
     :root{
-      --subject-color:#ef4444;
-      /* Base (Durchgeschüttelt-Optik) */
-      --bg:#f2f4f7;
+      --subject-color:#ef4444; /* Fallback, wird durch Portal-CSS ggf. überschrieben */
+
+      /* Base UI Colors */
+      --bg:#f8fafc;
       --card:#ffffff;
       --ink:#1e293b;
       --muted:#64748b;
       --line:#e2e8f0;
-      --accent:#3b82f6;
-      --shadow:0 10px 30px rgba(0,0,0,.08);
-      --radius:14px;
+      --accent:#3b82f6; /* Haupt-Aktionsfarbe */
+      --shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+      --radius:12px;
 
-      /* Montessori-Farben (beibehalten) */
+      /* Montessori-Farben */
       --noun:#111827;         /* Nomen: schwarz */
       --article:#93c5fd;      /* Artikel: hellblau */
       --adj:#2563eb;          /* Adjektiv: blau */
       --verb:#ef4444;         /* Verb: rot */
-      --adv:#f59e0b;          /* Adverb: orange */
       --pron:#7c3aed;         /* Pronomen: lila */
       --prep:#22c55e;         /* Präposition: grün */
       --conj:#ec4899;         /* Konjunktion: rosa */
       --interj:#fbbf24;       /* Interjektion: gold */
 
+      /* Feedback Colors */
       --ok:#10b981;
       --bad:#ef4444;
       --warn:#f59e0b;
 
-      --focus: rgba(30,64,175,.25);
+      --focus: rgba(59, 130, 246, 0.4);
     }
 
     *{box-sizing:border-box}
@@ -44,323 +45,316 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       color:var(--ink);
       background:var(--bg);
+      line-height: 1.5;
     }
 
-    .wrap{max-width:1180px;margin:0 auto;padding:24px}
+    /* Portal Standard Header overrides/additions handled by global CSS usually,
+       but strictly ensuring local layout is clean */
+    .app-header {
+      /* Ensuring standard look based on requirement */
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
+    .app-header .logo-img { width:40px; height:40px; object-fit:contain; border-radius:8px; }
+    .app-header .brand-title h1 { font-size: 18px; margin:0; color: var(--ink); font-weight: 700; }
+    .app-header .header-link { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; }
+    .app-header .header-link:hover { color: var(--accent); }
 
-    /* Header (ruhig, minimal) */
-    .app-intro{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:16px;
-    }
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      min-width:260px;
-    }
-    .meme{
-      width:44px;height:44px;border-radius:12px;object-fit:cover;
-      border:1px solid var(--line);
-      background:#fff;
-      flex:0 0 auto;
-    }
-    .titlebox h1{font-size:18px;margin:0 0 4px 0}
-    .titlebox p{margin:0;color:var(--muted);font-size:13px}
+    .wrap{max-width:1080px;margin:0 auto;padding:24px 16px}
 
-    .badge{
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      padding:8px 10px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid var(--line);
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
+    /* Action Bar (Toolbar) */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
-    .badge b{color:var(--ink)}
+    .action-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
 
-    /* Buttons: Durchgeschüttelt-Stil */
-    .top-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
-    }
+    /* Buttons */
     .btn{
       border:1px solid var(--line);
       background:#fff;
       color:var(--ink);
-      border-radius:10px;
-      padding:10px 12px;
+      border-radius:8px;
+      padding:8px 14px;
       font-weight:600;
+      font-size: 14px;
       cursor:pointer;
-      box-shadow:0 1px 0 rgba(0,0,0,.03);
-      transition:transform .04s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+      box-shadow:0 1px 2px rgba(0,0,0,.05);
+      transition: all .2s ease;
+      display: inline-flex; align-items: center; gap: 6px;
       user-select:none;
     }
-    .btn:hover{box-shadow:0 10px 30px rgba(0,0,0,.08); border-color:#d7dde6}
+    .btn:hover{background: #f8fafc; border-color:#cbd5e1}
     .btn:active{transform:translateY(1px)}
-    .btn:focus{outline:none; box-shadow:0 0 0 4px var(--focus)}
+    .btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
+
     .btn.primary{
       background:var(--accent);
       color:#fff;
       border-color:var(--accent);
     }
-    .btn.primary:hover{filter:brightness(0.98)}
-    .btn.good{background:var(--ok); border-color:var(--ok); color:#fff}
-    .btn.warn{background:var(--warn); border-color:var(--warn); color:#111827}
-    .btn.ghost{background:transparent; box-shadow:none}
-    .btn.small{padding:8px 10px;border-radius:10px}
+    .btn.primary:hover{background: #2563eb; border-color:#2563eb}
 
+    .btn.good{background:var(--ok); border-color:var(--ok); color:#fff}
+    .btn.good:hover{filter:brightness(0.95)}
+
+    .btn.warn{background:#fff; border-color:var(--line); color:var(--muted)}
+    .btn.warn:hover{color:var(--bad); border-color:var(--bad); background: #fef2f2}
+
+    .btn.small{padding:6px 10px; font-size:12px; border-radius:6px}
+
+    /* Main Grid */
     main{
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:14px;
+      grid-template-columns: 1fr 340px;
+      gap:20px;
+      align-items: start;
     }
-    @media (max-width: 980px){
+    @media (max-width: 900px){
       main{grid-template-columns: 1fr;}
-      .brand{min-width:auto}
+      .action-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+      .action-group { justify-content: space-between; }
     }
 
-    /* Cards: Durchgeschüttelt */
+    /* Cards */
     .card{
       background:var(--card);
       border:1px solid var(--line);
       border-radius:var(--radius);
-      padding:20px;
+      padding:24px;
       box-shadow:var(--shadow);
+      position: relative;
+      overflow: hidden; /* For progress bar */
     }
     .card h2{
-      font-size:14px;
-      margin:0 0 10px 0;
+      font-size:16px;
+      margin:0 0 16px 0;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
+      color: var(--ink);
     }
-    .sub{color:var(--muted);font-size:13px;margin:6px 0 0; line-height:1.35}
+    .sub{color:var(--muted);font-size:14px;margin-bottom: 16px; line-height:1.4}
+
+    /* Progress Bar */
+    .progress-track {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: #f1f5f9;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
 
     /* Sentence area */
     .sentence{
       display:flex;
       flex-wrap:wrap;
-      gap:10px 8px;
-      padding:14px;
-      border:1px dashed var(--line);
+      gap:12px 8px;
+      padding:24px;
+      border:2px dashed var(--line);
       border-radius:12px;
-      background:#f1f5f9;
+      background:#f8fafc;
       align-items:flex-end;
-      min-height:140px;
+      min-height:160px;
+      justify-content: flex-start;
     }
 
+    /* Tokens / Words */
     .tok{
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:6px;
-      padding:6px 6px 8px;
-      border-radius:12px;
-      border:1px solid transparent;
-      min-width:44px;
+      gap:8px;
+      position: relative;
     }
     .tok.word{
-      background:#fff;
-      border-color:var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      border: 1px solid transparent; /* prevent jump on select */
+    }
+    .tok.word.selected {
+      border-color: var(--accent);
+      background: #eff6ff;
     }
     .tok.punct{
-      padding:0 2px 6px;
+      padding: 0 0 14px 0; /* Align text with words */
       min-width:auto;
-      border:none;
-      background:transparent;
     }
 
     .tok .w{
-      font-size:16px;
-      font-weight:650;
+      font-size:18px;
+      font-weight:600;
       cursor:pointer;
-      padding:6px 10px;
-      border-radius:10px;
-      border:1px solid transparent;
+      padding:4px 8px;
+      border-radius:6px;
+      color: var(--ink);
       user-select:none;
-      white-space:nowrap;
-      outline:none;
-    }
-    .tok.word .w:hover{border-color:#c7d2fe;background:#eef2ff}
-    .tok.word.selected .w{border-color:#93c5fd;background:#eef2ff}
-    .tok.word .w:focus-visible{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 4px rgba(147,197,253,.35);
-      background:#eef2ff;
     }
 
+    /* Slot (Symbol Container) */
     .slot{
-      width:46px;height:42px;
-      border-radius:10px;
-      border:1px solid var(--line);
+      width:48px;height:44px;
+      border-radius:8px;
+      border:2px solid var(--line);
       background:#fff;
       display:grid;place-items:center;
       position:relative;
+      transition: all 0.2s ease;
     }
-    .slot.ok{border-color:rgba(22,163,74,.45); box-shadow:0 0 0 4px rgba(22,163,74,.10) inset}
-    .slot.bad{border-color:rgba(220,38,38,.40); box-shadow:0 0 0 4px rgba(220,38,38,.10) inset}
+    .slot.ok{border-color:var(--ok); background: #f0fdf4;}
+    .slot.bad{border-color:var(--bad); background: #fef2f2;}
     .slot.drop{
-      border-color:rgba(30,64,175,.45);
-      box-shadow:0 0 0 4px rgba(30,64,175,.12) inset;
-      background:#eef2ff;
+      border-color:var(--accent);
+      background:#eff6ff;
+      transform: scale(1.05);
     }
-    .slot .mini{
-      width:28px;height:28px;
-      opacity:.95;
-      pointer-events:none;
-      display:grid;
-      place-items:center;
-    }
-    .slot .mini svg{width:28px;height:28px}
 
+    .slot .mini svg{width:30px;height:30px}
+
+    /* Touch Optimized Clear Button */
     .slot .clear{
       position:absolute;
-      right:-8px;
-      top:-8px;
-      width:22px;height:22px;
-      border-radius:999px;
-      border:1px solid var(--line);
+      /* Visual positioning */
+      right:-10px;
+      top:-10px;
+      /* Visual Size */
+      width:24px;
+      height:24px;
+      border-radius:50%;
       background:#fff;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      font-size:12px;
+      border:1px solid var(--line);
+      color: var(--muted);
+      /* Centering content */
+      display:grid; place-items:center;
+      font-weight:bold;
+      font-size:14px;
+      line-height: 1;
       cursor:pointer;
       opacity:0;
-      transition:opacity .15s ease;
-      box-shadow:0 10px 30px rgba(0,0,0,.10);
+      transition:opacity .15s ease, transform 0.1s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 10;
     }
-    .tok.word:hover .slot .clear{opacity:1}
+    /* Invisible Hit Area expansion for Touch (min 44px) */
+    .slot .clear::after {
+        content: '';
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 44px; height: 44px;
+        transform: translate(-50%, -50%);
+        /* background: rgba(255,0,0,0.2); Debug only */
+    }
+    .tok.word:hover .slot .clear,
+    .slot .clear:focus, /* Accessibility */
+    .tok.word.selected .slot .clear /* Show when selected too for mobile clarity */
+    { opacity:1; }
 
+    .slot .clear:hover { background: var(--bad); color: #fff; border-color: var(--bad); }
+
+    /* Palette */
     .palette{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:10px;
+      gap:12px;
     }
     .sym{
       display:flex; align-items:center; gap:10px;
-      padding:10px;
-      border-radius:12px;
+      padding:12px;
+      border-radius:10px;
       border:1px solid var(--line);
       background:#fff;
       cursor:grab;
       user-select:none;
-      min-height:56px;
+      transition: all 0.1s ease;
     }
-    .sym:active{cursor:grabbing}
-    .sym .label{font-weight:700;font-size:13px}
-    .sym .hint{font-size:12px;color:var(--muted);margin-top:2px}
-    .sym .stack{display:flex;flex-direction:column;line-height:1.15}
+    .sym:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .sym:active{cursor:grabbing; transform: scale(0.98);}
     .sym.selected{
-      outline:4px solid rgba(30,64,175,.18);
-      border-color:#c7d2fe;
-      background:#eef2ff;
+      border-color:var(--accent);
+      background:#eff6ff;
+      ring: 2px solid var(--focus);
     }
-    .sym svg{width:34px;height:34px;flex:0 0 auto}
+    .sym .stack{display:flex;flex-direction:column;line-height:1.2}
+    .sym .label{font-weight:700;font-size:13px; color: var(--ink);}
+    .sym .hint{font-size:11px;color:var(--muted);}
 
-    .status{
-      display:flex; gap:10px; flex-wrap:wrap;
+    /* Stats & Status */
+    .status-box{
+      display:flex; gap:12px; flex-wrap:wrap;
       align-items:center; justify-content:space-between;
-      margin-top:12px;
-      padding:12px;
-      border:1px solid var(--line);
+      margin-top:20px;
+      padding:16px;
       border-radius:12px;
-      background:#fff;
+      background:#f8fafc;
+      border: 1px solid var(--line);
     }
-    .status .left{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
     .pill{
-      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
-      background:#fff;font-size:12px;color:var(--muted);
+      padding:4px 10px; border-radius:99px; background:#fff; border:1px solid var(--line);
+      font-size:12px; color:var(--muted); font-weight: 500;
     }
     .pill b{color:var(--ink)}
-    .msg{font-size:13px;color:var(--muted)}
-    .msg b{color:var(--ink)}
+
     .kbd{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-      border:1px solid var(--line);
-      padding:2px 6px;border-radius:8px;background:#fff;color:var(--muted);
-      font-size:12px;
+      font-family: monospace;
+      padding: 2px 5px; background: #e2e8f0; border-radius: 4px; font-size: 11px;
     }
 
-    .right-top{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-    }
-
-    .minirow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-    }
-
-    .footer{
-      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      margin-top:12px; color:var(--muted); font-size:12px;
-    }
-
+    /* Toast */
     .toast{
-      margin-top:10px;
-      padding:12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--muted);
-      font-size:13px;
+      position: fixed;
+      bottom: 20px; left: 50%; transform: translateX(-50%);
+      padding:12px 20px;
+      border-radius:99px;
+      background: var(--ink);
+      color: #fff;
+      font-size:14px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+      z-index: 100;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
     }
-  
-    .app-header {
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
-    }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
-    .app-header .badge-main {
-      display:inline-flex; align-items:center;
-      background: var(--subject-color);
-      color: white;
-      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-      padding:3px 8px; border-radius:99px;
-    }
+    .toast.show { opacity: 1; pointer-events: auto; }
 
-    .app-intro h1,
-    .app-intro .meme{
-      display:none;
-    }
+    /* Footer text */
+    .footer-note { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
 
-</style>
-
+  </style>
 </head>
-
 <body>
 
+<!-- 1. STANDARD HEADER (MUSS-REGEL) -->
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
     <div class="brand-title">
       <div class="badge-main is-deutsch">Deutsch</div>
-      <h1>Wortarten-Training</h1>
+      <h1>Montessori Wortarten</h1>
     </div>
   </div>
   <div class="header-actions">
@@ -368,130 +362,100 @@
   </div>
 </header>
 
-  <div class="wrap">
-    <div class="app-intro">
-      <div class="brand">
-        <img src="/chatisthisreal.png"
-             onerror="this.onerror=null;this.src='/chatisthisreal.png';"
-             alt="Chat is this real?"
-             class="meme">
-        <div class="titlebox">
-          <h1>Montessori – Wortarten-Symbole zuordnen</h1>
-          <p>30 Sätze · Wortarten · Drag&Drop + Klick · HoS</p>
-        </div>
-      </div>
+<div class="wrap">
 
-      <div class="badge">🧩 Zuordnung • <b>Wortarten</b> • HoS</div>
-
-      <div class="top-actions">
-        <button class="btn ghost" id="homeBtn" title="Zur Startseite">🏠 Startseite</button>
-        <button class="btn warn" id="newBtn" title="Nur diesen Satz zurücksetzen">🔁 Neu</button>
-        <button class="btn primary" id="prevBtn" title="Vorheriger Satz">⬅️ Zurück</button>
-        <button class="btn primary" id="nextBtn" title="Nächster Satz">➡️ Weiter</button>
-        <button class="btn good" id="checkBtn" title="Überprüfen">✅ Prüfen</button>
-        <button class="btn" id="solveBtn" title="Lösung anzeigen">🧠 Lösung</button>
-      </div>
+  <!-- Action Bar / Toolbar -->
+  <div class="action-bar">
+    <div class="action-group">
+        <div class="pill">Satz <b id="idx">1</b>/<span id="total">30</span></div>
+        <div class="pill">Erledigt: <b id="done">0</b></div>
     </div>
-
-    <main>
-      <section class="card">
-        <h2>
-          <span>Satz</span>
-          <span class="minirow">
-            <span class="pill">Satz: <b id="idx">1</b>/<span id="total">30</span></span>
-            <span class="pill">Erledigt: <b id="done">0</b></span>
-            <span class="pill">Score: <b id="score">0</b></span>
-          </span>
-        </h2>
-
-        <div class="sub">
-          Tipp: Taste <span class="kbd">1–9</span> wählt ein Symbol. <span class="kbd">Esc</span> hebt Auswahl auf.
-          Doppelklick auf Slot oder <b>×</b> entfernt Zuordnung.
-        </div>
-
-        <div id="sentence" class="sentence" aria-label="Satz mit Wörtern"></div>
-
-        <div class="status">
-          <div class="left">
-            <span class="pill">Richtig: <b id="right">0</b></span>
-            <span class="pill">Falsch: <b id="wrong">0</b></span>
-            <span class="pill">Fehlt: <b id="missing">0</b></span>
-            <span class="pill">Letzter Check: <b id="last">–</b></span>
-          </div>
-          <div class="msg" id="msg">Wähle ein Symbol und ordne es den Wörtern zu.</div>
-        </div>
-
-        <div class="toast" id="toast" style="display:none"></div>
-
-        <div class="footer">
-          <div>HoS · Montessori-Symbole · Interjektion = Marker-Symbol</div>
-          <div>Bedienung: Ziehen oder klicken</div>
-        </div>
-      </section>
-
-      <aside class="card">
-        <h2>
-          <span>Symbol-Auswahl</span>
-          <span class="right-top">
-            <button class="btn small" id="clearSelBtn" title="Auswahl aufheben">✖ Auswahl</button>
-          </span>
-        </h2>
-        <div class="sub">Ziehe ein Symbol auf ein Wort <b>oder</b> klicke ein Symbol an und dann das Wort.</div>
-
-        <div class="palette" id="palette"></div>
-
-        <div class="toast" style="margin-top:12px">
-          <b>Score-Logik:</b> Beim Prüfen gibt’s <b>+1 pro richtig</b> und <b>-1 pro falsch</b> (Score fällt nie unter 0).
-          <br>„Erledigt“ zählt einen Satz, wenn <b>nichts fehlt</b> und <b>alles richtig</b> ist.
-        </div>
-      </aside>
-    </main>
+    <div class="action-group">
+      <button class="btn warn" id="newBtn" title="Diesen Satz zurücksetzen">↺ Neu</button>
+      <button class="btn" id="prevBtn" title="Vorheriger Satz">⬅</button>
+      <button class="btn" id="nextBtn" title="Nächster Satz">➡</button>
+      <button class="btn good" id="checkBtn" title="Überprüfen">✅ Prüfen</button>
+      <button class="btn primary" id="solveBtn" title="Lösung anzeigen">💡 Lösung</button>
+    </div>
   </div>
+
+  <main>
+    <section class="card">
+      <!-- Visueller Fortschritt -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+
+      <h2>
+        <span>Satz</span>
+      </h2>
+
+      <div class="sub">
+        <span id="instruction">Wähle ein Symbol und klicke auf ein Wort (oder ziehe es).</span>
+      </div>
+
+      <div id="sentence" class="sentence" aria-label="Satzbereich"></div>
+
+      <div class="status-box">
+        <div id="msg">Bereit.</div>
+        <div style="display:flex; gap:8px">
+          <span class="pill" style="color:var(--ok)">✓ <b id="right">0</b></span>
+          <span class="pill" style="color:var(--bad)">✗ <b id="wrong">0</b></span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>
+        <span>Symbole</span>
+        <button class="btn small" id="clearSelBtn" title="Auswahl aufheben">ESC</button>
+      </h2>
+
+      <div class="palette" id="palette"></div>
+
+      <div class="footer-note">
+        Tasten <span class="kbd">1-8</span> wählen Symbol.<br>
+        Montessori-Standard (HoS).
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">Feedback Nachricht</div>
 
 <script>
 /* =========================================================
    Montessori-Symbole (SVG)
+   HoS-Farben via CSS Var
 ========================================================= */
 const SYMBOLS = [
   { key:"N",    name:"Nomen",        hint:"Dinge/Namen",        colorVar:"--noun",    draw:"triangle" },
   { key:"ART",  name:"Artikel",      hint:"Begleiter",          colorVar:"--article", draw:"triangleSmall" },
-  { key:"ADJ",  name:"Adjektiv",     hint:"Eigenschaft",        colorVar:"--adj",     draw:"triangleMid" },
-  { key:"V",    name:"Verb",         hint:"Tun/Handlung",       colorVar:"--verb",    draw:"circle" },
-  { key:"ADV",  name:"Adverb",       hint:"Umstände",           colorVar:"--adv",     draw:"circleSmall" },
-  { key:"PRO",  name:"Pronomen",     hint:"Stellvertreter",     colorVar:"--pron",    draw:"trianglePron" },
-  { key:"PRÄP", name:"Präposition",  hint:"Beziehung/Lage",     colorVar:"--prep",    draw:"crescent" },
-  { key:"KONJ", name:"Konjunktion",  hint:"Verbindet",          colorVar:"--conj",    draw:"bar" },
-  { key:"INT",  name:"Interjektion", hint:"Ausruf",             colorVar:"--interj",  draw:"marker" } // wie dein Material
+  { key:"ADJ",  name:"Adjektiv",     hint:"Wie ist es?",        colorVar:"--adj",     draw:"triangleMid" },
+  { key:"V",    name:"Verb",         hint:"Tun-Wort",           colorVar:"--verb",    draw:"circle" },
+  { key:"PRO",  name:"Pronomen",     hint:"Für-Wort",           colorVar:"--pron",    draw:"trianglePron" },
+  { key:"PRÄP", name:"Präposition",  hint:"Lage/Verhältnis",    colorVar:"--prep",    draw:"crescent" },
+  { key:"KONJ", name:"Konjunktion",  hint:"Bindewort",          colorVar:"--conj",    draw:"bar" },
+  { key:"INT",  name:"Interjektion", hint:"Ausruf",             colorVar:"--interj",  draw:"marker" }
 ];
 
 function svgFor(sym, size=34){
   const color = getComputedStyle(document.documentElement).getPropertyValue(sym.colorVar).trim();
-  const s = size;
   const view = `0 0 100 100`;
 
-  // widthScale hinzugefügt für schmalere Dreiecke (Pronomen)
   const tri = (scale=1, yOffset=0, widthScale=1.0) => {
     const cx=50, cy=52+yOffset;
     const w=70*scale*widthScale, h=64*scale;
-    const p1 = `${cx},${cy-h/2}`;
-    const p2 = `${cx-w/2},${cy+h/2}`;
-    const p3 = `${cx+w/2},${cy+h/2}`;
-    return `<polygon points="${p1} ${p2} ${p3}" fill="${color}" />`;
+    return `<polygon points="${cx},${cy-h/2} ${cx-w/2},${cy+h/2} ${cx+w/2},${cy+h/2}" fill="${color}" />`;
   };
 
   const circle = (r=34) => `<circle cx="50" cy="52" r="${r}" fill="${color}" />`;
 
-  // Halbmond gedreht (270 Grad, damit er in die andere Richtung schaut)
   const crescent = () => `
     <g transform="rotate(270 50 50)">
-      <path d="M63 20
-               A30 30 0 1 0 63 84
-               A22 30 0 1 1 63 20 Z"
-            fill="${color}" opacity="1"/>
-      <path d="M71 24
-               A24 28 0 1 0 71 80
-               A18 28 0 1 1 71 24 Z"
-            fill="white" opacity="0.92"/>
+      <path d="M63 20 A30 30 0 1 0 63 84 A22 30 0 1 1 63 20 Z" fill="${color}" />
+      <path d="M71 24 A24 28 0 1 0 71 80 A18 28 0 1 1 71 24 Z" fill="white" opacity="0.9"/>
     </g>
   `;
 
@@ -500,12 +464,7 @@ function svgFor(sym, size=34){
   const marker = () => `
     <g>
       <circle cx="50" cy="28" r="16" fill="${color}" />
-      <path d="M34 40
-               L66 40
-               L78 86
-               Q50 96 22 86
-               Z"
-            fill="${color}" />
+      <path d="M34 40 L66 40 L78 86 Q50 96 22 86 Z" fill="${color}" />
     </g>
   `;
 
@@ -514,138 +473,97 @@ function svgFor(sym, size=34){
     case "triangle":       shape = tri(1.0, 0); break;
     case "triangleSmall":  shape = tri(0.72, 4); break;
     case "triangleMid":    shape = tri(0.86, 2); break;
-    // Hier Pronomen angepasst: widthScale = 0.6 (schmaler)
     case "trianglePron":   shape = tri(0.86, 2, 0.6); break;
     case "circle":         shape = circle(32); break;
-    case "circleSmall":    shape = circle(24); break;
     case "crescent":       shape = crescent(); break;
     case "bar":            shape = bar(); break;
     case "marker":         shape = marker(); break;
   }
 
-  return `
-    <svg width="${s}" height="${s}" viewBox="${view}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      ${shape}
-    </svg>
-  `;
+  return `<svg width="${size}" height="${size}" viewBox="${view}">${shape}</svg>`;
 }
 
 /* =========================================================
-   Übungen – 30 Sätze (wortartlich korrekt)
-   - Typen beziehen sich NUR auf Wörter (Satzzeichen werden ignoriert)
-   - Adjektive bleiben ADJ, auch wenn adverbial gebraucht (z.B. "schnell", "leise")
-   - Adverbien (ADV) realistisch häufig: heute, gestern, dort, sehr, oft, nie, vielleicht, jetzt, immer, wirklich, später, hier, draußen, oben, unten, danach, bald, sofort ...
+   Übungen (30 Sätze)
 ========================================================= */
 const EXERCISES = [
-  { sentence: "Der kluge Hund läuft heute schnell durch den Park.",               types:["ART","ADJ","N","V","ADV","ADJ","PRÄP","ART","N"] },
-  { sentence: "Wow, meine Schwester liest heute sehr leise.",                     types:["INT","PRO","N","V","ADV","ADV","ADJ"] },
-  { sentence: "Ich gehe morgen vielleicht mit dir ins Kino.",                     types:["PRO","V","ADV","ADV","PRÄP","PRO","PRÄP","ART","N"] },
-  { sentence: "Der alte Mann spricht dort oft laut.",                             types:["ART","ADJ","N","V","ADV","ADV","ADJ"] },
-  { sentence: "Aua! Das tut jetzt wirklich sehr weh.",                            types:["INT","PRO","V","ADV","ADV","ADV","ADV"] },
-  { sentence: "Wir bleiben heute lieber zu Hause.",                               types:["PRO","V","ADV","ADV","PRÄP","N"] },
-  { sentence: "Die Kinder spielen draußen fröhlich.",                             types:["ART","N","V","ADV","ADJ"] },
-  { sentence: "Er hat gestern dort lange gewartet.",                              types:["PRO","V","ADV","ADV","ADV","V"] },
-  { sentence: "Oh nein, ich komme später sicher.",                                types:["INT","INT","PRO","V","ADV","ADV"] },
-  { sentence: "Der Ball liegt oben auf dem Tisch.",                               types:["ART","N","V","ADV","PRÄP","ART","N"] },
-
-  { sentence: "Sie arbeitet heute sehr konzentriert.",                            types:["PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Wow, der Film war gestern wirklich spannend.",                     types:["INT","ART","N","V","ADV","ADV","ADJ"] },
-  { sentence: "Ich bleibe jetzt hier.",                                           types:["PRO","V","ADV","ADV"] },
-  { sentence: "Der Hund schläft draußen ruhig.",                                  types:["ART","N","V","ADV","ADJ"] },
-  { sentence: "Ach, das ist heute gar nicht schlimm.",                            types:["INT","PRO","V","ADV","ADV","ADV","ADJ"] },
-  { sentence: "Die kleine Katze springt plötzlich hoch.",                         types:["ART","ADJ","N","V","ADV","ADJ"] },
-  { sentence: "Er liest oft sehr aufmerksam.",                                    types:["PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Meine Freunde warten draußen geduldig.",                           types:["PRO","N","V","ADV","ADJ"] },
-  { sentence: "Oh, das klingt heute wirklich gut.",                               types:["INT","PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Der Zug fährt jetzt langsam los.",                                 types:["ART","N","V","ADV","ADJ","ADV"] },
-
-  { sentence: "Sie bleibt morgen sicher hier.",                                   types:["PRO","V","ADV","ADV","ADV"] },
-  { sentence: "Wow, ich habe dort nie gefroren.",                                 types:["INT","PRO","V","ADV","ADV","V"] },
-  { sentence: "Der Lehrer erklärt alles heute ruhig.",                            types:["ART","N","V","PRO","ADV","ADJ"] },
-  { sentence: "Ach, wir sind jetzt endlich fertig.",                              types:["INT","PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Die Sonne scheint draußen hell.",                                  types:["ART","N","V","ADV","ADJ"] },
-  { sentence: "Er spricht dort immer höflich.",                                   types:["PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Oh nein, das klappt heute nicht.",                                 types:["INT","INT","PRO","V","ADV","ADV"] },
-  { sentence: "Mein Bruder arbeitet sehr sorgfältig.",                            types:["PRO","N","V","ADV","ADJ"] },
-  { sentence: "Wow, das war gestern echt cool.",                                  types:["INT","PRO","V","ADV","ADV","ADJ"] },
-  { sentence: "Die Kinder gehen jetzt nach Hause.",                               types:["ART","N","V","ADV","PRÄP","N"] }
+  { sentence: "Der kluge Hund läuft durch den Park.",               types:["ART","ADJ","N","V","PRÄP","ART","N"] },
+  { sentence: "Wow, meine Schwester liest ein Buch.",               types:["INT","PRO","N","V","ART","N"] },
+  { sentence: "Ich gehe mit dir in das Kino.",                      types:["PRO","V","PRÄP","PRO","PRÄP","ART","N"] },
+  { sentence: "Der alte Mann spricht laut.",                        types:["ART","ADJ","N","V","ADJ"] },
+  { sentence: "Aua! Das tut weh.",                                  types:["INT","PRO","V","ADJ"] },
+  { sentence: "Wir bleiben zu Hause.",                              types:["PRO","V","PRÄP","N"] },
+  { sentence: "Die Kinder spielen fröhlich.",                       types:["ART","N","V","ADJ"] },
+  { sentence: "Er hat auf den Bus gewartet.",                       types:["PRO","V","PRÄP","ART","N","V"] },
+  { sentence: "Oh nein, ich komme.",                                types:["INT","INT","PRO","V"] },
+  { sentence: "Der Ball liegt auf dem Tisch.",                      types:["ART","N","V","PRÄP","ART","N"] },
+  { sentence: "Sie arbeitet konzentriert.",                         types:["PRO","V","ADJ"] },
+  { sentence: "Wow, der Film war spannend.",                        types:["INT","ART","N","V","ADJ"] },
+  { sentence: "Ich bleibe.",                                        types:["PRO","V"] },
+  { sentence: "Der Hund schläft ruhig.",                            types:["ART","N","V","ADJ"] },
+  { sentence: "Ach, das ist kein Problem.",                         types:["INT","PRO","V","ART","N"] },
+  { sentence: "Die kleine Katze springt auf das Sofa.",             types:["ART","ADJ","N","V","PRÄP","ART","N"] },
+  { sentence: "Er liest aufmerksam.",                               types:["PRO","V","ADJ"] },
+  { sentence: "Meine Freunde warten geduldig.",                     types:["PRO","N","V","ADJ"] },
+  { sentence: "Oh, das klingt gut.",                                types:["INT","PRO","V","ADJ"] },
+  { sentence: "Der Zug fährt los.",                                 types:["ART","N","V","ADJ"] },
+  { sentence: "Sie bleibt in der Klasse.",                          types:["PRO","V","PRÄP","ART","N"] },
+  { sentence: "Wow, ich habe gefroren.",                            types:["INT","PRO","V","V"] },
+  { sentence: "Der Lehrer erklärt alles ruhig.",                    types:["ART","N","V","PRO","ADJ"] },
+  { sentence: "Ach, wir sind fertig.",                              types:["INT","PRO","V","ADJ"] },
+  { sentence: "Die Sonne scheint hell.",                            types:["ART","N","V","ADJ"] },
+  { sentence: "Er spricht höflich.",                                types:["PRO","V","ADJ"] },
+  { sentence: "Oh nein, das klappt.",                               types:["INT","INT","PRO","V"] },
+  { sentence: "Mein Bruder arbeitet sorgfältig.",                   types:["PRO","N","V","ADJ"] },
+  { sentence: "Wow, das war cool.",                                 types:["INT","PRO","V","ADJ"] },
+  { sentence: "Die Kinder gehen nach Hause.",                       types:["ART","N","V","PRÄP","N"] }
 ];
 
 document.getElementById("total").textContent = EXERCISES.length;
 
 /* =========================================================
-   State
+   State & Setup
 ========================================================= */
 let current = 0;
 let selectedSymbolKey = null;
+let doneSet = new Set();
+let score = 0;
 
-// Score/Progress (für Lehrperson „im Vorbeigehen“)
-let score = 0;                 // +1 richtig, -1 falsch (min 0) pro Prüfen
-let doneSet = new Set();       // Satz-Indices, die einmal komplett richtig & ohne fehlend waren
-let lastCheckStr = "–";
-
-/* =========================================================
-   Helpers
-========================================================= */
 const sentenceEl = document.getElementById("sentence");
 const paletteEl  = document.getElementById("palette");
 const toastEl    = document.getElementById("toast");
+const progressBar = document.getElementById("progressBar");
 
 function escapeHtml(str){
-  return str.replace(/[&<>"']/g, (c)=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[c]));
+  return str.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function showToast(text){
-  toastEl.style.display = "block";
+function showToast(text, type="info"){
   toastEl.textContent = text;
-  setTimeout(()=>{ toastEl.style.display="none"; }, 1700);
+  toastEl.className = "toast show";
+  if(type==="success") toastEl.style.background = "var(--ok)";
+  if(type==="error") toastEl.style.background = "var(--bad)";
+  else toastEl.style.background = "var(--ink)";
+
+  setTimeout(()=>{ toastEl.className = "toast"; }, 2000);
 }
 
-/* Tokenizer: trennt Wörter und Satzzeichen.
-   Wörter: Buchstaben inkl. Umlaute + ß, mit Bindestrich/Apostroph im Inneren erlaubt.
-*/
-function tokenize(sentence){
-  const re = /([A-Za-zÄÖÜäöüß]+(?:[-’'][A-Za-zÄÖÜäöüß]+)*)|([0-9]+)|([^\sA-Za-zÄÖÜäöüß0-9])/g;
-  const out = [];
-  let m;
-  while((m=re.exec(sentence))!==null){
-    if(m[1] || m[2]){
-      out.push({ kind:"word", text:(m[1]||m[2]) });
-    }else if(m[3]){
-      out.push({ kind:"punct", text:m[3] });
-    }
-  }
-  return out;
-}
-
-/* =========================================================
-   Palette
-========================================================= */
-function setSelectedSymbol(symKey){
-  selectedSymbolKey = symKey;
-
-  document.querySelectorAll(".sym").forEach(el=>{
-    el.classList.toggle("selected", el.dataset.sym === symKey);
-  });
-
-  const s = SYMBOLS.find(x=>x.key===symKey);
-  document.getElementById("msg").innerHTML = s
-    ? `Ausgewählt: <b>${s.name}</b>. Jetzt Wort anklicken oder Symbol ziehen.`
-    : `Wähle ein Symbol und ordne es den Wörtern zu.`;
+function updateProgress(){
+  const pct = (doneSet.size / EXERCISES.length) * 100;
+  progressBar.style.width = pct + "%";
+  document.getElementById("done").textContent = doneSet.size;
+  document.getElementById("idx").textContent = current + 1;
 }
 
 function renderPalette(){
   paletteEl.innerHTML = "";
-
   SYMBOLS.forEach((s, idx) => {
     const item = document.createElement("div");
     item.className = "sym";
     item.setAttribute("draggable","true");
     item.dataset.sym = s.key;
     item.innerHTML = `
-      ${svgFor(s, 34)}
+      ${svgFor(s, 32)}
       <div class="stack">
         <div class="label">${s.name}</div>
         <div class="hint">${s.hint}</div>
@@ -654,278 +572,196 @@ function renderPalette(){
 
     item.addEventListener("dragstart", (ev) => {
       ev.dataTransfer.setData("text/plain", s.key);
-      ev.dataTransfer.effectAllowed = "copy";
       setSelectedSymbol(s.key);
     });
 
     item.addEventListener("click", () => setSelectedSymbol(s.key));
-    item.title = `Taste ${idx+1}`;
-
     paletteEl.appendChild(item);
   });
 }
 renderPalette();
 
-/* =========================================================
-   Sentence rendering
-========================================================= */
-function updateTop(){
-  document.getElementById("idx").textContent = String(current + 1);
-  document.getElementById("score").textContent = String(score);
-  document.getElementById("done").textContent  = String(doneSet.size);
-  document.getElementById("last").textContent  = lastCheckStr;
+function setSelectedSymbol(key){
+  selectedSymbolKey = key;
+  document.querySelectorAll(".sym").forEach(el => el.classList.toggle("selected", el.dataset.sym === key));
+  const s = SYMBOLS.find(x=>x.key===key);
+  document.getElementById("instruction").innerHTML = s
+    ? `Gewählt: <b>${s.name}</b>. Klicke jetzt auf ein Wort.`
+    : `Wähle ein Symbol rechts (oder Taste 1-8).`;
 }
 
-function clearStats(){
-  document.getElementById("right").textContent = "0";
-  document.getElementById("wrong").textContent = "0";
-  document.getElementById("missing").textContent = "0";
-}
-
-function assignSymbolToWord(wordEl, symKey){
-  const slot = wordEl.querySelector(".slot");
-  const sym = SYMBOLS.find(s=>s.key === symKey);
-  if(!sym) return;
-
-  slot.innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear" title="Entfernen">×</div>`;
-  wordEl.dataset.assigned = symKey;
-
-  // Clear check styling until next check
-  slot.classList.remove("ok","bad");
-
-  // Clear button
-  const clearBtn = slot.querySelector(".clear");
-  clearBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    removeAssignment(wordEl);
-  });
-}
-
-function removeAssignment(wordEl){
-  const slot = wordEl.querySelector(".slot");
-  wordEl.dataset.assigned = "";
-  slot.classList.remove("ok","bad");
-  slot.innerHTML = `<div class="clear" title="Entfernen" style="opacity:0">×</div>`;
+function tokenize(str){
+  const re = /([A-Za-zÄÖÜäöüß]+(?:[-’'][A-Za-zÄÖÜäöüß]+)*)|([0-9]+)|([^\sA-Za-zÄÖÜäöüß0-9])/g;
+  const out = [];
+  let m;
+  while((m=re.exec(str))!==null){
+    if(m[1]||m[2]) out.push({kind:"word", text:m[1]||m[2]});
+    else if(m[3]) out.push({kind:"punct", text:m[3]});
+  }
+  return out;
 }
 
 function loadExercise(i){
   current = (i + EXERCISES.length) % EXERCISES.length;
-  updateTop();
-  clearStats();
+  updateProgress();
+
+  // Reset Stats for this sentence view (not global)
+  document.getElementById("right").textContent = "0";
+  document.getElementById("wrong").textContent = "0";
+  document.getElementById("msg").textContent = "Neuer Satz.";
 
   const ex = EXERCISES[current];
-  const tokens = tokenize(ex.sentence);
-
   sentenceEl.innerHTML = "";
   setSelectedSymbol(null);
 
+  const tokens = tokenize(ex.sentence);
   let wIndex = 0;
 
-  tokens.forEach((t) => {
+  tokens.forEach(t => {
     if(t.kind === "punct"){
       const p = document.createElement("div");
       p.className = "tok punct";
-      p.innerHTML = `<div class="w" style="cursor:default;padding:0 2px;border:none;background:transparent">${escapeHtml(t.text)}</div>`;
+      p.innerHTML = `<div class="w" style="cursor:default;padding:0;background:transparent">${escapeHtml(t.text)}</div>`;
       sentenceEl.appendChild(p);
       return;
     }
 
-    const correctType = ex.types[wIndex] || null;
-
+    const correctType = ex.types[wIndex];
     const wrap = document.createElement("div");
     wrap.className = "tok word";
-    wrap.dataset.wi = String(wIndex);
-    wrap.dataset.correct = correctType; // ART, N, ...
+    wrap.dataset.correct = correctType;
     wrap.dataset.assigned = "";
 
+    // Slot structure
     wrap.innerHTML = `
-      <div class="w" role="button" tabindex="0">${escapeHtml(t.text)}</div>
-      <div class="slot" aria-label="Symbol-Ablage"><div class="clear" title="Entfernen" style="opacity:0">×</div></div>
+      <div class="w" tabindex="0">${escapeHtml(t.text)}</div>
+      <div class="slot" aria-label="Symbol Platzhalter">
+         <div class="clear" title="Entfernen">×</div>
+      </div>
     `;
 
     const wordBtn = wrap.querySelector(".w");
     const slot = wrap.querySelector(".slot");
 
-    // Click word to assign selected symbol
-    const assignFromSelection = () => {
-      if(!selectedSymbolKey) return;
-      assignSymbolToWord(wrap, selectedSymbolKey);
+    // Logic
+    const applySymbol = (key) => {
+       const sym = SYMBOLS.find(s=>s.key === key);
+       if(!sym) return;
+       slot.innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear" title="Entfernen">×</div>`;
+       wrap.dataset.assigned = key;
+       slot.classList.remove("ok","bad");
+       wrap.classList.remove("selected");
+
+       // Re-attach clear listener
+       slot.querySelector(".clear").addEventListener("click", (e)=>{
+         e.stopPropagation();
+         wrap.dataset.assigned = "";
+         slot.innerHTML = `<div class="clear">×</div>`;
+         slot.classList.remove("ok","bad");
+       });
     };
 
     wordBtn.addEventListener("click", () => {
-      document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
-      wrap.classList.add("selected");
-      assignFromSelection();
-    });
-
-    wordBtn.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        wordBtn.click();
+      if(selectedSymbolKey) applySymbol(selectedSymbolKey);
+      else {
+        document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
+        wrap.classList.add("selected");
+        document.getElementById("instruction").innerHTML = "Wähle jetzt ein Symbol aus der Leiste.";
       }
     });
 
-    // Slot: double click to clear
-    slot.addEventListener("dblclick", (e) => {
+    slot.addEventListener("dragover", e => { e.preventDefault(); slot.classList.add("drop"); });
+    slot.addEventListener("dragleave", () => slot.classList.remove("drop"));
+    slot.addEventListener("drop", e => {
       e.preventDefault();
-      removeAssignment(wrap);
-    });
-
-    // Slot accepts drop
-    slot.addEventListener("dragover", (ev) => {
-      ev.preventDefault();
-      slot.classList.add("drop");
-    });
-    slot.addEventListener("dragleave", () => {
       slot.classList.remove("drop");
-    });
-    slot.addEventListener("drop", (ev) => {
-      ev.preventDefault();
-      slot.classList.remove("drop");
-      const symKey = ev.dataTransfer.getData("text/plain");
-      if(symKey) assignSymbolToWord(wrap, symKey);
+      const k = e.dataTransfer.getData("text/plain");
+      if(k) applySymbol(k);
     });
 
     sentenceEl.appendChild(wrap);
     wIndex++;
   });
-
-  document.getElementById("msg").innerHTML = `Ordne die Symbole zu. Tipp: Taste <span class="kbd">1</span> wählt das 1. Symbol usw.`;
 }
-
-loadExercise(0);
-
-/* =========================================================
-   Checking & Solving
-========================================================= */
-const KEY_TO_TYPE = {
-  "N":"N",
-  "ART":"ART",
-  "ADJ":"ADJ",
-  "V":"V",
-  "ADV":"ADV",
-  "PRO":"PRO",
-  "PRÄP":"PRÄP",
-  "KONJ":"KONJ",
-  "INT":"INT"
-};
 
 function check(){
   let right=0, wrong=0, missing=0;
-
-  document.querySelectorAll(".tok.word").forEach(w=>{
-    const correct = w.dataset.correct;
-    const assignedKey = w.dataset.assigned;
+  document.querySelectorAll(".tok.word").forEach(w => {
     const slot = w.querySelector(".slot");
     slot.classList.remove("ok","bad");
+    const assigned = w.dataset.assigned;
 
-    if(!assignedKey){
+    if(!assigned) {
       missing++;
-      return;
-    }
-
-    const assignedType = KEY_TO_TYPE[assignedKey] || null;
-
-    if(assignedType === correct){
-      right++;
-      slot.classList.add("ok");
-    }else{
+    } else if(assigned === w.dataset.correct || (assigned==="ADJ" && w.dataset.correct.includes("ADJ"))){
+      // simple tolerant check (logic simplified from original)
+      // Actually strictly checking key match
+      if (assigned === w.dataset.correct) {
+          right++;
+          slot.classList.add("ok");
+      } else {
+          wrong++;
+          slot.classList.add("bad");
+      }
+    } else {
       wrong++;
       slot.classList.add("bad");
     }
   });
 
-  // Score update (+right - wrong, min 0)
-  score = Math.max(0, score + right - wrong);
+  document.getElementById("right").textContent = right;
+  document.getElementById("wrong").textContent = wrong;
 
-  // Sentence completed?
-  const completedNow = (missing === 0 && wrong === 0);
-  if(completedNow) doneSet.add(current);
-
-  // Update UI
-  document.getElementById("right").textContent = String(right);
-  document.getElementById("wrong").textContent = String(wrong);
-  document.getElementById("missing").textContent = String(missing);
-
-  lastCheckStr = `${right}✓ ${wrong}✗ ${missing}…`;
-  updateTop();
-
-  if(missing>0){
-    document.getElementById("msg").innerHTML = `Du hast noch <b>${missing}</b> Wort/Wörter ohne Symbol. (Richtig: <b>${right}</b>, Falsch: <b>${wrong}</b>)`;
-    showToast("Noch nicht fertig – es fehlt noch etwas.");
-  }else if(wrong>0){
-    document.getElementById("msg").innerHTML = `Geprüft: Richtig <b>${right}</b> • Falsch <b>${wrong}</b>.`;
-    showToast("Schon gut – noch ein paar Fehler.");
-  }else{
-    document.getElementById("msg").innerHTML = `Perfekt! Alles richtig ✅`;
-    showToast("Top – Satz erledigt ✅");
+  if(missing === 0 && wrong === 0){
+    doneSet.add(current);
+    updateProgress();
+    document.getElementById("msg").textContent = "Perfekt!";
+    showToast("Fantastisch!", "success");
+  } else if (wrong > 0) {
+    document.getElementById("msg").textContent = `${wrong} Fehler gefunden.`;
+    showToast("Schau nochmal genau hin.", "error");
+  } else {
+    document.getElementById("msg").textContent = `${missing} fehlen noch.`;
+    showToast("Da fehlt noch was.");
   }
 }
 
 function solve(){
-  // Set all correct symbols
-  document.querySelectorAll(".tok.word").forEach(w=>{
+  document.querySelectorAll(".tok.word").forEach(w => {
     const correct = w.dataset.correct;
-    const symKey = Object.keys(KEY_TO_TYPE).find(k => KEY_TO_TYPE[k] === correct);
-    if(symKey) assignSymbolToWord(w, symKey);
+    // Simulate finding the symbol key. Since keys match types 1:1 in this set:
+    const sym = SYMBOLS.find(s => s.key === correct);
+    if(sym){
+       w.querySelector(".slot").innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear">×</div>`;
+       w.dataset.assigned = correct;
+       w.querySelector(".slot").classList.remove("bad");
+       w.querySelector(".slot").classList.add("ok");
+    }
   });
   check();
-  document.getElementById("msg").innerHTML = `Lösung angezeigt.`;
 }
 
 /* =========================================================
-   Reset current sentence
+   Event Listeners
 ========================================================= */
-function clearAssignments(){
-  document.querySelectorAll(".tok.word").forEach(w=>{
-    w.dataset.assigned = "";
-    w.classList.remove("selected");
-    const slot = w.querySelector(".slot");
-    slot.classList.remove("ok","bad","drop");
-    slot.innerHTML = `<div class="clear" title="Entfernen" style="opacity:0">×</div>`;
-  });
-  clearStats();
-  document.getElementById("msg").textContent = "Zurückgesetzt. Ordne die Symbole zu.";
-  showToast("Satz zurückgesetzt.");
-}
-
-/* =========================================================
-   Navigation & Buttons
-========================================================= */
-document.getElementById("homeBtn").addEventListener("click", () => {
-  // Zur Repo-Startseite (Root index.html)
-  window.location.href = "index.html";
-});
-document.getElementById("newBtn").addEventListener("click", clearAssignments);
+document.getElementById("newBtn").addEventListener("click", () => loadExercise(current));
 document.getElementById("prevBtn").addEventListener("click", () => loadExercise(current-1));
 document.getElementById("nextBtn").addEventListener("click", () => loadExercise(current+1));
 document.getElementById("checkBtn").addEventListener("click", check);
 document.getElementById("solveBtn").addEventListener("click", solve);
 document.getElementById("clearSelBtn").addEventListener("click", () => setSelectedSymbol(null));
 
-/* =========================================================
-   Keyboard shortcuts
-========================================================= */
-window.addEventListener("keydown", (e) => {
-  if(e.key === "Escape"){
-    setSelectedSymbol(null);
-    document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
-  }
-
-  // 1-9 selects symbol
-  const n = Number(e.key);
-  if(n>=1 && n<=SYMBOLS.length){
-    setSelectedSymbol(SYMBOLS[n-1].key);
-  }
-
-  // Optional: Nächster Satz mit Pfeil rechts
-  if(e.key === "ArrowRight"){
-    loadExercise(current+1);
-  }
-  if(e.key === "ArrowLeft"){
-    loadExercise(current-1);
-  }
+window.addEventListener("keydown", e => {
+  if(e.key === "Escape") setSelectedSymbol(null);
+  const n = parseInt(e.key);
+  if(!isNaN(n) && n>=1 && n<=SYMBOLS.length) setSelectedSymbol(SYMBOLS[n-1].key);
+  if(e.key==="ArrowRight") loadExercise(current+1);
+  if(e.key==="ArrowLeft") loadExercise(current-1);
 });
+
+// Init
+loadExercise(0);
+
 </script>
 </body>
 </html>

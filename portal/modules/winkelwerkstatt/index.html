@@ -64,6 +64,9 @@
         const IconRight = ({ size = 20, className = "" }) => (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"/></svg>
         );
+        const IconTrash = ({ size = 16, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        );
 
         // --- UI Components ---
         const Card = ({ children, className = "" }) => (
@@ -128,7 +131,7 @@
         // --- Angle Visualization for Explore/Quiz ---
         const AngleView = ({ angle, showProtractor = false, size = 300, interactive = false, onAngleChange }) => {
             const cx = size / 2;
-            const cy = size / 2; // Centered vertically to allow full 360 rotation without clipping
+            const cy = size / 2;
             const r = size * 0.35;
             const arcR = size * 0.15;
 
@@ -171,7 +174,7 @@
                     <svg
                         ref={svgRef}
                         width={size}
-                        height={size} // Full height square
+                        height={size}
                         viewBox={`0 0 ${size} ${size}`}
                         onMouseMove={(e) => e.buttons === 1 && handleInteraction(e)}
                         onMouseDown={(e) => handleInteraction(e)}
@@ -207,10 +210,10 @@
 
         // --- Calculation Visualizations ---
 
-        // 1. Lines (Supplementary/Complementary)
+        // 1. Lines
         const CalcLinesView = ({ task, size = 280 }) => {
             const cx = size / 2;
-            const cy = size / 2; // Centered vertically for full circles
+            const cy = size / 2;
             const r = size * 0.35;
             const arcR = size * 0.15;
 
@@ -243,39 +246,25 @@
             );
         };
 
-        // 2. Triangle View
+        // 2. Triangle
         const CalcTriangleView = ({ task, size = 280 }) => {
-            // Task has angles [a, b, c], missingIndex
             const angles = task.angles;
             const missingIdx = task.missingIndex;
 
-            // Generate visual coordinates based on angles (simplified construction)
-            // Base line at bottom
             const w = size * 0.7;
             const h = size * 0.5;
             const padX = (size - w) / 2;
-            const padY = size * 0.7; // bottom Y
+            const padY = size * 0.7;
 
             const A = { x: padX, y: padY };
             const B = { x: padX + w, y: padY };
 
-            // Calculate C using angles at A and B
-            // tan(alpha) = y / x_a, tan(beta) = y / x_b
-            // This is complex to render perfectly scaled, so we approximate a visual triangle
-            // but use correct labels.
-            // BETTER: Use actual trigonometry to find C.
-            // C.x = (w * tan(beta)) / (tan(alpha) + tan(beta))
-            // C.y = C.x * tan(alpha)
-
             const rA = toRad(angles[0]);
             const rB = toRad(angles[1]);
 
-            // Handle right angle specifically for simpler math or edge cases
-            // We use standard construction
             const h_calc = (w * Math.tan(rB) * Math.tan(rA)) / (Math.tan(rA) + Math.tan(rB));
             const x_calc = h_calc / Math.tan(rA);
 
-            // Scale down if too tall
             let scale = 1;
             if (h_calc > size * 0.6) scale = (size * 0.6) / h_calc;
 
@@ -284,12 +273,7 @@
                 y: A.y - h_calc * scale
             };
 
-            const labels = ["α", "β", "γ"];
-
             const renderAngle = (p1, pCenter, p2, val, idx) => {
-                // Simplified Angle arc drawing would go here
-                // For now, just placing text near the corner is enough for HoS style clarity
-                // Calculate label position slightly inwards
                 const dx = (p1.x + p2.x)/2 - pCenter.x;
                 const dy = (p1.y + p2.y)/2 - pCenter.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
@@ -321,14 +305,11 @@
             );
         };
 
-        // 3. Quadrilateral View
+        // 3. Quad
         const CalcQuadView = ({ task, size = 280 }) => {
             const angles = task.angles;
             const missingIdx = task.missingIndex;
 
-            // Draw a generic irregular convex quadrilateral
-            // Hard to generate from angles alone perfectly without a solver.
-            // We draw a generic shape and label it.
             const pts = [
                 {x: 50, y: 180},
                 {x: 230, y: 180},
@@ -342,7 +323,6 @@
                 <svg width={size} height={200} viewBox={`0 0 ${size} 200`}>
                      <polygon points={`${pts[0].x},${pts[0].y} ${pts[1].x},${pts[1].y} ${pts[2].x},${pts[2].y} ${pts[3].x},${pts[3].y}`} fill="none" stroke="#1e293b" strokeWidth="2" strokeLinejoin="round" />
                      {pts.map((p, i) => {
-                         // Label pos
                          const dx = center.x - p.x;
                          const dy = center.y - p.y;
                          const lx = p.x + dx * 0.2;
@@ -362,7 +342,7 @@
         };
 
 
-        // --- Modul 1-3 (Unchanged) ---
+        // --- Modul 1: Explore ---
         const ModuleExplore = () => {
             const [angle, setAngle] = useState(45);
             const [showProtractor, setShowProtractor] = useState(false);
@@ -410,11 +390,16 @@
             );
         };
 
+        // --- Modul 2: Quiz (Persisted) ---
         const ModuleQuiz = () => {
             const [currentAngle, setCurrentAngle] = useState(0);
             const [options, setOptions] = useState([]);
             const [status, setStatus] = useState("guessing");
-            const [score, setScore] = useState(0);
+
+            // Persist Score
+            const [score, setScore] = useState(() => parseInt(localStorage.getItem("winkel_quiz_score") || "0"));
+            useEffect(() => { localStorage.setItem("winkel_quiz_score", score); }, [score]);
+
             const [feedback, setFeedback] = useState("");
             const generateTask = () => {
                 const angle = Math.floor(Math.random() * 340) + 10;
@@ -439,7 +424,10 @@
                 <div className="space-y-6 max-w-xl mx-auto">
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-slate-800">Winkel bestimmen</h2>
-                        <Badge color="green">Punkte: {score}</Badge>
+                        <div className="flex gap-2 items-center">
+                            {score > 0 && <button onClick={() => setScore(0)} className="text-slate-400 hover:text-red-500 transition-colors" title="Punkte zurücksetzen"><IconTrash /></button>}
+                            <Badge color="green">Punkte: {score}</Badge>
+                        </div>
                     </div>
                     <Card className="p-8 flex flex-col items-center justify-center bg-white min-h-[250px]">
                         <AngleView angle={currentAngle} size={280} />
@@ -533,12 +521,16 @@
             );
         };
 
-        // --- Modul 4: Rechnen (UPDATED) ---
+        // --- Modul 4: Rechnen (Persisted) ---
         const ModuleCalculate = () => {
-            const [mode, setMode] = useState("lines"); // lines, triangle, quad
+            const [mode, setMode] = useState("lines");
             const [task, setTask] = useState(null);
             const [input, setInput] = useState("");
             const [status, setStatus] = useState("input");
+
+            // Persist Solved Count
+            const [solvedCount, setSolvedCount] = useState(() => parseInt(localStorage.getItem("winkel_calc_score") || "0"));
+            useEffect(() => { localStorage.setItem("winkel_calc_score", solvedCount); }, [solvedCount]);
 
             // Generators
             const generateLineTask = () => {
@@ -553,8 +545,6 @@
             };
 
             const generateTriangleTask = () => {
-                // Generate 2 random angles that sum < 180
-                // We use integer values for school level simplicity
                 const a = Math.floor(Math.random() * 80) + 20;
                 const b = Math.floor(Math.random() * (160 - a)) + 10;
                 const c = 180 - a - b;
@@ -564,15 +554,11 @@
             };
 
             const generateQuadTask = () => {
-                // Generate 3 random angles summing < 360
                 const a = Math.floor(Math.random() * 80) + 40;
                 const b = Math.floor(Math.random() * 80) + 40;
                 const c = Math.floor(Math.random() * 80) + 40;
                 const d = 360 - a - b - c;
-
-                // Ensure d is convex-ish (not negative or overly huge, though math is correct either way)
-                if (d <= 0 || d > 180) return generateQuadTask(); // retry
-
+                if (d <= 0 || d > 180) return generateQuadTask();
                 const angles = [a, b, c, d];
                 const missingIndex = Math.floor(Math.random() * 4);
                 return { mode: "quad", label: "Winkelsumme Viereck", angles, missingIndex, answer: angles[missingIndex] };
@@ -584,13 +570,11 @@
                 if (m === "lines") t = generateLineTask();
                 else if (m === "triangle") t = generateTriangleTask();
                 else if (m === "quad") t = generateQuadTask();
-
                 setTask(t);
                 setInput("");
                 setStatus("input");
             };
 
-            // Switch mode
             const handleModeChange = (newMode) => {
                 setMode(newMode);
                 nextTask(newMode);
@@ -604,6 +588,7 @@
 
                 if (val === task.answer) {
                     setStatus("correct");
+                    setSolvedCount(s => s + 1);
                 } else {
                     setStatus("wrong");
                 }
@@ -615,7 +600,10 @@
                 <div className="space-y-6 max-w-xl mx-auto">
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-bold text-slate-800">Winkel berechnen</h2>
-                        <Badge color="purple">Rechnen</Badge>
+                        <div className="flex gap-2 items-center">
+                             {solvedCount > 0 && <button onClick={() => setSolvedCount(0)} className="text-slate-400 hover:text-red-500 transition-colors" title="Zähler zurücksetzen"><IconTrash /></button>}
+                             <Badge color="purple">Gelöst: {solvedCount}</Badge>
+                        </div>
                     </div>
 
                     {/* Mode Selector */}
@@ -679,9 +667,11 @@
             );
         };
 
-        // --- Main App Container ---
+        // --- Main App Container (Persisted Tab) ---
         const App = () => {
-            const [activeTab, setActiveTab] = useState("explore");
+            const [activeTab, setActiveTab] = useState(() => localStorage.getItem("winkel_active_tab") || "explore");
+
+            useEffect(() => { localStorage.setItem("winkel_active_tab", activeTab); }, [activeTab]);
 
             const renderContent = () => {
                 switch(activeTab) {
@@ -709,7 +699,7 @@
 
                     <footer className="mt-12 text-center">
                         <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto mb-4"></div>
-                        <p className="text-slate-300 text-xs">© 2024 WinkelWerkstatt • HoS-Standard</p>
+                        <p className="text-slate-300 text-xs">© 2026 WinkelWerkstatt • HoS-Education</p>
                     </footer>
                 </div>
             );
