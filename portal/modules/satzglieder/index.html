@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satzglieder-Profi</title>
+    
+    <!-- Externe Styles (Portal-Standard) -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/app.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Schriftart Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- React & ReactDOM (Global UMD - stabilste Methode für Single File) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel Standalone -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { subject: '#0ea5e9' }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fallback Styles (falls Portal-CSS fehlt) -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .app-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.75rem 1.5rem; background-color: white; border-bottom: 1px solid #e2e8f0;
+            position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);
+        }
+        .brand-row { display: flex; align-items: center; gap: 1rem; }
+        .logo-img { height: 2.5rem; width: auto; }
+        .brand-title h1 { margin: 0; font-size: 1.25rem; font-weight: 600; color: #0f172a; line-height: 1.2; }
+        .badge-main {
+            display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px;
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.15rem;
+        }
+        .badge-main.is-deutsch { background-color: #e0f2fe; color: #0369a1; }
+        .header-actions { display: flex; align-items: center; }
+        .header-link {
+            color: #64748b; text-decoration: none; font-size: 0.875rem; font-weight: 500;
+            padding: 0.5rem 1rem; border-radius: 0.375rem; transition: background-color 0.2s;
+        }
+        .header-link:hover { background-color: #f1f5f9; color: #334155; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- GLOBALS & ICONS ---
+        const { useState, useEffect } = React;
+        const { createRoot } = ReactDOM;
+
+        // Inline Icons (ersetzt lucide-react Abhängigkeit für Stabilität)
+        const Icons = {
+            Scissors: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" x2="8.12" y1="4" y2="15.88"/><line x1="14.47" x2="20" y1="14.48" y2="20"/><line x1="8.12" x2="12" y1="8.12" y2="12"/></svg>,
+            Search: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+            Check: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polyline points="20 6 9 17 4 12"/></svg>,
+            ChevronRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 18 6-6-6-6"/></svg>,
+            RotateCcw: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>,
+            Award: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>,
+            Settings: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
+            BookOpen: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+            Shuffle: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l14.2-12.6c.8-1.1 2-1.7 3.3-1.7H22"/><path d="M2 6h1.4c1.3 0 2.5.6 3.3 1.7l14.2 12.6c.8 1.1 2 1.7 3.3 1.7H22"/></svg>,
+            MoveRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M18 8L22 12L18 16"/><path d="M2 12H22"/></svg>,
+            ArrowLeft: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>,
+        };
+
+        // --- DATA & CONFIGURATION ---
+
+        const TERMINOLOGY = {
+            standard: {
+                SUBJ: "Subjekt",
+                PRED: "Prädikat",
+                OBJ3: "Objekt im 3. Fall",
+                OBJ4: "Objekt im 4. Fall",
+                LOK: "Ortsergänzung",
+                TEMP: "Zeitergänzung",
+                MOD: "Artergänzung",
+                KAUS: "Begründungsergänzung",
+                POBJ3: "Präpositionalobjekt (3. Fall)",
+                POBJ4: "Präpositionalobjekt (4. Fall)",
+            },
+            ahs: {
+                SUBJ: "Subjekt",
+                PRED: "Prädikat",
+                OBJ3: "Dativobjekt",
+                OBJ4: "Akkusativobjekt",
+                LOK: "Lokaladverbiale",
+                TEMP: "Temporaladverbiale",
+                MOD: "Modaladverbiale",
+                KAUS: "Kausaladverbiale",
+                POBJ3: "Präpositionalobjekt (Dativ)",
+                POBJ4: "Präpositionalobjekt (Akkusativ)",
+            }
+        };
+
+        const SENTENCES = [
+            {
+                id: 1,
+                segments: [
+                    { text: "Der alte Hund", type: "SUBJ" },
+                    { text: "schläft", type: "PRED" },
+                    { text: "heute", type: "TEMP" },
+                    { text: "im Garten", type: "LOK" }
+                ]
+            },
+            {
+                id: 2,
+                segments: [
+                    { text: "Wir", type: "SUBJ" },
+                    { text: "schenken", type: "PRED" },
+                    { text: "dem Lehrer", type: "OBJ3" },
+                    { text: "einen Apfel", type: "OBJ4" }
+                ]
+            },
+            {
+                id: 3,
+                segments: [
+                    { text: "Wegen des Regens", type: "KAUS" },
+                    { text: "fällt", type: "PRED" },
+                    { text: "das Spiel", type: "SUBJ" },
+                    { text: "leider", type: "MOD" },
+                    { text: "aus", type: "PRED" }
+                ]
+            },
+            {
+                id: 4,
+                segments: [
+                    { text: "Sie", type: "SUBJ" },
+                    { text: "wartet", type: "PRED" },
+                    { text: "geduldig", type: "MOD" },
+                    { text: "auf den Bus", type: "POBJ4" }
+                ]
+            },
+            {
+                id: 5,
+                segments: [
+                    { text: "Mit großer Freude", type: "MOD" },
+                    { text: "erzählte", type: "PRED" },
+                    { text: "er", type: "SUBJ" },
+                    { text: "von seinem Urlaub", type: "POBJ3" }
+                ]
+            }
+        ];
+
+        // --- HELPER FUNCTIONS ---
+
+        const flattenSentence = (segments) => {
+            let words = [];
+            let breaks = []; 
+            let currentWordIndex = 0;
+
+            segments.forEach((seg, segIndex) => {
+                const segWords = seg.text.split(' ');
+                segWords.forEach((word) => {
+                    words.push(word);
+                    currentWordIndex++;
+                });
+                if (segIndex < segments.length - 1) {
+                    breaks.push(currentWordIndex - 1);
+                }
+            });
+            return { words, breaks };
+        };
+
+        const shuffleArray = (array) => {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        };
+
+        const getSegmentColorStyle = (typeKey, isActive, isCorrect) => {
+            if (!typeKey) {
+                if (isActive) return "border-slate-800 ring-2 ring-slate-100 bg-white text-slate-900 shadow-md transform scale-105 z-10";
+                return "border-slate-200 bg-white hover:border-slate-400 text-slate-700";
+            }
+
+            const baseColored = "border-2 shadow-sm font-medium";
+
+            if (typeKey === 'SUBJ') return `${baseColored} bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 hover:border-blue-300`;
+            if (typeKey === 'PRED') return `${baseColored} bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100 hover:border-rose-300`;
+            if (typeKey.includes('OBJ') || typeKey.includes('POBJ')) return `${baseColored} bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300`;
+            return `${baseColored} bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 hover:border-amber-300`;
+        };
+
+        // --- COMPONENTS ---
+
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Button = ({ onClick, children, variant = "primary", className = "", disabled = false }) => {
+            const baseStyle = "px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed";
+            const variants = {
+                primary: "bg-slate-800 text-white hover:bg-slate-700 shadow-md hover:shadow-lg",
+                secondary: "bg-white text-slate-700 border border-slate-300 hover:bg-slate-50",
+                outline: "border-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800",
+                ghost: "text-slate-500 hover:bg-slate-100",
+                success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md",
+                danger: "bg-rose-100 text-rose-700 border border-rose-200"
+            };
+
+            return (
+                <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`} disabled={disabled}>
+                    {children}
+                </button>
+            );
+        };
+
+        // --- MAIN APP COMPONENT ---
+
+        function App() {
+            const [mode, setMode] = useState('start');
+            const [ahsMode, setAhsMode] = useState(false);
+            const [currentSentenceIdx, setCurrentSentenceIdx] = useState(0);
+            const [score, setScore] = useState(0);
+            
+            // Split Game
+            const [userSplits, setUserSplits] = useState([]); 
+            const [splitFeedback, setSplitFeedback] = useState(null);
+            
+            // Move Game
+            const [builtSentence, setBuiltSentence] = useState([]);
+            const [availableParts, setAvailableParts] = useState([]); 
+            const [moveFeedback, setMoveFeedback] = useState(null);
+            const [foundPermutations, setFoundPermutations] = useState([]); 
+            const [moveCompletedForThisSentence, setMoveCompletedForThisSentence] = useState(false);
+
+            // Identify Game
+            const [identifiedSegments, setIdentifiedSegments] = useState({}); 
+            const [identifyFeedback, setIdentifyFeedback] = useState(null); 
+            const [activeSegmentIdx, setActiveSegmentIdx] = useState(null);
+
+            const currentSentence = SENTENCES[currentSentenceIdx];
+            const terms = ahsMode ? TERMINOLOGY.ahs : TERMINOLOGY.standard;
+
+            // --- HANDLERS & LOGIC ---
+
+            const handleStart = () => { setMode('split'); resetLevelState(); };
+
+            const resetLevelState = () => {
+                setUserSplits([]); setSplitFeedback(null);
+                setBuiltSentence([]); setAvailableParts([]); setMoveFeedback(null); setFoundPermutations([]); setMoveCompletedForThisSentence(false);
+                setIdentifiedSegments({}); setIdentifyFeedback(null); setActiveSegmentIdx(null);
+            };
+
+            const handleNextLevel = () => {
+                if (currentSentenceIdx < SENTENCES.length - 1) {
+                    setCurrentSentenceIdx(prev => prev + 1); setMode('split'); resetLevelState();
+                } else {
+                    setMode('summary');
+                }
+            };
+
+            const handleRestart = () => {
+                setCurrentSentenceIdx(0); setScore(0); setMode('start'); resetLevelState();
+            };
+
+            const toggleSplit = (index) => {
+                if (splitFeedback) return; 
+                setUserSplits(prev => prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]);
+            };
+
+            const checkSplit = () => {
+                const { breaks } = flattenSentence(currentSentence.segments);
+                const sortedUser = [...userSplits].sort((a, b) => a - b);
+                const sortedCorrect = [...breaks].sort((a, b) => a - b);
+                if (JSON.stringify(sortedUser) === JSON.stringify(sortedCorrect)) {
+                    setSplitFeedback('correct'); setScore(s => s + 10);
+                } else {
+                    setSplitFeedback('wrong');
+                }
+            };
+
+            const proceedToIdentify = () => setMode('identify');
+
+            const startMoveGame = () => {
+                const parts = currentSentence.segments.map((p, i) => ({ ...p, originalIndex: i }));
+                setAvailableParts(shuffleArray(parts));
+                setBuiltSentence([]); setMoveFeedback(null); setFoundPermutations([]); setMode('move');
+            };
+
+            const returnToIdentify = () => setMode('identify');
+
+            const addToSentence = (part, indexInAvailable) => {
+                if (moveFeedback === 'correct' || moveFeedback === 'session_complete') return;
+                setBuiltSentence(prev => [...prev, part]);
+                setAvailableParts(prev => prev.filter((_, i) => i !== indexInAvailable));
+                setMoveFeedback(null);
+            };
+
+            const removeFromSentence = (part, indexInBuilt) => {
+                if (moveFeedback === 'correct' || moveFeedback === 'session_complete') return;
+                setAvailableParts(prev => [...prev, part]);
+                setBuiltSentence(prev => prev.filter((_, i) => i !== indexInBuilt));
+                setMoveFeedback(null);
+            };
+
+            const checkMove = () => {
+                if (availableParts.length > 0) { setMoveFeedback('incomplete'); return; }
+
+                const originalFiniteVerb = currentSentence.segments.find(s => s.type === 'PRED');
+                const otherPreds = currentSentence.segments.filter(s => s.type === 'PRED' && s !== originalFiniteVerb);
+                const builtFiniteVerbIdx = builtSentence.findIndex(s => s.text === originalFiniteVerb.text);
+                let isGrammaticallyCorrect = builtFiniteVerbIdx === 1;
+
+                if (otherPreds.length > 0) {
+                    const lastPart = builtSentence[builtSentence.length - 1];
+                    if (!otherPreds.some(op => op.text === lastPart.text)) isGrammaticallyCorrect = false;
+                }
+
+                const sentenceString = builtSentence.map(s => s.text).join(' ');
+                if (foundPermutations.includes(sentenceString)) { setMoveFeedback('duplicate'); return; }
+
+                if (isGrammaticallyCorrect) {
+                    const newFound = [...foundPermutations, sentenceString];
+                    setFoundPermutations(newFound); setScore(s => s + 15);
+                    if (newFound.length >= 2) { setMoveFeedback('session_complete'); setMoveCompletedForThisSentence(true); }
+                    else { setMoveFeedback('correct'); }
+                } else {
+                    setMoveFeedback('wrong_grammar');
+                }
+            };
+
+            const nextPermutation = () => {
+                const parts = currentSentence.segments.map((p, i) => ({ ...p, originalIndex: i }));
+                setAvailableParts(shuffleArray(parts));
+                setBuiltSentence([]); setMoveFeedback(null);
+            };
+
+            const handleSegmentClick = (index) => { if (identifyFeedback !== 'correct') setActiveSegmentIdx(index); };
+            const selectType = (typeKey) => { setIdentifiedSegments(prev => ({ ...prev, [activeSegmentIdx]: typeKey })); setActiveSegmentIdx(null); };
+
+            const checkIdentify = () => {
+                const correct = currentSentence.segments.every((seg, idx) => identifiedSegments[idx] === seg.type);
+                if (correct) { setIdentifyFeedback('correct'); setScore(s => s + 20); } else { setIdentifyFeedback('wrong'); }
+            };
+
+            // --- RENDERERS ---
+
+            const renderStartScreen = () => (
+                <div className="max-w-2xl mx-auto pt-12 px-4 animate-in fade-in duration-500">
+                    <Card className="p-12 text-center">
+                        <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-700">
+                            <Icons.BookOpen size={40} strokeWidth={1.5} />
+                        </div>
+                        <h2 className="text-2xl font-light text-slate-700 mb-6 tracking-tight">Übungsbereich</h2>
+                        <p className="text-slate-500 mb-8 text-lg max-w-md mx-auto leading-relaxed">
+                            Lerne, Sätze korrekt zu zerlegen und zu bestimmen. Nutze die Verschiebeprobe als Hilfe.<br/>
+                            <span className="text-sm mt-2 block opacity-75">Blau = Subjekt • Rot = Prädikat • Grün = Objekte</span>
+                        </p>
+                        <div className="flex items-center justify-center gap-4 mb-10 bg-slate-50 p-4 rounded-xl inline-flex mx-auto border border-slate-100">
+                            <span className={`text-sm font-medium ${!ahsMode ? 'text-slate-900' : 'text-slate-400'}`}>Standardbegriffe</span>
+                            <button onClick={() => setAhsMode(!ahsMode)} className={`w-14 h-8 rounded-full p-1 transition-colors duration-300 relative ${ahsMode ? 'bg-slate-800' : 'bg-slate-300'}`}>
+                                <div className={`w-6 h-6 bg-white rounded-full shadow-sm transition-transform duration-300 ${ahsMode ? 'translate-x-6' : 'translate-x-0'}`} />
+                            </button>
+                            <span className={`text-sm font-medium ${ahsMode ? 'text-slate-900' : 'text-slate-400'}`}>Fachbegriffe (AHS)</span>
+                        </div>
+                        <Button onClick={handleStart} className="w-full sm:w-auto mx-auto px-12">Übung starten</Button>
+                    </Card>
+                    <div className="mt-8 text-center text-slate-400 text-sm font-medium">Klasse von Frau/Herr Müller • 2024</div>
+                </div>
+            );
+
+            const renderSplitGame = () => {
+                const { words } = flattenSentence(currentSentence.segments);
+                return (
+                    <div className="max-w-4xl mx-auto px-4 pt-8 animate-in slide-in-from-right-4 duration-300">
+                        <header className="flex justify-between items-center mb-8">
+                            <div className="flex items-center gap-3 text-slate-500">
+                                <span className="font-mono text-sm bg-slate-100 px-2 py-1 rounded">Satz {currentSentenceIdx + 1}/{SENTENCES.length}</span>
+                                <span className="h-4 w-[1px] bg-slate-300"></span>
+                                <span className="flex items-center gap-1"><Icons.Scissors size={16}/> Schritt 1: Abteilen</span>
+                            </div>
+                            <div className="text-slate-400 font-mono">{score} Punkte</div>
+                        </header>
+                        <Card className="p-8 md:p-12 mb-6 min-h-[300px] flex flex-col justify-center items-center">
+                            <p className="text-slate-500 mb-8 text-center">Klicke zwischen die Wörter, um die Satzglieder zu trennen.</p>
+                            <div className="flex flex-wrap gap-y-8 justify-center items-center text-2xl md:text-3xl leading-loose font-medium text-slate-800 select-none">
+                                {words.map((word, idx) => (
+                                    <React.Fragment key={idx}>
+                                        <span className="px-1">{word}</span>
+                                        {idx < words.length - 1 && (
+                                            <div onClick={() => toggleSplit(idx)} className={`w-8 h-12 mx-1 rounded cursor-pointer transition-all duration-200 flex items-center justify-center group relative ${userSplits.includes(idx) ? 'bg-blue-100' : 'hover:bg-slate-50'}`}>
+                                                <div className={`w-1 h-full transition-all duration-300 rounded-full ${userSplits.includes(idx) ? 'bg-blue-600 h-10' : 'bg-transparent group-hover:bg-slate-200 group-hover:h-6'}`}></div>
+                                                {!userSplits.includes(idx) && <Icons.Scissors size={16} className="absolute text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity -top-6" />}
+                                            </div>
+                                        )}
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        </Card>
+                        <div className="flex justify-center gap-4">
+                            {!splitFeedback && <Button onClick={checkSplit}>Prüfen</Button>}
+                            {splitFeedback === 'wrong' && <div className="flex items-center gap-4 animate-in fade-in"><span className="text-rose-600 font-medium bg-rose-50 px-4 py-2 rounded-lg">Leider nicht ganz richtig.</span><Button onClick={() => { setSplitFeedback(null); setUserSplits([]); }} variant="secondary"><Icons.RotateCcw size={18} /> Noch einmal</Button></div>}
+                            {splitFeedback === 'correct' && <div className="flex items-center gap-4 animate-in fade-in"><span className="text-emerald-700 font-medium bg-emerald-50 px-4 py-2 rounded-lg flex items-center gap-2"><Icons.Check size={18} /> Perfekt abgeteilt!</span><Button onClick={proceedToIdentify} variant="success">Weiter zum Bestimmen <Icons.ChevronRight size={18} /></Button></div>}
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderMoveGame = () => (
+                <div className="max-w-4xl mx-auto px-4 pt-8 animate-in slide-in-from-right-4 duration-300">
+                    <header className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-3 text-slate-500">
+                            <span className="font-mono text-sm bg-slate-100 px-2 py-1 rounded">Satz {currentSentenceIdx + 1}/{SENTENCES.length}</span>
+                            <span className="h-4 w-[1px] bg-slate-300"></span>
+                            <span className="flex items-center gap-1"><Icons.Shuffle size={16}/> Extra: Verschiebeprobe</span>
+                        </div>
+                        <div className="text-slate-400 font-mono">{score} Punkte</div>
+                    </header>
+                    <div className="flex justify-between items-center mb-6">
+                        <Button onClick={returnToIdentify} variant="ghost" className="text-sm"><Icons.ArrowLeft size={16}/> Zurück</Button>
+                        <div className="flex gap-2">
+                            <span className={`h-3 w-3 rounded-full ${foundPermutations.length >= 1 ? 'bg-emerald-500' : 'bg-slate-200'}`}></span>
+                            <span className={`h-3 w-3 rounded-full ${foundPermutations.length >= 2 ? 'bg-emerald-500' : 'bg-slate-200'}`}></span>
+                            <span className="ml-2 text-sm text-slate-500 font-medium">{foundPermutations.length} / 2 Sätze gefunden</span>
+                        </div>
+                    </div>
+                    <Card className="p-8 mb-6 min-h-[400px] flex flex-col items-center">
+                        <div className="w-full mb-8">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 text-center">Dein Satz</h3>
+                            <div className="min-h-[80px] bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 p-4 flex flex-wrap gap-3 justify-center items-center">
+                                {builtSentence.length === 0 && <span className="text-slate-400 text-sm italic">Klicke unten auf die Bausteine...</span>}
+                                {builtSentence.map((seg, idx) => (
+                                    <button key={idx} onClick={() => removeFromSentence(seg, idx)} className="bg-white border border-blue-200 text-blue-900 px-4 py-3 rounded-lg shadow-sm hover:shadow-md hover:bg-rose-50 hover:text-rose-700 transition-all text-lg">{seg.text}</button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="w-full flex justify-center mb-8 relative">
+                            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+                            <div className="relative bg-white px-4 text-slate-300"><Icons.MoveRight size={20} className="rotate-90" /></div>
+                        </div>
+                        <div className="w-full">
+                            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 text-center">Bausteine</h3>
+                            <div className="flex flex-wrap gap-3 justify-center">
+                                {availableParts.map((seg, idx) => (
+                                    <button key={idx} onClick={() => addToSentence(seg, idx)} className="bg-slate-100 border border-slate-200 text-slate-700 px-4 py-3 rounded-lg hover:bg-blue-50 hover:text-blue-800 transition-all text-lg">{seg.text}</button>
+                                ))}
+                                {availableParts.length === 0 && builtSentence.length > 0 && <span className="text-slate-300 text-sm italic py-3">Alle Bausteine verwendet</span>}
+                            </div>
+                        </div>
+                    </Card>
+                    <div className="flex justify-center gap-4 items-center flex-wrap">
+                        {!moveFeedback && <Button onClick={checkMove} disabled={availableParts.length > 0}>Prüfen</Button>}
+                        {moveFeedback === 'incomplete' && <span className="text-amber-600 bg-amber-50 px-4 py-2 rounded-lg font-medium">Bitte verwende alle Bausteine.</span>}
+                        {moveFeedback === 'duplicate' && <div className="flex items-center gap-4"><span className="text-indigo-600 bg-indigo-50 px-4 py-2 rounded-lg font-medium">Diesen Satz hattest du schon.</span><Button onClick={() => { setBuiltSentence([]); setAvailableParts(shuffleArray(currentSentence.segments.map((p,i)=>({...p,originalIndex:i})))); setMoveFeedback(null); }} variant="secondary"><Icons.RotateCcw size={18} /></Button></div>}
+                        {moveFeedback === 'wrong_grammar' && <div className="flex items-center gap-4"><div className="bg-rose-50 text-rose-700 px-4 py-2 rounded-lg font-medium text-sm"><span className="font-bold">Achtung: </span> Verb an 2. Stelle?</div><Button onClick={() => { setBuiltSentence([]); setAvailableParts(shuffleArray(currentSentence.segments.map((p,i)=>({...p,originalIndex:i})))); setMoveFeedback(null); }} variant="secondary"><Icons.RotateCcw size={18} /></Button></div>}
+                        {moveFeedback === 'correct' && <div className="flex items-center gap-4"><span className="text-emerald-700 font-medium bg-emerald-50 px-4 py-2 rounded-lg flex items-center gap-2"><Icons.Check size={18} /> Richtig! Finde noch einen.</span><Button onClick={nextPermutation} variant="success">Weiter <Icons.ChevronRight size={18} /></Button></div>}
+                        {moveFeedback === 'session_complete' && <div className="flex items-center gap-4"><span className="text-emerald-700 font-medium bg-emerald-50 px-4 py-2 rounded-lg flex items-center gap-2"><Icons.Award size={18} /> Super! 2 Varianten gefunden.</span><Button onClick={returnToIdentify} variant="success">Zurück zum Bestimmen <Icons.ChevronRight size={18} /></Button></div>}
+                    </div>
+                </div>
+            );
+
+            const renderIdentifyGame = () => (
+                <div className="max-w-4xl mx-auto px-4 pt-8 animate-in slide-in-from-right-4 duration-300">
+                    <header className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-3 text-slate-500">
+                            <span className="font-mono text-sm bg-slate-100 px-2 py-1 rounded">Satz {currentSentenceIdx + 1}/{SENTENCES.length}</span>
+                            <span className="h-4 w-[1px] bg-slate-300"></span>
+                            <span className="flex items-center gap-1"><Icons.Search size={16}/> Schritt 2: Bestimmen</span>
+                        </div>
+                        <div className="text-slate-400 font-mono">{score} Punkte</div>
+                    </header>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2">
+                            <Card className="p-8 min-h-[300px] flex flex-col justify-center items-center relative">
+                                {!moveCompletedForThisSentence && identifyFeedback !== 'correct' && (
+                                    <div className="absolute top-4 right-4">
+                                        <Button onClick={startMoveGame} variant="secondary" className="text-xs py-2 px-3 gap-1 shadow-none border-dashed"><Icons.Shuffle size={14} /> Verschiebeprobe (Extra)</Button>
+                                    </div>
+                                )}
+                                {moveCompletedForThisSentence && (
+                                    <div className="absolute top-4 right-4 text-xs text-emerald-600 font-medium bg-emerald-50 px-3 py-1 rounded-full flex gap-1 items-center"><Icons.Check size={12} /> Verschiebeprobe erledigt</div>
+                                )}
+                                <p className="text-slate-500 mb-8 text-center pt-6">Bestimme die Satzglieder.</p>
+                                <div className="flex flex-wrap justify-center gap-3 w-full">
+                                    {currentSentence.segments.map((seg, idx) => {
+                                        const assignedType = identifiedSegments[idx];
+                                        const styleClass = getSegmentColorStyle(assignedType, activeSegmentIdx === idx, identifyFeedback === 'correct');
+                                        return (
+                                            <button key={idx} onClick={() => handleSegmentClick(idx)} className={`relative px-4 py-3 rounded-lg text-xl transition-all duration-200 ${styleClass}`}>
+                                                {seg.text}
+                                                {assignedType && <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full whitespace-nowrap shadow-sm border border-white/20 ${assignedType === 'SUBJ' ? 'bg-blue-600 text-white' : assignedType === 'PRED' ? 'bg-rose-600 text-white' : (assignedType.includes('OBJ') || assignedType.includes('POBJ')) ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}`}>{terms[assignedType]}</span>}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                                {identifyFeedback && (
+                                    <div className="absolute bottom-6 left-0 right-0 flex justify-center animate-in slide-in-from-bottom-2">
+                                        {identifyFeedback === 'correct' ? <span className="text-emerald-700 font-medium bg-emerald-100/90 px-4 py-2 rounded-lg flex items-center gap-2 backdrop-blur-sm border border-emerald-200 shadow-sm"><Icons.Check size={18} /> Richtig bestimmt!</span> : <span className="text-rose-600 font-medium bg-rose-50 px-4 py-2 rounded-lg flex items-center gap-2 border border-rose-100 shadow-sm">Etwas stimmt noch nicht. Überprüfe die Farben.</span>}
+                                    </div>
+                                )}
+                            </Card>
+                            <div className="flex justify-end mt-4">
+                                {identifyFeedback !== 'correct' ? <Button onClick={checkIdentify} disabled={Object.keys(identifiedSegments).length !== currentSentence.segments.length}>Überprüfen</Button> : <Button onClick={handleNextLevel} variant="success">Nächster Satz <Icons.ChevronRight size={18} /></Button>}
+                            </div>
+                        </div>
+                        <div className="lg:col-span-1">
+                            <Card className="h-full bg-slate-50 border-none shadow-inner p-4">
+                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Icons.Settings size={14} /> Auswahl</h3>
+                                {activeSegmentIdx !== null ? (
+                                    <div className="grid grid-cols-1 gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
+                                        {Object.entries(terms).map(([key, label]) => {
+                                            let btnColorClass = "hover:border-slate-400 hover:text-slate-800";
+                                            if (key === 'SUBJ') btnColorClass = "hover:border-blue-400 hover:text-blue-700 hover:bg-blue-50";
+                                            else if (key === 'PRED') btnColorClass = "hover:border-rose-400 hover:text-rose-700 hover:bg-rose-50";
+                                            else if (key.includes('OBJ') || key.includes('POBJ')) btnColorClass = "hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50";
+                                            else btnColorClass = "hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50";
+                                            return <button key={key} onClick={() => selectType(key)} className={`text-left px-4 py-3 bg-white border border-slate-200 rounded-lg hover:shadow-md transition-all text-sm font-medium text-slate-600 ${btnColorClass}`}>{label}</button>;
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center border-2 border-dashed border-slate-200 rounded-lg"><Icons.Search size={32} className="mb-2 opacity-50" /><p className="text-sm">Wähle links ein Satzglied aus, um die Begriffe zu sehen.</p></div>
+                                )}
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            const renderSummary = () => (
+                <div className="max-w-2xl mx-auto pt-12 px-4 animate-in zoom-in-50 duration-500">
+                    <Card className="p-12 text-center">
+                        <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600"><Icons.Award size={40} strokeWidth={1.5} /></div>
+                        <h2 className="text-3xl font-light text-slate-800 mb-2">Großartige Arbeit!</h2>
+                        <p className="text-slate-500 mb-8">Du hast alle Übungen erfolgreich gemeistert.</p>
+                        <div className="text-5xl font-bold text-slate-800 mb-2">{score}</div>
+                        <div className="text-sm text-slate-400 uppercase tracking-widest mb-10">Gesamtpunkte</div>
+                        <Button onClick={handleRestart} variant="secondary"><Icons.RotateCcw size={18} /> Neustart</Button>
+                    </Card>
+                </div>
+            );
+
+            // --- HEADER (PORTAL STYLE) ---
+            const renderHeader = () => (
+                <header className="app-header">
+                    <div className="brand-row">
+                        <img src="../chatisthisreal.png" alt="Logo" className="logo-img" onError={(e) => e.target.style.display='none'} />
+                        <div className="brand-title">
+                            <div className="badge-main is-deutsch">Deutsch</div>
+                            <h1>Satzglieder-Profi</h1>
+                        </div>
+                    </div>
+                    <div className="header-actions">
+                        <a href="../index.html" className="header-link">Startseite</a>
+                    </div>
+                </header>
+            );
+
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 selection:bg-blue-100">
+                    {renderHeader()}
+                    <main className="container mx-auto">
+                        {mode === 'start' && renderStartScreen()}
+                        {mode === 'split' && renderSplitGame()}
+                        {mode === 'move' && renderMoveGame()}
+                        {mode === 'identify' && renderIdentifyGame()}
+                        {mode === 'summary' && renderSummary()}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
