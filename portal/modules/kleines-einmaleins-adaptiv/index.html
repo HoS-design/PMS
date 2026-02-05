@@ -26,6 +26,7 @@
         radial-gradient(1100px 520px at 18% -10%, rgba(37,99,235,.12), transparent 60%),
         radial-gradient(900px 460px at 95% 10%, rgba(56,189,248,.12), transparent 58%),
         linear-gradient(180deg,#ffffff,#f7fafc);
+      font-family: system-ui, -apple-system, sans-serif;
     }
     .wrap{max-width:1120px;margin:0 auto;padding:18px 14px 56px}
     .shell{
@@ -109,6 +110,19 @@
     .btn.primary{border-color:rgba(37,99,235,.35);box-shadow:0 12px 30px rgba(37,99,235,.12)}
     .btn.danger{border-color:rgba(239,68,68,.30);box-shadow:0 12px 30px rgba(239,68,68,.10)}
     .btn.ghost{background:rgba(255,255,255,.55)}
+    
+    .btn-row-sel {
+      width: 36px; height: 36px; padding: 0; display: inline-flex;
+      align-items: center; justify-content: center;
+      border-radius: 10px;
+      transition: all 0.1s ease;
+    }
+    .btn-row-sel.active {
+      background: var(--subject-color); color: white; border-color: var(--subject-color);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+      transform: translateY(-1px);
+    }
+
     .feedback{
       margin-top:10px;padding:10px 12px;border-radius:14px;
       border:1px solid var(--line);background:rgba(255,255,255,.70)
@@ -134,6 +148,7 @@
     .cell.is-wobbly{outline:3px solid rgba(239,68,68,.14)}
     .cell.is-ok{outline:3px solid rgba(16,185,129,.14)}
     .row2{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .rows-grid { display: flex; flex-wrap: wrap; gap: 6px; }
     .switch{
       display:flex;gap:8px;align-items:center;border:1px solid var(--line);
       background:rgba(255,255,255,.60);padding:10px 12px;border-radius:16px
@@ -166,7 +181,7 @@
         </div>
         <div class="tabs" role="tablist" aria-label="Ansichten">
           <button class="tab" type="button" role="tab" id="tab-train" aria-selected="true" aria-controls="panel-train">Training</button>
-          <button class="tab" type="button" role="tab" id="tab-overview" aria-selected="false" aria-controls="panel-overview">Uebersicht</button>
+          <button class="tab" type="button" role="tab" id="tab-overview" aria-selected="false" aria-controls="panel-overview">Übersicht</button>
           <button class="tab" type="button" role="tab" id="tab-settings" aria-selected="false" aria-controls="panel-settings">Einstellungen</button>
         </div>
       </div>
@@ -177,7 +192,7 @@
             <section class="card" aria-label="Aufgabe">
               <h3>Aufgabe</h3>
               <p class="muted small" style="margin:0 0 10px;">
-                Tipp: <strong>Enter</strong> prueft. Danach kommt automatisch die naechste Aufgabe.
+                Tipp: <strong>Enter</strong> prüft. Danach kommt automatisch die nächste Aufgabe.
               </p>
 
               <div class="problem">
@@ -188,8 +203,8 @@
                 <div class="answer">
                   <label class="sr-only" for="ans">Antwort</label>
                   <input id="ans" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="?" />
-                  <button class="btn primary" type="button" id="checkBtn">Pruefen</button>
-                  <button class="btn ghost" type="button" id="skipBtn" title="Aufgabe ueberspringen">Weiter</button>
+                  <button class="btn primary" type="button" id="checkBtn">Prüfen</button>
+                  <button class="btn ghost" type="button" id="skipBtn" title="Aufgabe überspringen">Weiter</button>
                 </div>
               </div>
 
@@ -200,21 +215,31 @@
               <div class="kpis" aria-label="Status">
                 <div class="pill"><span class="muted">Streak:</span> <strong id="streak">0</strong></div>
                 <div class="pill"><span class="muted">Gesamtquote:</span> <strong id="acc">-</strong></div>
-                <div class="pill"><span class="muted">Geuebt:</span> <strong id="covered">0/55</strong></div>
-                <div class="pill"><span class="muted">Zuletzt gespeichert:</span> <strong id="savedAt">-</strong></div>
+                <div class="pill"><span class="muted">Geübt:</span> <strong id="covered">0/55</strong></div>
+                <div class="pill"><span class="muted">Gespeichert:</span> <strong id="savedAt">-</strong></div>
               </div>
             </section>
 
             <aside class="card" aria-label="Hilfen und Fokus">
-              <h3>Fokus</h3>
+              <h3>Fokus & Reihen</h3>
               <p class="muted small" style="margin:0 0 10px;">
-                Standard: alles 1 bis 10. In der Uebersicht kannst du Felder anklicken und gezielt trainieren.
+                Wähle eine oder mehrere Reihen aus.
               </p>
+              
+              <div class="rows-grid" id="rowSelector">
+                <!-- JS will fill this -->
+              </div>
+              <div style="margin-top:8px;">
+                 <button class="btn ghost small" style="width:100%" type="button" id="clearFocusBtn">Alles zurücksetzen (Gemischt)</button>
+              </div>
+
+              <div class="sep"></div>
+              
               <div class="note small" id="focusNote"><strong>Aktuell:</strong> alles gemischt (adaptiv)</div>
+              
               <div class="sep"></div>
               <div class="row2">
-                <button class="btn" type="button" id="showSolutionBtn" title="Zeigt die Loesung (zaehlt optional als falsch)">Loesung zeigen</button>
-                <button class="btn" type="button" id="clearFocusBtn">Fokus loeschen</button>
+                <button class="btn" type="button" id="showSolutionBtn" title="Zeigt die Lösung (zählt optional als falsch)">Lösung zeigen</button>
               </div>
 
               <div class="sep"></div>
@@ -226,10 +251,10 @@
 
         <div id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" hidden>
           <div class="grid">
-            <section class="card" aria-label="Uebersicht">
-              <h3>Uebersicht (1 bis 10)</h3>
+            <section class="card" aria-label="Übersicht">
+              <h3>Übersicht (1 bis 10)</h3>
               <p class="muted small" style="margin:0 0 10px;">
-                Klicke ein Feld, um genau diese Aufgabe zu trainieren. (Statistik ist kommutativ: a×b = b×a)
+                Klicke ein Feld, um genau diese Aufgabe zu trainieren.
               </p>
               <div class="heatwrap">
                 <table class="heat" id="heat"></table>
@@ -266,15 +291,15 @@
               <div class="sep"></div>
               <div class="switch">
                 <input type="checkbox" id="helpCountsWrong" checked />
-                <label for="helpCountsWrong"><strong>Loesung zeigen</strong> zaehlt als falsch</label>
+                <label for="helpCountsWrong"><strong>Lösung zeigen</strong> zählt als falsch</label>
               </div>
               <div class="sep"></div>
               <div class="row2">
                 <button class="btn" type="button" id="saveBtn">Speichern</button>
-                <button class="btn danger" type="button" id="resetBtn">Statistik loeschen</button>
+                <button class="btn danger" type="button" id="resetBtn">Statistik löschen</button>
               </div>
               <div class="sep"></div>
-              <div class="note small"><strong>Hinweis:</strong> Alles laeuft lokal (localStorage).</div>
+              <div class="note small"><strong>Hinweis:</strong> Alles läuft lokal (localStorage).</div>
             </section>
           </div>
         </div>
@@ -285,7 +310,7 @@
   <script>
   (function(){
     "use strict";
-    var STORAGE_KEY = "hos_kleines_einmaleins_adaptiv_v1";
+    var STORAGE_KEY = "hos_kleines_einmaleins_adaptiv_v3"; // Version bump for multi-row
     var A_MIN = 1, A_MAX = 10;
 
     function keyFor(a,b){
@@ -300,7 +325,9 @@
       }catch(e){ return "-"; }
     }
 
-    var state = { v:1, streak:0, focus:null, stats:{}, settings:{useTime:false, helpCountsWrong:true}, savedAt:"-" };
+    // focusRows is now an array
+    var state = { v:3, streak:0, focus:null, focusRows:[], stats:{}, settings:{useTime:false, helpCountsWrong:true}, savedAt:"-" };
+    
     var tabTrain = document.getElementById("tab-train");
     var tabOverview = document.getElementById("tab-overview");
     var tabSettings = document.getElementById("tab-settings");
@@ -324,6 +351,7 @@
     var modeLine = document.getElementById("modeLine");
     var showSolutionBtn = document.getElementById("showSolutionBtn");
     var clearFocusBtn = document.getElementById("clearFocusBtn");
+    var rowSelector = document.getElementById("rowSelector");
 
     var heat = document.getElementById("heat");
     var refreshOverviewBtn = document.getElementById("refreshOverviewBtn");
@@ -342,16 +370,39 @@
     function load(){
       try{
         var raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return;
+        // Fallback for migrations
+        if(!raw) {
+          // Try v2 (single row focus)
+          var old2 = localStorage.getItem("hos_kleines_einmaleins_adaptiv_v2");
+          if(old2) {
+            var p2 = JSON.parse(old2);
+            state.stats = p2.stats || {};
+            state.settings = p2.settings || state.settings;
+            state.streak = p2.streak || 0;
+            if(p2.focusRow) state.focusRows = [p2.focusRow]; // migrate single to array
+          } else {
+             // Try v1
+             var old1 = localStorage.getItem("hos_kleines_einmaleins_adaptiv_v1");
+             if(old1) {
+                var p1 = JSON.parse(old1);
+                state.stats = p1.stats || {};
+                state.settings = p1.settings || state.settings;
+                state.streak = p1.streak || 0;
+             }
+          }
+          return;
+        }
         var p = JSON.parse(raw);
-        if(!p || p.v !== 1) return;
+        if(!p) return;
         state.streak = p.streak || 0;
         state.focus = p.focus || null;
+        state.focusRows = Array.isArray(p.focusRows) ? p.focusRows : [];
         state.stats = p.stats || {};
         state.settings = p.settings || state.settings;
         state.savedAt = p.savedAt || "-";
       }catch(e){}
     }
+
     function save(){
       try{
         state.savedAt = nowStamp();
@@ -359,30 +410,35 @@
         savedAtEl.textContent = state.savedAt;
       }catch(e){ savedAtEl.textContent = "Speichern fehlgeschlagen"; }
     }
+
     function resetAll(){
-      if(!confirm("Wirklich Statistik loeschen?")) return;
+      if(!confirm("Wirklich Statistik löschen?")) return;
       try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-      state.streak=0; state.focus=null; state.stats={}; state.savedAt="-";
+      state.streak=0; state.focus=null; state.focusRows=[]; state.stats={}; state.savedAt="-";
       renderAll(); nextQuestion();
     }
+
     function getStat(k){
       if(!state.stats[k]) state.stats[k] = {attempts:0, correct:0, wrong:0, lastTs:0, avgMs:0};
       return state.stats[k];
     }
+
     function allPairs(){
       var pairs=[];
       for(var a=A_MIN;a<=A_MAX;a++) for(var b=A_MIN;b<=A_MAX;b++) if(a<=b) pairs.push({a:a,b:b,k:keyFor(a,b)});
       return pairs;
     }
+
     function weightForPair(pair){
       var s = getStat(pair.k);
       var attempts = s.attempts||0, wrong = s.wrong||0;
       var errRate = attempts ? (wrong/attempts) : 0.0;
-      var errBoost = 1 + (errRate*3.2);
-      var novelty = (attempts===0) ? 1.9 : 1.0;
+      var errBoost = 1 + (errRate*3.5);
+      var novelty = (attempts===0) ? 2.0 : 1.0;
       var now = Date.now();
       var ageMin = s.lastTs ? Math.min(720, Math.max(0, (now - s.lastTs)/60000)) : 720;
       var spacing = 1 + Math.min(2.0, ageMin/240);
+      
       var timeBoost = 1.0;
       if(state.settings.useTime && attempts>=2 && s.avgMs){
         var t=s.avgMs;
@@ -390,40 +446,95 @@
       }
       return 1.0 * errBoost * novelty * spacing * timeBoost;
     }
+
     function pickWeighted(pairs){
+      if(pairs.length === 0) return {a:1, b:1, k:"1x1"}; // Fallback
       var sum=0, w=[], i;
       for(i=0;i<pairs.length;i++){ w[i]=weightForPair(pairs[i]); sum+=w[i]; }
       var r=Math.random()*sum, acc=0;
       for(i=0;i<pairs.length;i++){ acc+=w[i]; if(r<=acc) return pairs[i]; }
       return pairs[pairs.length-1];
     }
+
     function nextQuestion(){
       var pair;
+      
+      // 1. Single Pair focus takes precedence
       if(state.focus && state.focus.a && state.focus.b){
         var x=Math.min(state.focus.a,state.focus.b), y=Math.max(state.focus.a,state.focus.b);
         pair={a:x,b:y,k:keyFor(x,y)};
-      } else {
+      } 
+      // 2. Row(s) focus (Series)
+      else if (state.focusRows && state.focusRows.length > 0) {
+        var rows = state.focusRows;
+        // Filter: Pair is valid if at least one of its numbers is in the 'rows' array
+        var relevantPairs = allPairs().filter(function(p){
+          return rows.indexOf(p.a) !== -1 || rows.indexOf(p.b) !== -1;
+        });
+        
+        // If nothing found (shouldn't happen), fallback to all
+        if(relevantPairs.length === 0) relevantPairs = allPairs();
+        
+        pair = pickWeighted(relevantPairs);
+      }
+      // 3. Normal adaptive mode
+      else {
         pair = pickWeighted(allPairs());
       }
+
       var showA=pair.a, showB=pair.b;
       if(Math.random()<0.5){ showA=pair.b; showB=pair.a; }
+      
       cur.a=showA; cur.b=showB; cur.startTs=Date.now();
       elA.textContent=String(cur.a); elB.textContent=String(cur.b);
       ans.value=""; ans.focus();
-      focusTag.textContent = (state.focus ? ("Fokus: "+state.focus.a+"×"+state.focus.b) : "");
+      
+      updateFocusText();
     }
+
+    function updateFocusText(){
+        var txt = "";
+        var badge = "";
+        
+        if(state.focus) {
+            txt = "<strong>Aktuell:</strong> Fokus " + state.focus.a + "×" + state.focus.b + " (kommutativ)";
+            badge = "Fokus: " + state.focus.a + "×" + state.focus.b;
+            modeLine.textContent = "Modus: Fokus " + state.focus.a + "×" + state.focus.b;
+        } else if (state.focusRows && state.focusRows.length > 0) {
+            var sorted = state.focusRows.slice().sort(function(a,b){return a-b;});
+            var label = sorted.join("er, ") + "er"; // simple join
+            if(sorted.length > 1) {
+               // Make nice text: "2er, 5er & 10er"
+               var last = sorted.pop();
+               label = sorted.join("er, ") + "er & " + last + "er";
+            }
+            
+            txt = "<strong>Aktuell:</strong> " + label + " Reihen (adaptiv)";
+            badge = label + " Reihen";
+            modeLine.textContent = "Modus: " + label + " Reihen";
+        } else {
+            txt = "<strong>Aktuell:</strong> alles gemischt (adaptiv)";
+            badge = "";
+            modeLine.textContent = "Modus: adaptiv (1 bis 10)";
+        }
+        focusNote.innerHTML = txt;
+        focusTag.textContent = badge;
+    }
+
     function parseAnswer(v){
       var s=String(v||"").trim();
       if(!s) return null;
       if(!/^-?\d+$/.test(s)) return null;
       return parseInt(s,10);
     }
+
     function setFeedback(kind, html){
       fb.style.display="block";
       fb.className="feedback"+(kind?(" "+kind):"");
       fb.innerHTML=html;
     }
     function clearFeedback(){ fb.style.display="none"; fb.className="feedback"; fb.innerHTML=""; }
+
     function recordResult(ok, ms, counts){
       if(!counts) return;
       var k=keyFor(cur.a,cur.b);
@@ -436,6 +547,7 @@
         st.avgMs = prev ? Math.round(prev*0.8 + ms*0.2) : ms;
       }
     }
+
     function overallKpis(){
       var pairs=allPairs(), attempts=0, correct=0, covered=0, i;
       for(i=0;i<pairs.length;i++){
@@ -447,6 +559,7 @@
       var acc = attempts ? Math.round((correct/attempts)*100) : 0;
       return {attempts:attempts, correct:correct, acc:acc, covered:covered, total:pairs.length};
     }
+
     function topProblems(limit){
       var pairs=allPairs(), scored=[], i;
       for(i=0;i<pairs.length;i++){
@@ -464,18 +577,48 @@
           s.p.a + "×" + s.p.b + " <span class='muted' style='font-weight:650;'>(" + mini + ")</span></button>";
       }).join("") || "-";
     }
+
     function setFocus(a,b){
       state.focus={a:a,b:b};
-      focusNote.innerHTML="<strong>Aktuell:</strong> Fokus "+a+"×"+b+" (kommutativ)";
-      modeLine.textContent="Modus: adaptiv (Fokus "+a+"×"+b+")";
-      focusTag.textContent="Fokus: "+a+"×"+b;
+      state.focusRows=[]; // optional: clear rows? Or keep them? Let's clear to avoid confusion.
+      updateFocusText();
     }
+    
+    function toggleRowFocus(r){
+      // Toggle logic
+      var idx = state.focusRows.indexOf(r);
+      if(idx > -1) {
+          state.focusRows.splice(idx, 1);
+      } else {
+          state.focusRows.push(r);
+      }
+      state.focus = null; // clear single pair focus when messing with rows
+      updateFocusText();
+    }
+
     function clearFocus(){
       state.focus=null;
-      focusNote.innerHTML="<strong>Aktuell:</strong> alles gemischt (adaptiv)";
-      modeLine.textContent="Modus: adaptiv (1 bis 10)";
-      focusTag.textContent="";
+      state.focusRows=[];
+      updateFocusText();
     }
+
+    function renderRowSelector(){
+        var html = "";
+        for(var i=1; i<=10; i++){
+            var isActive = (state.focusRows.indexOf(i) !== -1);
+            var cls = isActive ? "btn btn-row-sel active" : "btn btn-row-sel ghost";
+            html += "<button class='"+cls+"' type='button' data-row='"+i+"'>"+i+"</button>";
+        }
+        rowSelector.innerHTML = html;
+        rowSelector.querySelectorAll("[data-row]").forEach(function(b){
+            b.addEventListener("click", function(){
+                var r = parseInt(b.getAttribute("data-row"), 10);
+                toggleRowFocus(r);
+                save(); nextQuestion(); renderRowSelector();
+            });
+        });
+    }
+
     function renderTrainKpis(){
       var k=overallKpis();
       streakEl.textContent=String(state.streak||0);
@@ -490,7 +633,9 @@
           save(); openTab("train"); nextQuestion();
         });
       });
+      renderRowSelector(); 
     }
+
     function statusForPair(a,b){
       var st=getStat(keyFor(a,b));
       var attempts=st.attempts||0;
@@ -500,6 +645,7 @@
       if(pct>=85) return {cls:"is-ok", pct:pct};
       return {cls:"is-wobbly", pct:pct};
     }
+
     function buildHeatmap(){
       var html="";
       html += "<tr><th class='sticky-left'>×</th>";
@@ -526,6 +672,7 @@
         });
       });
     }
+
     function renderOverview(){
       buildHeatmap();
       var k=overallKpis();
@@ -558,16 +705,18 @@
         });
       });
     }
+
     function renderSettings(){
       timeToggle.checked=!!state.settings.useTime;
       helpCountsWrong.checked=!!state.settings.helpCountsWrong;
     }
+
     function renderAll(){
-      if(state.focus && state.focus.a && state.focus.b) setFocus(state.focus.a,state.focus.b);
-      else clearFocus();
+      updateFocusText();
       renderTrainKpis();
       renderSettings();
     }
+
     function openTab(which){
       var isTrain=(which==="train"), isOv=(which==="overview"), isSet=(which==="settings");
       tabTrain.setAttribute("aria-selected", isTrain?"true":"false");
@@ -580,6 +729,7 @@
       if(isSet) renderSettings();
       if(isTrain) ans.focus();
     }
+
     function checkAnswer(counts){
       clearFeedback();
       var v=parseAnswer(ans.value);
@@ -607,12 +757,12 @@
 
     showSolutionBtn.addEventListener("click", function(){
       var correct=cur.a*cur.b;
-      setFeedback("bad","<strong>Loesung:</strong> "+cur.a+"×"+cur.b+" = <strong>"+correct+"</strong>.");
+      setFeedback("bad","<strong>Lösung:</strong> "+cur.a+"×"+cur.b+" = <strong>"+correct+"</strong>.");
       if(state.settings.helpCountsWrong){ recordResult(false, 0, true); state.streak=0; renderTrainKpis(); save(); }
       setTimeout(function(){ nextQuestion(); clearFeedback(); }, 850);
     });
 
-    clearFocusBtn.addEventListener("click", function(){ clearFocus(); save(); nextQuestion(); });
+    clearFocusBtn.addEventListener("click", function(){ clearFocus(); save(); nextQuestion(); renderRowSelector(); });
 
     refreshOverviewBtn.addEventListener("click", function(){ renderOverview(); });
 
