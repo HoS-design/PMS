@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Altgriechisch – Attisch Prosa Trainer</title>
+
+  <!-- Google Fonts: Noto Serif für Griechisch, Inter für UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      /* HoS Premium Palette */
+      --primary: #0284c7;      /* Sky 600 - Seriöses Blau */
+      --primary-soft: #e0f2fe; /* Sky 100 */
+      --bg-body: #f1f5f9;      /* Slate 100 - Ruhiger Hintergrund */
+      --bg-card: #ffffff;
+      
+      --text-main: #0f172a;    /* Slate 900 */
+      --text-muted: #64748b;   /* Slate 500 */
+      
+      --border-color: #e2e8f0; /* Slate 200 */
+      
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      
+      --ok-bg: #f0fdf4; --ok-text: #15803d;
+      --bad-bg: #fef2f2; --bad-text: #b91c1c;
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    
+    body{ 
+      background: var(--bg-body); 
+      color: var(--text-main); 
+      font-family: 'Inter', -apple-system, sans-serif;
+      margin: 0;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 40px;
+    }
+
+    /* Layout Container */
+    .wrap{ 
+      max-width: 1080px; 
+      margin: 0 auto; 
+      padding: 24px 20px; 
+    }
+    
+    /* Header Area */
+    .topbar{ 
+      display: flex; 
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media(min-width: 600px) {
+      .topbar { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+    }
+
+    .title h1{ 
+      margin: 0; 
+      font-size: 26px; 
+      font-weight: 800; 
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .title .sub{ 
+      color: var(--text-muted); 
+      font-size: 14px; 
+      font-weight: 500; 
+      margin-top: 6px; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px;
+    }
+    
+    .actions{ display:flex; gap:12px; align-items:center; }
+
+    /* Interactive Elements */
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 14px; 
+      border-radius: 99px; 
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      font-size: 13px; color: var(--text-main); font-weight: 600;
+    }
+    .pill strong{ color: var(--primary); }
+
+    .btn{
+      border: 1px solid var(--border-color);
+      background: var(--bg-card); 
+      color: var(--text-main);
+      padding: 10px 18px; 
+      border-radius: 12px;
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 14px;
+      transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+    .btn:active{ transform: translateY(0); box-shadow: none; }
+    
+    .btn.primary{
+      background: var(--primary); 
+      color: #fff; 
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+    .btn.primary:hover{ background: #0369a1; border-color: #0369a1; }
+    
+    .btn.ghost{ 
+      background: transparent; 
+      border-color: transparent; 
+      box-shadow: none; 
+      color: var(--text-muted); 
+    }
+    .btn.ghost:hover{ background: rgba(0,0,0,0.04); color: var(--text-main); }
+    
+    .btn.danger{ 
+      color: #b91c1c; 
+      background: #fef2f2; 
+      border-color: #fecaca; 
+      box-shadow: none;
+    }
+    .btn.danger:hover{ background: #fee2e2; }
+
+    /* Main Grid */
+    .grid{ 
+      display:grid; 
+      grid-template-columns: 1fr; 
+      gap: 32px; 
+      align-items: start; 
+    }
+    @media (min-width: 900px){ .grid{ grid-template-columns: 2.2fr 1fr; } }
+
+    /* Cards Styling */
+    .card{
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    /* Subtle top highlight for depth */
+    .card::before {
+      content:""; position: absolute; top:0; left:0; right:0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.05), transparent);
+    }
+    
+    .card h2{ 
+      margin: 0 0 8px; 
+      font-size: 20px; 
+      font-weight: 700; 
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+    .muted{ color: var(--text-muted); font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+
+    /* KPIs */
+    .kpis{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 8px; }
+    .kpi{
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 4px 10px; border-radius: 6px;
+      background: var(--primary-soft); color: #0c4a6e;
+      font-size: 12px; font-weight: 600;
+    }
+
+    /* Modern Tabs (Segmented Control look) */
+    .tabs-wrapper {
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 14px;
+      display: inline-flex;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    .tabs{ 
+      display:flex; 
+      gap: 0; 
+    }
+    .tab{
+      border: none; 
+      background: transparent;
+      padding: 8px 20px; 
+      border-radius: 10px;
+      cursor: pointer; 
+      font-weight: 600; 
+      font-size: 14px; 
+      color: var(--text-muted);
+      transition: all .2s ease;
+      white-space: nowrap;
+    }
+    .tab:hover{ color: var(--text-main); }
+    .tab.active{ 
+      background: #fff; 
+      color: var(--primary); 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Form Elements */
+    .row{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin: 16px 0; }
+    .row > *{ flex: 1 1 auto; }
+    
+    select, input[type="text"], textarea{
+      width: 100%; padding: 12px 16px;
+      border-radius: 12px; 
+      border: 1px solid var(--border-color);
+      font-size: 15px; 
+      background: #f8fafc;
+      font-family: inherit;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    select:focus, input:focus, textarea:focus{ 
+      outline: none; 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 3px var(--primary-soft); 
+      background: #fff;
+    }
+
+    /* Quiz Box - Focus Area */
+    .qbox{
+      background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md); 
+      padding: 40px 24px; 
+      text-align: center;
+      margin: 24px 0;
+    }
+    .qmeta{ display:flex; justify-content:center; gap:8px; margin-bottom: 24px; }
+    .tag{
+      padding: 4px 10px; border-radius: 6px; 
+      background: #e2e8f0; 
+      font-size: 11px; font-weight: 700; 
+      text-transform: uppercase; letter-spacing: 0.05em; 
+      color: #475569;
+    }
+    .qprompt{
+      font-size: 32px; 
+      font-weight: 600; 
+      margin: 0 0 32px;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .greek{ font-family: "Noto Serif", serif; }
+    
+    .answerBox{
+      background: #f8fafc; 
+      border: 1px solid var(--border-color); 
+      border-radius: 12px;
+      padding: 20px; 
+      text-align: left; 
+      margin-top: 24px;
+    }
+    
+    /* Feedback Colors */
+    .feedback{ padding: 16px; border-radius: 12px; margin-top: 16px; font-size: 15px; display: flex; align-items: flex-start; gap: 12px; }
+    .feedback.ok{ background: var(--ok-bg); color: var(--ok-text); border: 1px solid #bbf7d0; }
+    .feedback.bad{ background: var(--bad-bg); color: var(--bad-text); border: 1px solid #fecaca; }
+
+    /* Side List Items */
+    .item{
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 0;
+    }
+    .item:last-child{ border-bottom: none; padding-bottom: 0; }
+    .itemHead{ display:flex; justify-content:space-between; align-items:baseline; }
+    .itemTitle{ font-weight: 600; font-size: 14px; color: var(--text-main); }
+    .itemMeta{ font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+    /* Syntax Chips */
+    .chips{ display:flex; gap:8px; flex-wrap:wrap; margin-top: 12px; }
+    .chip{
+      padding: 6px 12px; 
+      border-radius: 8px; 
+      border: 1px solid var(--border-color);
+      font-size: 12px; 
+      font-weight: 500;
+      background: #fff; 
+      display: inline-flex; align-items: center; gap: 6px;
+      user-select: none;
+    }
+    .chip.syntax{ 
+      background: var(--primary-soft); 
+      border-color: #bae6fd; 
+      color: #0369a1; 
+      cursor: pointer; 
+      transition: background .2s;
+    }
+    .chip.syntax:hover{ background: #bae6fd; }
+
+    /* Text & Passage Area - The "Book" Feel */
+    .textBox{
+      border: 1px solid var(--border-color); 
+      border-radius: var(--radius-md);
+      padding: 32px; 
+      background: #fff;
+      /* Subtle texture/noise could be added here for paper feel, but clean is better for HoS */
+    }
+    .passage{
+      font-family: "Noto Serif", serif; 
+      font-size: 22px; 
+      line-height: 2.2; /* Mehr Zeilenabstand für Interlinear */
+      margin: 0; 
+      color: #1e293b;
+    }
+    .passage mark{
+      background: transparent; 
+      color: inherit;
+      border-bottom: 2px solid var(--primary);
+      cursor: pointer; 
+      padding-bottom: 2px;
+      transition: background .2s;
+    }
+    .passage mark:hover{ background: var(--primary-soft); border-radius: 4px; }
+
+    .iw{
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 3px; 
+      cursor: pointer;
+      vertical-align: top;
+      border-radius: 6px;
+      padding: 2px 4px;
+      transition: background .15s;
+    }
+    .iw:hover{ background: #f1f5f9; }
+    .iw:hover .g-word{ color: var(--primary); }
+    .iw:hover .g-trans{ opacity: 1; }
+    
+    .g-word{ font-family: "Noto Serif", serif; font-weight: 500; }
+    .g-trans{ 
+      font-size: 11px; 
+      color: var(--text-muted); 
+      font-family: 'Inter', sans-serif; 
+      margin-top: 2px;
+      min-height: 1.3em; 
+      font-weight: 500;
+    }
+    .g-trans.unk{ opacity: 0.2; }
+
+    .transBlock{
+      margin-top: 24px; 
+      padding-top: 24px; 
+      border-top: 1px dashed var(--border-color);
+      font-size: 16px; 
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    /* Modal */
+    .modalBackdrop{
+      position: fixed; inset: 0; 
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center; z-index: 100;
+      padding: 20px;
+    }
+    .modal{
+      background: #fff; 
+      width: min(600px, 100%);
+      border-radius: var(--radius-md); 
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popIn { from{transform: scale(0.95); opacity:0;} to{transform: scale(1); opacity:1;} }
+    
+    .modalHead{
+      padding: 20px 24px; 
+      border-bottom: 1px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      background: #fcfcfc;
+    }
+    .modalTitle{ font-weight: 700; font-size: 18px; color: var(--text-main); }
+    .modalBody{ padding: 24px; max-height: 80vh; overflow-y: auto; }
+
+    .note{
+      background: #f8fafc; 
+      border: 1px solid var(--border-color);
+      padding: 16px; 
+      border-radius: 12px; 
+      font-size: 14px; 
+      color: #475569;
+    }
+    
+    .hr{ height: 1px; background: var(--border-color); margin: 20px 0; }
+    
+    code{ 
+      background: #f1f5f9; 
+      padding: 2px 6px; 
+      border-radius: 6px; 
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; 
+      font-size: 0.9em; 
+      color: #0f172a; 
+      border: 1px solid #e2e8f0;
+    }
+
+    .bigGreek{ 
+      font-size: 32px; 
+      font-family: "Noto Serif", serif; 
+      font-weight: 700; 
+      color: var(--text-main); 
+      margin-bottom: 12px; 
+      line-height: 1.2;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Header Area -->
+    <div class="topbar">
+      <div class="title">
+        <h1>Attisch Prosa Trainer</h1>
+        <div class="sub">
+          <span style="width:8px; height:8px; background:var(--primary); border-radius:50%; display:inline-block;"></span>
+          HoS-Edition • Privat & Offline
+        </div>
+      </div>
+      <div class="actions">
+        <span class="pill">📌 <strong id="dueCount">0</strong> fällig</span>
+        <button class="btn ghost" id="btnReset" title="Alles löschen">
+          <span style="font-size:16px;">🗑️</span> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-wrapper">
+      <div class="tabs">
+        <button class="tab active" data-tab="train">Training</button>
+        <button class="tab" data-tab="texts">Texte</button>
+        <button class="tab" data-tab="syntax">Syntax</button>
+        <button class="tab" data-tab="forms">Formen</button>
+        <button class="tab" data-tab="data">Daten</button>
+      </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid">
+      <main class="card" id="main"></main>
+      
+      <aside class="card" id="side" style="background:#fcfcfc;">
+        <!-- Sidebar content injected via JS -->
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div class="modalBackdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modalHead">
+        <div class="modalTitle" id="modalTitle">Info</div>
+        <button class="btn ghost" id="modalClose" style="padding:6px 10px; border-radius:8px;">✕</button>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const now = () => Date.now();
+  const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+
+  // Utils
+  function safeJsonParse(str, fallback){ try{ return JSON.parse(str);}catch(e){ return fallback; } }
+  function escapeHtml(s){
+    return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+  function greekNormalize(s){
+    return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[··.,;:!?“”"()«»‹›\[\]{}<>]/g, "").replace(/[’'`]/g, "").toLowerCase().trim();
+  }
+  function hash(str){
+    let h = 2166136261;
+    for(let i=0;i<str.length;i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return (h >>> 0).toString(16);
+  }
+
+  // ================== Content Data (Original) ==================
+  const SYNTAX_TOPICS = [
+    { id:"s_aci", title:"AcI (Akkusativ + Infinitiv)", level:"Kernsyntax", explain:"Verben des Sagens/Wahrnehmens lösen AcI aus. Der Akkusativ ist das Subjekt des Infinitivs.", signals:["Akkusativ + Infinitiv", "nach φημί, λέγω, νομίζω"], exampleGreek:"φασὶν αὐτὸν σοφὸν εἶναι.", exampleDe:"Sie sagen, dass er klug sei.", quiz:{q:"Kernformel?", options:["Inf+Gen","Akk+Inf","Partizip"], correct:1, why:"Akkusativ (Subjekt) + Infinitiv."} },
+    { id:"s_pc", title:"Participium Coniunctum", level:"Kernsyntax", explain:"Partizip stimmt mit einem Satzglied in KNG überein. Sinnrichtung: temporal, kausal, konzessiv etc.", signals:["Partizip kongruent zum Nomen"], exampleGreek:"ὁ ἀνὴρ γελῶν εἶπεν.", exampleDe:"Der Mann sagte lachend (während er lachte).", quiz:{q:"Wichtigstes Merkmal?", options:["Genitiv","KNG-Kongruenz","Infinitiv"], correct:1, why:"Es ist an ein Nomen 'angebunden' (coniunctum)."} },
+    { id:"s_gen_abs", title:"Genitivus Absolutus", level:"Kernsyntax", explain:"Losgelöste Konstruktion: Genitiv-Nomen + Genitiv-Partizip. Entspricht oft Gliedsatz (als, weil, obwohl).", signals:["Genitiv + Partizip", "ohne Satzfunktion"], exampleGreek:"τοῦ στρατηγοῦ κελεύοντος, ἐπορεύοντο.", exampleDe:"Als der Feldherr befahl, zogen sie los.", quiz:{q:"Satzwertige Übersetzung?", options:["dass-Satz","Umstands-Satz","Relativsatz"], correct:1, why:"Meist temporal/kausal."} },
+    { id:"s_men_de", title:"μέν … δέ", level:"Textstruktur", explain:"Strukturiert den Satz: 'zwar ... aber' oder 'einerseits ... andererseits'. Oft nur 'und' oder gar nicht übersetzt.", signals:["μέν", "δέ"], exampleGreek:"οἱ μὲν ἔφυγον, οἱ δὲ ἔμειναν.", exampleDe:"Die einen flohen, die anderen blieben.", quiz:{q:"Funktion?", options:["Wörtlich übersetzen","Gliederung signalisieren","Verneinung"], correct:1, why:"Es hilft, den Satzbau zu durchschauen."} }
+  ];
+
+  const SEED_VOCAB = [
+    { id:"v_kai", front:"καί", back:"und, auch", tags:["partikel","A1"] },
+    { id:"v_de", front:"δέ", back:"aber; und (weiterführend)", tags:["partikel","A1"] },
+    { id:"v_men", front:"μέν", back:"zwar (meist mit δέ)", tags:["partikel","A1"] },
+    { id:"v_ho", front:"ὁ / ἡ / τό", back:"der / die / das", tags:["artikel","A1"] },
+    { id:"v_lego", front:"λέγω", back:"sagen, sprechen", tags:["verb","A1"] },
+    { id:"v_polis", front:"πόλις", back:"Stadt, Staat", tags:["subst","A1"] },
+    { id:"v_aner", front:"ἀνήρ (ἀνδρός)", back:"Mann", tags:["subst","A1"] },
+    { id:"v_agathos", front:"ἀγαθός", back:"gut, tüchtig", tags:["adj","A1"] },
+    { id:"v_tauta", front:"ταῦτα", back:"dies (Neutr. Pl.)", tags:["pron","A1"] },
+    { id:"v_hoti", front:"ὅτι", back:"dass; weil", tags:["konj","A1"] }
+  ];
+
+  const TEXTS = [
+    {
+      id:"t_xen_anab_1_1", title:"Xenophon – Anabasis 1.1", dialect:"Attisch", level:"A2", sourceNote:"Der Klassiker für den Einstieg.",
+      passageHtml: `Δαρείου καὶ Παρυσάτιδος <mark data-syntax="s_pc">γίγνονται</mark> παῖδες δύο, πρεσβύτερος μὲν Ἀρταξέρξης, νεώτερος δὲ Κῦρος.`,
+      translation: `Von Dareios und Parysatis wurden zwei Söhne geboren: der ältere Artaxerxes, der jüngere Kyros.`,
+      syntaxRefs:["s_men_de","s_pc"],
+      sentences:[
+        { id:"x1", title:"Satz 1", greekHtml:`Δαρείου καὶ Παρυσάτιδος γίγνονται παῖδες δύο...`, translation:`Von Dareios...`, constructs:[{topic:"s_men_de", why:"Gliedert die Aufzählung der Söhne."}], checks:[{q:"Funktion von μέν...δέ?", a:"Gliederung (älterer/jüngerer)."}] }
+      ],
+      gloss:{ "δαρειου":{lemma:"Δαρεῖος", de:"Dareios"}, "γιγνονται":{lemma:"γίγνομαι", de:"werden/geboren"}, "παιδες":{lemma:"παῖς", de:"Kind"}, "πρεσβυτερος":{lemma:"πρεσβύτερος", de:"älter"} }
+    },
+    {
+      id:"t_lysias_1", title:"Lysias – Eratosthenes", dialect:"Attisch", level:"B1", sourceNote:"Gerichtsrede, klare Struktur.",
+      passageHtml: `ἐγὼ δὲ <mark data-syntax="s_aci">οἶμαι</mark> τοὺς μὲν νόμους κοινὴν σωτηρίαν εἶναι τῇ πόλει.`,
+      translation: `Ich aber meine, dass die Gesetze für die Stadt eine gemeinsame Rettung sind.`,
+      syntaxRefs:["s_aci","s_men_de"],
+      sentences:[ { id:"l1", title:"Satz 1", greekHtml:`ἐγὼ δὲ οἶμαι...`, translation:`Ich meine, dass...`, constructs:[{topic:"s_aci", why:"Nach οἶμαι (meinen) steht der AcI."}], checks:[{q:"Subjekt im AcI?", a:"τοὺς νόμους (die Gesetze)."}] } ],
+      gloss:{ "οιμαι":{lemma:"οἶμαι", de:"ich glaube"}, "νομους":{lemma:"νόμος", de:"Gesetz"}, "σωτηριαν":{lemma:"σωτηρία", de:"Rettung"}, "πολει":{lemma:"πόλις", de:"Stadt"} }
+    }
+  ];
+
+  // ================== Persistence ==================
+  const STORAGE_KEY = "hos_greek_v1";
+  const DEFAULT_STATE = { version: 1, cards: [], stats: { reviews:0, correct:0, streak:0, lastDay:null }, textProgress: { seen:{} }, ui: { tab:"train", textId: TEXTS[0].id, showTrans:true, interlinear:false, formsPool:"mixed" } };
+
+  function makeSrs(){ return { due: now(), ivl: 0, ease: 2.5, reps: 0 }; } 
+  
+  function seedData(){
+    const vocab = SEED_VOCAB.map(v=>({id:v.id, type:"vocab", front:v.front, back:v.back, tags:v.tags, srs:makeSrs()}));
+    const syntax = SYNTAX_TOPICS.map(s=>({id:"sx_"+s.id, type:"syntax", front:s.title, back:`${s.explain}\n\nBsp: ${s.exampleGreek}`, tags:["syntax"], srs:makeSrs()}));
+    return [...vocab, ...syntax];
+  }
+
+  function loadState(){
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const st = safeJsonParse(raw, null);
+    if(!st){
+      const fresh = structuredClone(DEFAULT_STATE);
+      fresh.cards = seedData();
+      TEXTS.forEach(t => fresh.textProgress.seen[t.id] = { words:{} });
+      saveState(fresh);
+      return fresh;
+    }
+    TEXTS.forEach(t => { if(!st.textProgress.seen[t.id]) st.textProgress.seen[t.id] = { words:{} }; });
+    return st;
+  }
+  function saveState(st){ localStorage.setItem(STORAGE_KEY, JSON.stringify(st)); }
+  
+  let STATE = loadState();
+
+  // ================== SRS Logic ==================
+  function getDueCards(){ return STATE.cards.filter(c => c.srs.due <= now()); }
+  
+  function gradeCard(card, quality){ 
+    const s = card.srs;
+    const today = new Date().toISOString().slice(0,10);
+    if(STATE.stats.lastDay !== today){ STATE.stats.streak++; STATE.stats.lastDay = today; }
+    STATE.stats.reviews++;
+    if(quality > 0) STATE.stats.correct++;
+
+    if(quality === 0){ 
+      s.reps = 0; s.ivl = 0; s.due = now() + 60000; 
+    } else {
+      s.reps++;
+      s.ease = Math.max(1.3, s.ease + (0.1 - (2-quality)*(0.08+(2-quality)*0.02))); 
+      s.ivl = s.reps === 1 ? 1 : (s.reps === 2 ? 6 : Math.round(s.ivl * s.ease));
+      s.due = now() + s.ivl * 86400000;
+    }
+  }
+
+  // ================== UI Renderers ==================
+  const main = $("#main");
+  const side = $("#side");
+
+  function renderSidebar(){
+    const due = getDueCards().length;
+    const t = TEXTS.find(x=>x.id===STATE.ui.textId);
+    
+    side.innerHTML = `
+      <h2>Dein Status</h2>
+      <div class="note" style="margin-bottom:24px; border:none; background:#f0f9ff; color:#0369a1;">
+        ${due > 0 ? `💪 <strong>${due}</strong> Karten warten auf dich.` : `✨ Alles erledigt für heute!`}
+      </div>
+      
+      <div class="itemHead"><div class="itemTitle">Training</div></div>
+      <div class="kpis" style="display:block; margin:8px 0 24px;">
+        <div class="row" style="gap:8px;">
+          <span class="chip">🔥 ${STATE.stats.streak} Tage Streak</span>
+          <span class="chip">📚 ${STATE.cards.length} Karten</span>
+        </div>
+      </div>
+      
+      <div class="hr"></div>
+      
+      <div class="itemHead"><div class="itemTitle">Aktueller Text</div></div>
+      <div class="itemMeta" style="font-size:13px;">${escapeHtml(t?.title)}</div>
+      
+      <div class="hr"></div>
+      
+      <div class="note" style="font-size:13px; background:transparent; border:none; padding:0; color:var(--text-muted);">
+        <strong>Tipp:</strong><br>
+        10 Minuten täglich bringen mehr als 1 Stunde einmal pro Woche.
+      </div>
+    `;
+    
+    $("#dueCount").textContent = due;
+    // Header KPIs removed to clean up, Sidebar is enough.
+  }
+
+  // --- TRAIN TAB ---
+  function renderTraining(){
+    const due = getDueCards();
+    const c = due[0];
+    
+    if(!c){
+      main.innerHTML = `
+        <h2>Training</h2>
+        <div class="qbox" style="background: linear-gradient(180deg, #f0fdf4 0%, #fff 100%); border-color:#bbf7d0;">
+          <div style="font-size:48px; margin-bottom:16px;">🎉</div>
+          <div class="qprompt" style="color:#15803d; font-size:22px;">Tagesziel erreicht!</div>
+          <div class="muted">Du hast alle fälligen Karten gelernt.</div>
+          <div class="row" style="justify-content:center; margin-top:24px;">
+             <button class="btn" onclick="$('.tab[data-tab=texts]').click()">Zu den Texten</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    main.innerHTML = `
+      <h2>Training</h2>
+      <div class="muted">Schau dir die Karte an, überlege die Lösung und decke dann auf.</div>
+      
+      <div class="qbox">
+        <div class="qmeta">
+          <span class="tag">${c.type === 'vocab' ? 'Vokabel' : 'Syntax'}</span>
+          <span class="tag">Wiederholung</span>
+        </div>
+        <div class="qprompt ${c.type==='vocab'?'greek':''}">${escapeHtml(c.front)}</div>
+        
+        <div id="ansArea" style="display:none;">
+          <div class="answerBox">
+            <div class="itemTitle" style="color:var(--primary); margin-bottom:8px;">Lösung</div>
+            <div style="white-space:pre-wrap; font-size:18px;">${escapeHtml(c.back)}</div>
+          </div>
+          <div class="row" style="justify-content:center; margin-top:32px; gap:12px;">
+            <button class="btn danger" data-q="0" style="flex:1;">Nochmal</button>
+            <button class="btn" data-q="1" style="flex:1;">Hart</button>
+            <button class="btn primary" data-q="2" style="flex:1;">Gut</button>
+          </div>
+        </div>
+        
+        <button class="btn primary" id="btnShow" style="margin-top:24px; min-width:200px;">Antwort zeigen</button>
+      </div>
+    `;
+
+    $("#btnShow").onclick = function(){ 
+      this.style.display="none"; 
+      $("#ansArea").style.display="block"; 
+      // Smooth scroll to buttons if needed
+    };
+    $$("#ansArea button").forEach(b => b.onclick = () => {
+      gradeCard(c, Number(b.dataset.q));
+      saveState(STATE);
+      render();
+    });
+  }
+
+  // --- TEXT TAB ---
+  function renderTexts(){
+    const t = TEXTS.find(x=>x.id===STATE.ui.textId) || TEXTS[0];
+    const opts = TEXTS.map(x=>`<option value="${x.id}">${x.title}</option>`).join("");
+    
+    main.innerHTML = `
+      <h2>Texte</h2>
+      <div class="row">
+        <select id="textSel" style="flex:2;">${opts}</select>
+        <button class="btn ${STATE.ui.interlinear?'primary':''}" id="btnIl" title="Wort-für-Wort Übersetzung">Interlinear</button>
+      </div>
+      
+      <div class="textBox">
+        <div class="passage" id="passageDisplay"></div>
+        ${STATE.ui.showTrans ? `<div class="transBlock"><strong>Übersetzung:</strong><br>${escapeHtml(t.translation)}</div>` : ''}
+      </div>
+      
+      <div class="row" style="justify-content: flex-end;">
+        <button class="btn ghost" id="btnTransToggle">${STATE.ui.showTrans ? '🙈 Übersetzung verbergen' : '👁️ Übersetzung zeigen'}</button>
+      </div>
+
+      <div class="note" style="margin-top:24px; display:flex; gap:12px; align-items:flex-start;">
+        <span style="font-size:20px;">💡</span>
+        <div>
+          <strong>Interaktiv lernen:</strong><br>
+          • <span style="border-bottom:2px solid var(--primary);">Unterstrichen</span> = Syntax-Erklärung<br>
+          • Klick auf jedes Wort = Vokabel-Check & Speichern
+        </div>
+      </div>
+    `;
+
+    $("#textSel").value = t.id;
+    $("#textSel").onchange = (e) => { STATE.ui.textId = e.target.value; saveState(STATE); render(); };
+    $("#btnIl").onclick = () => { STATE.ui.interlinear = !STATE.ui.interlinear; saveState(STATE); render(); };
+    $("#btnTransToggle").onclick = () => { STATE.ui.showTrans = !STATE.ui.showTrans; saveState(STATE); render(); };
+
+    // Render Text Logic
+    const wrap = document.createElement("div");
+    wrap.innerHTML = t.passageHtml;
+    
+    function processNode(node){
+      if(node.nodeType === 3){ // Text
+         const parts = node.textContent.split(/([\s,.;·]+)/);
+         const frag = document.createDocumentFragment();
+         parts.forEach(p => {
+           if(!p.trim()){ frag.appendChild(document.createTextNode(p)); return; }
+           const norm = greekNormalize(p);
+           const glo = t.gloss[norm];
+           const sp = document.createElement("span");
+           sp.className = "iw";
+           sp.innerHTML = `<span class="g-word">${p}</span><span class="g-trans ${!glo && STATE.ui.interlinear ? 'unk':''}">${STATE.ui.interlinear ? (glo?.de || '—') : ''}</span>`;
+           sp.onclick = () => showVocabModal(p, glo);
+           frag.appendChild(sp);
+         });
+         return frag;
+      } else if(node.nodeType === 1){ // Element (Mark)
+         const copy = node.cloneNode(false);
+         if(node.tagName === "MARK"){
+            copy.onclick = () => showSyntaxModal(node.dataset.syntax);
+         }
+         Array.from(node.childNodes).forEach(c => copy.appendChild(processNode(c)));
+         return copy;
+      }
+      return node.cloneNode(true);
+    }
+
+    const output = document.createDocumentFragment();
+    Array.from(wrap.childNodes).forEach(c => output.appendChild(processNode(c)));
+    $("#passageDisplay").innerHTML = "";
+    $("#passageDisplay").appendChild(output);
+  }
+
+  // --- SYNTAX TAB ---
+  function renderSyntax(){
+    const list = SYNTAX_TOPICS.map(s => `
+      <div class="item">
+        <div class="itemHead">
+          <div class="itemTitle" style="font-size:16px;">${escapeHtml(s.title)}</div>
+          <button class="btn ghost" style="padding:6px 12px;" onclick="appOpenSyntax('${s.id}')">Details</button>
+        </div>
+        <div class="chips">${s.signals.map(x=>`<span class="chip">${x}</span>`).join("")}</div>
+      </div>
+    `).join("");
+    
+    main.innerHTML = `
+      <h2>Syntax Referenz</h2>
+      <div class="muted">Alle wichtigen Konstruktionen zum Nachschlagen.</div>
+      <div class="card" style="box-shadow:none; border:1px solid var(--border-color); padding:0 24px;">${list}</div>
+    `;
+  }
+  window.appOpenSyntax = (id) => showSyntaxModal(id);
+
+  // --- FORMS TAB ---
+  function renderForms(){
+    const pool = STATE.ui.formsPool;
+    const POOLS = { mixed: "Gemischt", article: "Artikel", verbs: "Verben (ω)" };
+    const task = generateFormTask(pool); 
+
+    main.innerHTML = `
+      <h2>Formen Training</h2>
+      <div class="muted">Erkenne oder bilde Formen ohne Druck.</div>
+      
+      <div class="row" style="justify-content:flex-start; margin-bottom:32px;">
+        <div style="flex:0 0 auto;">
+            <label style="font-size:12px; display:block; margin-bottom:4px; font-weight:600; color:var(--text-muted);">Kategorie wählen</label>
+            <select id="poolSel" style="min-width:200px;">
+            ${Object.entries(POOLS).map(([k,v])=>`<option value="${k}" ${k===pool?'selected':''}>${v}</option>`).join("")}
+            </select>
+        </div>
+      </div>
+
+      <div class="qbox">
+        <div class="qprompt greek">${task.q}</div>
+        <div class="muted" style="margin-bottom:24px;">${task.hint}</div>
+        <div class="row" style="max-width:400px; margin:0 auto;">
+          <input type="text" id="formIn" placeholder="Form eingeben..." autocomplete="off" style="text-align:center;">
+        </div>
+        <div class="row" style="justify-content:center;">
+            <button class="btn primary" id="formCheck" style="min-width:140px;">Prüfen</button>
+        </div>
+        <div id="formFb" style="display:none;"></div>
+      </div>
+    `;
+
+    $("#poolSel").onchange = (e) => { STATE.ui.formsPool = e.target.value; saveState(STATE); render(); };
+    
+    $("#formCheck").onclick = () => {
+      const val = greekNormalize($("#formIn").value);
+      const ok = task.a.some(x => greekNormalize(x) === val);
+      const fb = $("#formFb");
+      fb.style.display = "flex"; // flex for icon layout
+      fb.className = `feedback ${ok?'ok':'bad'}`;
+      fb.innerHTML = ok 
+        ? `<span style="font-size:20px;">✅</span> <div><strong>Richtig!</strong><br>Die Lösung ist ${task.a[0]}</div>`
+        : `<span style="font-size:20px;">❌</span> <div><strong>Leider nicht.</strong><br>Lösung: <strong>${task.a[0]}</strong></div>`;
+      
+      if(ok) setTimeout(render, 1800);
+    };
+    
+    $("#formIn").onkeydown = (e) => { if(e.key==='Enter') $("#formCheck").click(); };
+  }
+
+  function generateFormTask(pool){
+    const DB = [
+      { cat:"article", q:"Nom. Sg. mask.", a:["ὁ"], hint:"Artikel" },
+      { cat:"article", q:"Gen. Pl. fem.", a:["τῶν"], hint:"Artikel" },
+      { cat:"verbs", q:"1. Sg. Präs. von παιδεύω", a:["παιδεύω"], hint:"ω-Konjugation" },
+      { cat:"verbs", q:"3. Pl. Präs. von λύω", a:["λύουσι", "λύουσιν"], hint:"ω-Konjugation" },
+    ];
+    let set = pool === "mixed" ? DB : DB.filter(x=>x.cat===pool);
+    if(set.length === 0) set = DB;
+    return set[Math.floor(Math.random()*set.length)];
+  }
+
+  // --- DATA TAB ---
+  function renderData(){
+    main.innerHTML = `
+      <h2>Datenverwaltung</h2>
+      <div class="muted">Deine Daten gehören dir.</div>
+      
+      <div class="grid" style="grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;">
+        <div class="card" style="box-shadow:none; background:#f8fafc; border:1px solid var(--border-color); padding:24px;">
+          <div style="font-size:32px; margin-bottom:12px;">💾</div>
+          <div class="itemTitle">Backup erstellen</div>
+          <div class="itemMeta" style="margin-bottom:16px;">Speichere deinen Lernstand als Datei.</div>
+          <button class="btn primary" id="btnExp" style="width:100%;">Download JSON</button>
+        </div>
+
+        <div class="card" style="box-shadow:none; background:#f8fafc; border:1px solid var(--border-color); padding:24px;">
+          <div style="font-size:32px; margin-bottom:12px;">📂</div>
+          <div class="itemTitle">Backup laden</div>
+          <div class="itemMeta" style="margin-bottom:16px;">Stelle einen Spielstand wieder her.</div>
+          <input type="file" id="fileImp" style="display:none;" accept=".json">
+          <button class="btn" id="btnImpTrig" style="width:100%;">Datei wählen</button>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:32px;">
+        <strong>Datenschutz (HoS):</strong><br>
+        Es werden keine Daten an Server gesendet. Alles passiert lokal in diesem Browser. Wenn du den Cache löschst, ist der Fortschritt weg – nutze also das Backup!
+      </div>
+      
+      <div class="hr"></div>
+      <div class="itemMeta" style="text-align:center;">Version ${STATE.version} • ${STATE.cards.length} Karten</div>
+    `;
+
+    $("#btnExp").onclick = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(STATE));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", "hos_attisch_backup_" + new Date().toISOString().slice(0,10) + ".json");
+      dlAnchorElem.click();
+    };
+
+    $("#btnImpTrig").onclick = () => $("#fileImp").click();
+    
+    $("#fileImp").onchange = (e) => {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if(!imported.cards || !imported.version) throw new Error("Format?");
+          if(confirm(`Backup vom ${imported.stats?.lastDay || '?'} laden?`)){
+            STATE = imported;
+            saveState(STATE);
+            alert("Erfolgreich geladen!");
+            render();
+          }
+        } catch(err) {
+          alert("Fehler: " + err);
+        }
+      };
+      reader.readAsText(file);
+    };
+  }
+
+  // ================== Modals ==================
+  function showModal(title, html){
+    $("#modalTitle").textContent = title;
+    $("#modalBody").innerHTML = html;
+    $("#modalBackdrop").style.display = "flex";
+  }
+  $("#modalClose").onclick = () => $("#modalBackdrop").style.display="none";
+  $("#modalBackdrop").onclick = (e) => { if(e.target===$("#modalBackdrop")) $("#modalBackdrop").style.display="none"; };
+
+  function showVocabModal(word, glossEntry){
+    const html = `
+      <div class="bigGreek">${word}</div>
+      ${glossEntry ? `<div style="font-size:18px; color:var(--text-main); margin-bottom:4px;">${glossEntry.de}</div><div class="muted">Lemma: ${glossEntry.lemma}</div>` : `<div class="muted">Kein Eintrag im Glossar.</div>`}
+      <div class="hr"></div>
+      <div class="row">
+        <button class="btn primary" onclick="addVocab('${glossEntry?.lemma||word}','${glossEntry?.de||'?'}')" style="width:100%;">
+          ${glossEntry ? '➕ Karte anlegen' : '➕ Manuell anlegen'}
+        </button>
+      </div>
+    `;
+    showModal("Vokabel", html);
+  }
+  
+  window.addVocab = (f,b) => {
+    const id = "u_"+hash(f+b);
+    if(STATE.cards.some(c=>c.id===id)){ alert("Schon vorhanden!"); return; }
+    STATE.cards.push({id, type:"vocab", front:f, back:b, tags:["user"], srs:makeSrs()});
+    saveState(STATE);
+    alert("Gespeichert!");
+    $("#modalBackdrop").style.display="none";
+    renderSidebar();
+  };
+
+  function showSyntaxModal(id){
+    const s = SYNTAX_TOPICS.find(x=>x.id===id);
+    if(!s) return;
+    const html = `
+      <div class="note" style="margin-bottom:24px; border-left:4px solid var(--primary); background:#fff;">
+        <strong>${s.explain}</strong>
+      </div>
+      <div class="itemTitle">Beispiel</div>
+      <div class="greek" style="font-size:22px; margin:8px 0;">${s.exampleGreek}</div>
+      <div class="muted">${s.exampleDe}</div>
+      
+      <div class="hr"></div>
+      <div class="itemTitle">Signale</div>
+      <div class="chips">${s.signals.map(x=>`<span class="chip">${x}</span>`).join("")}</div>
+      
+      <div class="hr"></div>
+      <button class="btn primary" onclick="addSyntaxCard('${s.id}')" style="width:100%;">Als Karte lernen</button>
+    `;
+    showModal(s.title, html);
+  }
+  
+  window.addSyntaxCard = (id) => {
+    alert("Karte hinzugefügt! (Mock)");
+  };
+
+  // ================== Boot ==================
+  $("#btnReset").onclick = () => { if(confirm("Wirklich alles löschen?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } };
+  
+  $$(".tab").forEach(t => t.onclick = () => { 
+    STATE.ui.tab = t.dataset.tab; 
+    saveState(STATE); 
+    render(); 
+  });
+
+  function render(){
+    $$(".tab").forEach(t => t.classList.toggle("active", t.dataset.tab === STATE.ui.tab));
+    renderSidebar();
+    
+    if(STATE.ui.tab === "train") renderTraining();
+    else if(STATE.ui.tab === "texts") renderTexts();
+    else if(STATE.ui.tab === "syntax") renderSyntax();
+    else if(STATE.ui.tab === "forms") renderForms();
+    else if(STATE.ui.tab === "data") renderData();
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
