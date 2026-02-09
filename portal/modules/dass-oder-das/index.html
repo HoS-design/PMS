@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Das oder Dass? | HoS Learning</title>
+    <!-- HoS Global Styles (Pflicht) -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/app.css">
+
     
     <!-- React und ReactDOM laden -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -20,15 +24,24 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Custom Scrollbar für hübschere Listen */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
+
+
+    <!-- Standard-Header (Pflicht) -->
+    <header class="app-header">
+      <div class="brand-row">
+        <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+        <div class="brand-title">
+          <div class="badge-main is-deutsch">Deutsch</div>
+          <h1>das oder dass</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="/index.html" class="header-link">Startseite</a>
+      </div>
+    </header>
 
     <div id="root"></div>
 
@@ -144,7 +157,84 @@
             { id: "c1", correct: "dass", reason: "clause", level: 2, text: "(Chat) OMG, ich dachte nicht, ___ das wirklich klappt!", explain: "Nebensatz nach Komma." },
             { id: "c2", correct: "das", reason: "pronoun", level: 2, text: "(Chat) ___ meinte ich doch!", explain: "Pronomen: 'das' = dieses (das Gemeinte)." },
             { id: "c3", correct: "dass", reason: "clause", level: 3, text: "(Gaming) Du siehst, ___ Teamplay mehr bringt als Solo-Action.", explain: "Nebensatz: 'Teamplay ... bringt'." },
-            { id: "c4", correct: "das", reason: "article", level: 1, text: "(Schule) ___ Heft ist voll.", explain: "Artikel vor Nomen." }
+            { id: "c4", correct: "das", reason: "article", level: 1, text: "(Schule) ___ Heft ist voll.", explain: "Artikel vor Nomen." },
+            { id: "s16", correct: "dass", reason: "clause", level: 1, text: "Ich denke, ___ wir heute frueher Schluss haben.", explain: "Nach dem Komma folgt ein Nebensatz (wir ... haben) -> dass." },
+            { id: "s17", correct: "das", reason: "article", level: 1, text: "___ Fenster ist offen.", explain: "Artikel vor Nomen: das Fenster." },
+            { id: "s18", correct: "das", reason: "pronoun", level: 1, text: "___ war eine gute Idee!", explain: "Pronomen/Zeigwort: das = dieses (die Idee)." },
+            { id: "s19", correct: "dass", reason: "clause", level: 1, text: "Er behauptet, ___ er nichts davon wusste.", explain: "Nebensatz: er ... wusste -> dass." },
+            { id: "s20", correct: "das", reason: "replace", level: 1, text: "Ich finde ___ super.", explain: "Ersetzprobe: Ich finde dieses super -> das." },
+            { id: "s21", correct: "dass", reason: "clause", level: 1, text: "Gut, ___ du es sofort sagst.", explain: "Es folgt ein ganzer Satz (du ... sagst) -> dass." },
+            { id: "s22", correct: "das", reason: "article", level: 1, text: "___ Spiel beginnt um acht.", explain: "Artikel vor Nomen: das Spiel." },
+            { id: "s23", correct: "das", reason: "replace", level: 2, text: "Das ist ___, was ich gemeint habe.", explain: "Zeigwort/Pronomen: das = dieses. 'dass' wuerde keinen Nebensatz einleiten." },
+            { id: "s24", correct: "dass", reason: "clause", level: 2, text: "Sie freut sich, ___ ihr Plan funktioniert hat.", explain: "Nebensatz: ihr Plan ... hat -> dass." },
+            { id: "s25", correct: "das", reason: "article", level: 2, text: "___ Ergebnis ueberrascht mich.", explain: "Artikel vor Nomen: das Ergebnis." },
+            { id: "s26", correct: "das", reason: "pronoun", level: 2, text: "Ich weiss ___ schon.", explain: "Pronomen: das = dieses (das Gemeinte)." },
+            { id: "s27", correct: "dass", reason: "clause", level: 2, text: "Man merkt, ___ du gut geuebt hast.", explain: "Nebensatz: du ... hast -> dass." },
+            { id: "s28", correct: "das", reason: "replace", level: 2, text: "Kannst du ___ nochmal erklaeren?", explain: "Ersetzprobe: Kannst du dieses nochmal erklaeren? -> das." },
+            { id: "s29", correct: "dass", reason: "clause", level: 2, text: "Ich hoffe, ___ niemand den Zettel verliert.", explain: "Nebensatz: niemand ... verliert -> dass." },
+            { id: "s30", correct: "das", reason: "article", level: 2, text: "___ Passwort ist zu kurz.", explain: "Artikel vor Nomen: das Passwort." },
+            { id: "s31", correct: "dass", reason: "clause", level: 2, text: "Es stoert mich, ___ du dauernd unterbrichst.", explain: "Nebensatz: du ... unterbrichst -> dass." },
+            { id: "s32", correct: "das", reason: "pronoun", level: 2, text: "___ hatte ich nicht erwartet.", explain: "Pronomen/Zeigwort: das = dieses (das Ereignis)." },
+            { id: "s33", correct: "das", reason: "replace", level: 2, text: "Wir nehmen ___, was am einfachsten ist.", explain: "'das, was ...' -> Pronomen. Ersetzprobe: dieses, was ... (geht als Probe)." },
+            { id: "s34", correct: "dass", reason: "clause", level: 3, text: "Er hat so leise gesprochen, ___ ich ihn kaum verstanden habe.", explain: "Nebensatz nach 'so ...': ich ... habe -> dass." },
+            { id: "s35", correct: "das", reason: "article", level: 3, text: "___ Kapitel war schwerer als gedacht.", explain: "Artikel vor Nomen: das Kapitel." },
+            { id: "s36", correct: "dass", reason: "clause", level: 3, text: "Die Lehrerin findet, ___ wir genauer begruenden muessen.", explain: "Nebensatz: wir ... muessen -> dass." },
+            { id: "s37", correct: "das", reason: "pronoun", level: 2, text: "Wenn du ___ so siehst, ist es logisch.", explain: "Pronomen: das = dieses (so sehen)." },
+            { id: "s38", correct: "das", reason: "replace", level: 3, text: "Das Auto, ___ ich meinte, steht hinten.", explain: "Relativsatz mit Komma: das (welches) ich meinte -> das." },
+            { id: "s39", correct: "dass", reason: "clause", level: 3, text: "Ich kann nicht glauben, ___ das wirklich passiert ist.", explain: "Nebensatz: das ... ist -> dass." },
+            { id: "s40", correct: "das", reason: "article", level: 1, text: "___ Kind lacht laut.", explain: "Artikel vor Nomen: das Kind." },
+            { id: "s41", correct: "das", reason: "pronoun", level: 1, text: "___ ist falsch.", explain: "Zeigwort/Pronomen: das = dieses (die Aussage)." },
+            { id: "s42", correct: "dass", reason: "clause", level: 1, text: "Er meint, ___ es gleich regnet.", explain: "Nebensatz: es ... regnet -> dass." },
+            { id: "s43", correct: "das", reason: "replace", level: 2, text: "Ich habe ___ nicht so gemeint.", explain: "Ersetzprobe: Ich habe dieses nicht so gemeint -> das." },
+            { id: "s44", correct: "dass", reason: "clause", level: 2, text: "Vergiss nicht, ___ du deinen Namen draufschreibst.", explain: "Nebensatz: du ... draufschreibst -> dass." },
+            { id: "s45", correct: "das", reason: "article", level: 2, text: "___ Fahrrad hat einen Platten.", explain: "Artikel vor Nomen: das Fahrrad." },
+            { id: "s46", correct: "dass", reason: "clause", level: 2, text: "Es ist moeglich, ___ er spaeter nachkommt.", explain: "Nebensatz: er ... nachkommt -> dass." },
+            { id: "s47", correct: "das", reason: "pronoun", level: 2, text: "___ klingt fair.", explain: "Pronomen: das = dieses (was gesagt wurde)." },
+            { id: "s48", correct: "dass", reason: "clause", level: 3, text: "Im Escape-Room merken wir, ___ jedes Detail zaehlt.", explain: "Nebensatz: jedes Detail ... zaehlt -> dass." },
+            { id: "s49", correct: "das", reason: "replace", level: 3, text: "Das war ___, wovor ich Angst hatte.", explain: "'das' als Zeigwort/Pronomen; 'dass' passt hier nicht." },
+            { id: "s50", correct: "dass", reason: "clause", level: 3, text: "Die Nachricht war so wichtig, ___ ich sofort angerufen habe.", explain: "Es folgt ein Satz: ich ... habe -> dass." },
+            { id: "s51", correct: "das", reason: "article", level: 3, text: "___ Theaterstueck war beeindruckend.", explain: "Artikel vor Nomen: das Theaterstueck." },
+            { id: "s52", correct: "das", reason: "pronoun", level: 3, text: "Du sagst ___, als waere es ganz einfach.", explain: "Pronomen: das = dieses (das Gesagte)." },
+            { id: "s53", correct: "dass", reason: "clause", level: 3, text: "Sie war froh, ___ niemand verletzt wurde.", explain: "Nebensatz: niemand ... wurde -> dass." },
+            { id: "s54", correct: "das", reason: "replace", level: 2, text: "Ich glaube, ___ ist die beste Loesung.", explain: "Hier ist 'das' ein Pronomen: dieses ist die beste Loesung." },
+            { id: "s55", correct: "dass", reason: "clause", level: 2, text: "Ich glaube, ___ das die beste Loesung ist.", explain: "Hier folgt ein ganzer Satz: das ... ist -> dass." },
+            { id: "s56", correct: "das", reason: "article", level: 1, text: "___ Wetter wird besser.", explain: "Artikel vor Nomen: das Wetter." },
+            { id: "s57", correct: "dass", reason: "clause", level: 1, text: "Schade, ___ der Bus schon weg ist.", explain: "Nebensatz: der Bus ... ist -> dass." },
+            { id: "s58", correct: "das", reason: "replace", level: 2, text: "Ich habe ___ gesehen, aber ich bin mir nicht sicher.", explain: "Pronomen: das = dieses (das Gesehene)." },
+            { id: "s59", correct: "dass", reason: "clause", level: 2, text: "Sie hat gelacht, ___ alle mitlachen mussten.", explain: "Nebensatz: alle ... mussten -> dass." },
+            { id: "s60", correct: "das", reason: "article", level: 2, text: "___ Problem loesen wir spaeter.", explain: "Artikel vor Nomen: das Problem." },
+            { id: "s61", correct: "das", reason: "replace", level: 3, text: "Das Paket, ___ du gesucht hast, liegt im Regal.", explain: "Relativsatz: das (welches) du gesucht hast -> das." },
+            { id: "s62", correct: "dass", reason: "clause", level: 3, text: "Ich bin sicher, ___ wir das gemeinsam schaffen.", explain: "Nebensatz: wir ... schaffen -> dass." },
+            { id: "s63", correct: "das", reason: "pronoun", level: 2, text: "___ reicht fuer heute.", explain: "Pronomen: das = dieses (was wir gemacht haben)." },
+            { id: "s64", correct: "dass", reason: "clause", level: 3, text: "Der Trick ist, ___ du zuerst die Probe machst.", explain: "Nebensatz: du ... machst -> dass." },
+            { id: "s65", correct: "das", reason: "article", level: 3, text: "___ Experiment klappt nicht immer.", explain: "Artikel vor Nomen: das Experiment." }
+          ],
+          replacementItems: [
+            { id: "r1", correct: "das", ok: ["dieses", "jenes"], text: "Ich finde ___ spannend.", explain: "Wenn 'dieses/jenes' passt, ist das Wort meist 'das'." },
+            { id: "r2", correct: "dass", ok: [], text: "Ich hoffe, ___ du bald Zeit hast.", explain: "Es folgt ein Nebensatz. Ersatzwoerter (dieses/welches/jenes) passen nicht -> dass." },
+            { id: "r3", correct: "das", ok: ["dieses"], text: "___ Buch ist meins.", explain: "Artikel/Zeigwort: 'dieses Buch' passt -> das." },
+            { id: "r4", correct: "das", ok: ["welches"], text: "Das Auto, ___ ich meinte, steht hinten.", explain: "Relativsatz: 'welches' kann (formal) fuer 'das' stehen -> das." },
+            { id: "r5", correct: "dass", ok: [], text: "Er sagt, ___ er spaeter kommt.", explain: "Nebensatz (er ... kommt). Kein Ersatzwort passt -> dass." },
+            { id: "r6", correct: "das", ok: ["dieses", "jenes"], text: "Ich habe ___ verstanden.", explain: "Pronomen: 'dieses/jenes' verstanden -> das." },
+            { id: "r7", correct: "dass", ok: [], text: "Gut, ___ du es mir sagst.", explain: "Es folgt ein ganzer Satz -> dass." },
+            { id: "r8", correct: "das", ok: ["dieses"], text: "___ Thema ist wichtig.", explain: "Artikel: 'dieses Thema' passt -> das." },
+            { id: "r9", correct: "dass", ok: [], text: "Wir merken, ___ Teamwork hilft.", explain: "Nebensatz: Teamwork ... hilft -> dass." },
+            { id: "r10", correct: "das", ok: ["welches"], text: "Das ist etwas, ___ man selten sieht.", explain: "Relativsatz: 'welches' kann hier stehen -> das." },
+            { id: "r11", correct: "das", ok: ["dieses", "jenes"], text: "___ war unfair.", explain: "Zeigwort: dieses/jenes war unfair -> das." },
+            { id: "r12", correct: "dass", ok: [], text: "Es stoert mich, ___ du unterbrichst.", explain: "Nebensatz: du ... unterbrichst -> dass." },
+            { id: "r13", correct: "das", ok: ["dieses"], text: "Kannst du ___ erklaeren?", explain: "Pronomen: dieses erklaeren -> das." },
+            { id: "r14", correct: "dass", ok: [], text: "Ich glaube, ___ wir heute frueh fertig werden.", explain: "Nebensatz: wir ... werden -> dass." },
+            { id: "r15", correct: "das", ok: ["dieses"], text: "___ Fenster ist offen.", explain: "Artikel: dieses Fenster -> das." },
+            { id: "r16", correct: "dass", ok: [], text: "Schade, ___ der Bus schon weg ist.", explain: "Nebensatz: der Bus ... ist -> dass." },
+            { id: "r17", correct: "das", ok: ["welches"], text: "Das Geschenk, ___ ich bekam, war klein.", explain: "Relativsatz: welches kann fuer das stehen -> das." },
+            { id: "r18", correct: "das", ok: ["dieses", "jenes"], text: "Ich will ___ nicht.", explain: "Pronomen: dieses/jenes nicht -> das." },
+            { id: "r19", correct: "dass", ok: [], text: "Sie ist sicher, ___ alles klappt.", explain: "Nebensatz: alles ... klappt -> dass." },
+            { id: "r20", correct: "das", ok: ["dieses"], text: "___ Passwort ist falsch.", explain: "Artikel: dieses Passwort -> das." },
+            { id: "r21", correct: "dass", ok: [], text: "Es ist moeglich, ___ er nachkommt.", explain: "Nebensatz: er ... nachkommt -> dass." },
+            { id: "r22", correct: "das", ok: ["dieses"], text: "___ Kind lacht.", explain: "Artikel: dieses Kind -> das." },
+            { id: "r23", correct: "dass", ok: [], text: "Ich wusste nicht, ___ du krank bist.", explain: "Nebensatz: du ... bist -> dass." },
+            { id: "r24", correct: "das", ok: ["dieses", "jenes"], text: "___ reicht.", explain: "Pronomen: dieses/jenes reicht -> das." },
+            { id: "r25", correct: "das", ok: ["welches"], text: "Das ist das Spiel, ___ ich gesucht habe.", explain: "Relativsatz: welches kann hier stehen -> das." }
           ],
           detectiveTexts: [
             {
@@ -349,6 +439,9 @@
             if (newMode === 'mix') {
               const randomItem = data.items[Math.floor(Math.random() * data.items.length)];
               setItem({ ...randomItem, type: 'mix' });
+            } else if (newMode === 'ersatz') {
+              const randomRep = data.replacementItems[Math.floor(Math.random() * data.replacementItems.length)];
+              setItem({ ...randomRep, type: 'ersatz' });
             } else if (newMode === 'detective') {
               const randomDet = data.detectiveTexts[Math.floor(Math.random() * data.detectiveTexts.length)];
               const parts = randomDet.storyParts.map(p => (typeof p === 'object' ? { ...p, current: p.val } : p));
@@ -370,6 +463,24 @@
             setFeedback({ isCorrect, text: isCorrect ? "Sehr gut!" : `Richtig ist: ${item.correct}`, explain: item.explain });
             onRecord(isCorrect);
           };
+
+          const handleErsatzAnswer = (choice) => {
+            const isCorrect = item.correct === 'dass'
+              ? choice === 'keines passt'
+              : (item.ok || []).includes(choice);
+
+            const correctText = item.correct === 'dass'
+              ? 'keines passt'
+              : (item.ok && item.ok.length ? item.ok.join(' / ') : 'dieses');
+
+            setFeedback({
+              isCorrect,
+              text: isCorrect ? "Sehr gut!" : `Richtig ist: ${correctText}`,
+              explain: item.explain
+            });
+            onRecord(isCorrect);
+          };
+
 
           const toggleDetectiveWord = (partId) => {
             setItem(prev => ({
@@ -424,7 +535,7 @@
           return (
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
               <div className="bg-slate-50 border-b border-slate-200 p-2 flex gap-2 overflow-x-auto">
-                {['mix', 'detective', 'dialog'].map(m => (
+                {['mix', 'ersatz', 'detective', 'dialog'].map(m => (
                   <button
                     key={m}
                     onClick={() => handleModeChange(m)}
@@ -432,7 +543,7 @@
                       mode === m ? 'bg-white text-red-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-700'
                     }`}
                   >
-                    {m === 'mix' ? 'Lückentext' : m}
+                    {m === 'mix' ? 'Lückentext' : m === 'ersatz' ? 'Ersatzprobe' : m}
                   </button>
                 ))}
               </div>
@@ -463,6 +574,45 @@
                         )}
                       </div>
                     )}
+
+                    {mode === 'ersatz' && (
+                      <div className="max-w-2xl mx-auto fade-in">
+                        <div className="flex justify-between text-xs font-bold text-slate-400 uppercase mb-4">
+                          <span>Ersatzprobe</span>
+                          <span>dieses / welches / jenes</span>
+                        </div>
+
+                        <div className="text-xl md:text-2xl leading-relaxed text-slate-800 mb-8 font-medium">
+                          {renderTextWithBlank(item.text, '___', feedback ? (feedback.isCorrect ? 'correct' : 'wrong') : 'neutral')}
+                        </div>
+
+                        {!feedback ? (
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {['dieses', 'welches', 'jenes', 'keines passt'].map(ch => (
+                              <button
+                                key={ch}
+                                onClick={() => handleErsatzAnswer(ch)}
+                                className="bg-white border border-slate-200 rounded-xl px-4 py-3 font-bold text-base hover:bg-red-50 transition-all"
+                              >
+                                {ch}
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className={`p-6 rounded-xl border ${feedback.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                            <h3 className={`font-bold ${feedback.isCorrect ? 'text-green-900' : 'text-red-900'}`}>{feedback.text}</h3>
+                            <p className="text-slate-700 mt-2">{feedback.explain}</p>
+                            <div className="mt-4 flex gap-2 flex-wrap">
+                              <div className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+                                Ergebnis: {item.correct === 'dass' ? 'dass' : 'das'}
+                              </div>
+                            </div>
+                            <button onClick={() => startNewItem('ersatz')} className="mt-4 bg-slate-900 text-white px-6 py-2 rounded-lg font-bold text-sm">Nächste Frage</button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
 
                     {mode === 'detective' && (
                       <div className="max-w-3xl mx-auto fade-in">
@@ -711,46 +861,28 @@
           const resetStats = () => setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0 });
 
           return (
-            <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col items-center">
-              {/* HoS Header Anpassung */}
-              <header className="w-full bg-white border-b border-slate-200 mb-8">
-                <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                         {/* Logo Placeholder */}
-                        <img src="/chatisthisreal.png" alt="Logo" className="h-10 w-auto object-contain" onError={(e) => e.target.style.display='none'} />
-                        <div>
-                             {/* Badge & Title */}
-                             <div className="flex items-center gap-2">
-                                <span className="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider">Deutsch</span>
-                                <h1 className="text-lg font-bold text-slate-900 leading-none">das oder dass</h1>
-                             </div>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                         <a href="/index.html" className="text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">Startseite</a>
-                    </div>
-                </div>
-              </header>
-
-              <div className="w-full max-w-4xl px-4 flex flex-col md:flex-row justify-between items-end mb-6">
-                 <div>
-                    <h2 className="text-xl font-bold text-slate-800">Übersicht</h2>
+            <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-4 md:p-8 flex flex-col items-center">
+              <header className="w-full max-w-4xl mb-6 flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div className="flex items-center gap-4 mb-4 md:mb-0">
+                  <div className="bg-red-600 text-white font-bold px-3 py-1 rounded text-sm tracking-wide">DEUTSCH</div>
+                  <div>
+                    <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Das oder Dass?</h1>
                     <p className="text-slate-500 text-sm">Lernen • Üben • Testen</p>
-                 </div>
-                 {/* KPI Chips */}
-                 <div className="flex gap-3 text-sm mt-4 md:mt-0">
-                  <div className="px-4 py-2 bg-white rounded-lg border border-slate-200 flex items-center gap-2 shadow-sm">
+                  </div>
+                </div>
+                <div className="flex gap-3 text-sm">
+                  <div className="px-4 py-2 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-yellow-500" />
                     <span className="font-semibold">{stats.streak}</span> <span className="text-slate-400">Serie</span>
                   </div>
-                  <div className="px-4 py-2 bg-white rounded-lg border border-slate-200 flex items-center gap-2 shadow-sm">
+                  <div className="px-4 py-2 bg-slate-50 rounded-lg border border-slate-100 flex items-center gap-2">
                     <Activity className="w-4 h-4 text-green-500" />
                     <span className="font-semibold">{stats.total > 0 ? Math.round((stats.correct/stats.total)*100) : 0}%</span> <span className="text-slate-400">Richtig</span>
                   </div>
                 </div>
-              </div>
+              </header>
 
-              <div className="w-full max-w-4xl px-4 flex mb-6 bg-white p-1 rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+              <div className="w-full max-w-4xl flex mb-6 bg-white p-1 rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
                 {[
                   { id: 'learn', icon: BookOpen, label: 'Lernen' },
                   { id: 'practice', icon: PenTool, label: 'Üben' },
@@ -772,7 +904,7 @@
                 ))}
               </div>
 
-              <main className="w-full max-w-4xl px-4">
+              <main className="w-full max-w-4xl">
                 {activeTab === 'learn' && <LearnModule data={DATA.lessons} onComplete={() => setActiveTab('practice')} onRecord={recordResult} />}
                 {activeTab === 'practice' && <PracticeModule data={DATA} onRecord={recordResult} />}
                 {activeTab === 'test' && <TestModule items={DATA.items} onRecord={recordResult} />}
