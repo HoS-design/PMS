@@ -1,70 +1,117 @@
-Du bist ein Lehrer-Assistant und baust neue Lern-Apps fuer das PMS/HoS-Portal. Halte dich strikt an die Portal-Regeln. Starte nicht mit Code, bevor alle Eckdaten klar sind.
+Du bist eine KI, die das Repo **PMS** und das **HoS Lern-Apps Portal** versteht. Erstelle ein neues Lernapp-Modul und integriere es korrekt. Antworte klar, strukturiert und mit konkreten Dateipfaden/Schritten. Wenn du Code ausgibst, dann als vollständige Dateien/Blöcke.
 
-Ziel
-Erstelle ein neues Modul unter `portal/modules/<slug>/index.html` und binde es in Portal + Startseite ein. Achte auf konsistentes Design und funktionierende Links.
+### Kontext & Repo-Struktur
+Dieses Repo enthaelt Lern-Apps (Module) und zwei Einstiegsseiten:
+- `index.html`: Dashboard-Startseite. Karten werden per JavaScript aus `APP_CARDS` erzeugt.
+- `portal/index.html`: Portal-Ansicht mit statischen Kacheln.
+Module liegen unter:
+- `portal/modules/<slug>/index.html`
 
-MUSS-Regeln (Portal-Standard)
-1) Standard-Header in jeder App (exakt dieses HTML; nur Text anpassen)
+**Wichtig:** Es gibt **keinen Root-Wrapper/Redirect** mehr. Die Dashboard-Card soll **direkt** auf `/portal/modules/<slug>/` verlinken.
+
+### Pflicht: HoS Header + HoS CSS
+Jede App muss oben den gleichen HoS-Kopfbereich verwenden (sticky Header):
+- Logo: `/chatisthisreal.png`
+- Fach-Badge (z.B. Deutsch rot: `badge-main is-deutsch`)
+- Titel in der Kopfzeile
+- Startseite-Link: `/index.html`
+
+Pflicht in jedem Modul-HTML:
+
+**Im `<head>`:**
+```html
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/app.css">
+```
+
+**Im `<body>` ganz oben (VOR der App):**
+```html
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
     <div class="brand-title">
       <div class="badge-main is-deutsch">Deutsch</div>
-      <h1>App-Titel</h1>
+      <h1>APP-TITEL</h1>
     </div>
   </div>
   <div class="header-actions">
     <a href="/index.html" class="header-link">Startseite</a>
   </div>
 </header>
+```
 
-2) Pflicht-Stylesheets im <head> (immer genau so)
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/app.css">
+Badge-Varianten:
+- Deutsch: `badge-main is-deutsch`
+- Mathe: `badge-main is-mathe`
+- Englisch: `badge-main is-english`
+- Anderes Fach: `badge-main` oder `badge-main is-andere` und ggf. `--subject-color` setzen.
 
-3) Kein doppelter Titel
-Entferne/unterdruecke alte Hero-Header oder Body-Titel. Der App-Titel darf nur im Standard-Header als <h1> stehen.
+**Kein doppelter Titel:** Wenn die App selbst einen Hero/Title hat, muss er entfernt/vermieden werden, weil der Titel im HoS-Header sitzt.
 
-4) Badge-Regeln (Fachfarben)
-- Deutsch:  <div class="badge-main is-deutsch">Deutsch</div>
-- Mathe:   <div class="badge-main is-mathe">Mathe</div>
-- English: <div class="badge-main is-english">English</div>   (gruen, global in style.css)
-- Andere:  <div class="badge-main is-andere">Andere</div>     (gelb, global in style.css)
-- Sonstige Faecher ohne eigene Klasse: <div class="badge-main">Fach</div> und in :root der App `--subject-color` setzen.
+### Neue Standardvorlage (React + Tailwind, ohne Build)
+Neue Apps sollen im **React+Tailwind Card-Design** gebaut werden (ruhig, hochwertig, modern):
+- KPI-Pills (z.B. Richtig-Quote, Serie, Antworten)
+- Ueben mit kreativen Modulen (z.B. Mix/Detektiv/Dialog/Ersatzprobe)
+- Moderne Cards, klare Buttons, gute Abstaende, aber HoS-konform
 
-5) Neue App korrekt verlinken (immer alle 4 Schritte)
-- Portal-Kachel in `portal/index.html` anlegen, Link auf `/portal/modules/<slug>/`
-- Dashboard-Card in Root `index.html` unter APP_CARDS anlegen (href zeigt auf Root-Wrapper)
-- Root-Wrapper im Repo-Root anlegen, z.B. `MeinModul.html`, der auf `/portal/modules/<slug>/` umleitet (inkl. query/hash)
-- Mapping in `docs/MIGRATION.md` ergaenzen: `MeinModul.html` -> `/portal/modules/<slug>/`
+Technik:
+- React (UMD) im Browser, JSX via Babel ist ok
+- Tailwind CDN ist ok, aber **Preflight muss AUS** (damit HoS CSS/Header nicht beeinflusst wird)
 
-Struktur-Schritte fuer ein neues Modul
-1) Ordner: `portal/modules/<slug>/`
-2) Datei:  `portal/modules/<slug>/index.html`
-3) Standard-Header einsetzen (siehe oben)
-4) App-Inhalt implementieren (mobil-faehig, keine externen Dependencies)
-5) Portal-Kachel hinzufuegen (`portal/index.html`)
-6) Dashboard-Card hinzufuegen (`index.html`)
-7) Root-Wrapper hinzufuegen (Repo-Root)
-8) MIGRATION.md erweitern
+Tailwind-Config im `<head>`:
+```html
+<script>
+  tailwind = { config: { corePlugins: { preflight: false } } };
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+```
 
-Dashboard-Card Vorlage (index.html -> APP_CARDS)
+React UMD:
+- `react.production.min.js`
+- `react-dom.production.min.js`
+- Babel Standalone (wenn JSX genutzt wird)
+
+### Integration: Portal-Kachel
+Füge in `portal/index.html` eine neue Kachel hinzu:
+
+```html
+<a class="portal-card" href="/portal/modules/<slug>/">
+  <h3>APP-TITEL</h3>
+  <p>Kurzbeschreibung.</p>
+  <div class="portal-tags">
+    <span class="portal-tag">Deutsch</span>
+    <span class="portal-tag">Grammatik</span>
+  </div>
+</a>
+```
+
+### Integration: Dashboard-Card (ohne Wrapper)
+In `index.html` innerhalb von `APP_CARDS.deutsch` (oder passendem Fach) füge eine Karte hinzu. `href` verlinkt **direkt** auf das Modul:
+
+```js
 {
-  href: "MeinModul.html",
-  icon: "A",
-  title: "Mein Modul",
+  href: "/portal/modules/<slug>/",
+  icon: "X",
+  title: "APP-TITEL",
   description: "Kurzbeschreibung.",
   keywords: "stichworte hier"
 }
+```
 
-Qualitaet & Stabilitaet
-- Nur ASCII in neuen Dateien, wenn moeglich (Umlaute als ae/oe/ue).
-- Pfade/Links muessen exakt stimmen.
-- Keine externen Libraries/Dependencies ohne Absprache.
-- Layout muss mobil funktionieren.
+### Qualitätsregeln
+- Einheitlicher HoS-Header + HoS CSS immer drin.
+- Kein doppelter Titel im Body.
+- Slug: klein, nur a-z, 0-9, `-`
+- ASCII bevorzugen, UTF-8 Datei speichern.
+- App-Assets im Modulordner halten: `portal/modules/<slug>/...`
 
-Lieferumfang (immer)
-- Neues Modul-HTML (`portal/modules/<slug>/index.html`)
-- Neue Portal-Kachel (Snippet fuer `portal/index.html`)
-- Neue Dashboard-Card (Snippet fuer Root `index.html`)
-- Neuer Root-Wrapper (`<Name>.html`) + MIGRATION.md Mapping
+### Aufgabe
+Erstelle die App zum Thema: **<THEMA>**
+Fach: **<FACH>** (Deutsch/Mathe/Englisch/anderes)
+Slug: **<SLUG>**
+Kurzbeschreibung: **<BESCHREIBUNG>**
+
+Liefere:
+1) vollständige Datei `portal/modules/<slug>/index.html` (HoS-Header + React+Tailwind Standardlayout)
+2) Einfügeblock für `portal/index.html` (Kachel)
+3) Einfügeblock für `index.html` (APP_CARDS-Eintrag, direkte Verlinkung)
