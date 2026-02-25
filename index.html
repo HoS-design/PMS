@@ -261,6 +261,16 @@
             text-align: center; color: var(--muted);
             font-size: 13px; border-top: 1px solid var(--line);
         }
+
+        /* NEU: Footer Links als Textlinks im gleichen Stil */
+        footer a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        footer a:hover {
+            color: var(--ink);
+        }
         
         /* Utility: Verstecken beim Filtern */
         .hidden { display: none !important; }
@@ -333,7 +343,9 @@
 </div>
 
     <footer>
-        HoS Apps • Entwickelt für die PMS Dobl
+        HoS Apps • Entwickelt für die PMS Dobl •
+        <a href="https://www.pms-dobl.at/kopie-von-organisatorisches" target="_blank" rel="noopener">Impressum</a>
+        • <a href="mailto:stefan.holzer@pms-dobl.at">stefan.holzer@pms-dobl.at</a>
     </footer>
 
     <script>
