@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Formeltrainer Geometrie 8</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+
+  <script>
+    tailwind = { config: { corePlugins: { preflight: false } } };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .app-shell { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+    .tw-safe * { box-sizing: border-box; }
+    body { background-color: #f8fafc; }
+
+    /* Print-Styles für den kompakten Spickzettel */
+    @media print {
+      body { background-color: white !important; padding: 0 !important; }
+      .app-header { display: none !important; }
+      .print-hide { display: none !important; }
+      .print-only { display: block !important; }
+      .app-shell { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+      .print-page-break { page-break-inside: avoid; }
+      @page { margin: 1.2cm; }
+    }
+    .print-only { display: none; }
+  </style>
+</head>
+
+<body>
+  <header class="app-header print-hide">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-mathe">Mathematik</div>
+        <h1>Formeltrainer Geometrie 8</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <noscript>
+      <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800 print-hide">
+        Bitte JavaScript aktivieren, damit die App funktioniert.
+      </div>
+    </noscript>
+
+    <div id="app" class="tw-safe"></div>
+  </main>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useState, useRef } = React;
+
+    // ------------------------------------------------------------
+    // Daten: Formelsammlung (inkl. KaTeX tex-Attribut)
+    // ------------------------------------------------------------
+    const DECK = [
+      {
+        group: "Allgemeines Dreieck", domain: "2D", tags: ["Umfang", "Fläche"],
+        facts: [
+          { key: "U", label: "Umfang", prompt: "Umfang", formula: "U = a + b + c", tex: "U = a + b + c", vars: ["a","b","c"] },
+          { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = (g·hₐ)/2 = (b·h_b)/2 = (c·h_c)/2", tex: "A = \\frac{g \\cdot h_a}{2} = \\frac{b \\cdot h_b}{2} = \\frac{c \\cdot h_c}{2}", note: "g = Grundseite, hₐ/h_b/h_c = zugehörige Höhe", vars: ["g","hₐ","b","h_b","c","h_c"] }
+        ]
+      },
+      { group: "Rechtwinkliges Dreieck", domain: "2D", tags: ["Fläche"], facts: [
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = (a·b)/2", tex: "A = \\frac{a \\cdot b}{2}", vars: ["a","b"] }
+      ]},
+      { group: "Rechteck", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 2·a + 2·b", tex: "u = 2 \\cdot a + 2 \\cdot b", vars: ["a","b"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = a·b", tex: "A = a \\cdot b", vars: ["a","b"] }
+      ]},
+      { group: "Quadrat", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 4·a", tex: "u = 4 \\cdot a", vars: ["a"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = a²", tex: "A = a^2", vars: ["a"] }
+      ]},
+      { group: "Parallelogramm", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 2·a + 2·b", tex: "u = 2 \\cdot a + 2 \\cdot b", vars: ["a","b"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = a·hₐ = b·h_b", tex: "A = a \\cdot h_a = b \\cdot h_b", note: "hₐ/h_b = zugehörige Höhe", vars: ["a","hₐ","b","h_b"] }
+      ]},
+      { group: "Raute", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 4·a", tex: "u = 4 \\cdot a", vars: ["a"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = a·hₐ", tex: "A = a \\cdot h_a", vars: ["a","hₐ"] },
+        { key: "A2", label: "Fläche (Diagonalen)", prompt: "Fläche (Diagonalen)", formula: "A = (e·f)/2", tex: "A = \\frac{e \\cdot f}{2}", vars: ["e","f"] }
+      ]},
+      { group: "Trapez", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = a + b + c + d", tex: "u = a + b + c + d", vars: ["a","b","c","d"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = ((a + c)·h)/2", tex: "A = \\frac{(a + c) \\cdot h}{2}", vars: ["a","c","h"] }
+      ]},
+      { group: "Deltoid", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 2·(a + b)", tex: "u = 2 \\cdot (a + b)", vars: ["a","b"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = (e·f)/2", tex: "A = \\frac{e \\cdot f}{2}", vars: ["e","f"] }
+      ]},
+      { group: "Kreis", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 2·r·π = d·π", tex: "u = 2 \\cdot r \\cdot \\pi = d \\cdot \\pi", vars: ["r","d"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = r²·π", tex: "A = r^2 \\cdot \\pi", vars: ["r"] }
+      ]},
+      { group: "Kreisring", domain: "2D", tags: ["Umfang","Fläche"], facts: [
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = (r₁ + r₂)·2·π", tex: "u = (r_1 + r_2) \\cdot 2 \\cdot \\pi", vars: ["r₁","r₂"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = (r₁² − r₂²)·π", tex: "A = (r_1^2 - r_2^2) \\cdot \\pi", vars: ["r₁","r₂"] }
+      ]},
+      { group: "Kreissektor", domain: "2D", tags: ["Bogen","Umfang","Fläche"], facts: [
+        { key: "b", label: "Bogenlänge", prompt: "Bogenlänge", formula: "b = (r·π·α)/180", tex: "b = \\frac{r \\cdot \\pi \\cdot \\alpha}{180^\\circ}", vars: ["r","α"] },
+        { key: "u", label: "Umfang", prompt: "Umfang", formula: "u = 2·r + b", tex: "u = 2 \\cdot r + b", vars: ["r","b"] },
+        { key: "A", label: "Fläche", prompt: "Fläche", formula: "A = (r²·π·α)/360", tex: "A = \\frac{r^2 \\cdot \\pi \\cdot \\alpha}{360^\\circ}", vars: ["r","α"] }
+      ]},
+      { group: "Quader", domain: "3D", tags: ["Volumen","Oberfläche"], facts: [
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = a·b·h", tex: "V = a \\cdot b \\cdot h", vars: ["a","b","h"] },
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = 2·a·b + 2·a·h + 2·b·h", tex: "O = 2ab + 2ah + 2bh", note: "NEU ergänzt", vars: ["a","b","h"] }
+      ]},
+      { group: "Würfel", domain: "3D", tags: ["Oberfläche","Volumen"], facts: [
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = 6·a²", tex: "O = 6 \\cdot a^2", vars: ["a"] },
+        { key: "V0", label: "Volumen (Grundform)", prompt: "Volumen (Grundform)", formula: "V = G·h", tex: "V = G \\cdot h", vars: ["G","h"] },
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = a³", tex: "V = a^3", vars: ["a"] }
+      ]},
+      { group: "Regelmäßige rechteckige Pyramide", domain: "3D", tags: ["Oberfläche","Volumen"], facts: [
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = a·b + a·hₐ + b·h_b", tex: "O = a \\cdot b + a \\cdot h_a + b \\cdot h_b", vars: ["a","b","hₐ","h_b"] },
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = (a·b·h)/3", tex: "V = \\frac{a \\cdot b \\cdot h}{3}", vars: ["a","b","h"] }
+      ]},
+      { group: "Regelmäßige quadratische Pyramide", domain: "3D", tags: ["Oberfläche","Volumen"], facts: [
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = a² + 2·a·hₐ", tex: "O = a^2 + 2 \\cdot a \\cdot h_a", vars: ["a","hₐ"] },
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = (a²·h)/3", tex: "V = \\frac{a^2 \\cdot h}{3}", vars: ["a","h"] }
+      ]},
+      { group: "Zylinder", domain: "3D", tags: ["Oberfläche","Volumen"], facts: [
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = 2·r²·π + 2·r·π·h", tex: "O = 2 \\cdot r^2 \\cdot \\pi + 2 \\cdot r \\cdot \\pi \\cdot h", vars: ["r","h"] },
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = r²·π·h", tex: "V = r^2 \\cdot \\pi \\cdot h", vars: ["r","h"] }
+      ]},
+      { group: "Kegel", domain: "3D", tags: ["Oberfläche","Volumen"], facts: [
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = r²·π + r·π·s", tex: "O = r^2 \\cdot \\pi + r \\cdot \\pi \\cdot s", vars: ["r","s"] },
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = (r²·π·h)/3", tex: "V = \\frac{r^2 \\cdot \\pi \\cdot h}{3}", vars: ["r","h"] }
+      ]},
+      { group: "Prisma (gerades Prisma)", domain: "3D", tags: ["Volumen","Mantelfläche","Oberfläche"], facts: [
+        { key: "V", label: "Volumen", prompt: "Volumen", formula: "V = G·h", tex: "V = G \\cdot h", vars: ["G","h"] },
+        { key: "M", label: "Mantelfläche", prompt: "Mantelfläche", formula: "M = U_G·h", tex: "M = U_G \\cdot h", vars: ["U_G","h"] },
+        { key: "O", label: "Oberfläche", prompt: "Oberfläche", formula: "O = 2·G + M", tex: "O = 2 \\cdot G + M", vars: ["G","M"] }
+      ]}
+    ];
+
+    // ------------------------------------------------------------
+    // KaTeX Komponente
+    // ------------------------------------------------------------
+    function MathTex({ tex, fallback, block = false, className = "" }) {
+      const ref = useRef();
+      useEffect(() => {
+        if (ref.current && window.katex && tex) {
+          try {
+            window.katex.render(tex, ref.current, { displayMode: block, throwOnError: false, strict: false });
+          } catch (e) {
+            ref.current.innerText = fallback || tex;
+          }
+        } else if (ref.current) {
+          ref.current.innerText = fallback || tex;
+        }
+      }, [tex, block, fallback]);
+      return <span ref={ref} className={className} />;
+    }
+
+    // ------------------------------------------------------------
+    // SVG Skizzen Komponente (mit Variablen)
+    // ------------------------------------------------------------
+    function ShapeGraphic({ group, className="" }) {
+      const baseClass = "w-full h-full text-slate-700 stroke-current " + className;
+
+      const graphics = {
+        "Allgemeines Dreieck": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="10,85 90,85 40,15" fill="#e0f2fe" /><path d="M40,15 L40,85" stroke="#3b82f6" strokeDasharray="4 4"/><text x="50" y="98" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">c</text><text x="70" y="48" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">a</text><text x="20" y="48" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="end" fontStyle="italic">b</text><text x="44" y="55" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">h<tspan baselineShift="sub" fontSize="7">c</tspan></text></svg>,
+        "Rechtwinkliges Dreieck": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="15,85 85,85 15,15" fill="#e0f2fe" /><rect x="15" y="75" width="10" height="10" stroke="#3b82f6"/><text x="50" y="98" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="10" y="50" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="end" fontStyle="italic">b</text><text x="55" y="45" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">c</text></svg>,
+        "Rechteck": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3"><rect x="10" y="30" width="80" height="40" fill="#e0f2fe" /><text x="50" y="82" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="94" y="55" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">b</text></svg>,
+        "Quadrat": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3"><rect x="25" y="25" width="50" height="50" fill="#e0f2fe" /><text x="50" y="88" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text></svg>,
+        "Parallelogramm": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="20,80 90,80 80,20 10,20" fill="#e0f2fe" /><path d="M80,20 L80,80" stroke="#3b82f6" strokeDasharray="4 4"/><text x="55" y="95" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="10" y="48" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="end" fontStyle="italic">b</text><text x="84" y="55" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">h<tspan baselineShift="sub" fontSize="7">a</tspan></text></svg>,
+        "Raute": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="50,10 90,50 50,90 10,50" fill="#e0f2fe" /><path d="M10,50 L90,50 M50,10 L50,90" stroke="#3b82f6" strokeDasharray="4 4"/><text x="74" y="25" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">a</text><text x="70" y="46" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">e</text><text x="54" y="30" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">f</text></svg>,
+        "Trapez": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="10,80 90,80 70,20 30,20" fill="#e0f2fe" /><path d="M30,20 L30,80" stroke="#3b82f6" strokeDasharray="4 4"/><text x="50" y="95" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="50" y="15" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">c</text><text x="34" y="55" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text></svg>,
+        "Deltoid": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3" strokeLinejoin="round"><polygon points="50,10 80,40 50,90 20,40" fill="#e0f2fe" /><path d="M20,40 L80,40 M50,10 L50,90" stroke="#3b82f6" strokeDasharray="4 4"/><text x="70" y="20" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">a</text><text x="70" y="70" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">b</text><text x="65" y="36" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">e</text><text x="54" y="75" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">f</text></svg>,
+        "Kreis": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3"><circle cx="50" cy="50" r="40" fill="#e0f2fe" /><line x1="50" y1="50" x2="90" y2="50" stroke="#3b82f6" /><text x="70" y="46" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">r</text></svg>,
+        "Kreisring": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3"><circle cx="50" cy="50" r="40" fill="#e0f2fe" /><circle cx="50" cy="50" r="20" fill="#f8fafc" /><line x1="50" y1="50" x2="90" y2="50" stroke="#3b82f6" strokeDasharray="3 3"/><line x1="50" y1="50" x2="70" y2="50" stroke="#0ea5e9"/><text x="75" y="46" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">r₁</text><text x="60" y="46" fontSize="10" fill="#0ea5e9" strokeWidth="0" textAnchor="middle" fontStyle="italic">r₂</text></svg>,
+        "Kreissektor": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="3"><path d="M50,50 L90,50 A40,40 0 0,0 65,13 Z" fill="#e0f2fe" /><path d="M60,50 A10,10 0 0,0 56,42" stroke="#3b82f6" /><text x="70" y="62" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">r</text><text x="78" y="28" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">b</text><text x="58" y="44" fontSize="8" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">α</text></svg>,
+        "Quader": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2" strokeLinejoin="round"><rect x="15" y="35" width="50" height="50" fill="#e0f2fe" /><polygon points="15,35 35,15 85,15 85,65 65,85 65,35" fill="#bae6fd" /><polygon points="65,35 85,15 35,15" fill="#f0f9ff" /><path d="M65,35 L85,15 M15,35 L35,15 M85,15 L85,65 L65,85" stroke="currentColor"/><text x="32" y="48" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="78" y="28" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">b</text><text x="88" y="45" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text></svg>,
+        "Würfel": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2" strokeLinejoin="round"><rect x="20" y="40" width="40" height="40" fill="#e0f2fe" /><polygon points="20,40 40,20 80,20 80,60 60,80 60,40" fill="#bae6fd" /><path d="M60,40 L80,20 M20,40 L40,20 L80,20 M80,20 L80,60 L60,80" stroke="currentColor"/><text x="30" y="52" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text></svg>,
+        "Zylinder": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2"><ellipse cx="50" cy="20" rx="30" ry="10" fill="#bae6fd" /><path d="M20,20 L20,80 A30,10 0 0,0 80,80 L80,20" fill="#e0f2fe" stroke="currentColor"/><ellipse cx="50" cy="20" rx="30" ry="10" stroke="currentColor"/><path d="M50,20 L80,20" stroke="#3b82f6" /><path d="M20,20 L20,80" stroke="currentColor"/><path d="M80,20 L80,80" stroke="currentColor"/><text x="65" y="15" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">r</text><text x="84" y="55" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text></svg>,
+        "Kegel": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2"><path d="M20,80 Q50,95 80,80 L50,15 Z" fill="#e0f2fe" /><ellipse cx="50" cy="80" rx="30" ry="10" stroke="currentColor" strokeDasharray="4 4"/><path d="M20,80 A30,10 0 0,0 80,80 L50,15 Z" stroke="currentColor"/><path d="M50,80 L80,80 M50,15 L50,80" stroke="#3b82f6" strokeDasharray="2 2"/><text x="65" y="88" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">r</text><text x="53" y="50" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text><text x="70" y="45" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">s</text></svg>,
+        "Regelmäßige rechteckige Pyramide": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2" strokeLinejoin="round"><polygon points="15,75 65,85 50,15" fill="#bae6fd" /><polygon points="65,85 85,60 50,15" fill="#e0f2fe" /><path d="M15,75 L35,50 L85,60 M35,50 L50,15" stroke="currentColor" strokeDasharray="3 3" opacity="0.4"/><path d="M15,75 L65,85 L85,60 M15,75 L50,15 L65,85 M85,60 L50,15" stroke="currentColor"/><text x="40" y="95" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="78" y="78" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">b</text><text x="53" y="50" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text></svg>,
+        "Regelmäßige quadratische Pyramide": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2" strokeLinejoin="round"><polygon points="25,80 75,80 55,15" fill="#bae6fd" /><polygon points="75,80 85,60 55,15" fill="#e0f2fe" /><path d="M25,80 L35,60 L85,60 M35,60 L55,15" stroke="currentColor" strokeDasharray="3 3" opacity="0.4"/><path d="M25,80 L75,80 L85,60 M25,80 L55,15 L75,80 M85,60 L55,15" stroke="currentColor"/><text x="50" y="93" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="middle" fontStyle="italic">a</text><text x="58" y="50" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text></svg>,
+        "Prisma (gerades Prisma)": <svg viewBox="0 0 100 100" className={baseClass} fill="none" strokeWidth="2" strokeLinejoin="round"><polygon points="40,40 60,80 90,60 70,20" fill="#e0f2fe" /><polygon points="20,80 60,80 40,40" fill="#bae6fd" /><path d="M20,80 L50,60 L90,60 M50,60 L70,20" stroke="currentColor" strokeDasharray="3 3" opacity="0.4"/><path d="M20,80 L60,80 L40,40 Z M60,80 L90,60 L70,20 L40,40" stroke="currentColor"/><text x="94" y="45" fontSize="10" fill="#475569" strokeWidth="0" textAnchor="start" fontStyle="italic">h</text><text x="40" y="65" fontSize="10" fill="#3b82f6" strokeWidth="0" textAnchor="middle" fontStyle="italic">G</text></svg>
+      };
+
+      return graphics[group] || <svg viewBox="0 0 100 100" className={baseClass}><rect x="10" y="10" width="80" height="80" fill="none" strokeWidth="2" strokeDasharray="4 4" /></svg>;
+    }
+
+    // ------------------------------------------------------------
+    // Logik: Progress & Formel-Parsing
+    // ------------------------------------------------------------
+    const STORE_KEY = "hos_formeltrainer_geometrie8_v2";
+    function nowMs() { return Date.now(); }
+    function loadProgress() { try { const raw = localStorage.getItem(STORE_KEY); if (!raw) return null; return JSON.parse(raw); } catch { return null; } }
+    function saveProgress(p) { localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
+    function clone(obj) { return JSON.parse(JSON.stringify(obj)); }
+    function clamp(n, a, b) { return Math.max(a, Math.min(b, n)); }
+
+    const BOX_INTERVALS_MS = { 1: 2*60*1000, 2: 8*60*1000, 3: 60*60*1000, 4: 24*60*60*1000, 5: 3*24*60*60*1000 };
+    function defaultItemState() { return { box: 1, dueAt: 0, right: 0, wrong: 0, lastSeen: 0 }; }
+
+    function slugify(s) {
+      return String(s).toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+    }
+
+    function buildFacts(deck) {
+      const facts = [];
+      for (const card of deck) {
+        for (const f of card.facts) {
+          facts.push({
+            id: slugify(`${card.group}__${f.key}`),
+            group: card.group, domain: card.domain, tags: card.tags,
+            key: f.key, label: f.label, prompt: `${card.group} – ${f.prompt} (${f.key})`,
+            shortPrompt: f.prompt, formula: f.formula, tex: f.tex, note: f.note || "", vars: f.vars || []
+          });
+        }
+      }
+      return facts;
+    }
+
+    function pickWeighted(items, weightFn) {
+      const weights = items.map(weightFn);
+      const total = weights.reduce((a, b) => a + b, 0);
+      if (total <= 0) return items[Math.floor(Math.random() * items.length)];
+      let r = Math.random() * total;
+      for (let i = 0; i < items.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return items[i];
+      }
+      return items[items.length - 1];
+    }
+
+    function makeQuizOptions(correct, pool, count = 4) {
+      const sameDomain = pool.filter(x => x.domain === correct.domain && x.id !== correct.id);
+      const candidates = (sameDomain.length >= 10 ? sameDomain : pool.filter(x => x.id !== correct.id));
+      const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+      const picks = shuffled.slice(0, Math.max(0, count - 1));
+      const options = [correct, ...picks].sort(() => Math.random() - 0.5);
+      return options.slice(0, count);
+    }
+
+    const SUBSCRIPT_MAP = { "₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9", "ₐ":"a","ₑ":"e","ₕ":"h","ᵦ":"b","ᵧ":"y","ₖ":"k","ₗ":"l","ₘ":"m","ₙ":"n","ₒ":"o","ₚ":"p","ₛ":"s","ₜ":"t", "ᵣ":"r","ᵤ":"u","ᵥ":"v","ₓ":"x" };
+    function normalizeMath(s) {
+      let t = String(s || "").toLowerCase();
+      t = t.split("").map(ch => SUBSCRIPT_MAP[ch] ?? ch).join("");
+      t = t.replaceAll("π", "pi").replaceAll("·", "*").replaceAll("×", "*").replaceAll("−", "-").replaceAll("–", "-").replaceAll("—", "-").replaceAll("²", "^2").replaceAll("³", "^3").replace(/\s+/g, "").replaceAll("_", "");
+      return t;
+    }
+
+    function InlineSubscripts({ text }) {
+      const s = String(text || "");
+      const re = /([A-Za-z]+)_([A-Za-z0-9]+)/g;
+      const out = [];
+      let last = 0;
+      let match;
+      while ((match = re.exec(s)) !== null) {
+        if (match.index > last) out.push(s.slice(last, match.index));
+        const base = match[1];
+        const sub = match[2];
+        out.push(
+          <span key={"sub-" + match.index} className="whitespace-nowrap">
+            {base}<sub className="text-[0.75em] align-sub">{sub}</sub>
+          </span>
+        );
+        last = match.index + match[0].length;
+      }
+      if (last < s.length) out.push(s.slice(last));
+      return <>{out}</>;
+    }
+
+    function splitFormula(formula) {
+      const parts = String(formula).split("=").map(p => p.trim()).filter(Boolean);
+      if (parts.length < 2) return { lhs: "", rhs: [String(formula).trim()] };
+      return { lhs: parts[0], rhs: parts.slice(1) };
+    }
+
+    function acceptedRhsOptions(fact) {
+      const { lhs, rhs } = splitFormula(fact.formula);
+      let options = rhs.length ? rhs : [fact.formula];
+      const lhsNorm = normalizeMath(lhs).replaceAll("=", "");
+      const extra = options.map(o => `${lhs}=${o}`);
+      return { lhs, options, extra, lhsNorm };
+    }
+
+    function rhsEqualsUserInput(fact, userInput) {
+      const { lhs, options, extra, lhsNorm } = acceptedRhsOptions(fact);
+      const u = normalizeMath(userInput);
+      let stripped = u;
+      if (lhsNorm && stripped.startsWith(lhsNorm + "=")) stripped = stripped.slice((lhsNorm + "=").length);
+      const candidates = [...options, ...extra, fact.formula].map(normalizeMath);
+      return candidates.some(c => c === stripped || c === u);
+    }
+
+    function makeClozeFromRhs(rhsString) {
+      const src = String(rhsString);
+      const tokenRe = /([A-Za-z]+[0-9]*|[0-9]+|π|pi|[+\-*/^()·×])/g;
+      const tokens = src.match(tokenRe) || [src];
+      const blankableIdx = tokens.map((tok, i) => ({ tok, i })).filter(x => {
+        const t = x.tok;
+        if (/^[A-Za-z]+[0-9]*$/.test(t)) return true;
+        if (/^(π|pi)$/.test(t)) return true;
+        if (/^[0-9]+$/.test(t)) return ["2","3","180","360","4","6"].includes(t);
+        return false;
+      }).map(x => x.i);
+      const blankCount = clamp(Math.floor(Math.random() * 2) + 2, 2, 3);
+      const picks = [...blankableIdx].sort(() => Math.random() - 0.5).slice(0, blankCount);
+      const segments = tokens.map((tok, i) => {
+        if (picks.includes(i)) return { type: "blank", value: tok, key: `b${i}` };
+        return { type: "text", value: tok, key: `t${i}` };
+      });
+      return { segments, answers: picks.map(i => tokens[i]) };
+    }
+
+    // ------------------------------------------------------------
+    // UI Bausteine (Jetzt wieder im ruhigen HoS-Style!)
+    // ------------------------------------------------------------
+    function Pill({ children }) {
+      return <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm print-hide">{children}</span>;
+    }
+
+    function Card({ children, className="" }) {
+      return <div className={"rounded-xl border border-slate-200 bg-white shadow-sm " + className}>{children}</div>;
+    }
+
+    function TabButton({ active, onClick, children }) {
+      return <button onClick={onClick} className={"border-b-2 px-5 py-3 text-sm font-semibold transition-colors print-hide " + (active ? "border-blue-600 text-blue-700" : "border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-700")}>{children}</button>;
+    }
+
+    function Tag({ children }) {
+      return <span className="inline-flex items-center rounded bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">{children}</span>;
+    }
+
+    function SmallBtn({ children, onClick, disabled=false, kind="default" }) {
+      const cls = kind === "primary" ? "border-blue-600 bg-blue-600 text-white hover:bg-blue-700" : kind === "good" ? "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700" : kind === "bad" ? "border-red-200 bg-red-50 text-red-700 hover:bg-red-100" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50";
+      return <button onClick={onClick} disabled={disabled} className={"rounded-lg border px-4 py-2 text-sm font-semibold transition disabled:opacity-50 print-hide " + cls}>{children}</button>;
+    }
+
+    function TeacherNote({ children, title="Hinweis" }) {
+      return <div className="mt-4 rounded-r-lg border-l-4 border-blue-400 bg-blue-50 p-4 print-hide"><div className="text-xs font-bold text-blue-700 uppercase tracking-wider">{title}</div><div className="mt-1 text-sm text-blue-900 leading-relaxed">{children}</div></div>;
+    }
+
+    // ------------------------------------------------------------
+    // Learn View & Kompakter Spickzettel-Container
+    // ------------------------------------------------------------
+    function LearnView({ deck, factsByGroup }) {
+      const [domain, setDomain] = useState("2D");
+      const [q, setQ] = useState("");
+      const [selectedGroup, setSelectedGroup] = useState(null);
+
+      const groups = useMemo(() => {
+        const needle = q.trim().toLowerCase();
+        const g = deck.filter(x => x.domain === domain).map(x => x.group);
+        const uniq = Array.from(new Set(g));
+        if (!needle) return uniq;
+        return uniq.filter(name => {
+          const items = factsByGroup[name] || [];
+          const blob = `${name} ${items.map(i => i.formula).join(" ")} ${items.map(i => (i.tags||[]).join(" ")).join(" ")}`.toLowerCase();
+          return blob.includes(needle);
+        });
+      }, [deck, domain, q, factsByGroup]);
+
+      useEffect(() => {
+        if (selectedGroup && !groups.includes(selectedGroup)) setSelectedGroup(null);
+      }, [domain, q, groups, selectedGroup]);
+
+      function pickPrevNext(dir) {
+        if (!selectedGroup) return;
+        const idx = groups.indexOf(selectedGroup);
+        if (idx === -1) return;
+        const nextIdx = (idx + dir + groups.length) % groups.length;
+        setSelectedGroup(groups[nextIdx]);
+      }
+
+      const selectedFacts = selectedGroup ? (factsByGroup[selectedGroup] || []) : [];
+
+      return (
+        <div className="space-y-6">
+
+          {/* Print Container: Kompakt & Platzsparend in 2 Spalten */}
+          <div className="print-only">
+            <h1 className="text-2xl font-bold border-b-2 border-slate-800 pb-2 mb-6 text-slate-900">Formelsammlung Geometrie 8</h1>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+              {deck.map(d => (
+                <div key={d.group} className="print-page-break border-b border-slate-200 pb-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-16 h-16 shrink-0"><ShapeGraphic group={d.group} /></div>
+                    <div>
+                      <h2 className="text-base font-bold text-slate-800 leading-tight">{d.group}</h2>
+                      <div className="text-[10px] text-slate-500 uppercase tracking-wider mt-0.5">{d.domain}</div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    {(factsByGroup[d.group] || []).map(f => (
+                      <div key={f.id} className="flex flex-col">
+                        <span className="text-xs font-semibold text-slate-600">{f.shortPrompt}:</span>
+                        <MathTex tex={f.tex} fallback={f.formula} className="text-sm mt-1 block" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Normale Screen UI */}
+          <div className="print-hide flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex gap-2">
+              <SmallBtn kind={domain==="2D" ? "primary" : "default"} onClick={() => { setDomain("2D"); setSelectedGroup(null); }}>2D Figuren</SmallBtn>
+              <SmallBtn kind={domain==="3D" ? "primary" : "default"} onClick={() => { setDomain("3D"); setSelectedGroup(null); }}>3D Körper</SmallBtn>
+            </div>
+            <div className="flex gap-3 items-center">
+              <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Suchen (z.B. Kreisring...)" className="w-full md:w-64 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none" />
+              <SmallBtn onClick={() => window.print()}>🖨️ Spickzettel drucken</SmallBtn>
+            </div>
+          </div>
+
+          {selectedGroup && (
+            <div className="print-hide flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4">
+              <SmallBtn onClick={() => setSelectedGroup(null)}>← Zur Übersicht</SmallBtn>
+              <div className="flex-grow"></div>
+              <span className="text-sm text-slate-500">{domain} · Form {groups.indexOf(selectedGroup)+1} von {Math.max(1, groups.length)}</span>
+              <SmallBtn onClick={() => pickPrevNext(-1)}>Vorherige</SmallBtn>
+              <SmallBtn onClick={() => pickPrevNext(+1)}>Nächste</SmallBtn>
+            </div>
+          )}
+
+          {!selectedGroup ? (
+            <div className="print-hide grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {groups.map(g => (
+                <Card key={g} className="overflow-hidden hover:border-blue-300 transition-colors">
+                  <button onClick={() => setSelectedGroup(g)} className="w-full flex items-center gap-4 text-left p-4">
+                    <div className="w-16 h-16 shrink-0 bg-slate-50 rounded-lg p-2"><ShapeGraphic group={g} /></div>
+                    <div>
+                      <div className="text-base font-bold text-slate-800">{g}</div>
+                      <div className="mt-1 text-sm text-slate-500">{factsByGroup[g]?.length || 0} Formel(n)</div>
+                    </div>
+                  </button>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="print-hide grid grid-cols-1 gap-6 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <Card className="p-6">
+                  <div className="flex justify-center mb-6 bg-slate-50 rounded-lg p-4 border border-slate-100">
+                    <div className="w-32 h-32"><ShapeGraphic group={selectedGroup} /></div>
+                  </div>
+                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{domain}</div>
+                  <h2 className="mt-1 text-2xl font-bold text-slate-800">{selectedGroup}</h2>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {(selectedFacts[0]?.tags || []).slice(0, 3).map(t => <Tag key={t}>{t}</Tag>)}
+                  </div>
+                  <TeacherNote title="Tipp zum Lernen">Präge dir die Formel zuerst visuell ein. Decke sie dann ab und versuche, sie laut aufzusagen oder aufzuschreiben, bevor du weitergehst.</TeacherNote>
+                </Card>
+              </div>
+              <div className="lg:col-span-8 space-y-4">
+                {selectedFacts.map(f => (
+                  <Card key={f.id} className="p-6">
+                    <h3 className="text-lg font-bold text-slate-800">{f.shortPrompt} <span className="text-slate-400 font-normal text-sm ml-2">({f.label})</span></h3>
+                    <div className="mt-4 rounded-lg bg-slate-50 p-6 border border-slate-100 flex justify-center overflow-x-auto">
+                      <MathTex tex={f.tex} fallback={f.formula} block={true} className="text-2xl text-slate-800" />
+                    </div>
+                    {f.note && <div className="mt-3 text-sm text-slate-600 italic">Hinweis: <InlineSubscripts text={f.note} /></div>}
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // ------------------------------------------------------------
+    // Practice View
+    // ------------------------------------------------------------
+    function PracticeView({ facts, progress, setProgress }) {
+      const [domain, setDomain] = useState("ALLE");
+      const [practiceMode, setPracticeMode] = useState("MIX");
+      const [taskType, setTaskType] = useState("KARTE");
+      const [current, setCurrent] = useState(null);
+      const [reveal, setReveal] = useState(false);
+      const [feedback, setFeedback] = useState(null);
+      const [mcOptions, setMcOptions] = useState([]);
+      const [mcPicked, setMcPicked] = useState(null);
+      const [tipValue, setTipValue] = useState("");
+      const [tipChecked, setTipChecked] = useState(false);
+      const [cloze, setCloze] = useState(null);
+      const [clozeInputs, setClozeInputs] = useState([]);
+      const [clozeChecked, setClozeChecked] = useState(false);
+
+      const pool = useMemo(() => facts.filter(f => (domain === "ALLE") || f.domain === domain), [facts, domain]);
+
+      function getItemState(id) { return progress.items[id] || defaultItemState(); }
+
+      function nextItem() {
+        if (pool.length === 0) return;
+        const now = nowMs();
+        const due = pool.filter(f => (getItemState(f.id).dueAt || 0) <= now);
+        let candidates = due.length > 0 ? due : pool.sort((a,b) => (getItemState(a.id).dueAt||0)-(getItemState(b.id).dueAt||0)).slice(0,10);
+
+        const weightFn = (item) => {
+          const st = getItemState(item.id);
+          return (6 - clamp(st.box || 1, 1, 5)) + Math.min(4, (st.wrong || 0)*0.6) + clamp(Math.max(0, now - (st.dueAt||0))/(1800000), 0, 3) + 0.2;
+        };
+
+        const picked = pickWeighted(candidates, weightFn);
+        const tt = practiceMode !== "MIX" ? practiceMode : (Math.random() < 0.35 ? "KARTE" : Math.random() < 0.60 ? "MC" : Math.random() < 0.80 ? "TIP" : "LUECKE");
+
+        setTaskType(tt); setCurrent(picked); setReveal(false); setFeedback(null); setMcPicked(null);
+        setMcOptions(tt === "MC" ? makeQuizOptions(picked, pool, 4) : []);
+        setTipValue(""); setTipChecked(false); setCloze(null); setClozeInputs([]); setClozeChecked(false);
+
+        if (tt === "LUECKE") {
+          const { rhs } = splitFormula(picked.formula);
+          const rhsChoice = (rhs && rhs.length) ? rhs[Math.floor(Math.random() * rhs.length)] : picked.formula;
+          const cz = makeClozeFromRhs(rhsChoice);
+          setCloze(cz); setClozeInputs(cz.answers.map(() => ""));
+        }
+      }
+
+      function markAnswer(correct) {
+        if (!current) return;
+        const p2 = clone(progress); const st = p2.items[current.id] || defaultItemState();
+        st.lastSeen = nowMs();
+        if (correct) { st.right++; st.box = clamp((st.box||1)+1, 1, 5); st.dueAt = nowMs() + (BOX_INTERVALS_MS[st.box] || BOX_INTERVALS_MS[5]); }
+        else { st.wrong++; st.box = 1; st.dueAt = nowMs() + BOX_INTERVALS_MS[1]; }
+        p2.items[current.id] = st;
+        p2.stats.attempts++; p2.stats.correct += correct ? 1 : 0; p2.stats.streak = correct ? (p2.stats.lastWasCorrect ? p2.stats.streak+1 : 1) : 0; p2.stats.lastWasCorrect = correct;
+        setProgress(p2); saveProgress(p2); setFeedback(correct ? "OK" : "NO");
+      }
+
+      useEffect(() => { if (!current) nextItem(); }, [domain, practiceMode]);
+
+      const dueCount = useMemo(() => pool.filter(f => (getItemState(f.id).dueAt || 0) <= nowMs()).length, [pool, progress, domain]);
+
+      return (
+        <div className="space-y-6 print-hide">
+          <Card className="p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-slate-200 pb-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <select value={domain} onChange={(e) => setDomain(e.target.value)} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none">
+                  <option value="ALLE">Alle Bereiche</option><option value="2D">2D (Figuren)</option><option value="3D">3D (Körper)</option>
+                </select>
+                <select value={practiceMode} onChange={(e) => setPracticeMode(e.target.value)} className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm focus:outline-none">
+                  <option value="MIX">Mix (Empfohlen)</option><option value="KARTE">Nur Karten</option><option value="MC">Nur Multiple Choice</option><option value="TIP">Nur Tippen</option><option value="LUECKE">Nur Lückentext</option>
+                </select>
+              </div>
+              <SmallBtn kind="primary" onClick={nextItem}>Überspringen / Nächste</SmallBtn>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Pill>Fällig: <span className="font-bold text-slate-800 ml-1">{dueCount}</span></Pill>
+              <Pill>Versuche gesamt: <span className="font-bold text-slate-800 ml-1">{progress.stats.attempts}</span></Pill>
+              <Pill>Davon richtig: <span className="font-bold text-slate-800 ml-1">{progress.stats.correct}</span></Pill>
+              <Pill>Aktuelles Format: <span className="font-bold text-slate-800 ml-1">{taskType}</span></Pill>
+            </div>
+          </Card>
+
+          {current && (
+            <Card className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 shrink-0 bg-slate-50 rounded-lg p-2 border border-slate-100"><ShapeGraphic group={current.group} /></div>
+                <div className="flex-grow">
+                  <div className="text-sm font-semibold text-slate-500">{current.domain} · {current.group}</div>
+                  <h2 className="mt-1 text-2xl font-bold text-slate-800">{current.prompt}</h2>
+                </div>
+                <div className="text-right hidden sm:block">
+                  <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Lern-Box</div>
+                  <div className="mt-1 text-lg font-bold text-blue-600">{getItemState(current.id).box || 1} <span className="text-sm text-slate-400 font-normal">/ 5</span></div>
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-slate-100 pt-6">
+                {taskType === "KARTE" && (
+                  <div className="max-w-2xl">
+                    {!reveal ? (
+                      <div className="space-y-4"><TeacherNote title="Aufgabe">Sage die Formel auswendig auf.</TeacherNote><SmallBtn kind="primary" onClick={() => setReveal(true)}>Lösung anzeigen</SmallBtn></div>
+                    ) : (
+                      <div className="space-y-6">
+                        <div className="rounded-lg bg-slate-50 p-8 border border-slate-200 text-center overflow-x-auto"><MathTex tex={current.tex} fallback={current.formula} block={true} className="text-2xl" /></div>
+                        {!feedback ? (
+                          <div className="flex flex-wrap gap-3"><SmallBtn kind="good" onClick={() => markAnswer(true)}>Wusste ich sicher</SmallBtn><SmallBtn kind="bad" onClick={() => markAnswer(false)}>Wusste ich nicht</SmallBtn></div>
+                        ) : (
+                          <div className={"rounded-lg p-4 border-l-4 " + (feedback === "OK" ? "border-emerald-500 bg-emerald-50 text-emerald-900" : "border-red-500 bg-red-50 text-red-900")}>{feedback === "OK" ? "Sehr gut! Die Formel rutscht eine Box weiter." : "Macht nichts, wir wiederholen das bald wieder."}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {taskType === "MC" && (
+                  <div className="max-w-3xl">
+                    <TeacherNote title="Aufgabe">Wähle die richtige Formel aus.</TeacherNote>
+                    <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
+                      {mcOptions.map(opt => (
+                        <button key={opt.id} onClick={() => { if (!mcPicked) { setMcPicked(opt.id); markAnswer(opt.id === current.id); } }}
+                          className={"rounded-lg border-2 p-5 text-center transition-colors flex items-center justify-center min-h-[80px] " + (mcPicked ? (opt.id === current.id ? "border-emerald-500 bg-emerald-50" : (opt.id === mcPicked ? "border-red-400 bg-red-50" : "border-slate-100 bg-white opacity-50")) : "border-slate-200 bg-white hover:border-blue-400")}
+                        >
+                          <MathTex tex={opt.tex} fallback={opt.formula} block={true} />
+                        </button>
+                      ))}
+                    </div>
+                    {feedback === "NO" && <div className="mt-6 rounded-lg p-4 border-l-4 border-red-500 bg-red-50 text-red-900">Leider falsch. Richtig wäre: <MathTex tex={current.tex} fallback={current.formula} className="ml-2 font-bold" /></div>}
+                  </div>
+                )}
+
+                {taskType === "TIP" && (
+                  <div className="max-w-2xl">
+                    <TeacherNote title="Aufgabe">Ergänze die rechte Seite der Gleichung als Text. (Tipp: 'pi' statt 'π' ist erlaubt).</TeacherNote>
+                    <div className="mt-6 flex items-center gap-3 text-xl">
+                      <div className="font-mono font-medium text-slate-800 whitespace-nowrap">{splitFormula(current.formula).lhs} =</div>
+                      <input value={tipValue} onChange={(e) => setTipValue(e.target.value)} className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none" disabled={tipChecked} autoFocus />
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <SmallBtn kind="primary" onClick={() => { setTipChecked(true); markAnswer(rhsEqualsUserInput(current, tipValue)); }} disabled={tipChecked || !tipValue.trim()}>Prüfen</SmallBtn>
+                      {!tipChecked && <SmallBtn onClick={() => setReveal(r => !r)}>Tipp ansehen</SmallBtn>}
+                    </div>
+                    {reveal && !tipChecked && <div className="mt-4 bg-slate-50 p-4 rounded text-center"><MathTex tex={current.tex} fallback={current.formula} block={true} /></div>}
+                    {feedback && <div className={"mt-6 rounded-lg p-4 border-l-4 " + (feedback === "OK" ? "border-emerald-500 bg-emerald-50 text-emerald-900" : "border-red-500 bg-red-50 text-red-900")}>{feedback === "OK" ? "Korrekt!" : <span>Richtig wäre: <MathTex tex={current.tex} fallback={current.formula} className="ml-2 font-bold" /></span>}</div>}
+                  </div>
+                )}
+
+                {taskType === "LUECKE" && (
+                  <div className="max-w-2xl">
+                    <TeacherNote title="Aufgabe">Fülle die Lücken aus.</TeacherNote>
+                    <div className="mt-6 flex flex-wrap items-center gap-2 text-xl font-mono text-slate-800">
+                      <span className="whitespace-nowrap">{splitFormula(current.formula).lhs} =</span>
+                      {cloze?.segments?.map((seg, idx) => {
+                        if (seg.type === "text") return <span key={seg.key}>{seg.value}</span>;
+                        const blankIndex = cloze.segments.slice(0, idx).filter(s => s.type === "blank").length;
+                        return <input key={seg.key} value={clozeInputs[blankIndex] || ""} onChange={(e) => { const v = e.target.value; setClozeInputs(prev => { const p = [...prev]; p[blankIndex] = v; return p; }); }} className="w-16 text-center rounded border-2 border-slate-300 bg-white px-2 py-1 focus:border-blue-500 outline-none" disabled={clozeChecked} />
+                      })}
+                    </div>
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      <SmallBtn kind="primary" onClick={() => { setClozeChecked(true); markAnswer(cloze.answers.every((ans, i) => normalizeMath(ans) === normalizeMath(clozeInputs[i] || ""))); }} disabled={clozeChecked || clozeInputs.some(x => !String(x).trim())}>Prüfen</SmallBtn>
+                      {!clozeChecked && <SmallBtn onClick={() => setReveal(r => !r)}>Tipp ansehen</SmallBtn>}
+                    </div>
+                    {reveal && !clozeChecked && <div className="mt-4 bg-slate-50 p-4 rounded text-center"><MathTex tex={current.tex} fallback={current.formula} block={true} /></div>}
+                    {feedback && <div className={"mt-6 rounded-lg p-4 border-l-4 " + (feedback === "OK" ? "border-emerald-500 bg-emerald-50 text-emerald-900" : "border-red-500 bg-red-50 text-red-900")}>{feedback === "OK" ? "Korrekt!" : <span>Richtig: <MathTex tex={current.tex} fallback={current.formula} className="ml-2 font-bold" /></span>}</div>}
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
+        </div>
+      );
+    }
+
+    // ------------------------------------------------------------
+    // Test View
+    // ------------------------------------------------------------
+    function TestView({ facts, progress, setProgress }) {
+      const [domain, setDomain] = useState("ALLE");
+      const [running, setRunning] = useState(false);
+      const [idx, setIdx] = useState(0);
+      const [order, setOrder] = useState([]);
+      const [options, setOptions] = useState([]);
+      const [picked, setPicked] = useState(null);
+      const [score, setScore] = useState(0);
+      const [answers, setAnswers] = useState([]);
+
+      const pool = useMemo(() => facts.filter(f => (domain === "ALLE") || f.domain === domain), [facts, domain]);
+
+      function start() {
+        const n = Math.min(12, pool.length);
+        setOrder([...pool].sort(() => Math.random() - 0.5).slice(0, n));
+        setIdx(0); setScore(0); setAnswers([]); setPicked(null); setRunning(true);
+      }
+
+      useEffect(() => {
+        if (running && order[idx]) { setPicked(null); setOptions(makeQuizOptions(order[idx], pool, 4)); }
+      }, [running, idx, order, pool]);
+
+      const current = running ? order[idx] : null;
+      const finished = (!running && order.length > 0 && answers.length === order.length);
+
+      function answer(optId) {
+        if (!current || picked) return;
+        setPicked(optId);
+        const ok = optId === current.id;
+        setAnswers(prev => [...prev, { id: current.id, ok }]);
+        if (ok) setScore(s => s + 1);
+        const p2 = clone(progress); p2.stats.attempts++; p2.stats.correct += ok?1:0;
+        setProgress(p2); saveProgress(p2);
+        setTimeout(() => { if (idx + 1 >= order.length) setRunning(false); else setIdx(i => i + 1); }, 1200);
+      }
+
+      return (
+        <div className="space-y-6 print-hide">
+          <Card className="p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div><h2 className="text-xl font-bold text-slate-800">Wissenstest</h2><div className="text-sm text-slate-500">Überprüfe dein Wissen unter Prüfungsbedingungen.</div></div>
+              <div className="flex gap-3 items-center">
+                <select value={domain} onChange={(e) => setDomain(e.target.value)} disabled={running} className="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-50"><option value="ALLE">Gesamter Stoff</option><option value="2D">2D Figuren</option><option value="3D">3D Körper</option></select>
+                <SmallBtn kind="primary" onClick={start} disabled={running || pool.length < 4}>Test starten</SmallBtn>
+              </div>
+            </div>
+
+            {!running && !finished && (
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Pill>Pool: <span className="font-bold text-slate-800 ml-1">{pool.length} Formeln</span></Pill>
+              </div>
+            )}
+          </Card>
+
+          {running && current && (
+            <Card className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <div className="text-sm font-semibold text-slate-500">Frage {idx + 1} von {order.length}</div>
+                <div className="text-sm font-semibold text-slate-500">Punkte: {score}</div>
+              </div>
+
+              <div className="mb-8 flex items-center gap-4">
+                <div className="w-16 h-16 shrink-0 bg-slate-50 rounded-lg p-2"><ShapeGraphic group={current.group} /></div>
+                <div>
+                  <div className="text-sm font-semibold text-slate-400 uppercase">{current.domain} · {current.group}</div>
+                  <h3 className="mt-1 text-2xl font-bold text-slate-800">Welche Formel berechnet: {current.prompt}?</h3>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {options.map(opt => {
+                  const isCorrect = opt.id === current.id;
+                  const isPicked = picked === opt.id;
+                  const cls = picked ? (isCorrect ? "border-emerald-500 bg-emerald-50" : (isPicked ? "border-red-400 bg-red-50" : "border-slate-100 bg-white opacity-50")) : "border-slate-200 bg-white hover:border-blue-400 hover:bg-slate-50";
+                  return (
+                    <button key={opt.id} onClick={() => answer(opt.id)} className={"rounded-lg border-2 p-5 transition-colors flex items-center justify-center min-h-[100px] " + cls}>
+                      <MathTex tex={opt.tex} fallback={opt.formula} block={true} className="text-xl text-slate-800" />
+                    </button>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
+
+          {finished && (
+            <Card className="p-6 text-center">
+              <h2 className="text-2xl font-bold text-slate-800">Test beendet</h2>
+              <div className="mt-2 text-lg text-slate-600">Dein Ergebnis: <span className="font-bold text-blue-600">{score}</span> von {order.length} Punkten</div>
+
+              {answers.filter(a => !a.ok).length > 0 && (
+                <div className="mt-8 text-left">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">Diese Formeln solltest du dir nochmal ansehen:</h3>
+                  <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    {answers.filter(a => !a.ok).map(a => {
+                      const fact = facts.find(f => f.id === a.id);
+                      if (!fact) return null;
+                      return (
+                        <div key={a.id} className="rounded-lg border-l-4 border-red-400 bg-slate-50 p-4">
+                          <div className="text-xs font-semibold text-slate-500">{fact.group}</div>
+                          <div className="font-bold text-slate-800 mt-1">{fact.prompt}</div>
+                          <div className="mt-3 bg-white border border-slate-200 rounded p-3 text-center">
+                            <MathTex tex={fact.tex} fallback={fact.formula} block={true} className="text-lg text-slate-800" />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-8"><SmallBtn kind="primary" onClick={start}>Neuen Test starten</SmallBtn></div>
+            </Card>
+          )}
+        </div>
+      );
+    }
+
+    // ------------------------------------------------------------
+    // Help View
+    // ------------------------------------------------------------
+    function HelpView({ onReset }) {
+      return (
+        <Card className="p-6 print-hide space-y-6">
+          <h2 className="text-xl font-bold text-slate-800">Informationen</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Druck-Funktion</h3>
+              <p className="text-sm text-slate-700">Im Bereich "Lernen" findest du den Button "Spickzettel drucken". Dieser generiert eine perfekt gestaltete PDF-Übersicht aller Formeln mit Skizzen, ideal für GoodNotes oder zum Ausdrucken.</p>
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Daten & Fortschritt</h3>
+              <p className="text-sm text-slate-700 mb-3">Dein Lernfortschritt wird nur lokal auf diesem Gerät gespeichert.</p>
+              <SmallBtn kind="bad" onClick={onReset}>Lernfortschritt zurücksetzen</SmallBtn>
+            </div>
+          </div>
+        </Card>
+      );
+    }
+
+    // ------------------------------------------------------------
+    // App Root
+    // ------------------------------------------------------------
+    function App() {
+      const facts = useMemo(() => buildFacts(DECK), []);
+      const [tab, setTab] = useState("LERNEN");
+      const [progress, setProgress] = useState(() => {
+        const loaded = loadProgress();
+        if (loaded && loaded.items && loaded.stats) return loaded;
+        const init = { items: {}, stats: { attempts: 0, correct: 0, streak: 0, lastWasCorrect: false } };
+        saveProgress(init); return init;
+      });
+
+      const deckForLearn = useMemo(() => DECK.map(x => ({ group: x.group, domain: x.domain, tags: x.tags })), []);
+      const factsByGroup = useMemo(() => {
+        const map = {}; for (const f of facts) { if (!map[f.group]) map[f.group] = []; map[f.group].push(f); }
+        return map;
+      }, [facts]);
+
+      const kpi = useMemo(() => {
+        const a = progress.stats.attempts || 0;
+        const c = progress.stats.correct || 0;
+        const acc = a ? Math.round((c / a) * 100) : 0;
+        return { attempts: a, correct: c, acc, streak: progress.stats.streak || 0 };
+      }, [progress]);
+
+      return (
+        <div className="space-y-6">
+          <div className="print-hide flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-2">
+            <div className="flex gap-2">
+              <TabButton active={tab === "LERNEN"} onClick={() => setTab("LERNEN")}>Lernen</TabButton>
+              <TabButton active={tab === "UEBEN"} onClick={() => setTab("UEBEN")}>Üben</TabButton>
+              <TabButton active={tab === "TEST"} onClick={() => setTab("TEST")}>Testen</TabButton>
+              <TabButton active={tab === "HILFE"} onClick={() => setTab("HILFE")}>Hilfe</TabButton>
+            </div>
+
+            <div className="flex flex-wrap gap-4 pb-2 text-sm">
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-slate-400 uppercase">Beantwortet</span>
+                <span className="font-bold text-slate-800">{kpi.attempts}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-slate-400 uppercase">Quote</span>
+                <span className="font-bold text-slate-800">{kpi.acc}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-slate-400 uppercase">Serie</span>
+                <span className="font-bold text-emerald-600">{kpi.streak}</span>
+              </div>
+            </div>
+          </div>
+
+          {tab === "LERNEN" && <LearnView deck={deckForLearn} factsByGroup={factsByGroup} />}
+          {tab === "UEBEN" && <PracticeView facts={facts} progress={progress} setProgress={setProgress} />}
+          {tab === "TEST" && <TestView facts={facts} progress={progress} setProgress={setProgress} />}
+          {tab === "HILFE" && <HelpView onReset={() => { if(confirm("Wirklich alles löschen?")) { const init = { items: {}, stats: { attempts: 0, correct: 0, streak: 0, lastWasCorrect: false } }; setProgress(init); saveProgress(init); } }} />}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("app"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
