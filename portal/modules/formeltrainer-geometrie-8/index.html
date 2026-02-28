@@ -325,7 +325,7 @@
     }
 
     // ------------------------------------------------------------
-    // UI Bausteine (Jetzt wieder im ruhigen HoS-Style!)
+    // UI Bausteine
     // ------------------------------------------------------------
     function Pill({ children }) {
       return <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-600 shadow-sm print-hide">{children}</span>;
@@ -501,6 +501,9 @@
       const [clozeInputs, setClozeInputs] = useState([]);
       const [clozeChecked, setClozeChecked] = useState(false);
 
+      // NEU: Toggle für die kompakten Boxen
+      const [showBoxes, setShowBoxes] = useState(false);
+
       const pool = useMemo(() => facts.filter(f => (domain === "ALLE") || f.domain === domain), [facts, domain]);
 
       function getItemState(id) { return progress.items[id] || defaultItemState(); }
@@ -546,6 +549,37 @@
 
       const dueCount = useMemo(() => pool.filter(f => (getItemState(f.id).dueAt || 0) <= nowMs()).length, [pool, progress, domain]);
 
+      // Box-Berechnung für die Toggle-Ansicht
+      const boxCounts = useMemo(() => {
+        const counts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        for (const f of facts) {
+          const st = progress.items[f.id];
+          const b = clamp(st && st.box ? st.box : 1, 1, 5);
+          counts[b] += 1;
+        }
+        return counts;
+      }, [facts, progress]);
+
+      const boxMax = Math.max(boxCounts[1], boxCounts[2], boxCounts[3], boxCounts[4], boxCounts[5]) || 1;
+      // Höhe maximal 60px (h-16), damit es kompakt bleibt
+      const barHeight = (count) => Math.max(4, Math.round((count / boxMax) * 60));
+
+      const boxColors = {
+        1: "bg-slate-300",
+        2: "bg-sky-300",
+        3: "bg-blue-400",
+        4: "bg-teal-400",
+        5: "bg-emerald-500"
+      };
+
+      const boxLabels = {
+        1: "Neu",
+        2: "Unsicher",
+        3: "Training",
+        4: "Sicher",
+        5: "Profi"
+      };
+
       return (
         <div className="space-y-6 print-hide">
           <Card className="p-6">
@@ -561,12 +595,58 @@
               <SmallBtn kind="primary" onClick={nextItem}>Überspringen / Nächste</SmallBtn>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Pill>Fällig: <span className="font-bold text-slate-800 ml-1">{dueCount}</span></Pill>
-              <Pill>Versuche gesamt: <span className="font-bold text-slate-800 ml-1">{progress.stats.attempts}</span></Pill>
-              <Pill>Davon richtig: <span className="font-bold text-slate-800 ml-1">{progress.stats.correct}</span></Pill>
-              <Pill>Aktuelles Format: <span className="font-bold text-slate-800 ml-1">{taskType}</span></Pill>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap gap-3">
+                <Pill>Fällig: <span className="font-bold text-slate-800 ml-1">{dueCount}</span></Pill>
+                <Pill>Versuche gesamt: <span className="font-bold text-slate-800 ml-1">{progress.stats.attempts}</span></Pill>
+                <Pill>Davon richtig: <span className="font-bold text-slate-800 ml-1">{progress.stats.correct}</span></Pill>
+                <Pill>Aktuelles Format: <span className="font-bold text-slate-800 ml-1">{taskType}</span></Pill>
+              </div>
+
+              <button
+                onClick={() => setShowBoxes(!showBoxes)}
+                className="rounded-lg bg-slate-50 px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition border border-slate-200"
+              >
+                {showBoxes ? "▲ Boxen ausblenden" : "▼ Boxen anzeigen"}
+              </button>
             </div>
+
+            {/* HIER STARTEN DIE KOMPAKTEN BOXEN (ON-DEMAND) */}
+            {showBoxes && (
+              <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-inner">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <div className="text-sm font-extrabold text-slate-900">Dein Lernfortschritt</div>
+                    <div className="text-xs font-semibold text-slate-500">Leitner-Boxen System</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs font-bold text-slate-500">Gesamt</div>
+                    <div className="text-sm font-extrabold text-slate-900">{facts.length} Formeln</div>
+                  </div>
+                </div>
+
+                <div className="flex items-end justify-between gap-2 overflow-x-auto pb-1 pt-1">
+                  {[1, 2, 3, 4, 5].map((b) => (
+                    <div key={b} className="flex-1 flex flex-col items-center group">
+                      {/* h-16 statt h-24 für deutlich geringere Höhe */}
+                      <div className="h-16 w-full max-w-[40px] rounded-t-lg bg-white flex items-end overflow-hidden border-b-2 border-slate-200">
+                        <div
+                          className={`w-full transition-all duration-500 ease-out ${boxColors[b]} opacity-85 group-hover:opacity-100`}
+                          style={{ height: barHeight(boxCounts[b]) + "px" }}
+                          title={`Box ${b}: ${boxCounts[b]} Formeln`}
+                        />
+                      </div>
+                      <div className="mt-2 text-center">
+                        <div className="text-xs font-extrabold text-slate-800">Box {b}</div>
+                        <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{boxLabels[b]}</div>
+                        <div className="mt-1 inline-block rounded-md bg-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-700">{boxCounts[b]}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {/* ENDE DER KOMPAKTEN BOXEN */}
           </Card>
 
           {current && (
