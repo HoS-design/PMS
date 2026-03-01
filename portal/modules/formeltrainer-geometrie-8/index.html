@@ -304,6 +304,41 @@
       return candidates.some(c => c === stripped || c === u);
     }
 
+    function normalizeExpr(s) {
+      let t = normalizeMath(s);
+      t = t.replaceAll("°", "");
+      while (t.startsWith("(") && t.endsWith(")")) {
+        t = t.slice(1, -1);
+      }
+      return t;
+    }
+
+    function parseSimpleFraction(rhs) {
+      const s = String(rhs || "").trim();
+      const idx = s.lastIndexOf("/");
+      if (idx === -1) return null;
+      return { num: s.slice(0, idx).trim(), den: s.slice(idx + 1).trim() };
+    }
+
+    function expectedFractions(fact) {
+      const { rhs } = splitFormula(fact.formula);
+      const parts = rhs.length ? rhs : [fact.formula];
+      const fracs = [];
+      for (const p of parts) {
+        const f = parseSimpleFraction(p);
+        if (f && f.num && f.den) fracs.push(f);
+      }
+      return fracs;
+    }
+
+    function fractionEqualsUserInput(fact, userNum, userDen) {
+      const fracs = expectedFractions(fact);
+      if (!fracs.length) return false;
+      const un = normalizeExpr(userNum);
+      const ud = normalizeExpr(userDen);
+      return fracs.some(f => normalizeExpr(f.num) === un && normalizeExpr(f.den) === ud);
+    }
+
     function makeClozeFromRhs(rhsString) {
       const src = String(rhsString);
       const tokenRe = /([A-Za-z]+[0-9]*|[0-9]+|π|pi|[+\-*/^()·×])/g;
@@ -350,6 +385,30 @@
 
     function TeacherNote({ children, title="Hinweis" }) {
       return <div className="mt-4 rounded-r-lg border-l-4 border-blue-400 bg-blue-50 p-4 print-hide"><div className="text-xs font-bold text-blue-700 uppercase tracking-wider">{title}</div><div className="mt-1 text-sm text-blue-900 leading-relaxed">{children}</div></div>;
+    }
+
+    function MathKeyboard({ onKey, vars = [] }) {
+      const coreKeys = ["π","·","+","−","/","(",")","=","²","³","^","⌫"];
+      const varKeys = Array.from(new Set((vars || []).map(String))).slice(0, 10);
+      const keys = [...varKeys, ...coreKeys];
+      return (
+        <div className="mt-4 rounded-lg border border-slate-200 bg-white p-3 print-hide">
+          <div className="text-xs font-semibold text-slate-500 mb-2">Mathe‑Tastatur</div>
+          <div className="flex flex-wrap gap-2">
+            {keys.map(k => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => onKey(k)}
+                className="rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100"
+                title={k === "⌫" ? "Löschen" : "Einfügen"}
+              >
+                {k}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
     }
 
     // ------------------------------------------------------------
@@ -497,6 +556,13 @@
       const [mcPicked, setMcPicked] = useState(null);
       const [tipValue, setTipValue] = useState("");
       const [tipChecked, setTipChecked] = useState(false);
+      const [tipScope, setTipScope] = useState("rhs"); // "rhs" | "full"
+      const [tipNum, setTipNum] = useState("");
+      const [tipDen, setTipDen] = useState("");
+      const activeFieldRef = useRef("tip"); // "tip" | "num" | "den"
+      const tipInputRef = useRef(null);
+      const numInputRef = useRef(null);
+      const denInputRef = useRef(null);
       const [cloze, setCloze] = useState(null);
       const [clozeInputs, setClozeInputs] = useState([]);
       const [clozeChecked, setClozeChecked] = useState(false);
@@ -507,6 +573,44 @@
       const pool = useMemo(() => facts.filter(f => (domain === "ALLE") || f.domain === domain), [facts, domain]);
 
       function getItemState(id) { return progress.items[id] || defaultItemState(); }
+
+      function insertInto(getValue, setValue, el, token) {
+        const val = String(getValue() ?? "");
+        const start = (el && typeof el.selectionStart === "number") ? el.selectionStart : val.length;
+        const end = (el && typeof el.selectionEnd === "number") ? el.selectionEnd : val.length;
+
+        let next = val;
+        let caret = start;
+
+        if (token === "⌫") {
+          if (start !== end) {
+            next = val.slice(0, start) + val.slice(end);
+            caret = start;
+          } else if (start > 0) {
+            next = val.slice(0, start - 1) + val.slice(end);
+            caret = start - 1;
+          }
+        } else {
+          next = val.slice(0, start) + token + val.slice(end);
+          caret = start + String(token).length;
+        }
+
+        setValue(next);
+        requestAnimationFrame(() => {
+          if (el) {
+            el.focus();
+            try { el.setSelectionRange(caret, caret); } catch (e) {}
+          }
+        });
+      }
+
+      function insertToken(token) {
+        if (tipChecked) return;
+        const target = activeFieldRef.current || "tip";
+        if (target === "num") return insertInto(() => tipNum, setTipNum, numInputRef.current, token);
+        if (target === "den") return insertInto(() => tipDen, setTipDen, denInputRef.current, token);
+        return insertInto(() => tipValue, setTipValue, tipInputRef.current, token);
+      }
 
       function nextItem() {
         if (pool.length === 0) return;
@@ -524,7 +628,7 @@
 
         setTaskType(tt); setCurrent(picked); setReveal(false); setFeedback(null); setMcPicked(null);
         setMcOptions(tt === "MC" ? makeQuizOptions(picked, pool, 4) : []);
-        setTipValue(""); setTipChecked(false); setCloze(null); setClozeInputs([]); setClozeChecked(false);
+        setTipValue(""); setTipChecked(false); setTipScope("rhs"); setTipNum(""); setTipDen(""); activeFieldRef.current = "tip"; setCloze(null); setClozeInputs([]); setClozeChecked(false);
 
         if (tt === "LUECKE") {
           const { rhs } = splitFormula(picked.formula);
@@ -548,6 +652,8 @@
       useEffect(() => { if (!current) nextItem(); }, [domain, practiceMode]);
 
       const dueCount = useMemo(() => pool.filter(f => (getItemState(f.id).dueAt || 0) <= nowMs()).length, [pool, progress, domain]);
+
+      const hasFraction = current ? (expectedFractions(current).length > 0) : false;
 
       // Box-Berechnung für die Toggle-Ansicht
       const boxCounts = useMemo(() => {
@@ -699,15 +805,120 @@
 
                 {taskType === "TIP" && (
                   <div className="max-w-2xl">
-                    <TeacherNote title="Aufgabe">Ergänze die rechte Seite der Gleichung als Text. (Tipp: 'pi' statt 'π' ist erlaubt).</TeacherNote>
-                    <div className="mt-6 flex items-center gap-3 text-xl">
-                      <div className="font-mono font-medium text-slate-800 whitespace-nowrap">{splitFormula(current.formula).lhs} =</div>
-                      <input value={tipValue} onChange={(e) => setTipValue(e.target.value)} className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none" disabled={tipChecked} autoFocus />
+                    <TeacherNote title="Aufgabe">
+                      Tippe entweder <strong>nur die rechte Seite</strong> oder <strong>die ganze Formel</strong>.
+                      Du kannst die Mathe‑Tastatur nutzen (z.B. π, ², ³, ·).
+                    </TeacherNote>
+
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => { if (!tipChecked) setTipScope("rhs"); }}
+                        className={"rounded-lg border px-3 py-1.5 text-xs font-bold transition print-hide " + (tipScope === "rhs" ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50")}
+                      >
+                        Rechte Seite
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { if (!tipChecked) setTipScope("full"); }}
+                        className={"rounded-lg border px-3 py-1.5 text-xs font-bold transition print-hide " + (tipScope === "full" ? "border-blue-600 bg-blue-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50")}
+                      >
+                        Ganze Formel
+                      </button>
+
+                      {hasFraction && (
+                        <span className="text-xs font-semibold text-slate-500 ml-1">
+                          (mit Bruch‑Eingabe möglich)
+                        </span>
+                      )}
                     </div>
+
+                    {tipScope === "rhs" ? (
+                      <div className="mt-6 flex items-center gap-3 text-xl">
+                        <div className="font-mono font-medium text-slate-800 whitespace-nowrap">{splitFormula(current.formula).lhs} =</div>
+                        <input
+                          ref={tipInputRef}
+                          onFocus={() => { activeFieldRef.current = "tip"; }}
+                          value={tipValue}
+                          onChange={(e) => setTipValue(e.target.value)}
+                          className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none"
+                          disabled={tipChecked}
+                          autoFocus
+                        />
+                      </div>
+                    ) : (
+                      <div className="mt-6">
+                        <div className="text-xs font-semibold text-slate-500 mb-2">Ganze Formel eingeben</div>
+                        <input
+                          ref={tipInputRef}
+                          onFocus={() => { activeFieldRef.current = "tip"; }}
+                          value={tipValue}
+                          onChange={(e) => setTipValue(e.target.value)}
+                          placeholder={current.formula}
+                          className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-4 py-3 focus:border-blue-500 focus:outline-none"
+                          disabled={tipChecked}
+                          autoFocus
+                        />
+                      </div>
+                    )}
+
+                    {hasFraction && (
+                      <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                        <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">Bruch‑Eingabe (optional)</div>
+                        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_160px] sm:items-end">
+                          <div>
+                            <div className="text-xs font-semibold text-slate-500 mb-1">Zähler</div>
+                            <input
+                              ref={numInputRef}
+                              onFocus={() => { activeFieldRef.current = "num"; }}
+                              value={tipNum}
+                              onChange={(e) => setTipNum(e.target.value)}
+                              className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                              disabled={tipChecked}
+                              placeholder="…"
+                            />
+                          </div>
+                          <div className="text-2xl font-mono text-slate-500 justify-self-center sm:pb-2">/</div>
+                          <div>
+                            <div className="text-xs font-semibold text-slate-500 mb-1">Nenner</div>
+                            <input
+                              ref={denInputRef}
+                              onFocus={() => { activeFieldRef.current = "den"; }}
+                              value={tipDen}
+                              onChange={(e) => setTipDen(e.target.value)}
+                              className="w-full font-mono rounded-lg border-2 border-slate-300 bg-white px-3 py-2 focus:border-blue-500 focus:outline-none"
+                              disabled={tipChecked}
+                              placeholder="…"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    <MathKeyboard onKey={insertToken} vars={current.vars} />
+
                     <div className="mt-6 flex flex-wrap gap-3">
-                      <SmallBtn kind="primary" onClick={() => { setTipChecked(true); markAnswer(rhsEqualsUserInput(current, tipValue)); }} disabled={tipChecked || !tipValue.trim()}>Prüfen</SmallBtn>
+                      <SmallBtn
+                        kind="primary"
+                        onClick={() => { setTipChecked(true); markAnswer(rhsEqualsUserInput(current, tipValue)); }}
+                        disabled={tipChecked || !tipValue.trim()}
+                      >
+                        Text prüfen
+                      </SmallBtn>
+
+                      {hasFraction && (
+                        <SmallBtn
+                          kind="primary"
+                          onClick={() => { setTipChecked(true); markAnswer(fractionEqualsUserInput(current, tipNum, tipDen)); }}
+                          disabled={tipChecked || !tipNum.trim() || !tipDen.trim()}
+                        >
+                          Bruch prüfen
+                        </SmallBtn>
+                      )}
+
                       {!tipChecked && <SmallBtn onClick={() => setReveal(r => !r)}>Tipp ansehen</SmallBtn>}
                     </div>
+
                     {reveal && !tipChecked && <div className="mt-4 bg-slate-50 p-4 rounded text-center"><MathTex tex={current.tex} fallback={current.formula} block={true} /></div>}
                     {feedback && <div className={"mt-6 rounded-lg p-4 border-l-4 " + (feedback === "OK" ? "border-emerald-500 bg-emerald-50 text-emerald-900" : "border-red-500 bg-red-50 text-red-900")}>{feedback === "OK" ? "Korrekt!" : <span>Richtig wäre: <MathTex tex={current.tex} fallback={current.formula} className="ml-2 font-bold" /></span>}</div>}
                   </div>
