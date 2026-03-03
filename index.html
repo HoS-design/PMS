@@ -12,11 +12,11 @@
             --ink: #1e293b;
             --muted: #64748b;
             --line: #e2e8f0;
-            
+
             /* Fach-Farben (Dezent) */
             --de-accent: #ef4444; /* Rot für Deutsch */
             --de-bg: #fef2f2;     /* Sehr helles Rot */
-            
+
             --ma-accent: #3b82f6; /* Blau für Mathe */
             --ma-bg: #eff6ff;     /* Sehr helles Blau */
 
@@ -30,7 +30,7 @@
             --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -1px rgba(0,0,0,0.03);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
-            
+
             --radius: 16px;
             --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
@@ -53,7 +53,7 @@
             position: sticky; top: 0; z-index: 50;
             box-shadow: var(--shadow-sm);
         }
-        
+
         .container {
             max-width: 1100px;
             margin: 0 auto;
@@ -127,7 +127,7 @@
 
         /* --- Sektionen --- */
         .section { margin: 40px 0; }
-        
+
         .section-header {
             display: flex; align-items: center; gap: 12px;
             margin-bottom: 24px;
@@ -143,7 +143,7 @@
         /* Farb-Themen für Sektionen */
         .sec-de .section-header { border-color: rgba(239, 68, 68, 0.2); }
         .sec-de h2 { color: var(--de-accent); }
-        
+
         .sec-ma .section-header { border-color: rgba(59, 130, 246, 0.2); }
         .sec-ma h2 { color: var(--ma-accent); }
 
@@ -173,14 +173,14 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .card:hover {
             transform: translateY(-4px);
             box-shadow: var(--shadow-lg);
         }
 
         /* --- HOVER EFFEKTE (NEU) --- */
-        
+
         /* Deutsch: Roter Hintergrund + Rahmen bei Hover */
         .card.de:hover {
             background-color: var(--de-bg);
@@ -227,7 +227,7 @@
         .card-top {
             display: flex; justify-content: space-between; align-items: flex-start;
         }
-        
+
         .icon-box {
             width: 48px; height: 48px;
             border-radius: 12px;
@@ -271,7 +271,7 @@
         footer a:hover {
             color: var(--ink);
         }
-        
+
         /* Utility: Verstecken beim Filtern */
         .hidden { display: none !important; }
 
@@ -292,7 +292,7 @@
                     <p>Digitale Übungen für Unterricht & Freiarbeit</p>
                 </div>
             </div>
-            
+
             <div class="search-wrapper">
                 <span class="search-icon">🔎</span>
                 <input type="text" id="searchInput" class="search-input" placeholder="Suche nach Thema (z.B. Zeitformen, Körper)...">
@@ -301,13 +301,13 @@
     </header>
 
     <div class="container">
-        
+
         <div class="section sec-de" id="sec-deutsch">
             <div class="section-header">
                 <h2>Deutsch</h2>
                 <span class="count-badge" id="count-de">0</span>
             </div>
-            
+
             <div class="grid" id="grid-deutsch"></div>
         </div>
 
@@ -320,7 +320,7 @@
             <div class="grid" id="grid-mathe"></div>
         </div>
 
-    
+
 
 <div class="section sec-en" id="sec-englisch">
     <div class="section-header">
@@ -435,7 +435,15 @@
 					  title: "das oder dass",
 					  description: "Interaktiv lernen, ueben und testen (Ersetzprobe, Detektiv, Dialog, Test).",
 					  keywords: "das dass ersetzprobe nebensatz konjunktion pronomen artikel grammatik"
-				}
+				},
+                {
+                      href: "/portal/modules/beistriche/",
+                      icon: "✍️",
+                      title: "Beistriche sicher setzen",
+                      description: "Beistriche sicher setzen. Pflichtfälle + Zweifelsfälle optional erklärt. Übung + Test.",
+                      keywords: "beistrich beistriche komma kommasetzung öwb nebensatz relativsatz infinitivgruppe einschub wörtliche rede und",
+                      isNew: true
+                }
             ],
             mathe: [
                 {
