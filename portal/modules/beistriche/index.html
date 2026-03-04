@@ -65,16 +65,16 @@
 
     // Alle Regeln unverändert
     const RULES = [
-      { key:"satzkern", levels:["standard","ahs"], title:"Satzkern-Strategie (Prüfungstrick)", why:"Satzkerne (finite Verben) helfen dir, Teilsätze zu erkennen – aber sie ersetzen nicht die Beistrichregeln.", signals:["Personalform finden (gehe, ging, kommt, hat, ist …)","Nebensatzstarter markieren (weil, dass, wenn …)","Relativwörter markieren (der/die/das …)"], examples:["Wenn es regnet, bleiben wir zu Hause. (2 Satzkerne: regnet / bleiben)","Er packte seine Sachen und ging nach Hause. (2 Verben, aber 1 Hauptsatz → kein Beistrich)"], notes:["Merke: „Mehrere Satzkerne“ heißt nicht automatisch „Beistrich“. Entscheidend ist: Nebensatz/Relativsatz (immer) oder zwei selbstständige Hauptsätze (oft möglich)."] },
+      { key:"satzkern", levels:["standard","ahs"], title:"Satzkern-Strategie (Prüfungstrick)", why:"Satzkerne (finite Verben) helfen dir, Teilsätze zu erkennen – aber sie ersetzen nicht die Kommaregeln.", signals:["Personalform finden (gehe, ging, kommt, hat, ist …)","Nebensatzstarter markieren (weil, dass, wenn …)","Relativwörter markieren (der/die/das …)"], examples:["Wenn es regnet, bleiben wir zu Hause. (2 Satzkerne: regnet / bleiben)","Er packte seine Sachen und ging nach Hause. (2 Verben, aber 1 Hauptsatz → kein Beistrich)"], notes:["Merke: „Mehrere Satzkerne“ heißt nicht automatisch „Komma“. Entscheidend ist: Nebensatz/Relativsatz (immer) oder zwei selbstständige Hauptsätze (oft möglich)."] },
       { key:"aufzaehlung", levels:["standard","ahs"], title:"1) Aufzählungen", why:"Aufzählungen werden mit Beistrich getrennt – vor dem letzten „und/oder“ meist kein Beistrich.", signals:["mehrere gleichartige Teile","Reihung: A, B und C"], examples:["laut, deutlich und höflich","Brot, Milch, Käse und Obst"], notes:["Kein Beistrich vor „und“ in der einfachen Aufzählung."] },
       { key:"nebensatz", levels:["standard","ahs"], title:"2) Nebensätze", why:"Nebensätze werden vom Hauptsatz durch Beistriche abgetrennt (am Anfang und/oder Ende).", signals:["weil, dass, wenn, obwohl, damit, während, bevor, nachdem, bis, falls, sobald, ob …"], examples:["Wenn es regnet, bleiben wir zu Hause.","Ich glaube, dass du recht hast."], notes:["Nebensatz = Einleitewort + Verb oft am Ende."] },
       { key:"relativsatz", levels:["standard","ahs"], title:"3) Relativsätze", why:"Relativsätze (Zusatzinfos zu Nomen) werden immer durch Beistriche abgetrennt.", signals:["der/die/das, den/dem, dessen/deren, welcher …, wo …"], examples:["Der Schüler, der heute fehlt, bekommt die Aufgabe."], notes:["Relativsatz-Test: Zusatzinfo weglassen – der Satz bleibt korrekt."] },
-      { key:"satzreihe", levels:["standard","ahs"], title:"4) Satzreihen / zwei Hauptsätze", why:"Zwischen zwei selbstständigen Hauptsätzen steht häufig ein Beistrich – besonders bei aber, denn, sondern, doch, jedoch …", signals:["aber, denn, sondern, doch, jedoch, trotzdem, deshalb"], examples:["Ich wollte gehen, aber es regnete.","Wir lernen, denn morgen ist die Schularbeit."], notes:["Bei „und/oder“ ist der Beistrich zwischen Hauptsätzen oft möglich, aber nicht immer Pflicht (Lesbarkeit).","Wenn vor „und“ ein Nebensatz/Einschub endet, steht der Beistrich trotzdem."] },
+      { key:"satzreihe", levels:["standard","ahs"], title:"4) Satzreihen / zwei Hauptsätze", why:"Zwischen zwei selbstständigen Hauptsätzen steht häufig ein Beistrich – besonders bei aber, denn, sondern, doch, jedoch …", signals:["aber, denn, sondern, doch, jedoch, trotzdem, deshalb"], examples:["Ich wollte gehen, aber es regnete.","Wir lernen, denn morgen ist die Schularbeit."], notes:["Bei „und/oder“ ist das Komma zwischen Hauptsätzen oft möglich, aber nicht immer Pflicht (Lesbarkeit).","Wenn vor „und“ ein Nebensatz/Einschub endet, steht das Komma trotzdem."] },
       { key:"infinitiv", levels:["standard","ahs"], title:"5) Infinitivgruppen mit „zu“", why:"Bei um/ohne/(an)statt/außer/als … zu wird die Infinitivgruppe mit Beistrich abgetrennt.", signals:["um … zu","ohne … zu","statt/anstatt … zu","außer … zu","als … zu"], examples:["Ich lerne, um die Schularbeit zu schaffen.","Er ging, ohne sich zu verabschieden."], notes:["In der Schule als sicherer Standard: Bei diesen Einleitungen Beistrich setzen."] },
       { key:"einschub", levels:["standard","ahs"], title:"6) Einschübe/Appositionen", why:"Einschübe (Zusatzinfos) werden mit zwei Beistrichen abgetrennt.", signals:["Max, unser Klassensprecher, …","Der Laptop, ein Leihgerät, …"], examples:["Frau Huber, unsere Klassenvorständin, hilft uns."], notes:["Einschub-Test: Weglassen – Satz bleibt korrekt."] },
       { key:"rede", levels:["standard","ahs"], title:"7) Wörtliche Rede", why:"Bei Begleitsätzen („sagte er“) steht oft ein Beistrich zwischen Rede und Begleitsatz.", signals:["sagte, fragte, rief, antwortete, meinte"], examples:["„Komm sofort!“, sagte Mara.","Mara sagte: „Komm sofort!“"], notes:["Satzzeichen bleibt in den Anführungszeichen; Beistrich folgt danach, wenn der Begleitsatz anschließt."] },
-      { key:"oewb_und", levels:["ahs"], title:"Zweifelsfall: Beistrich vor „und“ (zwei Hauptsätze)", why:"Verbinden „und/oder“ zwei vollständige Hauptsätze, kann ein Beistrich zur besseren Lesbarkeit gesetzt werden – muss aber nicht.", signals:["zwei vollständige Hauptsätze","langer Satz / Subjektwechsel"], examples:["Er packte seine Sachen(,) und er ging nach Hause."], notes:["In dieser App werden solche Aufgaben als „optional“ markiert und beide Lösungen akzeptiert."] },
-      { key:"oewb_infinitiv_optional", levels:["ahs"], title:"Zweifelsfall: kurzer Infinitiv ohne Einleitung", why:"Bei kurzen Infinitivgruppen ohne um/ohne/statt… kann der Beistrich möglich sein, muss aber nicht (z. B. zur Gliederung).", signals:["Er versprach(,) zu helfen.","Sie beschloss(,) nicht zu kommen."], examples:["Er versprach(,) zu helfen."], notes:["In der App: beide Varianten gelten als korrekt, wenn es als optional markiert ist."] }
+      { key:"oewb_und", levels:["ahs"], title:"Zweifelsfall: Komma vor „und“ (zwei Hauptsätze)", why:"Verbinden „und/oder“ zwei vollständige Hauptsätze, kann ein Komma zur besseren Lesbarkeit gesetzt werden – muss aber nicht.", signals:["zwei vollständige Hauptsätze","langer Satz / Subjektwechsel"], examples:["Er packte seine Sachen(,) und er ging nach Hause."], notes:["In dieser App werden solche Aufgaben als „optional“ markiert und beide Lösungen akzeptiert."] },
+      { key:"oewb_infinitiv_optional", levels:["ahs"], title:"Zweifelsfall: kurzer Infinitiv ohne Einleitung", why:"Bei kurzen Infinitivgruppen ohne um/ohne/statt… kann das Komma möglich sein, muss aber nicht (z. B. zur Gliederung).", signals:["Er versprach(,) zu helfen.","Sie beschloss(,) nicht zu kommen."], examples:["Er versprach(,) zu helfen."], notes:["In der App: beide Varianten gelten als korrekt, wenn es als optional markiert ist."] }
     ];
 
     const RULE_TO_CAT = {
@@ -105,7 +105,7 @@
       { id:"R1", levels:["standard","ahs"], cat:"Relativsätze", mode:"insert", diff:"easy", prompt:"Setze die Beistriche beim Relativsatz.", tokens:["Der","Schüler","der","heute","fehlt","bekommt","die","Aufgabe."], solutions:[[1,4]], explain:"Der Schüler, der heute fehlt, bekommt die Aufgabe." },
       { id:"R2", levels:["standard","ahs"], cat:"Relativsätze", mode:"insert", diff:"easy", prompt:"Setze die Beistriche beim Relativsatz.", tokens:["Das","Buch","das","ich","gestern","gelesen","habe","war","spannend."], solutions:[[1,6]], explain:"Das Buch, das ich gestern gelesen habe, war spannend." },
       { id:"R3", levels:["standard","ahs"], cat:"Relativsätze", mode:"insert", diff:"medium", prompt:"Relativsatz am Ende: Setze den Beistrich.", tokens:["Das","ist","der","Ort","an","dem","wir","uns","treffen."], solutions:[[3]], explain:"Das ist der Ort, an dem wir uns treffen." },
-      { id:"R4", levels:["ahs"], cat:"Relativsätze", mode:"insert", diff:"hard", prompt:"Zwei Relativsätze: Setze alle Beistriche.", tokens:["Der","Film","der","gestern","lief","den","wir","gesehen","haben","war","lustig."], solutions:[[1,4,8]], explain:"Der Film, der gestern lief, den wir gesehen haben, war lustig." },
+      { id:"R4", levels:["ahs"], cat:"Relativsätze", mode:"insert", diff:"hard", prompt:"Relativsatz: Setze alle Beistriche.", tokens:["Der","Film","der","gestern","lief","und","den","wir","gesehen","haben","war","lustig."], solutions:[[1,9]], explain:"Der Film, der gestern lief und den wir gesehen haben, war lustig." },
       { id:"I1", levels:["standard","ahs"], cat:"Infinitivgruppen", mode:"insert", diff:"easy", prompt:"„um … zu“: Setze den Beistrich.", tokens:["Ich","lerne","um","die","Schularbeit","zu","schaffen."], solutions:[[1]], explain:"Ich lerne, um die Schularbeit zu schaffen." },
       { id:"I2", levels:["standard","ahs"], cat:"Infinitivgruppen", mode:"insert", diff:"easy", prompt:"„ohne … zu“: Setze den Beistrich.", tokens:["Er","ging","ohne","sich","zu","verabschieden."], solutions:[[1]], explain:"Er ging, ohne sich zu verabschieden." },
       { id:"I3", levels:["standard","ahs"], cat:"Infinitivgruppen", mode:"insert", diff:"medium", prompt:"„statt … zu“: Setze den Beistrich.", tokens:["Statt","zu","lernen","spielte","er","am","Handy."], solutions:[[2]], explain:"Statt zu lernen, spielte er am Handy." },
@@ -120,21 +120,21 @@
       { id:"G1", levels:["standard","ahs"], cat:"Gemischt", mode:"insert", diff:"medium", prompt:"Setze alle nötigen Beistriche.", tokens:["Ich","weiß","dass","du","heute","kommst","aber","ich","bin","trotzdem","nervös."], solutions:[[1,5]], explain:"Ich weiß, dass du heute kommst, aber ich bin trotzdem nervös." },
       { id:"G2", levels:["standard","ahs"], cat:"Gemischt", mode:"insert", diff:"hard", prompt:"Setze alle nötigen Beistriche (Relativsatz + Nebensatz).", tokens:["Die","Schülerin","die","immer","pünktlich","ist","lernt","weil","sie","besser","werden","will."], solutions:[[1,5,6]], explain:"Die Schülerin, die immer pünktlich ist, lernt, weil sie besser werden will." },
       { id:"G3", levels:["standard","ahs"], cat:"Gemischt", mode:"insert", diff:"hard", prompt:"Setze alle nötigen Beistriche (Infinitivgruppe + Nebensatz).", tokens:["Ich","bleibe","daheim","um","in","Ruhe","zu","lernen","weil","morgen","die","Schularbeit","ist."], solutions:[[2,7]], explain:"Ich bleibe daheim, um in Ruhe zu lernen, weil morgen die Schularbeit ist." },
-      { id:"O1", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"Optional: Zwei Hauptsätze mit „und“. Beides gilt hier als korrekt.", tokens:["Er","packte","seine","Sachen","und","er","ging","nach","Hause."], solutions:[[],[3]], optional:true, explain:"Beistrich zwischen zwei Hauptsätzen mit „und“ ist möglich (Lesbarkeit), aber nicht immer Pflicht." },
-      { id:"O2", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"medium", prompt:"Optional: Kurzer Infinitiv ohne Einleitung (beides korrekt).", tokens:["Er","versprach","zu","helfen."], solutions:[[],[1]], optional:true, explain:"Er versprach(,) zu helfen. (Beistrich möglich, nicht zwingend.)" },
-      { id:"O3", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"Optional: Kurzer Infinitiv ohne Einleitung (beides korrekt).", tokens:["Sie","beschloss","nicht","zu","kommen."], solutions:[[],[1]], optional:true, explain:"Sie beschloss(,) nicht zu kommen. (Beistrich möglich, nicht zwingend.)" },
-      // --- Beispiele (nur Vornamen) ---
-      { id:"4C_A1", levels:["standard","ahs"], cat:"Aufzählungen", mode:"insert", diff:"easy", prompt:"Setze die Beistriche in der Aufzählung.", tokens:["Maximilian","Martin","Paul","und","Tom","spielen","Fußball."], solutions:[[0,1,2]], explain:"Aufzählung: Maximilian, Martin, Paul und Tom spielen Fußball. (Kein Beistrich vor „und“.)" },
-      { id:"4C_A2", levels:["standard","ahs"], cat:"Aufzählungen", mode:"insert", diff:"easy", prompt:"Setze die Beistriche in der Aufzählung.", tokens:["Hannah","Leonie","und","Lucia","arbeiten","gemeinsam","am","Plakat."], solutions:[[0]], explain:"Aufzählung: Hannah, Leonie und Lucia arbeiten gemeinsam am Plakat." },
-      { id:"4C_N1", levels:["standard","ahs"], cat:"Nebensätze", mode:"insert", diff:"easy", prompt:"Setze die Beistriche beim Nebensatz.", tokens:["Wenn","Jonas","Zeit","hat","hilft","er","Fabio."], solutions:[[3]], explain:"Wenn Jonas Zeit hat, hilft er Fabio." },
-      { id:"4C_N2", levels:["standard","ahs"], cat:"Nebensätze", mode:"insert", diff:"medium", prompt:"Setze die Beistriche beim Nebensatz.", tokens:["Fabian","lernt","weil","Sebastian","morgen","fragt."], solutions:[[1]], explain:"Fabian lernt, weil Sebastian morgen fragt." },
-      { id:"4C_R1", levels:["standard","ahs"], cat:"Relativsätze", mode:"insert", diff:"medium", prompt:"Setze die Beistriche beim Relativsatz.", tokens:["Marco","der","das","Heft","vergessen","hat","leiht","sich","eines."], solutions:[[0,5]], explain:"Marco, der das Heft vergessen hat, leiht sich eines." },
-      { id:"4C_I1", levels:["standard","ahs"], cat:"Infinitivgruppen", mode:"insert", diff:"easy", prompt:"Setze den Beistrich bei „um … zu“.", tokens:["Romy","lernt","um","die","Schularbeit","zu","schaffen."], solutions:[[1]], explain:"Romy lernt, um die Schularbeit zu schaffen." },
-      { id:"4C_E1", levels:["standard","ahs"], cat:"Einschübe", mode:"insert", diff:"medium", prompt:"Setze die Beistriche beim Einschub.", tokens:["Tom","unser","Klassensprecher","verteilt","die","Blätter."], solutions:[[0,2]], explain:"Tom, unser Klassensprecher, verteilt die Blätter." },
-      { id:"4C_W1", levels:["standard","ahs"], cat:"Wörtliche Rede", mode:"insert", diff:"easy", prompt:"Setze den Beistrich bei der wörtlichen Rede.", tokens:["„Bitte","leise!“","sagte","Florentina."], solutions:[[1]], explain:"„Bitte leise!“, sagte Florentina." },
-      { id:"4C_S1", levels:["standard","ahs"], cat:"Satzreihen", mode:"insert", diff:"medium", prompt:"Setze den Beistrich zwischen den Hauptsätzen.", tokens:["Lennox","wollte","beginnen","aber","Christian","war","noch","nicht","bereit."], solutions:[[2]], explain:"Lennox wollte beginnen, aber Christian war noch nicht bereit." },
-      { id:"4C_U1", levels:["standard","ahs"], cat:"Satzreihen", mode:"insert", diff:"hard", prompt:"Setze alle nötigen Beistriche. Achte auf das „und“.", tokens:["Sebastian","sagt","dass","Larissa","kommt","und","Maximilian","wartet."], solutions:[[1,4]], explain:"Sebastian sagt, dass Larissa kommt, und Maximilian wartet. (Beistrich vor „und“ schließt den Nebensatz.)" },
-      { id:"4C_O1", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"Zwei Hauptsätze mit „und“. Beides gilt als korrekt.", tokens:["Paul","machte","die","Aufgabe","und","Martin","kontrollierte","sie."], solutions:[[],[3]], optional:true, explain:"Paul machte die Aufgabe(,) und Martin kontrollierte sie. (Optionaler Fall: Beistrich möglich, nicht Pflicht.)" }
+      { id:"O1", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"Optional: Zwei Hauptsätze mit „und“. Beides gilt hier als korrekt.", tokens:["Er","packte","seine","Sachen","und","er","ging","nach","Hause."], solutions:[[],[3]], optional:true, explain:"Komma zwischen zwei Hauptsätzen mit „und“ ist möglich (Lesbarkeit), aber nicht immer Pflicht." },
+      { id:"O2", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"medium", prompt:"Optional: Kurzer Infinitiv ohne Einleitung (beides korrekt).", tokens:["Er","versprach","zu","helfen."], solutions:[[],[1]], optional:true, explain:"Er versprach(,) zu helfen. (Komma möglich, nicht zwingend.)" },
+      { id:"O3", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"Optional: Kurzer Infinitiv ohne Einleitung (beides korrekt).", tokens:["Sie","beschloss","nicht","zu","kommen."], solutions:[[],[1]], optional:true, explain:"Sie beschloss(,) nicht zu kommen. (Komma möglich, nicht zwingend.)" },
+      // --- 4c Beispiele (nur Vornamen) ---
+      { id:"4C_A1", levels:["standard","ahs"], cat:"Aufzählungen", mode:"insert", diff:"easy", prompt:"4c: Setze die Beistriche in der Aufzählung.", tokens:["Maximilian","Martin","Paul","und","Tom","spielen","Fußball."], solutions:[[0,1]], explain:"Aufzählung: Maximilian, Martin, Paul und Tom spielen Fußball. (Kein Beistrich vor „und“.)" },
+      { id:"4C_A2", levels:["standard","ahs"], cat:"Aufzählungen", mode:"insert", diff:"easy", prompt:"4c: Setze die Beistriche in der Aufzählung.", tokens:["Hannah","Leonie","und","Lucia","arbeiten","gemeinsam","am","Plakat."], solutions:[[0]], explain:"Aufzählung: Hannah, Leonie und Lucia arbeiten gemeinsam am Plakat." },
+      { id:"4C_N1", levels:["standard","ahs"], cat:"Nebensätze", mode:"insert", diff:"easy", prompt:"4c: Setze die Beistriche beim Nebensatz.", tokens:["Wenn","Jonas","Zeit","hat","hilft","er","Fabio."], solutions:[[3]], explain:"Wenn Jonas Zeit hat, hilft er Fabio." },
+      { id:"4C_N2", levels:["standard","ahs"], cat:"Nebensätze", mode:"insert", diff:"medium", prompt:"4c: Setze die Beistriche beim Nebensatz.", tokens:["Fabian","lernt","weil","Sebastian","morgen","fragt."], solutions:[[1]], explain:"Fabian lernt, weil Sebastian morgen fragt." },
+      { id:"4C_R1", levels:["standard","ahs"], cat:"Relativsätze", mode:"insert", diff:"medium", prompt:"4c: Setze die Beistriche beim Relativsatz.", tokens:["Marco","der","das","Heft","vergessen","hat","leiht","sich","eines."], solutions:[[0,5]], explain:"Marco, der das Heft vergessen hat, leiht sich eines." },
+      { id:"4C_I1", levels:["standard","ahs"], cat:"Infinitivgruppen", mode:"insert", diff:"easy", prompt:"4c: Setze den Beistrich bei „um … zu“.", tokens:["Romy","lernt","um","die","Schularbeit","zu","schaffen."], solutions:[[1]], explain:"Romy lernt, um die Schularbeit zu schaffen." },
+      { id:"4C_E1", levels:["standard","ahs"], cat:"Einschübe", mode:"insert", diff:"medium", prompt:"4c: Setze die Beistriche beim Einschub.", tokens:["Tom","unser","Klassensprecher","verteilt","die","Blätter."], solutions:[[0,2]], explain:"Tom, unser Klassensprecher, verteilt die Blätter." },
+      { id:"4C_W1", levels:["standard","ahs"], cat:"Wörtliche Rede", mode:"insert", diff:"easy", prompt:"4c: Setze den Beistrich bei der wörtlichen Rede.", tokens:["„Bitte","leise!“","sagte","Florentina."], solutions:[[1]], explain:"„Bitte leise!“, sagte Florentina." },
+      { id:"4C_S1", levels:["standard","ahs"], cat:"Satzreihen", mode:"insert", diff:"medium", prompt:"4c: Setze den Beistrich zwischen den Hauptsätzen.", tokens:["Lennox","wollte","beginnen","aber","Christian","war","noch","nicht","bereit."], solutions:[[2]], explain:"Lennox wollte beginnen, aber Christian war noch nicht bereit." },
+      { id:"4C_U1", levels:["standard","ahs"], cat:"Satzreihen", mode:"insert", diff:"hard", prompt:"4c: Setze alle nötigen Beistriche. Achte auf das „und“.", tokens:["Sebastian","sagt","dass","Larissa","kommt","und","Maximilian","wartet."], solutions:[[1,4]], explain:"Sebastian sagt, dass Larissa kommt, und Maximilian wartet. (Komma vor „und“ schließt den Nebensatz.)" },
+      { id:"4C_O1", levels:["ahs"], cat:"Zweifelsfälle", mode:"insert", diff:"hard", prompt:"4c (optional): Zwei Hauptsätze mit „und“. Beides gilt als korrekt.", tokens:["Paul","machte","die","Aufgabe","und","Martin","kontrollierte","sie."], solutions:[[],[3]], optional:true, explain:"Paul machte die Aufgabe(,) und Martin kontrollierte sie. (Optionaler Fall: Komma möglich, nicht Pflicht.)" }
 
     ];
 
@@ -169,14 +169,36 @@
       useEffect(() => { try{ localStorage.setItem(key, JSON.stringify(v)); }catch(e){} }, [key, v]);
       return [v, setV];
     }
-    function pickExercises({level, cat, count}){
+    function pickExercises({level, cat, count, boxesMap=null}){
       let pool = EXERCISES.filter(x => (x.levels||["standard","ahs"]).includes(level));
       if(cat && cat !== "Gemischt") pool = pool.filter(x => x.cat === cat);
+
+      // Fallback: gemischt
       if(pool.length === 0){
         pool = EXERCISES.filter(x => (x.levels||["standard","ahs"]).includes(level) && x.cat === "Gemischt");
         if(pool.length === 0) pool = EXERCISES.filter(x => (x.levels||["standard","ahs"]).includes(level));
       }
-      return shuffle(pool).slice(0, clamp(count, 1, pool.length));
+
+      const n = clamp(count, 1, pool.length);
+
+      // Ohne Boxen: normales Shuffle
+      if(!boxesMap){
+        return shuffle(pool).slice(0, n);
+      }
+
+      // Mit Boxen: gewichtet (Box 1 kommt am häufigsten)
+      const weightByBox = {1: 8, 2: 4, 3: 2, 4: 1, 5: 0.5};
+
+      // Weighted shuffle without replacement (Efraimidis-Spirakis)
+      const scored = pool.map(ex => {
+        const b = clamp(parseInt((boxesMap[ex.id] ?? 1), 10), 1, 5);
+        const w = weightByBox[b] || 1;
+        const key = Math.random() ** (1 / w);
+        return { ex, key };
+      });
+
+      scored.sort((a,b) => b.key - a.key);
+      return scored.slice(0, n).map(x => x.ex);
     }
 
     // ----------------------------
@@ -309,7 +331,7 @@
                 <li><b>Einschub</b> → zwei Beistriche.</li>
                 <li><b>Wörtliche Rede</b> → „…!“, sagte …</li>
                 {level === "ahs" ? (
-                  <li><b>Zweifelsfälle</b>: „und“ zwischen zwei Hauptsätzen oder kurzer Infinitiv → Beistrich oft möglich (Lesbarkeit).</li>
+                  <li><b>Zweifelsfälle</b>: „und“ zwischen zwei Hauptsätzen oder kurzer Infinitiv → Komma oft möglich (Lesbarkeit).</li>
                 ) : (
                   <li><b>Standard</b>: Zweifelsfälle weglassen – Pflichtfälle sauber setzen.</li>
                 )}
@@ -317,11 +339,11 @@
             </div>
 
             <div className="bg-red-50 rounded-2xl p-6 sm:p-8 shadow-sm ring-1 ring-red-100">
-              <h3 className="text-lg font-bold text-red-900 mb-4">Merksatz - Beistrich vor "und"</h3>
+              <h3 className="text-lg font-bold text-red-900 mb-4">Merksatz - Komma vor "und"</h3>
               <div className="text-sm text-red-900 space-y-3">
                 <p><b>Aufzählung:</b> kein Beistrich vor <span className="mono bg-white px-1.5 py-0.5 rounded ring-1 ring-red-200">und</span>.</p>
-                <p><b>Zwei Hauptsätze:</b> Beistrich oft <i>möglich</i> (Lesbarkeit), nicht immer Pflicht.</p>
-                <p><b>Nebensatz endet:</b> Beistrich steht trotzdem vor <span className="mono bg-white px-1.5 py-0.5 rounded ring-1 ring-red-200">und</span>.</p>
+                <p><b>Zwei Hauptsätze:</b> Komma oft <i>möglich</i> (Lesbarkeit), nicht immer Pflicht.</p>
+                <p><b>Nebensatz endet:</b> Komma steht trotzdem vor <span className="mono bg-white px-1.5 py-0.5 rounded ring-1 ring-red-200">und</span>.</p>
               </div>
             </div>
 
@@ -394,7 +416,30 @@
     function ScreenPractice({ level, category, mode, onFinish, onAbort }) {
       const isTest = mode === "test";
       const count = isTest ? 10 : 12;
-      const [queue] = useState(() => pickExercises({ level, cat: category, count }));
+
+      // --- Leitner-Boxen (nur in Üben aktiv, nicht im Test) ---
+      const boxesKey = `beistriche_boxes_${level}`;
+      const [boxesMap, setBoxesMap] = useStoredState(boxesKey, {});
+      const [boxesOpen, setBoxesOpen] = useState(false);
+
+      const boxCounts = useMemo(() => {
+        const c = {1:0,2:0,3:0,4:0,5:0};
+        const pool = EXERCISES.filter(x => (x.levels||["standard","ahs"]).includes(level));
+        for(const ex of pool){
+          const b = clamp(parseInt((boxesMap[ex.id] ?? 1), 10), 1, 5);
+          c[b] = (c[b] || 0) + 1;
+        }
+        return c;
+      }, [level, boxesMap]);
+
+      // Queue: gewichtet nach Boxen (nur Üben), sonst normal
+      const [queue] = useState(() => pickExercises({
+        level,
+        cat: category,
+        count,
+        boxesMap: isTest ? null : boxesMap
+      }));
+
       const [idx, setIdx] = useState(0);
 
       const [userPos, setUserPos] = useState([]);
@@ -412,6 +457,7 @@
       const item = queue[idx];
       const isDone = idx >= queue.length;
 
+      // Timer (nur Test)
       const [seconds, setSeconds] = useState(0);
       useEffect(() => {
         if (!isTest || isDone) return;
@@ -419,7 +465,32 @@
         return () => clearInterval(t);
       }, [isTest, isDone]);
 
+      // Reset pro Aufgabe (verhindert "Beistriche bleiben stehen")
+      useEffect(() => {
+        if(!item) return;
+        setChecked(false);
+        setShowSol(false);
+        setChoicePick(null);
+        setUserPos(item.mode === "detective" ? normalizePositions(item.initial || []) : []);
+      }, [idx, item?.id]);
+
       if (!item && !isDone) return <div className="text-center mt-20">Lade Aufgaben...</div>;
+
+      function gradeNow(){
+        if(!item) return false;
+        if(item.mode === "choice") return choicePick === item.correctIndex;
+        return isCorrect(userPos, item.solutions);
+      }
+
+      function moveBox(exId, ok){
+        // richtig -> Box +1, falsch -> Box -1 (min 1, max 5)
+        setBoxesMap(prev => {
+          const cur = clamp(parseInt((prev[exId] ?? 1), 10), 1, 5);
+          const next = ok ? Math.min(5, cur + 1) : Math.max(1, cur - 1);
+          if(next === cur) return prev;
+          return { ...prev, [exId]: next };
+        });
+      }
 
       if (isDone) {
         const rate = Math.round((roundScore / queue.length) * 100);
@@ -427,68 +498,103 @@
           <div className="fade-in max-w-xl mx-auto text-center mt-12">
             <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-sm ring-1 ring-slate-200">
               <div className="text-4xl mb-4">{rate >= 80 ? "🎉" : "📚"}</div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">{isTest ? "Test beendet!" : "Runde beendet!"}</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-2">{isTest ? "Test beendet" : "Runde beendet"}</h2>
               <p className="text-slate-600 mb-6">Du hast {roundScore} von {queue.length} Aufgaben richtig gelöst.</p>
               {isTest && (
                 <div className="bg-slate-50 inline-block px-4 py-2 rounded-lg text-slate-600 mb-8 font-mono text-sm ring-1 ring-slate-200">
                   Benötigte Zeit: {Math.floor(seconds/60)}:{String(seconds%60).padStart(2,"0")}
                 </div>
               )}
-              <Button onClick={onFinish} className="w-full">Zurück zur Übersicht</Button>
+              <button onClick={onFinish} className="w-full rounded-2xl bg-slate-900 text-white font-bold py-4 shadow-sm hover:bg-slate-800 transition">
+                Zurück zur Übersicht
+              </button>
             </div>
           </div>
         );
       }
 
-      function gradeNow() {
-        if(!item) return false;
-        if(item.mode === "choice") return choicePick === item.correctIndex;
-        return isCorrect(userPos, item.solutions);
-      }
-
       function handleCheck() {
         if(checked) {
           setIdx(i => i + 1);
-          setChecked(false);
-          setShowSol(false);
-          setChoicePick(null);
-          setUserPos(item.mode === "detective" ? normalizePositions(queue[idx+1]?.initial || []) : []);
-        } else {
-          const ok = gradeNow();
-          if(ok) setRoundScore(s => s + 1);
-
-          setStats(s => {
-            const answered = s.answered + 1;
-            const correct = s.correct + (ok ? 1 : 0);
-            const streak = ok ? (s.streak + 1) : 0;
-            const best = Math.max(s.best, streak);
-            return { answered, correct, streak, best };
-          });
-
-          setChecked(true);
+          return;
         }
+
+        const ok = gradeNow();
+        if(ok) setRoundScore(s => s + 1);
+
+        // Leitner-Update nur im Üben
+        if(!isTest && item?.id){
+          moveBox(item.id, ok);
+        }
+
+        setStats(s => {
+          const answered = s.answered + 1;
+          const correct = s.correct + (ok ? 1 : 0);
+          const streak = ok ? (s.streak + 1) : 0;
+          const best = Math.max(s.best, streak);
+          return { answered, correct, streak, best };
+        });
+
+        setChecked(true);
       }
 
-      let isAnsCorrect = null;
-      if (checked) isAnsCorrect = gradeNow();
-
+      const isAnsCorrect = checked ? gradeNow() : null;
       const solutionForDisplay = bestSolutionForDisplay(userPos, item.solutions);
+
+      const currentBox = clamp(parseInt((boxesMap[item.id] ?? 1), 10), 1, 5);
+
+      function resetBoxes(){
+        setBoxesMap({});
+      }
 
       return (
         <div className="fade-in max-w-4xl mx-auto flex flex-col min-h-[60vh]">
-          <div className="flex justify-between items-center mb-8 text-sm font-medium text-slate-400">
+          <div className="flex justify-between items-center mb-4 text-sm font-medium text-slate-400">
             <button onClick={onAbort} className="hover:text-slate-800 transition">Abbrechen</button>
+
             <div className="flex gap-1">
                {queue.map((_, i) => (
                  <div key={i} className={`w-2 h-2 rounded-full ${i === idx ? "bg-red-500" : i < idx ? "bg-slate-300" : "bg-slate-200"}`} />
                ))}
             </div>
+
             {isTest ? (
               <span className="font-mono">{Math.floor(seconds/60)}:{String(seconds%60).padStart(2,"0")}</span>
             ) : (
-              <span>Aufgabe {idx + 1}/{queue.length}</span>
+              <div className="flex items-center gap-3">
+                <span>Aufgabe {idx + 1}/{queue.length}</span>
+                <button
+                  onClick={() => setBoxesOpen(o => !o)}
+                  className="hover:text-slate-800 transition inline-flex items-center gap-1"
+                  title="Lernboxen ein-/ausblenden"
+                >
+                  <span className="text-xs">Boxen</span>
+                  <span className="text-xs">{boxesOpen ? "▴" : "▾"}</span>
+                </button>
+              </div>
             )}
           </div>
+
+          {/* Boxen (ausklappbar) – nur Üben */}
+          {!isTest && boxesOpen && (
+            <div className="mb-6 rounded-xl bg-white/70 ring-1 ring-black/5 px-4 py-2 text-xs text-slate-500 flex flex-wrap items-center gap-2">
+              <span className="font-bold text-slate-600">Lernboxen:</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 ring-1 ring-black/10 px-3 py-1">Box 1: {boxCounts[1]}</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 ring-1 ring-black/10 px-3 py-1">Box 2: {boxCounts[2]}</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 ring-1 ring-black/10 px-3 py-1">Box 3: {boxCounts[3]}</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 ring-1 ring-black/10 px-3 py-1">Box 4: {boxCounts[4]}</span>
+              <span className="inline-flex items-center rounded-full bg-slate-50 ring-1 ring-black/10 px-3 py-1">Box 5: {boxCounts[5]}</span>
+
+              <span className="ml-1 text-slate-400">·</span>
+              <span className="inline-flex items-center rounded-full bg-white ring-1 ring-black/10 px-3 py-1">
+                Aktuell: Box {currentBox}
+              </span>
+
+              <button onClick={resetBoxes} className="ml-auto hover:text-slate-800 transition underline underline-offset-2">
+                zurücksetzen
+              </button>
+            </div>
+          )}
 
           <div className="flex-grow flex flex-col justify-center items-center w-full">
              <div className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-6 text-center">
@@ -498,23 +604,24 @@
              {item.mode === "choice" ? (
                <div className="w-full max-w-lg grid gap-3">
                  {item.options.map((opt, i) => {
-                    const picked = choicePick === i;
-                    const correct = checked && i === item.correctIndex;
-                    const wrongPicked = checked && picked && i !== item.correctIndex;
-                    return (
-                      <button
-                        key={i}
-                        onClick={() => !checked && setChoicePick(i)}
-                        className={[
-                          "text-left rounded-xl px-5 py-4 ring-1 transition-all",
-                          picked && !checked ? "bg-red-50 ring-2 ring-red-500 shadow-sm" : "bg-white ring-slate-200 hover:bg-slate-50",
-                          correct ? "ring-2 ring-emerald-500 bg-emerald-50" : "",
-                          wrongPicked ? "ring-2 ring-rose-500 bg-rose-50" : ""
-                        ].join(" ")}
-                      >
-                        <div className="text-base text-slate-800 mono">{opt}</div>
-                      </button>
-                    );
+                   const picked = choicePick === i;
+                   const correct = checked && i === item.correctIndex;
+                   const wrongPicked = checked && picked && i !== item.correctIndex;
+
+                   return (
+                     <button
+                       key={i}
+                       onClick={() => !checked && setChoicePick(i)}
+                       className={[
+                         "text-left rounded-2xl px-5 py-4 ring-1 transition shadow-sm",
+                         picked ? "bg-white ring-slate-300" : "bg-white/70 ring-slate-200 hover:bg-white",
+                         correct ? "outline outline-2 outline-emerald-500/60" : "",
+                         wrongPicked ? "outline outline-2 outline-rose-500/60" : ""
+                       ].join(" ")}
+                     >
+                       <div className="text-sm sm:text-base text-slate-900 mono">{opt}</div>
+                     </button>
+                   );
                  })}
                </div>
              ) : (
@@ -527,31 +634,43 @@
                  solutionPositions={solutionForDisplay}
                />
              )}
-          </div>
 
-          <div className="mt-12 min-h-[140px] flex flex-col items-center justify-end">
-            {checked && (
-              <div className={`fade-in text-center mb-6 px-4 py-3 rounded-xl w-full max-w-md ${isAnsCorrect ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"}`}>
-                 <div className="font-bold mb-1">{isAnsCorrect ? "Richtig! Gut gemacht." : "Noch nicht ganz."}</div>
-                 <div className="text-sm opacity-90">{item.explain}</div>
+             <div className="mt-10 w-full flex flex-col items-center">
+               {checked && (
+                 <div className={`text-center mb-6 px-4 py-3 rounded-xl w-full max-w-md ${isAnsCorrect ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"}`}>
+                    <div className="font-bold mb-1">{isAnsCorrect ? "Richtig! Gut gemacht." : "Noch nicht ganz."}</div>
+                    <div className="text-sm opacity-90">{item.explain}</div>
 
-                 {!isAnsCorrect && !showSol && !isTest && item.mode !== "choice" && (
-                   <button onClick={()=>setShowSol(true)} className="mt-2 text-xs underline opacity-80 hover:opacity-100">Lösung anzeigen im Satz</button>
-                 )}
-              </div>
-            )}
+                    {!isAnsCorrect && !showSol && !isTest && item.mode !== "choice" && (
+                      <button onClick={()=>setShowSol(true)} className="mt-2 text-xs underline opacity-80 hover:opacity-100">Lösung anzeigen im Satz</button>
+                    )}
 
-            <Button onClick={handleCheck} className="w-full sm:w-64 py-4 text-lg" disabled={!checked && item.mode === "choice" && choicePick === null}>
-              {checked ? (idx === queue.length - 1 ? "Ergebnis ansehen" : "Nächste Aufgabe") : "Prüfen"}
-            </Button>
+                    {!isAnsCorrect && item.mode === "choice" && (
+                      <div className="mt-3 text-xs opacity-90 font-mono bg-white/50 p-2 rounded">
+                        Richtige Lösung: {item.options[item.correctIndex]}
+                      </div>
+                    )}
+                 </div>
+               )}
+
+               <button
+                 onClick={handleCheck}
+                 className="w-full sm:w-64 py-4 text-lg rounded-2xl bg-red-500 text-white font-bold shadow-sm ring-1 ring-red-600/20 hover:bg-red-600 active:translate-y-[1px] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                 disabled={!checked && item.mode === "choice" && choicePick === null}
+               >
+                 {checked ? (idx === queue.length - 1 ? "Ergebnis ansehen" : "Nächste Aufgabe") : "Prüfen"}
+               </button>
+
+               {/* KPI klein (unsichtbar vom Layout her: nur Text) */}
+               <div className="mt-4 text-xs text-slate-400">
+                 {isTest ? null : <>Richtig: {roundScore}/{idx + (checked ? 1 : 0)} · Serie: {stats.streak} · Beste: {stats.best}</>}
+               </div>
+             </div>
           </div>
         </div>
       );
     }
 
-    // ----------------------------
-    // App Root Controller
-    // ----------------------------
     function App(){
       const [level, setLevel] = useStoredState("beistriche_level", "standard");
       const [screen, setScreen] = useState("home"); // home, topic, practice, test, checklist
