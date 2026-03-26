@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bildgeschichte</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    :root {
+      --subject-color: #c62828;
+      --bg: #f3f6fa;
+      --card: #ffffff;
+      --line: #d9e2ec;
+      --text: #1f2937;
+      --muted: #667085;
+      --accent: #0ea5e9;
+      --accent-soft: #e0f2fe;
+      --accent-strong: #0369a1;
+      --good-soft: #dcfce7;
+      --warn-soft: #fef3c7;
+      --bad-soft: #fee2e2;
+      --shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      width: min(1080px, calc(100% - 24px));
+      margin: 18px auto 40px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: var(--accent-strong);
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .steps {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .step-pill,
+    .mini-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .step-pill.active {
+      background: var(--accent-soft);
+      border-color: #bae6fd;
+      color: var(--accent-strong);
+    }
+
+    .step-pill.done {
+      background: #ecfdf5;
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: #fbfdff;
+      padding: 14px;
+      min-height: 96px;
+    }
+
+    .stat .muted {
+      display: block;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-top: 8px;
+    }
+
+    .storybar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .storybar-left,
+    .storybar-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .select-label {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    select,
+    button,
+    textarea {
+      font: inherit;
+    }
+
+    select {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      background: #fff;
+      color: var(--text);
+      min-width: 220px;
+    }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 10px 18px rgba(14, 165, 233, 0.16);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .btn-good {
+      background: var(--good-soft);
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .btn-warn {
+      background: var(--warn-soft);
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .btn-soft {
+      background: #f8fafc;
+      color: var(--text);
+      border-color: var(--line);
+    }
+
+    .feedback {
+      margin-top: 14px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .feedback.good {
+      background: var(--good-soft);
+      border-color: #bbf7d0;
+      color: #166534;
+    }
+
+    .feedback.warn {
+      background: var(--warn-soft);
+      border-color: #fde68a;
+      color: #92400e;
+    }
+
+    .feedback.bad {
+      background: var(--bad-soft);
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .scene-card {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+      min-height: 100%;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .scene-card.dragging {
+      opacity: 0.62;
+      transform: rotate(1deg);
+    }
+
+    .scene-card.drop-target {
+      outline: 3px dashed #7dd3fc;
+      outline-offset: 4px;
+    }
+
+    .scene-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scene-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      font-weight: 800;
+      flex: 0 0 auto;
+    }
+
+    .drag-hint {
+      font-size: 0.84rem;
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px dashed var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+      white-space: nowrap;
+    }
+
+    .scene-visual {
+      min-height: 172px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+      display: grid;
+      place-items: center;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .scene-image {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .scene-fallback {
+      width: 100%;
+      height: 160px;
+      display: block;
+    }
+
+    .scene-fallback svg {
+      width: 100%;
+      height: 160px;
+      display: block;
+    }
+
+    .scene-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .scene-text {
+      margin: 0;
+      color: var(--muted);
+      min-height: 44px;
+      line-height: 1.48;
+      font-size: 0.96rem;
+    }
+
+    .scene-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .writing-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .writing-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: #fff;
+      padding: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .writing-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .writing-scene-title {
+      font-weight: 800;
+      margin: 0;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 128px;
+      resize: vertical;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      background: #fcfdff;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    textarea:focus,
+    select:focus {
+      outline: 3px solid rgba(14, 165, 233, 0.16);
+      border-color: #7dd3fc;
+    }
+
+    .chip-block {
+      display: grid;
+      gap: 10px;
+    }
+
+    .chip-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      border-radius: 999px;
+      border: 1px solid #bae6fd;
+      background: #f0f9ff;
+      color: #075985;
+      padding: 8px 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .chip.word {
+      background: #f8fafc;
+      border-color: var(--line);
+      color: var(--text);
+    }
+
+    .preview-box {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: #fcfdff;
+      padding: 16px;
+      line-height: 1.7;
+      min-height: 150px;
+      white-space: pre-wrap;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: start;
+      gap: 12px;
+      border: 1px solid var(--line);
+      background: #fcfdff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      line-height: 1.45;
+    }
+
+    .check-item input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--accent);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+    }
+
+    .toolbar-left,
+    .toolbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .score-box {
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      padding: 14px;
+      background: #fbfdff;
+      font-weight: 800;
+    }
+
+    .score-box strong {
+      font-size: 1.3rem;
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .helper-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .helper-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fbfdff;
+    }
+
+    .helper-card strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .stats,
+      .cards-grid,
+      .writing-grid,
+      .helper-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .intro {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 14px, 1080px);
+      }
+
+      .cards-grid,
+      .writing-grid,
+      .stats,
+      .helper-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .storybar,
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .storybar-left,
+      .storybar-right,
+      .toolbar-left,
+      .toolbar-right {
+        width: 100%;
+      }
+
+      .storybar-left > *,
+      .storybar-right > *,
+      .toolbar-left > *,
+      .toolbar-right > * {
+        flex: 1 1 auto;
+      }
+
+      button,
+      select {
+        width: 100%;
+      }
+    }
+
+    @media print {
+      body { background: #fff; }
+
+      .app-header,
+      .storybar,
+      .scene-controls,
+      .drag-hint,
+      .toolbar,
+      .feedback,
+      .chip,
+      .small-note,
+      .helper-grid {
+        display: none !important;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      .panel,
+      .scene-card,
+      .writing-card {
+        box-shadow: none;
+        border-color: #cbd5e1;
+        break-inside: avoid;
+      }
+
+      textarea {
+        border-color: #cbd5e1;
+        min-height: 90px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Bildgeschichte</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="panel intro">
+      <div>
+        <div class="eyebrow">Bildgeschichte fuer die 5. Schulstufe</div>
+        <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Saetze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
+        <div class="steps" aria-label="Arbeitsschritte">
+          <span id="stepOrder" class="step-pill active">1. Bilder ordnen</span>
+          <span id="stepWrite" class="step-pill">2. Saetze schreiben</span>
+          <span id="stepCheck" class="step-pill">3. Geschichte pruefen</span>
+        </div>
+        <div class="helper-grid" aria-label="Hilfen">
+          <div class="helper-card">
+            <strong>Tipp 1</strong>
+            Schau genau: Wer ist zu sehen? Wo spielt die Szene?
+          </div>
+          <div class="helper-card">
+            <strong>Tipp 2</strong>
+            Nutze Reihenfolge-Woerter wie zuerst, dann, ploetzlich und am Ende.
+          </div>
+          <div class="helper-card">
+            <strong>Tipp 3</strong>
+            Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fuehlen.
+          </div>
+        </div>
+      </div>
+      <div class="stats" aria-label="Uebersicht">
+        <div class="stat">
+          <span class="muted">Bilder</span>
+          <strong id="stat-scenes">4</strong>
+        </div>
+        <div class="stat">
+          <span class="muted">Reihenfolge</span>
+          <strong id="stat-order">offen</strong>
+        </div>
+        <div class="stat">
+          <span class="muted">Checkliste</span>
+          <strong id="stat-check">0 / 5</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="storybar">
+        <div class="storybar-left">
+          <label class="select-label" for="storySelect">Bildergeschichte:</label>
+          <select id="storySelect" aria-label="Bildergeschichte waehlen"></select>
+        </div>
+        <div class="storybar-right">
+          <button id="shuffleBtn" class="btn-secondary" type="button">Neu mischen</button>
+          <button id="checkBtn" class="btn-primary" type="button">Reihenfolge pruefen</button>
+        </div>
+      </div>
+      <p class="small-note">Du kannst die Karten mit der Maus verschieben oder mit den Pfeil-Buttons nach links und rechts bewegen.</p>
+      <div id="orderFeedback" class="feedback">Ordne die Bildkarten so, dass eine stimmige Geschichte entsteht.</div>
+      <div id="sceneGrid" class="cards-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="panel">
+      <div class="storybar">
+        <div class="storybar-left">
+          <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Saetze.</span>
+        </div>
+        <div class="storybar-right">
+          <button id="fillHelpBtn" class="btn-soft" type="button">Hilfen ausblenden</button>
+          <button id="clearTextsBtn" class="btn-secondary" type="button">Texte leeren</button>
+        </div>
+      </div>
+
+      <div id="helpArea" class="chip-block">
+        <div class="chip-title">Satzanfaenge</div>
+        <div id="starterChips" class="chips"></div>
+        <div class="chip-title">Wortbank</div>
+        <div id="wordChips" class="chips"></div>
+      </div>
+
+      <div id="writingGrid" class="writing-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="storybar">
+        <div class="storybar-left">
+          <span class="mini-pill">Deine ganze Geschichte</span>
+        </div>
+        <div class="storybar-right">
+          <button id="buildPreviewBtn" class="btn-primary" type="button">Geschichte zusammensetzen</button>
+          <button id="printBtn" class="btn-secondary" type="button">Drucken</button>
+        </div>
+      </div>
+      <div id="previewBox" class="preview-box">Hier erscheint deine Bildgeschichte.</div>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <span class="small-note">Tipp: Lies deinen Text am Ende noch einmal durch. Klingt die Geschichte logisch und rund?</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="storybar">
+        <div class="storybar-left">
+          <span class="mini-pill">Schreib-Checkliste</span>
+        </div>
+        <div class="storybar-right">
+          <button id="scoreBtn" class="btn-good" type="button">Checkliste auswerten</button>
+        </div>
+      </div>
+
+      <div class="checklist" id="checklist">
+        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte beruecksichtigt.</span></label>
+        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Woerter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
+        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe so geschrieben, dass man gut versteht, was passiert.</span></label>
+        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefuehle, Gedanken oder Reaktionen beschrieben.</span></label>
+        <label class="check-item"><input type="checkbox" data-check> <span>Meine Geschichte hat einen Schluss.</span></label>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 5</strong></div>
+        </div>
+        <div class="toolbar-right">
+          <button id="resetAllBtn" class="btn-warn" type="button">Alles zuruecksetzen</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const starterPhrases = [
+        'Zuerst ',
+        'Dann ',
+        'Kurz darauf ',
+        'Ploetzlich ',
+        'Erschrocken ',
+        'Zum Glueck ',
+        'Am Ende '
+      ];
+
+      const wordBank = [
+        'rennt', 'schaut', 'sucht', 'entdeckt', 'hilft', 'ruft', 'lacht', 'erschrickt',
+        'freut sich', 'traurig', 'nervoes', 'aufgeregt', 'mutig', 'vorsichtig',
+        'auf dem Schulhof', 'im Park', 'neben der Bank', 'vor der Schule',
+        'ploetzlich', 'schliesslich', 'zum Schluss', 'gemeinsam'
+      ];
+
+      const stories = [
+        {
+          id: 'hund',
+          title: 'Der ausgebuexte Hund',
+          scenes: [
+            {
+              id: 'hund-1',
+              order: 1,
+              image: 'assets/hund-1-offene-gartentuer.svg',
+              art: 'dog-gate',
+              title: 'Die offene Gartentuer',
+              desc: 'Ein Hund bemerkt eine offene Tuer und schleicht neugierig hinaus.'
+            },
+            {
+              id: 'hund-2',
+              order: 2,
+              image: 'assets/hund-2-die-suche-beginnt.svg',
+              art: 'child-search',
+              title: 'Die Suche beginnt',
+              desc: 'Ein Kind merkt, dass der Hund weg ist, und sucht aufgeregt nach Spuren.'
+            },
+            {
+              id: 'hund-3',
+              order: 3,
+              image: 'assets/hund-3-hund-im-park.svg',
+              art: 'dog-park',
+              title: 'Hund im Park',
+              desc: 'Der Hund sitzt im Park und spielt froehlich mit einem Ball.'
+            },
+            {
+              id: 'hund-4',
+              order: 4,
+              image: 'assets/hund-4-wieder-zu-hause.svg',
+              art: 'home-return',
+              title: 'Wieder zu Hause',
+              desc: 'Das Kind findet den Hund und bringt ihn erleichtert nach Hause.'
+            }
+          ]
+        },
+        {
+          id: 'saft',
+          title: 'Das Missgeschick mit dem Saft',
+          scenes: [
+            {
+              id: 'saft-1',
+              order: 1,
+              image: 'assets/saft-1-zu-schnell-gelaufen.svg',
+              art: 'juice-run',
+              title: 'Zu schnell gelaufen',
+              desc: 'Ein Kind laeuft mit einem Becher Saft in der Hand durch das Zimmer.'
+            },
+            {
+              id: 'saft-2',
+              order: 2,
+              image: 'assets/saft-2-oh-nein.svg',
+              art: 'juice-spill',
+              title: 'Oh nein!',
+              desc: 'Der Saft kippt um und landet auf dem Tisch und auf den Heften.'
+            },
+            {
+              id: 'saft-3',
+              order: 3,
+              image: 'assets/saft-3-schnell-helfen.svg',
+              art: 'juice-clean',
+              title: 'Schnell helfen',
+              desc: 'Das Kind holt sofort ein Tuch und wischt alles vorsichtig auf.'
+            },
+            {
+              id: 'saft-4',
+              order: 4,
+              image: 'assets/saft-4-alles-wieder-sauber.svg',
+              art: 'juice-clean-finish',
+              title: 'Alles wieder sauber',
+              desc: 'Am Ende ist der Tisch wieder sauber und das Kind ist erleichtert.'
+            }
+          ]
+        },
+        {
+          id: 'drachen',
+          title: 'Der Drachen fliegt davon',
+          scenes: [
+            {
+              id: 'drachen-1',
+              order: 1,
+              image: 'assets/drachen-1-windiger-nachmittag.svg',
+              art: 'kite-field',
+              title: 'Windiger Nachmittag',
+              desc: 'Ein Kind laesst auf einer Wiese einen Drachen steigen.'
+            },
+            {
+              id: 'drachen-2',
+              order: 2,
+              image: 'assets/drachen-2-die-schnur-reisst.svg',
+              art: 'kite-string-break',
+              title: 'Die Schnur reisst',
+              desc: 'Ploetzlich reisst die Schnur und der Drachen fliegt davon.'
+            },
+            {
+              id: 'drachen-3',
+              order: 3,
+              image: 'assets/drachen-3-im-baum-haengen-geblieben.svg',
+              art: 'kite-tree',
+              title: 'Im Baum haengen geblieben',
+              desc: 'Der Drachen bleibt oben in einem Baum haengen.'
+            },
+            {
+              id: 'drachen-4',
+              order: 4,
+              image: 'assets/drachen-4-gemeinsam-geschafft.svg',
+              art: 'kite-help',
+              title: 'Gemeinsam geschafft',
+              desc: 'Ein Erwachsener hilft, und zusammen holen sie den Drachen herunter.'
+            }
+          ]
+        }
+      ];
+
+      const STORAGE_KEY = 'hos-bildgeschichte-v2';
+
+      const state = {
+        storyId: stories[0].id,
+        order: [],
+        texts: {},
+        checks: [false, false, false, false, false],
+        helpVisible: true,
+        activeTextareaId: null,
+        orderStatus: 'offen'
+      };
+
+      const storySelect = document.getElementById('storySelect');
+      const sceneGrid = document.getElementById('sceneGrid');
+      const writingGrid = document.getElementById('writingGrid');
+      const orderFeedback = document.getElementById('orderFeedback');
+      const previewBox = document.getElementById('previewBox');
+      const scoreBox = document.getElementById('scoreBox');
+      const helpArea = document.getElementById('helpArea');
+      const statScenes = document.getElementById('stat-scenes');
+      const statOrder = document.getElementById('stat-order');
+      const statCheck = document.getElementById('stat-check');
+      const starterChips = document.getElementById('starterChips');
+      const wordChips = document.getElementById('wordChips');
+      const checkboxes = Array.from(document.querySelectorAll('[data-check]'));
+      const stepOrder = document.getElementById('stepOrder');
+      const stepWrite = document.getElementById('stepWrite');
+      const stepCheck = document.getElementById('stepCheck');
+
+      document.getElementById('shuffleBtn').addEventListener('click', shuffleCurrentStory);
+      document.getElementById('checkBtn').addEventListener('click', checkOrder);
+      document.getElementById('fillHelpBtn').addEventListener('click', toggleHelp);
+      document.getElementById('clearTextsBtn').addEventListener('click', clearTexts);
+      document.getElementById('buildPreviewBtn').addEventListener('click', buildPreview);
+      document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+      document.getElementById('scoreBtn').addEventListener('click', evaluateChecklist);
+      document.getElementById('resetAllBtn').addEventListener('click', resetAll);
+
+      checkboxes.forEach((cb, index) => {
+        cb.addEventListener('change', function () {
+          state.checks[index] = cb.checked;
+          updateChecklistStat();
+          updateStepPills();
+          saveState();
+        });
+      });
+
+      storySelect.addEventListener('change', function () {
+        state.storyId = storySelect.value;
+        state.orderStatus = 'offen';
+        initStory(true);
+      });
+
+      initSelect();
+      loadState();
+      initStory(false);
+      renderHelpChips();
+
+      function initSelect() {
+        storySelect.innerHTML = stories.map(function (story) {
+          return '<option value="' + escapeHtml(story.id) + '">' + escapeHtml(story.title) + '</option>';
+        }).join('');
+      }
+
+      function getCurrentStory() {
+        return stories.find(function (story) {
+          return story.id === state.storyId;
+        }) || stories[0];
+      }
+
+      function initStory(forceShuffle) {
+        const story = getCurrentStory();
+        storySelect.value = story.id;
+        statScenes.textContent = String(story.scenes.length);
+
+        const existingOrder = Array.isArray(state.order) ? state.order.slice() : [];
+        const validExistingOrder = existingOrder.length === story.scenes.length && existingOrder.every(function (id) {
+          return story.scenes.some(function (scene) {
+            return scene.id === id;
+          });
+        });
+
+        if (forceShuffle || !validExistingOrder) {
+          state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
+        }
+
+        story.scenes.forEach(function (scene) {
+          if (typeof state.texts[scene.id] !== 'string') state.texts[scene.id] = '';
+        });
+
+        renderSceneGrid();
+        renderWritingGrid();
+        buildPreview();
+        updateOrderStat(state.orderStatus || 'offen');
+        restoreChecklistUi();
+        updateStepPills();
+        saveState();
+      }
+
+      function renderSceneGrid() {
+        const story = getCurrentStory();
+        const orderScenes = state.order.map(function (id) {
+          return story.scenes.find(function (scene) {
+            return scene.id === id;
+          });
+        }).filter(Boolean);
+
+        sceneGrid.innerHTML = orderScenes.map(function (scene, index) {
+          return [
+            '<article class="scene-card" draggable="true" data-scene-id="' + escapeHtml(scene.id) + '">',
+              '<div class="scene-header">',
+                '<div class="scene-num">' + (index + 1) + '</div>',
+                '<div class="drag-hint">ziehen oder schieben</div>',
+              '</div>',
+              '<div class="scene-visual">' + renderSceneMedia(scene) + '</div>',
+              '<h3 class="scene-title">' + escapeHtml(scene.title) + '</h3>',
+              '<p class="scene-text">' + escapeHtml(scene.desc) + '</p>',
+              '<div class="scene-controls">',
+                '<button type="button" class="btn-soft" data-action="left" data-scene-id="' + escapeHtml(scene.id) + '">◀ Nach links</button>',
+                '<button type="button" class="btn-soft" data-action="right" data-scene-id="' + escapeHtml(scene.id) + '">Nach rechts ▶</button>',
+              '</div>',
+            '</article>'
+          ].join('');
+        }).join('');
+
+        sceneGrid.querySelectorAll('[data-action]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            moveScene(btn.getAttribute('data-scene-id'), btn.getAttribute('data-action'));
+          });
+        });
+
+        bindDragAndDrop();
+      }
+
+      function renderWritingGrid() {
+        const story = getCurrentStory();
+        const orderedScenes = state.order.map(function (id) {
+          return story.scenes.find(function (scene) {
+            return scene.id === id;
+          });
+        }).filter(Boolean);
+
+        writingGrid.innerHTML = orderedScenes.map(function (scene, index) {
+          const value = state.texts[scene.id] || '';
+          return [
+            '<section class="writing-card">',
+              '<div class="writing-head">',
+                '<div class="scene-num">' + (index + 1) + '</div>',
+                '<div>',
+                  '<p class="writing-scene-title">' + escapeHtml(scene.title) + '</p>',
+                  '<p class="small-note">Schreibe passende Saetze zu diesem Bild.</p>',
+                '</div>',
+              '</div>',
+              '<textarea data-textarea-id="' + escapeHtml(scene.id) + '" placeholder="Schreibe hier ...">' + escapeHtml(value) + '</textarea>',
+            '</section>'
+          ].join('');
+        }).join('');
+
+        writingGrid.querySelectorAll('textarea').forEach(function (textarea) {
+          textarea.addEventListener('focus', function () {
+            state.activeTextareaId = textarea.getAttribute('data-textarea-id');
+            saveState();
+          });
+
+          textarea.addEventListener('input', function () {
+            const sceneId = textarea.getAttribute('data-textarea-id');
+            state.texts[sceneId] = textarea.value;
+            buildPreview();
+            updateStepPills();
+            saveState();
+          });
+        });
+      }
+
+      function renderHelpChips() {
+        starterChips.innerHTML = starterPhrases.map(function (text) {
+          return '<button type="button" class="chip" data-insert="' + escapeAttr(text) + '">' + escapeHtml(text.trim()) + '</button>';
+        }).join('');
+
+        wordChips.innerHTML = wordBank.map(function (text) {
+          return '<button type="button" class="chip word" data-insert="' + escapeAttr(text + ' ') + '">' + escapeHtml(text) + '</button>';
+        }).join('');
+
+        helpArea.querySelectorAll('[data-insert]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            insertIntoActiveTextarea(btn.getAttribute('data-insert'));
+          });
+        });
+
+        helpArea.classList.toggle('hidden', !state.helpVisible);
+        document.getElementById('fillHelpBtn').textContent = state.helpVisible ? 'Hilfen ausblenden' : 'Hilfen einblenden';
+      }
+
+      function bindDragAndDrop() {
+        const cards = Array.from(sceneGrid.querySelectorAll('.scene-card'));
+        let draggedId = null;
+
+        cards.forEach(function (card) {
+          card.addEventListener('dragstart', function () {
+            draggedId = card.getAttribute('data-scene-id');
+            card.classList.add('dragging');
+          });
+
+          card.addEventListener('dragend', function () {
+            card.classList.remove('dragging');
+            cards.forEach(function (item) {
+              item.classList.remove('drop-target');
+            });
+          });
+
+          card.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            if (card.getAttribute('data-scene-id') !== draggedId) {
+              card.classList.add('drop-target');
+            }
+          });
+
+          card.addEventListener('dragleave', function () {
+            card.classList.remove('drop-target');
+          });
+
+          card.addEventListener('drop', function (event) {
+            event.preventDefault();
+            const targetId = card.getAttribute('data-scene-id');
+            card.classList.remove('drop-target');
+            if (!draggedId || draggedId === targetId) return;
+            reorderByDrag(draggedId, targetId);
+          });
+        });
+      }
+
+      function reorderByDrag(sourceId, targetId) {
+        const oldOrder = state.order.slice();
+        const sourceIndex = oldOrder.indexOf(sourceId);
+        const targetIndex = oldOrder.indexOf(targetId);
+        if (sourceIndex < 0 || targetIndex < 0) return;
+        oldOrder.splice(sourceIndex, 1);
+        oldOrder.splice(targetIndex, 0, sourceId);
+        state.order = oldOrder;
+        state.orderStatus = 'offen';
+        renderSceneGrid();
+        renderWritingGrid();
+        buildPreview();
+        updateOrderStat('offen');
+        orderFeedback.className = 'feedback';
+        orderFeedback.textContent = 'Reihenfolge veraendert. Pruefe jetzt, ob deine Geschichte logisch ist.';
+        updateStepPills();
+        saveState();
+      }
+
+      function moveScene(sceneId, direction) {
+        const idx = state.order.indexOf(sceneId);
+        if (idx < 0) return;
+        if (direction === 'left' && idx > 0) {
+          const tmpLeft = state.order[idx - 1];
+          state.order[idx - 1] = state.order[idx];
+          state.order[idx] = tmpLeft;
+        }
+        if (direction === 'right' && idx < state.order.length - 1) {
+          const tmpRight = state.order[idx + 1];
+          state.order[idx + 1] = state.order[idx];
+          state.order[idx] = tmpRight;
+        }
+        state.orderStatus = 'offen';
+        renderSceneGrid();
+        renderWritingGrid();
+        buildPreview();
+        updateOrderStat('offen');
+        orderFeedback.className = 'feedback';
+        orderFeedback.textContent = 'Gut! Du hast die Karten verschoben.';
+        updateStepPills();
+        saveState();
+      }
+
+      function shuffleCurrentStory() {
+        const story = getCurrentStory();
+        state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
+        state.orderStatus = 'offen';
+        renderSceneGrid();
+        renderWritingGrid();
+        buildPreview();
+        updateOrderStat('offen');
+        orderFeedback.className = 'feedback';
+        orderFeedback.textContent = 'Die Bildkarten wurden neu gemischt.';
+        updateStepPills();
+        saveState();
+      }
+
+      function checkOrder() {
+        const story = getCurrentStory();
+        const correct = story.scenes.every(function (scene, index) {
+          return state.order[index] === scene.id;
+        });
+
+        if (correct) {
+          orderFeedback.className = 'feedback good';
+          orderFeedback.textContent = 'Sehr gut! Die Reihenfolge passt.';
+          state.orderStatus = 'richtig';
+          updateOrderStat('richtig');
+        } else {
+          const correctCount = story.scenes.reduce(function (count, scene, index) {
+            return count + (state.order[index] === scene.id ? 1 : 0);
+          }, 0);
+          orderFeedback.className = 'feedback warn';
+          orderFeedback.textContent = 'Noch nicht ganz. ' + correctCount + ' von ' + story.scenes.length + ' Bildern stehen bereits an der richtigen Stelle.';
+          state.orderStatus = 'teilweise';
+          updateOrderStat('teilweise');
+        }
+
+        updateStepPills();
+        saveState();
+      }
+
+      function toggleHelp() {
+        state.helpVisible = !state.helpVisible;
+        renderHelpChips();
+        saveState();
+      }
+
+      function clearTexts() {
+        const story = getCurrentStory();
+        story.scenes.forEach(function (scene) {
+          state.texts[scene.id] = '';
+        });
+        renderWritingGrid();
+        buildPreview();
+        updateStepPills();
+        saveState();
+      }
+
+      function insertIntoActiveTextarea(text) {
+        const activeId = state.activeTextareaId || (state.order[0] || '');
+        if (!activeId) return;
+        const textarea = writingGrid.querySelector('textarea[data-textarea-id="' + cssEscape(activeId) + '"]');
+        if (!textarea) return;
+        textarea.focus();
+        const start = textarea.selectionStart || 0;
+        const end = textarea.selectionEnd || 0;
+        const currentValue = textarea.value;
+        const nextValue = currentValue.slice(0, start) + text + currentValue.slice(end);
+        textarea.value = nextValue;
+        textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        state.texts[activeId] = nextValue;
+        buildPreview();
+        updateStepPills();
+        saveState();
+      }
+
+      function buildPreview() {
+        const parts = state.order.map(function (id) {
+          return state.texts[id] || '';
+        }).map(function (text) {
+          return text.trim();
+        }).filter(Boolean);
+
+        if (!parts.length) {
+          previewBox.textContent = 'Hier erscheint deine Bildgeschichte.';
+          updateStepPills();
+          return;
+        }
+
+        previewBox.textContent = parts.join('
+
+');
+        updateStepPills();
+      }
+
+      function evaluateChecklist() {
+        const score = state.checks.filter(Boolean).length;
+        scoreBox.innerHTML = 'Ergebnis: <strong>' + score + ' / ' + state.checks.length + '</strong>';
+        updateChecklistStat();
+
+        if (score === state.checks.length) {
+          orderFeedback.className = 'feedback good';
+          orderFeedback.textContent = 'Klasse! Deine Geschichte ist fertig ueberarbeitet.';
+        } else if (score >= 3) {
+          orderFeedback.className = 'feedback warn';
+          orderFeedback.textContent = 'Schon gut! Lies deine Geschichte noch einmal und verbessere die fehlenden Punkte.';
+        } else {
+          orderFeedback.className = 'feedback bad';
+          orderFeedback.textContent = 'Schau dir deine Geschichte noch einmal genau an. Die Checkliste hilft dir beim Verbessern.';
+        }
+
+        updateStepPills();
+        saveState();
+      }
+
+      function updateChecklistStat() {
+        const checked = state.checks.filter(Boolean).length;
+        statCheck.textContent = checked + ' / ' + state.checks.length;
+        scoreBox.innerHTML = 'Ergebnis: <strong>' + checked + ' / ' + state.checks.length + '</strong>';
+      }
+
+      function updateOrderStat(text) {
+        statOrder.textContent = text;
+      }
+
+      function restoreChecklistUi() {
+        checkboxes.forEach(function (cb, index) {
+          cb.checked = !!state.checks[index];
+        });
+        updateChecklistStat();
+      }
+
+      function updateStepPills() {
+        const filledTexts = state.order.filter(function (id) {
+          return (state.texts[id] || '').trim().length > 0;
+        }).length;
+        const allTextsDone = filledTexts === state.order.length && state.order.length > 0;
+        const checkCount = state.checks.filter(Boolean).length;
+
+        setStepState(stepOrder, state.orderStatus === 'richtig' ? 'done' : 'active');
+        setStepState(stepWrite, allTextsDone ? 'done' : (filledTexts > 0 ? 'active' : 'default'));
+        setStepState(stepCheck, checkCount === state.checks.length ? 'done' : (checkCount > 0 ? 'active' : 'default'));
+      }
+
+      function setStepState(el, stateName) {
+        el.classList.remove('active', 'done');
+        if (stateName === 'active') el.classList.add('active');
+        if (stateName === 'done') el.classList.add('done');
+      }
+
+      function resetAll() {
+        const story = getCurrentStory();
+        state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
+        story.scenes.forEach(function (scene) {
+          state.texts[scene.id] = '';
+        });
+        state.checks = state.checks.map(function () { return false; });
+        state.activeTextareaId = null;
+        state.orderStatus = 'offen';
+        restoreChecklistUi();
+        renderSceneGrid();
+        renderWritingGrid();
+        buildPreview();
+        updateOrderStat('offen');
+        orderFeedback.className = 'feedback';
+        orderFeedback.textContent = 'Alles wurde zurueckgesetzt. Du kannst neu beginnen.';
+        updateStepPills();
+        saveState();
+      }
+
+      function saveState() {
+        try {
+          const payload = {
+            storyId: state.storyId,
+            order: state.order,
+            texts: state.texts,
+            checks: state.checks,
+            helpVisible: state.helpVisible,
+            activeTextareaId: state.activeTextareaId,
+            orderStatus: state.orderStatus
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (error) {
+          // ignore storage errors
+        }
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          if (data && typeof data === 'object') {
+            if (typeof data.storyId === 'string' && stories.some(function (story) { return story.id === data.storyId; })) {
+              state.storyId = data.storyId;
+            }
+            if (Array.isArray(data.order)) state.order = data.order.slice();
+            if (data.texts && typeof data.texts === 'object') state.texts = Object.assign({}, data.texts);
+            if (Array.isArray(data.checks) && data.checks.length === state.checks.length) {
+              state.checks = data.checks.map(Boolean);
+            }
+            state.helpVisible = data.helpVisible !== false;
+            if (typeof data.activeTextareaId === 'string') state.activeTextareaId = data.activeTextareaId;
+            if (typeof data.orderStatus === 'string') state.orderStatus = data.orderStatus;
+          }
+        } catch (error) {
+          // ignore broken state
+        }
+      }
+
+      function shuffleArray(items) {
+        const arr = items.slice();
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = tmp;
+        }
+        return arr;
+      }
+
+      function renderSceneMedia(scene) {
+        const imagePath = scene.image || '';
+        const fallback = renderSceneArtwork(scene.art || '');
+        if (!imagePath) return fallback;
+        return '<img class="scene-image" src="' + escapeAttr(imagePath) + '" alt="' + escapeAttr(scene.title || 'Bildszene') + '">' +
+          '<div class="scene-fallback hidden">' + fallback + '</div>';
+      }
+
+      document.addEventListener('error', function (event) {
+        const target = event.target;
+        if (!target || !target.classList || !target.classList.contains('scene-image')) return;
+        target.style.display = 'none';
+        const fallback = target.nextElementSibling;
+        if (fallback) fallback.classList.remove('hidden');
+      }, true);
+
+      function renderSceneArtwork(kind) {
+        const art = {
+          'dog-gate': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#dff4ff"></rect><rect y="102" width="240" height="58" fill="#bde7a3"></rect><rect x="148" y="32" width="48" height="70" rx="4" fill="#d7b089" stroke="#8b5e3c" stroke-width="2"></rect><line x1="148" y1="32" x2="196" y2="102" stroke="#8b5e3c" stroke-width="3"></line><circle cx="186" cy="68" r="4" fill="#8b5e3c"></circle><rect x="118" y="34" width="6" height="68" fill="#7ea36f"></rect><rect x="110" y="32" width="22" height="8" rx="4" fill="#8ec27d"></rect><ellipse cx="78" cy="112" rx="30" ry="16" fill="#a46b3d"></ellipse><circle cx="58" cy="100" r="12" fill="#a46b3d"></circle><circle cx="52" cy="96" r="2" fill="#1f2937"></circle><path d="M46 106 Q56 112 68 108" fill="none" stroke="#1f2937" stroke-width="2"></path><path d="M86 100 Q104 90 104 102" fill="none" stroke="#a46b3d" stroke-width="5" stroke-linecap="round"></path><rect x="64" y="122" width="6" height="18" rx="3" fill="#6b4a2c"></rect><rect x="88" y="122" width="6" height="18" rx="3" fill="#6b4a2c"></rect></svg>',
+          'child-search': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#eef7ff"></rect><rect y="110" width="240" height="50" fill="#cdeaa9"></rect><circle cx="78" cy="46" r="16" fill="#ffd9b0"></circle><rect x="62" y="62" width="32" height="38" rx="12" fill="#60a5fa"></rect><rect x="54" y="70" width="10" height="32" rx="5" fill="#ffd9b0"></rect><rect x="94" y="68" width="10" height="26" rx="5" fill="#ffd9b0"></rect><rect x="66" y="98" width="10" height="34" rx="5" fill="#334155"></rect><rect x="82" y="98" width="10" height="34" rx="5" fill="#334155"></rect><circle cx="112" cy="84" r="14" fill="none" stroke="#0369a1" stroke-width="5"></circle><line x1="121" y1="93" x2="136" y2="108" stroke="#0369a1" stroke-width="5" stroke-linecap="round"></line><path d="M160 126 q8 -10 16 0" fill="none" stroke="#64748b" stroke-width="3"></path><path d="M182 132 q8 -10 16 0" fill="none" stroke="#64748b" stroke-width="3"></path><path d="M204 126 q8 -10 16 0" fill="none" stroke="#64748b" stroke-width="3"></path></svg>',
+          'dog-park': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#dff4ff"></rect><rect y="110" width="240" height="50" fill="#b6e388"></rect><circle cx="190" cy="34" r="14" fill="#fde68a"></circle><rect x="30" y="58" width="8" height="54" fill="#8b5a2b"></rect><circle cx="34" cy="48" r="22" fill="#5fb36b"></circle><ellipse cx="120" cy="112" rx="34" ry="18" fill="#a46b3d"></ellipse><circle cx="96" cy="98" r="13" fill="#a46b3d"></circle><circle cx="90" cy="94" r="2" fill="#111827"></circle><path d="M86 104 q12 6 22 0" fill="none" stroke="#111827" stroke-width="2"></path><path d="M145 98 q18 -18 22 -2" fill="none" stroke="#a46b3d" stroke-width="5" stroke-linecap="round"></path><circle cx="175" cy="118" r="12" fill="#f97316"></circle></svg>',
+          'home-return': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#eef7ff"></rect><rect y="108" width="240" height="52" fill="#cfe9ac"></rect><rect x="142" y="56" width="56" height="46" rx="4" fill="#f3d2a8"></rect><polygon points="136,60 170,34 204,60" fill="#ef4444"></polygon><rect x="164" y="76" width="14" height="26" rx="3" fill="#8b5e3c"></rect><circle cx="76" cy="50" r="15" fill="#ffd9b0"></circle><rect x="60" y="66" width="32" height="34" rx="12" fill="#22c55e"></rect><rect x="66" y="98" width="10" height="32" rx="5" fill="#334155"></rect><rect x="82" y="98" width="10" height="32" rx="5" fill="#334155"></rect><ellipse cx="116" cy="112" rx="24" ry="14" fill="#a46b3d"></ellipse><circle cx="98" cy="102" r="10" fill="#a46b3d"></circle><path d="M130 102 q14 -12 18 0" fill="none" stroke="#a46b3d" stroke-width="4" stroke-linecap="round"></path></svg>',
+          'juice-run': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#f3f8ff"></rect><rect y="116" width="240" height="44" fill="#e5d3b5"></rect><rect x="26" y="48" width="52" height="68" rx="4" fill="#ffffff" stroke="#d6dee8"></rect><rect x="36" y="58" width="32" height="48" rx="3" fill="#dbeafe"></rect><circle cx="118" cy="48" r="15" fill="#ffd9b0"></circle><rect x="102" y="64" width="30" height="36" rx="12" fill="#60a5fa"></rect><rect x="128" y="74" width="18" height="10" rx="5" fill="#ffd9b0" transform="rotate(-15 128 74)"></rect><rect x="144" y="62" width="16" height="30" rx="4" fill="#fde68a" stroke="#ca8a04"></rect><rect x="108" y="98" width="10" height="32" rx="5" fill="#334155"></rect><rect x="124" y="96" width="10" height="32" rx="5" fill="#334155"></rect><line x1="110" y1="128" x2="100" y2="138" stroke="#334155" stroke-width="4" stroke-linecap="round"></line><line x1="132" y1="128" x2="144" y2="138" stroke="#334155" stroke-width="4" stroke-linecap="round"></line></svg>',
+          'juice-spill': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#f6fbff"></rect><rect x="36" y="70" width="168" height="12" rx="6" fill="#b08968"></rect><rect x="48" y="82" width="10" height="42" fill="#a16207"></rect><rect x="182" y="82" width="10" height="42" fill="#a16207"></rect><rect x="110" y="46" width="16" height="28" rx="4" fill="#fde68a" stroke="#ca8a04" transform="rotate(18 118 60)"></rect><path d="M126 74 C148 82, 154 86, 160 102 C142 100, 132 102, 118 108 C112 94, 114 84, 126 74Z" fill="#f59e0b" opacity="0.82"></path><rect x="86" y="84" width="30" height="22" rx="3" fill="#dbeafe" stroke="#93c5fd"></rect><circle cx="184" cy="46" r="15" fill="#ffd9b0"></circle><path d="M176 42 q8 -8 16 0" fill="none" stroke="#1f2937" stroke-width="2"></path><circle cx="178" cy="48" r="2" fill="#1f2937"></circle><circle cx="190" cy="48" r="2" fill="#1f2937"></circle><path d="M178 56 q6 8 12 0" fill="none" stroke="#1f2937" stroke-width="2"></path></svg>',
+          'juice-clean': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#f4f9ff"></rect><rect x="34" y="72" width="172" height="12" rx="6" fill="#b08968"></rect><rect x="48" y="84" width="10" height="40" fill="#a16207"></rect><rect x="182" y="84" width="10" height="40" fill="#a16207"></rect><circle cx="92" cy="48" r="15" fill="#ffd9b0"></circle><rect x="76" y="64" width="32" height="36" rx="12" fill="#22c55e"></rect><rect x="104" y="76" width="20" height="10" rx="5" fill="#ffd9b0" transform="rotate(8 104 76)"></rect><rect x="120" y="70" width="32" height="18" rx="6" fill="#d1d5db"></rect><rect x="144" y="68" width="14" height="22" rx="5" fill="#94a3b8"></rect><path d="M148 90 q16 8 18 18" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"></path><path d="M124 92 q18 0 28 8" fill="none" stroke="#f59e0b" stroke-width="3"></path></svg>',
+          'juice-clean-finish': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#f4fbff"></rect><rect x="34" y="72" width="172" height="12" rx="6" fill="#b08968"></rect><rect x="48" y="84" width="10" height="40" fill="#a16207"></rect><rect x="182" y="84" width="10" height="40" fill="#a16207"></rect><rect x="102" y="52" width="20" height="28" rx="4" fill="#fde68a" stroke="#ca8a04"></rect><circle cx="64" cy="40" r="4" fill="#60a5fa"></circle><circle cx="76" cy="28" r="3" fill="#60a5fa"></circle><circle cx="188" cy="34" r="4" fill="#60a5fa"></circle><circle cx="176" cy="24" r="3" fill="#60a5fa"></circle><circle cx="176" cy="118" r="16" fill="#ffd9b0"></circle><path d="M168 118 q8 10 16 0" fill="none" stroke="#1f2937" stroke-width="2"></path><circle cx="170" cy="114" r="2" fill="#1f2937"></circle><circle cx="182" cy="114" r="2" fill="#1f2937"></circle></svg>',
+          'kite-field': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#dff4ff"></rect><rect y="114" width="240" height="46" fill="#b8e28f"></rect><path d="M0 114 C40 100, 86 110, 120 114 C162 120, 202 106, 240 114 L240 160 L0 160 Z" fill="#9dd27e"></path><circle cx="44" cy="34" r="13" fill="#fde68a"></circle><circle cx="84" cy="54" r="14" fill="#ffffff" opacity="0.9"></circle><circle cx="96" cy="54" r="12" fill="#ffffff" opacity="0.9"></circle><circle cx="74" cy="58" r="10" fill="#ffffff" opacity="0.9"></circle><circle cx="92" cy="86" r="15" fill="#ffd9b0"></circle><rect x="76" y="102" width="32" height="34" rx="12" fill="#60a5fa"></rect><rect x="82" y="132" width="10" height="20" rx="5" fill="#334155"></rect><rect x="98" y="132" width="10" height="20" rx="5" fill="#334155"></rect><polygon points="156,26 176,44 156,62 136,44" fill="#f43f5e" stroke="#be123c" stroke-width="2"></polygon><line x1="156" y1="62" x2="156" y2="78" stroke="#be123c" stroke-width="2"></line><line x1="156" y1="44" x2="110" y2="112" stroke="#64748b" stroke-width="2"></line></svg>',
+          'kite-string-break': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#e3f4ff"></rect><rect y="114" width="240" height="46" fill="#bbe391"></rect><circle cx="84" cy="90" r="15" fill="#ffd9b0"></circle><rect x="68" y="106" width="32" height="34" rx="12" fill="#22c55e"></rect><path d="M76 88 q8 -10 16 0" fill="none" stroke="#1f2937" stroke-width="2"></path><circle cx="78" cy="94" r="2" fill="#1f2937"></circle><circle cx="90" cy="94" r="2" fill="#1f2937"></circle><polygon points="176,20 198,40 176,60 154,40" fill="#f97316" stroke="#c2410c" stroke-width="2"></polygon><line x1="154" y1="48" x2="132" y2="64" stroke="#64748b" stroke-width="2" stroke-dasharray="4 4"></line><line x1="122" y1="72" x2="108" y2="92" stroke="#64748b" stroke-width="2"></line><line x1="196" y1="60" x2="206" y2="76" stroke="#c2410c" stroke-width="2"></line></svg>',
+          'kite-tree': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#e8f6ff"></rect><rect y="118" width="240" height="42" fill="#bfe59b"></rect><rect x="70" y="52" width="14" height="66" fill="#8b5a2b"></rect><circle cx="78" cy="44" r="28" fill="#5fb36b"></circle><circle cx="102" cy="58" r="20" fill="#60b96c"></circle><polygon points="138,28 156,44 138,60 120,44" fill="#a855f7" stroke="#7e22ce" stroke-width="2"></polygon><line x1="138" y1="60" x2="126" y2="88" stroke="#7e22ce" stroke-width="2"></line><circle cx="182" cy="96" r="15" fill="#ffd9b0"></circle><rect x="166" y="112" width="32" height="30" rx="12" fill="#60a5fa"></rect></svg>',
+          'kite-help': '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#eaf7ff"></rect><rect y="116" width="240" height="44" fill="#b9e291"></rect><rect x="154" y="38" width="10" height="78" fill="#8b5a2b"></rect><circle cx="120" cy="102" r="14" fill="#ffd9b0"></circle><rect x="106" y="116" width="28" height="26" rx="11" fill="#22c55e"></rect><circle cx="76" cy="102" r="14" fill="#ffd9b0"></circle><rect x="62" y="116" width="28" height="26" rx="11" fill="#60a5fa"></rect><polygon points="154,24 172,40 154,56 136,40" fill="#f43f5e" stroke="#be123c" stroke-width="2"></polygon><line x1="154" y1="56" x2="154" y2="72" stroke="#be123c" stroke-width="2"></line><line x1="90" y1="110" x2="138" y2="74" stroke="#64748b" stroke-width="2"></line><line x1="132" y1="110" x2="150" y2="76" stroke="#64748b" stroke-width="2"></line></svg>'
+        };
+
+        return art[kind] || '<svg viewBox="0 0 240 160" aria-hidden="true"><rect width="240" height="160" rx="18" fill="#eef7ff"></rect></svg>';
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/`/g, '&#96;');
+      }
+
+      function cssEscape(value) {
+        if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(value);
+        return String(value).replace(/([ #;?%&,.+*~\':"!^$[\]()=>|\/])/g, '\$1');
+      }
+    })();
+  </script>
+</body>
+</html>
