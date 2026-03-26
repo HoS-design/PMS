@@ -1365,10 +1365,16 @@
       }
 
       function renderSceneMedia(scene) {
-        const imagePath = scene.image || '';
+        const imagePath = (scene.image || '').trim();
         const fallback = renderSceneArtwork(scene.art || '');
         if (!imagePath) return fallback;
-        return '<img class="scene-image" src="' + escapeAttr(imagePath) + '" alt="' + escapeAttr(scene.title || 'Bildszene') + '">' +
+
+        // Sicherstellen, dass die Bilder aus dem lokalen App-Asset-Ordner geladen werden,
+        // auch wenn die URL ohne abschliessenden Slash aufgerufen wird.
+        const moduleAssetsBase = '/portal/modules/bildgeschichte/';
+        const resolvedImage = new URL(imagePath, window.location.origin + moduleAssetsBase).href;
+
+        return '<img class="scene-image" src="' + escapeAttr(resolvedImage) + '" alt="' + escapeAttr(scene.title || 'Bildszene') + '">' +
           '<div class="scene-fallback hidden">' + fallback + '</div>';
       }
 
