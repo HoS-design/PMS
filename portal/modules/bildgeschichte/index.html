@@ -1364,14 +1364,27 @@
         return arr;
       }
 
+      function getCurrentModuleBasePath() {
+        // Pfad für GitHub Pages (repo-bindings) und Root-Deployments abfangen.
+        // Beispiel: /PMS/portal/modules/bildgeschichte/
+        let path = window.location.pathname;
+        if (!path.endsWith('/')) {
+          path += '/';
+        }
+        // Das Skript läuft in /portal/modules/bildgeschichte/, daher entfern wir alles nach /bildgeschichte/ nicht!
+        // Achtung: Unterseiten wie /index.html werden ebenfalls behandelt.
+        if (path.includes('/portal/modules/bildgeschichte/')) {
+          return path.slice(0, path.indexOf('/portal/modules/bildgeschichte/') + '/portal/modules/bildgeschichte/'.length);
+        }
+        return '/portal/modules/bildgeschichte/';
+      }
+
       function renderSceneMedia(scene) {
         const imagePath = (scene.image || '').trim();
         const fallback = renderSceneArtwork(scene.art || '');
         if (!imagePath) return fallback;
 
-        // Sicherstellen, dass die Bilder aus dem lokalen App-Asset-Ordner geladen werden,
-        // auch wenn die URL ohne abschliessenden Slash aufgerufen wird.
-        const moduleAssetsBase = '/portal/modules/bildgeschichte/';
+        const moduleAssetsBase = getCurrentModuleBasePath();
         const resolvedImage = new URL(imagePath, window.location.origin + moduleAssetsBase).href;
 
         return '<img class="scene-image" src="' + escapeAttr(resolvedImage) + '" alt="' + escapeAttr(scene.title || 'Bildszene') + '">' +
