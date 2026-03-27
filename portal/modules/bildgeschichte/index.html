@@ -47,13 +47,24 @@
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
       padding: 18px;
+      position: relative;
     }
 
     .intro {
       display: grid;
       grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr);
-      gap: 16px;
+      gap: 20px;
       align-items: start;
+    }
+
+    .intro-main {
+      display: grid;
+      gap: 16px;
+    }
+
+    .intro-copy {
+      display: grid;
+      gap: 10px;
     }
 
     .eyebrow {
@@ -74,6 +85,7 @@
       margin: 0;
       line-height: 1.6;
       color: var(--muted);
+      max-width: 62ch;
     }
 
     .steps {
@@ -110,8 +122,9 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr;
       gap: 10px;
+      align-content: start;
     }
 
     .stat {
@@ -119,7 +132,7 @@
       border: 1px solid var(--line);
       background: #fbfdff;
       padding: 14px;
-      min-height: 96px;
+      min-height: 0;
     }
 
     .stat .muted {
@@ -149,6 +162,41 @@
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
+    }
+
+    .intro-actions {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .guide-panel {
+      display: grid;
+      gap: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-panel {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .section-head {
+      padding: 18px 18px 14px;
+      background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+    }
+
+    .section-head .storybar {
+      margin-bottom: 0;
+    }
+
+    .section-body {
+      display: grid;
+      gap: 14px;
+      padding: 0 18px 18px;
     }
 
     .select-label {
@@ -512,11 +560,14 @@
     .hidden { display: none !important; }
 
     @media (max-width: 980px) {
-      .stats,
       .cards-grid,
       .writing-grid,
       .helper-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
       }
 
       .intro {
@@ -534,6 +585,12 @@
       .stats,
       .helper-grid {
         grid-template-columns: 1fr;
+      }
+
+      .section-head,
+      .section-body {
+        padding-left: 14px;
+        padding-right: 14px;
       }
 
       .storybar,
@@ -612,26 +669,33 @@
 
   <main class="page">
     <section class="panel intro">
-      <div>
-        <div class="eyebrow">Bildgeschichte fuer die 5. Schulstufe</div>
-        <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Saetze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
+      <div class="intro-main">
+        <div class="intro-copy">
+          <div class="eyebrow">Bildgeschichte fuer die 5. Schulstufe</div>
+          <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Saetze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
+        </div>
         <div class="steps" aria-label="Arbeitsschritte">
           <span id="stepOrder" class="step-pill active">1. Bilder ordnen</span>
           <span id="stepWrite" class="step-pill">2. Saetze schreiben</span>
           <span id="stepCheck" class="step-pill">3. Geschichte pruefen</span>
         </div>
-        <div class="helper-grid" aria-label="Hilfen">
-          <div class="helper-card">
-            <strong>Tipp 1</strong>
-            Schau genau: Wer ist zu sehen? Wo spielt die Szene?
-          </div>
-          <div class="helper-card">
-            <strong>Tipp 2</strong>
-            Nutze Reihenfolge-Woerter wie zuerst, dann, ploetzlich und am Ende.
-          </div>
-          <div class="helper-card">
-            <strong>Tipp 3</strong>
-            Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fuehlen.
+        <div class="intro-actions">
+          <button id="toggleGuideBtn" class="btn-soft" type="button" aria-expanded="false">Tipps anzeigen</button>
+        </div>
+        <div id="guidePanel" class="guide-panel hidden">
+          <div class="helper-grid" aria-label="Hilfen">
+            <div class="helper-card">
+              <strong>Tipp 1</strong>
+              Schau genau: Wer ist zu sehen? Wo spielt die Szene?
+            </div>
+            <div class="helper-card">
+              <strong>Tipp 2</strong>
+              Nutze Reihenfolge-Woerter wie zuerst, dann, ploetzlich und am Ende.
+            </div>
+            <div class="helper-card">
+              <strong>Tipp 3</strong>
+              Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fuehlen.
+            </div>
           </div>
         </div>
       </div>
@@ -667,72 +731,95 @@
       <div id="sceneGrid" class="cards-grid" aria-live="polite"></div>
     </section>
 
-    <section class="panel">
-      <div class="storybar">
-        <div class="storybar-left">
-          <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Saetze.</span>
-        </div>
-        <div class="storybar-right">
-          <button id="fillHelpBtn" class="btn-soft" type="button">Hilfen ausblenden</button>
-          <button id="clearTextsBtn" class="btn-secondary" type="button">Texte leeren</button>
-        </div>
-      </div>
-
-      <div id="helpArea" class="chip-block">
-        <div class="chip-title">Satzanfaenge</div>
-        <div id="starterChips" class="chips"></div>
-        <div class="chip-title">Wortbank</div>
-        <div id="wordChips" class="chips"></div>
-      </div>
-
-      <div id="writingGrid" class="writing-grid"></div>
-    </section>
-
-    <section class="panel">
-      <div class="storybar">
-        <div class="storybar-left">
-          <span class="mini-pill">Deine ganze Geschichte</span>
-        </div>
-        <div class="storybar-right">
-          <button id="buildPreviewBtn" class="btn-primary" type="button">Geschichte zusammensetzen</button>
-          <button id="printBtn" class="btn-secondary" type="button">Drucken</button>
+    <section class="panel section-panel">
+      <div class="section-head">
+        <div class="storybar">
+          <div class="storybar-left">
+            <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Saetze.</span>
+          </div>
+          <div class="storybar-right">
+            <button id="fillHelpBtn" class="btn-soft" type="button">Hilfen ausblenden</button>
+            <button id="clearTextsBtn" class="btn-secondary" type="button">Texte leeren</button>
+          </div>
         </div>
       </div>
-      <div id="previewBox" class="preview-box">Hier erscheint deine Bildgeschichte.</div>
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <span class="small-note">Tipp: Lies deinen Text am Ende noch einmal durch. Klingt die Geschichte logisch und rund?</span>
+      <div class="section-body">
+        <div id="helpArea" class="chip-block">
+          <div class="chip-title">Satzanfaenge</div>
+          <div id="starterChips" class="chips"></div>
+          <div class="chip-title">Wortbank</div>
+          <div id="wordChips" class="chips"></div>
         </div>
+
+        <div id="writingGrid" class="writing-grid"></div>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="storybar">
-        <div class="storybar-left">
-          <span class="mini-pill">Schreib-Checkliste</span>
-        </div>
-        <div class="storybar-right">
-          <button id="scoreBtn" class="btn-good" type="button">Checkliste auswerten</button>
+    <section class="panel section-panel">
+      <div class="section-head">
+        <div class="storybar">
+          <div class="storybar-left">
+            <span class="mini-pill">Deine ganze Geschichte</span>
+          </div>
+          <div class="storybar-right">
+            <button id="buildPreviewBtn" class="btn-primary" type="button">Geschichte zusammensetzen</button>
+            <button id="togglePreviewBtn" class="btn-soft" type="button" aria-expanded="false">Vorschau anzeigen</button>
+          </div>
         </div>
       </div>
-
-      <div class="checklist" id="checklist">
-        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte beruecksichtigt.</span></label>
-        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Woerter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
-        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe so geschrieben, dass man gut versteht, was passiert.</span></label>
-        <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefuehle, Gedanken oder Reaktionen beschrieben.</span></label>
-        <label class="check-item"><input type="checkbox" data-check> <span>Meine Geschichte hat einen Schluss.</span></label>
-      </div>
-
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 5</strong></div>
-        </div>
-        <div class="toolbar-right">
-          <button id="resetAllBtn" class="btn-warn" type="button">Alles zuruecksetzen</button>
+      <div id="previewContent" class="section-body hidden">
+        <div id="previewBox" class="preview-box">Hier erscheint deine Bildgeschichte.</div>
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <span class="small-note">Tipp: Lies deinen Text am Ende noch einmal durch. Klingt die Geschichte logisch und rund?</span>
+          </div>
+          <div class="toolbar-right">
+            <button id="printBtn" class="btn-secondary" type="button">Drucken</button>
+          </div>
         </div>
       </div>
     </section>
+
+    <section class="panel section-panel">
+      <div class="section-head">
+        <div class="storybar">
+          <div class="storybar-left">
+            <span class="mini-pill">Schreib-Checkliste</span>
+          </div>
+          <div class="storybar-right">
+            <button id="toggleChecklistBtn" class="btn-soft" type="button" aria-expanded="false">Checkliste anzeigen</button>
+          </div>
+        </div>
+      </div>
+      <div id="checklistContent" class="section-body hidden">
+        <div class="storybar">
+          <div class="storybar-left">
+            <span class="small-note">Pruefe am Ende, ob deine Geschichte logisch, vollstaendig und gut lesbar ist.</span>
+          </div>
+          <div class="storybar-right">
+            <button id="scoreBtn" class="btn-good" type="button">Checkliste auswerten</button>
+          </div>
+        </div>
+
+        <div class="checklist" id="checklist">
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte beruecksichtigt.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Woerter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe so geschrieben, dass man gut versteht, was passiert.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefuehle, Gedanken oder Reaktionen beschrieben.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Meine Geschichte hat einen Schluss.</span></label>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 5</strong></div>
+          </div>
+          <div class="toolbar-right">
+            <button id="resetAllBtn" class="btn-warn" type="button">Alles zuruecksetzen</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script>
@@ -878,7 +965,10 @@
         order: [],
         texts: {},
         checks: [false, false, false, false, false],
-        helpVisible: true,
+        helpVisible: false,
+        guideVisible: false,
+        previewVisible: false,
+        checklistVisible: false,
         activeTextareaId: null,
         orderStatus: 'offen'
       };
@@ -890,6 +980,9 @@
       const previewBox = document.getElementById('previewBox');
       const scoreBox = document.getElementById('scoreBox');
       const helpArea = document.getElementById('helpArea');
+      const guidePanel = document.getElementById('guidePanel');
+      const previewContent = document.getElementById('previewContent');
+      const checklistContent = document.getElementById('checklistContent');
       const statScenes = document.getElementById('stat-scenes');
       const statOrder = document.getElementById('stat-order');
       const statCheck = document.getElementById('stat-check');
@@ -899,14 +992,20 @@
       const stepOrder = document.getElementById('stepOrder');
       const stepWrite = document.getElementById('stepWrite');
       const stepCheck = document.getElementById('stepCheck');
+      const toggleGuideBtn = document.getElementById('toggleGuideBtn');
+      const togglePreviewBtn = document.getElementById('togglePreviewBtn');
+      const toggleChecklistBtn = document.getElementById('toggleChecklistBtn');
 
       document.getElementById('shuffleBtn').addEventListener('click', shuffleCurrentStory);
       document.getElementById('checkBtn').addEventListener('click', checkOrder);
+      toggleGuideBtn.addEventListener('click', toggleGuide);
       document.getElementById('fillHelpBtn').addEventListener('click', toggleHelp);
       document.getElementById('clearTextsBtn').addEventListener('click', clearTexts);
-      document.getElementById('buildPreviewBtn').addEventListener('click', buildPreview);
+      document.getElementById('buildPreviewBtn').addEventListener('click', openPreview);
+      togglePreviewBtn.addEventListener('click', togglePreview);
+      toggleChecklistBtn.addEventListener('click', toggleChecklist);
       document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
-      document.getElementById('scoreBtn').addEventListener('click', evaluateChecklist);
+      document.getElementById('scoreBtn').addEventListener('click', openChecklistAndEvaluate);
       document.getElementById('resetAllBtn').addEventListener('click', resetAll);
 
       checkboxes.forEach((cb, index) => {
@@ -921,6 +1020,9 @@
       storySelect.addEventListener('change', function () {
         state.storyId = storySelect.value;
         state.orderStatus = 'offen';
+        state.guideVisible = false;
+        state.previewVisible = false;
+        state.checklistVisible = false;
         initStory(true);
       });
 
@@ -928,6 +1030,7 @@
       loadState();
       initStory(false);
       renderHelpChips();
+      syncLayoutVisibility();
 
       function initSelect() {
         storySelect.innerHTML = stories.map(function (story) {
@@ -974,6 +1077,7 @@
         orderFeedback.className = 'feedback';
         orderFeedback.textContent = 'Ordne die Bildkarten so, dass eine stimmige Geschichte entsteht.';
         restoreChecklistUi();
+        syncLayoutVisibility();
         updateStepPills();
         saveState();
       }
@@ -1081,6 +1185,51 @@
 
         helpArea.classList.toggle('hidden', !state.helpVisible);
         document.getElementById('fillHelpBtn').textContent = state.helpVisible ? 'Hilfen ausblenden' : 'Hilfen einblenden';
+      }
+
+      function toggleGuide() {
+        state.guideVisible = !state.guideVisible;
+        syncLayoutVisibility();
+        saveState();
+      }
+
+      function togglePreview() {
+        state.previewVisible = !state.previewVisible;
+        syncLayoutVisibility();
+        saveState();
+      }
+
+      function openPreview() {
+        state.previewVisible = true;
+        syncLayoutVisibility();
+        buildPreview();
+        saveState();
+      }
+
+      function toggleChecklist() {
+        state.checklistVisible = !state.checklistVisible;
+        syncLayoutVisibility();
+        saveState();
+      }
+
+      function openChecklistAndEvaluate() {
+        state.checklistVisible = true;
+        syncLayoutVisibility();
+        evaluateChecklist();
+      }
+
+      function syncLayoutVisibility() {
+        guidePanel.classList.toggle('hidden', !state.guideVisible);
+        toggleGuideBtn.textContent = state.guideVisible ? 'Tipps ausblenden' : 'Tipps anzeigen';
+        toggleGuideBtn.setAttribute('aria-expanded', String(state.guideVisible));
+        syncToggleSection(togglePreviewBtn, previewContent, state.previewVisible, 'Vorschau anzeigen', 'Vorschau ausblenden');
+        syncToggleSection(toggleChecklistBtn, checklistContent, state.checklistVisible, 'Checkliste anzeigen', 'Checkliste ausblenden');
+      }
+
+      function syncToggleSection(button, content, isVisible, closedLabel, openLabel) {
+        content.classList.toggle('hidden', !isVisible);
+        button.textContent = isVisible ? openLabel : closedLabel;
+        button.setAttribute('aria-expanded', String(isVisible));
       }
 
       function bindDragAndDrop() {
@@ -1214,8 +1363,10 @@
         story.scenes.forEach(function (scene) {
           state.texts[scene.id] = '';
         });
+        state.previewVisible = false;
         renderWritingGrid();
         buildPreview();
+        syncLayoutVisibility();
         updateStepPills();
         saveState();
       }
@@ -1317,12 +1468,18 @@
           state.texts[scene.id] = '';
         });
         state.checks = state.checks.map(function () { return false; });
+        state.helpVisible = false;
+        state.guideVisible = false;
+        state.previewVisible = false;
+        state.checklistVisible = false;
         state.activeTextareaId = null;
         state.orderStatus = 'offen';
         restoreChecklistUi();
         renderSceneGrid();
         renderWritingGrid();
         buildPreview();
+        renderHelpChips();
+        syncLayoutVisibility();
         updateOrderStat('offen');
         orderFeedback.className = 'feedback';
         orderFeedback.textContent = 'Alles wurde zurueckgesetzt. Du kannst neu beginnen.';
@@ -1338,6 +1495,9 @@
             texts: state.texts,
             checks: state.checks,
             helpVisible: state.helpVisible,
+            guideVisible: state.guideVisible,
+            previewVisible: state.previewVisible,
+            checklistVisible: state.checklistVisible,
             activeTextareaId: state.activeTextareaId,
             orderStatus: state.orderStatus
           };
@@ -1361,7 +1521,10 @@
             if (Array.isArray(data.checks) && data.checks.length === state.checks.length) {
               state.checks = data.checks.map(Boolean);
             }
-            state.helpVisible = data.helpVisible !== false;
+            state.helpVisible = data.helpVisible === true;
+            state.guideVisible = data.guideVisible === true;
+            state.previewVisible = data.previewVisible === true;
+            state.checklistVisible = data.checklistVisible === true;
             if (typeof data.activeTextareaId === 'string') state.activeTextareaId = data.activeTextareaId;
             if (typeof data.orderStatus === 'string') state.orderStatus = data.orderStatus;
           }
