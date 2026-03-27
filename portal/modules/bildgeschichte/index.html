@@ -961,10 +961,18 @@
           if (typeof state.texts[scene.id] !== 'string') state.texts[scene.id] = '';
         });
 
+        if (!story.scenes.some(function (scene) {
+          return scene.id === state.activeTextareaId;
+        })) {
+          state.activeTextareaId = null;
+        }
+
         renderSceneGrid();
         renderWritingGrid();
         buildPreview();
         updateOrderStat(state.orderStatus || 'offen');
+        orderFeedback.className = 'feedback';
+        orderFeedback.textContent = 'Ordne die Bildkarten so, dass eine stimmige Geschichte entsteht.';
         restoreChecklistUi();
         updateStepPills();
         saveState();
@@ -1003,6 +1011,17 @@
         });
 
         bindDragAndDrop();
+        normalizeSceneControlLabels();
+      }
+
+      function normalizeSceneControlLabels() {
+        sceneGrid.querySelectorAll('[data-action="left"]').forEach(function (btn) {
+          btn.innerHTML = '&larr; Nach links';
+        });
+
+        sceneGrid.querySelectorAll('[data-action="right"]').forEach(function (btn) {
+          btn.innerHTML = 'Nach rechts &rarr;';
+        });
       }
 
       function renderWritingGrid() {
@@ -1232,9 +1251,7 @@
           return;
         }
 
-        previewBox.textContent = parts.join('
-
-');
+        previewBox.textContent = parts.join('\n\n');
         updateStepPills();
       }
 
