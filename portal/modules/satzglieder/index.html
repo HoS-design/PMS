@@ -110,6 +110,8 @@
             }
         };
 
+        const MAX_ATTEMPTS_BEFORE_SOLUTION = 3;
+
         const SENTENCES = [
             {
                 id: 1,
@@ -394,6 +396,7 @@
             // Split Game
             const [userSplits, setUserSplits] = useState([]); 
             const [splitFeedback, setSplitFeedback] = useState(null);
+            const [splitAttempts, setSplitAttempts] = useState(0);
             
             // Move Game
             const [builtSentence, setBuiltSentence] = useState([]);
@@ -406,18 +409,24 @@
             const [identifiedSegments, setIdentifiedSegments] = useState({}); 
             const [identifyFeedback, setIdentifyFeedback] = useState(null); 
             const [activeSegmentIdx, setActiveSegmentIdx] = useState(null);
+            const [identifyAttempts, setIdentifyAttempts] = useState(0);
+            const [identifySolutionShown, setIdentifySolutionShown] = useState(false);
 
             const currentSentence = SENTENCES[currentSentenceIdx];
             const terms = ahsMode ? TERMINOLOGY.ahs : TERMINOLOGY.standard;
+            const splitSolutionUnlocked = splitAttempts >= MAX_ATTEMPTS_BEFORE_SOLUTION;
+            const identifySolutionUnlocked = identifyAttempts >= MAX_ATTEMPTS_BEFORE_SOLUTION;
+            const isSplitResolved = splitFeedback === 'correct' || splitFeedback === 'revealed';
+            const isIdentifyResolved = identifyFeedback === 'correct' || identifyFeedback === 'revealed';
 
             // --- HANDLERS & LOGIC ---
 
             const handleStart = () => { setMode('split'); resetLevelState(); };
 
             const resetLevelState = () => {
-                setUserSplits([]); setSplitFeedback(null);
+                setUserSplits([]); setSplitFeedback(null); setSplitAttempts(0);
                 setBuiltSentence([]); setAvailableParts([]); setMoveFeedback(null); setFoundPermutations([]); setMoveCompletedForThisSentence(false);
-                setIdentifiedSegments({}); setIdentifyFeedback(null); setActiveSegmentIdx(null);
+                setIdentifiedSegments({}); setIdentifyFeedback(null); setActiveSegmentIdx(null); setIdentifyAttempts(0); setIdentifySolutionShown(false);
             };
 
             const handleNextLevel = () => {
@@ -445,7 +454,14 @@
                     setSplitFeedback('correct'); setScore(s => s + 10);
                 } else {
                     setSplitFeedback('wrong');
+                    setSplitAttempts(prev => prev + 1);
                 }
+            };
+
+            const showSplitSolution = () => {
+                const { breaks } = flattenSentence(currentSentence.segments);
+                setUserSplits(breaks);
+                setSplitFeedback('revealed');
             };
 
             const proceedToIdentify = () => setMode('identify');
@@ -504,12 +520,33 @@
                 setBuiltSentence([]); setMoveFeedback(null);
             };
 
-            const handleSegmentClick = (index) => { if (identifyFeedback !== 'correct') setActiveSegmentIdx(index); };
-            const selectType = (typeKey) => { setIdentifiedSegments(prev => ({ ...prev, [activeSegmentIdx]: typeKey })); setActiveSegmentIdx(null); };
+            const handleSegmentClick = (index) => { if (!isIdentifyResolved) setActiveSegmentIdx(index); };
+            const selectType = (typeKey) => {
+                if (activeSegmentIdx === null || isIdentifyResolved) return;
+                setIdentifiedSegments(prev => ({ ...prev, [activeSegmentIdx]: typeKey }));
+                setActiveSegmentIdx(null);
+            };
 
             const checkIdentify = () => {
                 const correct = currentSentence.segments.every((seg, idx) => identifiedSegments[idx] === seg.type);
-                if (correct) { setIdentifyFeedback('correct'); setScore(s => s + 20); } else { setIdentifyFeedback('wrong'); }
+                if (correct) {
+                    setIdentifyFeedback('correct');
+                    setIdentifySolutionShown(false);
+                    setScore(s => s + 20);
+                } else {
+                    setIdentifyFeedback('wrong');
+                    setIdentifyAttempts(prev => prev + 1);
+                }
+            };
+
+            const showIdentifySolution = () => {
+                const correctAssignments = Object.fromEntries(
+                    currentSentence.segments.map((seg, idx) => [idx, seg.type])
+                );
+                setIdentifiedSegments(correctAssignments);
+                setActiveSegmentIdx(null);
+                setIdentifySolutionShown(true);
+                setIdentifyFeedback('correct');
             };
 
             // --- RENDERERS ---
@@ -566,10 +603,22 @@
                                 ))}
                             </div>
                         </Card>
-                        <div className="flex justify-center gap-4">
+                        <div className="flex justify-center gap-4 items-center flex-wrap">
                             {!splitFeedback && <Button onClick={checkSplit}>Prüfen</Button>}
+                            {!isSplitResolved && splitAttempts > 0 && (
+                                <span className="text-sm text-slate-500 bg-slate-100 px-4 py-2 rounded-lg">
+                                    Fehlversuche: {splitAttempts}/{MAX_ATTEMPTS_BEFORE_SOLUTION}
+                                </span>
+                            )}
+                            {false && !isSplitResolved && splitSolutionUnlocked && (
+                                <Button onClick={showSplitSolution} variant="outline">LÃ¶sung zeigen</Button>
+                            )}
+                            {!isSplitResolved && splitSolutionUnlocked && (
+                                <Button onClick={showSplitSolution} variant="outline">{'L\u00f6sung zeigen'}</Button>
+                            )}
                             {splitFeedback === 'wrong' && <div className="flex items-center gap-4 animate-in fade-in"><span className="text-rose-600 font-medium bg-rose-50 px-4 py-2 rounded-lg">Leider nicht ganz richtig.</span><Button onClick={() => { setSplitFeedback(null); setUserSplits([]); }} variant="secondary"><Icons.RotateCcw size={18} /> Noch einmal</Button></div>}
                             {splitFeedback === 'correct' && <div className="flex items-center gap-4 animate-in fade-in"><span className="text-emerald-700 font-medium bg-emerald-50 px-4 py-2 rounded-lg flex items-center gap-2"><Icons.Check size={18} /> Perfekt abgeteilt!</span><Button onClick={proceedToIdentify} variant="success">Weiter zum Bestimmen <Icons.ChevronRight size={18} /></Button></div>}
+                            {splitFeedback === 'revealed' && <div className="flex items-center gap-4 animate-in fade-in"><span className="text-amber-700 font-medium bg-amber-50 px-4 py-2 rounded-lg">Die richtige Abtrennung wird angezeigt.</span><Button onClick={proceedToIdentify} variant="success">Weiter zum Bestimmen <Icons.ChevronRight size={18} /></Button></div>}
                         </div>
                     </div>
                 );
@@ -641,7 +690,7 @@
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div className="lg:col-span-2">
                             <Card className="p-8 min-h-[300px] flex flex-col justify-center items-center relative">
-                                {!moveCompletedForThisSentence && identifyFeedback !== 'correct' && (
+                                {!moveCompletedForThisSentence && !isIdentifyResolved && (
                                     <div className="absolute top-4 right-4">
                                         <Button onClick={startMoveGame} variant="secondary" className="text-xs py-2 px-3 gap-1 shadow-none border-dashed"><Icons.Shuffle size={14} /> Verschiebeprobe (Extra)</Button>
                                     </div>
@@ -668,7 +717,18 @@
                                     </div>
                                 )}
                             </Card>
-                            <div className="flex justify-end mt-4">
+                            <div className="flex justify-end items-center gap-3 flex-wrap mt-4">
+                                {!isIdentifyResolved && identifyAttempts > 0 && (
+                                    <span className="text-sm text-slate-500 bg-slate-100 px-4 py-2 rounded-lg">
+                                        Fehlversuche: {identifyAttempts}/{MAX_ATTEMPTS_BEFORE_SOLUTION}
+                                    </span>
+                                )}
+                                {!isIdentifyResolved && identifySolutionUnlocked && (
+                                    <Button onClick={showIdentifySolution} variant="outline">{'L\u00f6sung zeigen'}</Button>
+                                )}
+                                {false && !isIdentifyResolved && identifySolutionUnlocked && (
+                                    <Button onClick={showIdentifySolution} variant="outline">LÃ¶sung zeigen</Button>
+                                )}
                                 {identifyFeedback !== 'correct' ? <Button onClick={checkIdentify} disabled={Object.keys(identifiedSegments).length !== currentSentence.segments.length}>Überprüfen</Button> : <Button onClick={handleNextLevel} variant="success">Nächster Satz <Icons.ChevronRight size={18} /></Button>}
                             </div>
                         </div>
