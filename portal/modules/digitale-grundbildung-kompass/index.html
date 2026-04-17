@@ -1,296 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mein Kompass</title>
-    
-    <!-- Standard Styles -->
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/app.css">
-
-    <!-- Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <style>
-        :root { --subject-color: #a855f7; }
-        body { background-color: #fdf4ff; } /* Freundliches Helllila */
-        .card-btn { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer; }
-        .card-btn:active { transform: scale(0.95); }
-        .animate-wiggle { animation: wiggle 3s ease-in-out infinite; }
-        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
-        @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klick &amp; Klar | Digitale Grundbildung</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    :root{--subject-color:#f97316;--bg:#fffaf2;--card:#fff;--ink:#1f2937;--muted:#64748b;--line:#fed7aa;--accent:#f97316;--ok:#16a34a;--warn:#f59e0b}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fffdf8,#fff7ed);color:var(--ink)}
+    .wrap{max-width:980px;margin:0 auto;padding:24px 16px 48px}.hero,.panel,.card,.choice{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:24px;box-shadow:0 14px 32px rgba(15,23,42,.08)}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;padding:24px}.over{display:inline-block;padding:8px 12px;border-radius:999px;background:#fff0d9;color:#c2410c;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    h2{margin:14px 0 10px;font-size:clamp(34px,5vw,56px);line-height:.98}h3{margin:0 0 8px;font-size:clamp(28px,4vw,42px);line-height:1.02}
+    p{margin:0;color:var(--muted);line-height:1.5}.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 16px;border-radius:16px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-weight:800;cursor:pointer}
+    .btn.main{background:linear-gradient(135deg,#fb923c,#f97316);border-color:transparent;color:#fff}.row{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+    .side{display:grid;gap:12px}.mini{padding:16px;border-radius:20px;background:#fff7ed;border:1px solid #fdba74}.stars{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .stars span{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;background:#fff;border:1px solid var(--line);font-weight:900;color:#f59e0b}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:22px}.card{padding:20px;display:grid;gap:12px}.num{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:#fff7ed;color:#c2410c;font-size:24px;font-weight:900}
+    .chip{display:inline-flex;padding:7px 10px;border-radius:999px;background:#f8fafc;border:1px solid #e2e8f0;color:var(--muted);font-size:12px;font-weight:800;width:max-content}
+    .hide{display:none!important}.panel{padding:22px;margin-top:22px}.top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap}.prog{margin:16px 0}.bar{height:14px;border-radius:999px;background:#ffedd5;overflow:hidden;border:1px solid #fdba74}
+    .fill{height:100%;background:linear-gradient(90deg,#fbbf24,#f97316)}.feedback{margin:14px 0 0;padding:16px;border-radius:18px;border:1px solid #e2e8f0;background:#fff}.feedback.ok{background:#f0fdf4;border-color:#86efac;color:#166534}.feedback.retry{background:#fffbeb;border-color:#fcd34d;color:#b45309}
+    .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:18px}.choice{padding:24px;min-height:180px;display:grid;place-items:center;text-align:center;font-size:32px;font-weight:900;line-height:1.05;cursor:pointer}
+    .choice small{display:block;margin-top:10px;font-size:15px;font-weight:700;color:var(--muted)}.choice.ok{background:#f0fdf4;border-color:#86efac}.choice.retry{background:#fffbeb;border-color:#fcd34d}.foot{margin-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+    @media (max-width:880px){.hero,.grid,.choices{grid-template-columns:1fr}}@media (max-width:620px){.wrap{padding:16px 12px 36px}.hero,.panel,.card,.choice{padding:18px;border-radius:20px}.choice{min-height:150px;font-size:28px}}
+  </style>
 </head>
 <body>
-
-    <!-- Header -->
-    <header class="app-header">
-        <div class="brand-row">
-            <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
-            <div class="brand-title">
-                <div class="badge-main">Digitale Grundbildung</div>
-                <h1>Mein Kompass</h1>
-            </div>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main">Digitale Grundbildung</div>
+        <h1>Klick &amp; Klar</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/portal/" class="header-link">Portal</a>
+      <a href="/index.html" class="header-link">Dashboard</a>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <span class="over">Leicht. Ruhig. Spielerisch.</span>
+        <h2>Klick &amp; Klar</h2>
+        <p>Eine sehr einfache Lern-App fuer digitale Grundbildung mit nur einer Aufgabe pro Seite, grossen Auswahlkarten, Vorlesefunktion und ruhigem Feedback.</p>
+        <div class="row">
+          <button class="btn main" id="start">Jetzt starten</button>
+          <button class="btn" id="toggle">Sprache an</button>
         </div>
-        <div class="header-actions">
-            <a href="/index.html" class="header-link">Startseite</a>
+      </div>
+      <div class="side">
+        <div class="mini">
+          <strong>Stickerwand</strong>
+          <p>Jede richtige Antwort bringt einen Stern.</p>
+          <div class="stars" id="wall"></div>
         </div>
-    </header>
-
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState } = React;
-        const { render } = ReactDOM;
-
-        // --- DATENBANK DER AUFGABEN ---
-        const LEVELS = [
-            {
-                id: 'explorer',
-                title: 'Entdecker',
-                color: 'bg-blue-500',
-                ring: 'ring-blue-200',
-                icon: '🔍',
-                intro: 'Wir suchen Computer-Sachen! Zeig mir, was ein Gerät ist.',
-                tasks: [
-                    { q: "Wo ist das Tablet? 📱", ok: "📱", okImg: "Tablet", bad: "🍌", badImg: "Banane", msg: "Lecker, aber kein Computer!" },
-                    { q: "Wo ist die Maus? 🖱️", ok: "🖱️", okImg: "Maus", bad: "🐱", badImg: "Katze", msg: "Miau! Das ist ein Tier!" },
-                    { q: "Zeig mir das Handy! 📱", ok: "📱", okImg: "Handy", bad: "👞", badImg: "Schuh", msg: "Den zieht man an!" },
-                    { q: "Wo ist der Laptop? 💻", ok: "💻", okImg: "Laptop", bad: "🍕", badImg: "Pizza", msg: "Mjam, Pizza essen!" },
-                    { q: "Ich suche die Tastatur ⌨️", ok: "⌨️", okImg: "Tastatur", bad: "🎹", badImg: "Klavier", msg: "Das macht Musik!" },
-                    { q: "Wo ist der Drucker? 🖨️", ok: "🖨️", okImg: "Drucker", bad: "🍞", badImg: "Toaster", msg: "Das ist für Toastbrot!" },
-                    { q: "Zeig mir den Controller 🎮", ok: "🎮", okImg: "Spiel", bad: "🚗", badImg: "Auto", msg: "Brumm Brumm!" },
-                    { q: "Wo ist die Kamera? 📸", ok: "📸", okImg: "Foto", bad: "🌻", badImg: "Blume", msg: "Eine schöne Blume!" },
-                    { q: "Was ist ein Roboter? 🤖", ok: "🤖", okImg: "Robo", bad: "🧸", badImg: "Teddy", msg: "Kuschelig, aber kein Roboter!" },
-                    { q: "Wo ist die Uhr? ⌚", ok: "⌚", okImg: "Uhr", bad: "🍩", badImg: "Donut", msg: "Süß!" },
-                    { q: "Wo ist das Kabel? 🔌", ok: "🔌", okImg: "Stecker", bad: "🐍", badImg: "Schlange", msg: "Huch, eine Schlange!" },
-                    { q: "Zeig mir den Bildschirm 🖥️", ok: "🖥️", okImg: "Monitor", bad: "🖼️", badImg: "Bild", msg: "Das hängt an der Wand." }
-                ]
-            },
-            {
-                id: 'thinker',
-                title: 'Denker',
-                color: 'bg-purple-500',
-                ring: 'ring-purple-200',
-                icon: '🧠',
-                intro: 'Was brauchst du wofür? Überlege gut!',
-                tasks: [
-                    { q: "Ich möchte Musik hören 🎵", ok: "🎧", okImg: "Kopfhörer", bad: "👓", badImg: "Brille", msg: "Damit sieht man besser." },
-                    { q: "Akku ist leer! Aufladen! ⚡", ok: "🔋", okImg: "Batterie", bad: "🍔", badImg: "Burger", msg: "Burger kann man nicht laden!" },
-                    { q: "Ich will ein Foto machen 📸", ok: "📸", okImg: "Kamera", bad: "👁️", badImg: "Auge", msg: "Nur gucken, kein Foto." },
-                    { q: "Ich will einen Brief schreiben ✍️", ok: "⌨️", okImg: "Tastatur", bad: "⚽", badImg: "Ball", msg: "Damit spielt man Fußball." },
-                    { q: "Ich will klicken! 👆", ok: "🖱️", okImg: "Maus", bad: "🥄", badImg: "Löffel", msg: "Damit isst man Suppe." },
-                    { q: "Lass uns spielen! 🎲", ok: "🎮", okImg: "Gamepad", bad: "📚", badImg: "Buch", msg: "Lesen ist toll, aber kein Game." },
-                    { q: "Wie spät ist es? 🕒", ok: "⌚", okImg: "Uhr", bad: "🧭", badImg: "Kompass", msg: "Das zeigt Norden an." },
-                    { q: "Ich will drucken 📄", ok: "🖨️", okImg: "Drucker", bad: "📺", badImg: "TV", msg: "Das ist zum Fernsehen." },
-                    { q: "Ins Internet gehen 🌐", ok: "📱", okImg: "Tablet", bad: "🚲", badImg: "Fahrrad", msg: "Damit fährt man draußen." },
-                    { q: "Film schauen 🎬", ok: "💻", okImg: "Laptop", bad: "📻", badImg: "Radio", msg: "Radio ist nur für Ohren." }
-                ]
-            },
-            {
-                id: 'guardian',
-                title: 'Wächter',
-                color: 'bg-red-500',
-                ring: 'ring-red-200',
-                icon: '🛡️',
-                intro: 'Aufpassen! Was ist gefährlich? Was ist sicher?',
-                tasks: [
-                    { q: "Ein Fremder schreibt dich an! 🛑", ok: "🛑", okImg: "STOP & Mama rufen", bad: "👋", badImg: "Hallo sagen", msg: "Nein! Nicht antworten!" },
-                    { q: "Komisches Bild am Screen? 👾", ok: "🛑", okImg: "STOP & Papa rufen", bad: "👍", badImg: "Anklicken", msg: "Nein! Das kann ein Virus sein." },
-                    { q: "Tablet ist kaputt gegangen 💔", ok: "🗣️", okImg: "Bescheid sagen", bad: "🤫", badImg: "Verstecken", msg: "Ehrlich sein ist besser!" },
-                    { q: "Darf ich alles anklicken? 🤔", ok: "🛑", okImg: "Nein, fragen!", bad: "✅", badImg: "Ja klar", msg: "Lieber erst fragen!" },
-                    { q: "Wie lange spielen? ⏳", ok: "⏱️", okImg: "Mit Wecker", bad: "🌙", badImg: "Ganze Nacht", msg: "Das ist zu viel!" },
-                    { q: "Wer darf mein Passwort wissen? 🔑", ok: "👩‍🦰", okImg: "Mama/Papa", bad: "🤡", badImg: "Fremde", msg: "Geheim bleiben!" }
-                ]
-            }
-        ];
-
-        // --- KOMPONENTEN ---
-
-        const Card = ({ emoji, label, onClick, color = "white", shake }) => (
-            <button 
-                onClick={onClick} 
-                className={`
-                    relative flex flex-col items-center justify-center 
-                    p-6 sm:p-10 rounded-[2.5rem] 
-                    border-b-8 transition-all duration-200 
-                    ${shake ? 'animate-shake bg-red-50 border-red-300' : 'bg-white border-slate-200 hover:bg-slate-50 hover:-translate-y-2 active:translate-y-0'}
-                    shadow-xl w-full h-full min-h-[220px]
-                `}
-            >
-                <div className="text-7xl sm:text-9xl mb-4 filter drop-shadow-sm select-none">{emoji}</div>
-                {label && <div className="text-xl sm:text-2xl font-bold text-slate-700">{label}</div>}
-            </button>
-        );
-
-        const FeedbackOverlay = ({ show }) => {
-            if (!show) return null;
-            return (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm animate-in fade-in zoom-in duration-300">
-                    <div className="text-9xl animate-bounce drop-shadow-2xl">⭐</div>
-                </div>
-            );
-        };
-
-        const App = () => {
-            // State
-            const [mode, setMode] = useState('menu'); // 'menu', 'game', 'finish'
-            const [activeLevel, setActiveLevel] = useState(null);
-            const [taskIndex, setTaskIndex] = useState(0);
-            const [shaking, setShaking] = useState(null); // 'left' or 'right'
-            const [showStar, setShowStar] = useState(false);
-
-            // Helpers
-            const startLevel = (levelId) => {
-                setActiveLevel(LEVELS.find(l => l.id === levelId));
-                setTaskIndex(0);
-                setMode('game');
-            };
-
-            const handleAnswer = (isCorrect, side) => {
-                if (isCorrect) {
-                    // Richtig!
-                    setShowStar(true);
-                    const audio = new Audio('/sounds/success.mp3'); // Optional, falls vorhanden
-                    
-                    setTimeout(() => {
-                        setShowStar(false);
-                        if (taskIndex + 1 < activeLevel.tasks.length) {
-                            setTaskIndex(t => t + 1);
-                        } else {
-                            setMode('finish');
-                        }
-                    }, 1200); // Zeit für den Stern
-                } else {
-                    // Falsch -> Wackeln
-                    setShaking(side);
-                    setTimeout(() => setShaking(null), 500);
-                    
-                    // Optional: Kleiner Hinweis via Alert oder Toast, hier einfach visuell
-                }
-            };
-
-            // --- VIEWS ---
-
-            // 1. HAUPTMENÜ
-            if (mode === 'menu') {
-                return (
-                    <div className="flex flex-col items-center p-6 max-w-5xl mx-auto min-h-[85vh]">
-                        <div className="text-center mb-10 mt-4">
-                            <h1 className="text-4xl sm:text-6xl font-extrabold text-purple-600 mb-4 animate-wiggle">Hallo! 👋</h1>
-                            <p className="text-xl sm:text-3xl text-slate-600 font-medium">Was möchtest du heute üben?</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-                            {LEVELS.map(level => (
-                                <button 
-                                    key={level.id}
-                                    onClick={() => startLevel(level.id)}
-                                    className={`
-                                        relative flex flex-col items-center p-8 rounded-[2rem] 
-                                        border-b-8 transition-transform hover:-translate-y-2 active:scale-95
-                                        ${level.color} border-black/20 shadow-xl group
-                                    `}
-                                >
-                                    <div className="text-8xl mb-6 bg-white/20 p-6 rounded-full backdrop-blur-sm group-hover:scale-110 transition-transform">
-                                        {level.icon}
-                                    </div>
-                                    <h2 className="text-3xl font-black text-white tracking-wide">{level.title}</h2>
-                                    <div className="mt-4 bg-white/20 px-4 py-1 rounded-full text-white font-bold text-sm">
-                                        {level.tasks.length} Aufgaben
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                );
-            }
-
-            // 2. SPIEL / GAMEPLAY
-            if (mode === 'game' && activeLevel) {
-                const task = activeLevel.tasks[taskIndex];
-                // Zufällige Anordnung der Karten für Abwechslung
-                // Wir nutzen den taskIndex als Seed für "Pseudo-Random", damit es stabil bleibt beim Re-Render, 
-                // aber wir machen es einfach: Random bei jedem Task-Wechsel. 
-                // Hier hardcoded wir einfach: Mal links, mal rechts basierend auf Index (gerade/ungerade)
-                // damit es nicht zu verwirrend wird, aber nicht immer gleich ist.
-                const swap = taskIndex % 2 !== 0; 
-
-                return (
-                    <div className="flex flex-col items-center p-4 max-w-6xl mx-auto min-h-[85vh]">
-                        <FeedbackOverlay show={showStar} />
-
-                        {/* Progress Bar */}
-                        <div className="w-full h-4 bg-slate-200 rounded-full mb-6 overflow-hidden">
-                            <div 
-                                className={`h-full ${activeLevel.color} transition-all duration-500`} 
-                                style={{ width: `${((taskIndex) / activeLevel.tasks.length) * 100}%` }}
-                            />
-                        </div>
-
-                        <h2 className="text-2xl sm:text-4xl font-bold text-slate-800 text-center mb-10 leading-snug">
-                            {task.q}
-                        </h2>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-12 w-full flex-grow items-center">
-                            {/* Karte 1 */}
-                            <Card 
-                                emoji={swap ? task.bad : task.ok} 
-                                label={swap ? task.badImg : task.okImg}
-                                shake={shaking === 'left'}
-                                onClick={() => handleAnswer(swap ? false : true, 'left')}
-                            />
-                            
-                            {/* Karte 2 */}
-                            <Card 
-                                emoji={swap ? task.ok : task.bad} 
-                                label={swap ? task.okImg : task.badImg}
-                                shake={shaking === 'right'}
-                                onClick={() => handleAnswer(swap ? true : false, 'right')}
-                            />
-                        </div>
-
-                        <button onClick={() => setMode('menu')} className="mt-8 text-slate-400 font-bold hover:text-slate-600 uppercase tracking-widest text-sm">
-                            Abbrechen / Zurück
-                        </button>
-                    </div>
-                );
-            }
-
-            // 3. ZIEL / FINISH
-            if (mode === 'finish') {
-                return (
-                    <div className="flex flex-col items-center justify-center min-h-[80vh] p-6 text-center animate-in fade-in duration-700">
-                        <div className="text-9xl mb-8 animate-bounce">🎉</div>
-                        <h1 className="text-5xl sm:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-6">
-                            Klasse gemacht!
-                        </h1>
-                        <p className="text-2xl text-slate-600 mb-12 max-w-md">
-                            Du hast alle Aufgaben im Bereich <strong>{activeLevel.title}</strong> geschafft.
-                        </p>
-                        
-                        <div className="flex gap-4">
-                            <button 
-                                onClick={() => setMode('menu')} 
-                                className="bg-blue-500 hover:bg-blue-600 text-white text-2xl font-bold py-6 px-12 rounded-full shadow-xl border-b-8 border-blue-700 active:translate-y-1 active:border-b-0 transition-all"
-                            >
-                                Zurück zur Übersicht 🏠
-                            </button>
-                        </div>
-                    </div>
-                );
-            }
-            
-            return null; // Fallback
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+        <div class="mini">
+          <strong>Kurz und klar</strong>
+          <p>Drei kleine Lernbereiche: Geraete erkennen, passende Aktion waehlen und sicher am Tablet bleiben.</p>
+        </div>
+      </div>
+    </section>
+    <section class="grid" id="menu"></section>
+    <section class="panel hide" id="game"></section>
+    <section class="panel hide" id="finish"></section>
+  </main>
+  <script>
+    const D=[
+      {id:"g",n:"Geraete finden",d:"Handy, Laptop, Maus und Kamera erkennen.",b:"4 Aufgaben",lead:"Wir suchen digitale Geraete.",q:[
+        ["Tippe auf das Handy.","Suche ein digitales Geraet.","Handy","Schuh",0,"Super. Das ist ein Handy.","Das ist ein Schuh. Wir probieren es noch einmal."],
+        ["Wo ist der Laptop?","Suche den kleinen Computer.","Laptop","Pizza",0,"Richtig. Das ist ein Laptop.","Pizza kann man essen. Wir suchen einen Computer."],
+        ["Tippe auf die Maus.","Mit der Maus kann man klicken.","Maus","Ball",0,"Genau. Mit der Maus klickt man.","Der Ball gehoert nicht zum Computer. Schau noch einmal."],
+        ["Wo ist die Kamera?","Mit der Kamera macht man Fotos.","Kamera","Buch",0,"Klasse. Mit der Kamera macht man Fotos.","Das Buch ist zum Lesen da. Wir suchen die Kamera."]
+      ]},
+      {id:"a",n:"Das passt zusammen",d:"Was passt zu Foto, Musik oder Schreiben?",b:"4 Aufgaben",lead:"Jetzt suchen wir das passende Geraet.",q:[
+        ["Ich will Musik hoeren.","Welche Karte passt?","Kopfhoerer","Kamera",0,"Ja. Kopfhoerer passen zu Musik.","Mit der Kamera macht man Fotos. Versuche es noch einmal."],
+        ["Ich will ein Foto machen.","Welche Karte passt?","Kamera","Tastatur",0,"Genau. Die Kamera macht Fotos.","Mit der Tastatur schreibt man. Wir suchen das Foto-Geraet."],
+        ["Ich will etwas schreiben.","Welche Karte passt?","Tastatur","Maus",0,"Super. Mit der Tastatur kann man schreiben.","Mit der Maus klickt man. Wir suchen die Karte zum Schreiben."],
+        ["Ich will etwas ausdrucken.","Welche Karte passt?","Drucker","Handy",0,"Richtig. Der Drucker druckt auf Papier.","Mit dem Handy telefoniert man. Wir suchen den Drucker."]
+      ]},
+      {id:"s",n:"Sicher am Tablet",d:"Einfache Regeln fuer sicheres Verhalten.",b:"4 Aufgaben",lead:"Jetzt ueben wir sichere Regeln.",q:[
+        ["Ein Fremder schreibt dir. Was ist gut?","Wichtig ist: Hilfe holen.","Stopp und Hilfe","Zurueckschreiben",0,"Sehr gut. Bei Fremden holen wir Hilfe.","Wir antworten Fremden nicht. Wir holen Hilfe."],
+        ["Eine komische Seite geht auf. Was ist gut?","Nicht weiter klicken. Bescheid sagen.","Bescheid sagen","Weiter klicken",0,"Genau. Erst Bescheid sagen.","Wir klicken nicht weiter. Wir holen Hilfe."],
+        ["Darf ein Fremder dein Passwort kennen?","Ein Passwort bleibt geheim.","Nein","Ja",0,"Richtig. Das Passwort bleibt geheim.","Das Passwort geben wir nicht weiter. Es bleibt geheim."],
+        ["Sollst du einfach alles anklicken?","Wenn du unsicher bist, frag zuerst.","Nein, erst fragen","Ja, alles klicken",0,"Genau. Erst fragen ist sicher.","Nicht alles anklicken. Lieber erst fragen."]
+      ]}
+    ];
+    const st={id:"g",i:0,speech:true,stars:0,round:0,sel:null,msg:"Tippe auf die passende Karte.",type:"",timer:null};
+    const $=s=>document.querySelector(s),menu=$("#menu"),game=$("#game"),finish=$("#finish"),wall=$("#wall"),toggle=$("#toggle");
+    const M=()=>D.find(x=>x.id===st.id),Q=()=>M().q[st.i];
+    const stop=()=>{"speechSynthesis"in window&&speechSynthesis.cancel()};
+    const say=t=>{if(!st.speech||!("speechSynthesis"in window)||!t)return;stop();const u=new SpeechSynthesisUtterance(t);u.lang="de-DE";u.rate=.92;speechSynthesis.speak(u)};
+    const clearT=()=>{if(st.timer){clearTimeout(st.timer);st.timer=null}};
+    function wallHtml(){wall.innerHTML=st.stars?Array.from({length:Math.min(st.stars,12)},()=>"<span>&#9733;</span>").join(""):'<span style="width:auto;padding:0 12px">Noch keine Sterne</span>'}
+    function menuView(){menu.innerHTML=D.map((m,k)=>`<article class="card"><div class="num">${k+1}</div><h3>${m.n}</h3><p>${m.d}</p><span class="chip">${m.b}</span><button class="btn main" data-id="${m.id}">Los geht's</button></article>`).join("");menu.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>start(b.dataset.id));wallHtml()}
+    function start(id){clearT();stop();st.id=id;st.i=0;st.round=0;st.sel=null;st.msg="Tippe auf die passende Karte.";st.type="";menu.classList.add("hide");finish.classList.add("hide");render();say(M().lead+" "+Q()[0])}
+    function answers(){const q=Q(),a=[[q[2],0],[q[3],1]];return st.i%2?a.reverse():a}
+    function render(){const m=M(),q=Q(),p=((st.i+1)/m.q.length*100).toFixed(0),a=answers();game.classList.remove("hide");game.innerHTML=`<div class="top"><div><span class="chip">${m.n}</span><h3>${q[0]}</h3><p>${q[1]}</p></div><div class="row" style="margin-top:0"><button class="btn" id="read">Vorlesen</button><button class="btn" id="back">Zur Uebersicht</button></div></div><div class="prog"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>Aufgabe ${st.i+1} von ${m.q.length}</strong><span class="chip">${st.round} Sterne in dieser Runde</span></div><div class="bar"><div class="fill" style="width:${p}%"></div></div></div><div class="feedback ${st.type}"><strong>${st.type==="ok"?"Super.":st.type==="retry"?"Wir probieren es noch einmal.":"Kiki ist bereit."}</strong><p>${st.msg}</p></div><div class="choices">${a.map((x,n)=>`<button class="choice ${st.sel===n&&st.type||""}" data-a="${x[1]}" ${st.sel!==null?"disabled":""}>${x[0]}<small>Tippe hier</small></button>`).join("")}</div><div class="foot"><button class="btn" id="hint">Hinweis</button><span class="chip">Immer nur eine Frage pro Seite</span></div>`;$("#read").onclick=()=>say(q[0]+" "+q[1]);$("#back").onclick=home;$("#hint").onclick=()=>{st.msg=q[1];st.type="";st.sel=null;render();say(q[1])};game.querySelectorAll("[data-a]").forEach((b,n)=>b.onclick=()=>pick(Number(b.dataset.a),n))}
+    function pick(v,n){if(st.sel!==null)return;const q=Q();st.sel=n;if(v===q[4]){st.type="ok";st.msg=q[5];st.stars++;st.round++;render();wallHtml();say(q[5]);clearT();st.timer=setTimeout(next,1100)}else{st.type="retry";st.msg=q[6];render();say(q[6]);clearT();st.timer=setTimeout(()=>{st.sel=null;st.type="";st.msg=q[1];render();say(q[0]+" "+q[1])},1300)}}
+    function next(){if(st.i+1>=M().q.length){done();return}st.i++;st.sel=null;st.type="";st.msg="Tippe auf die passende Karte.";render();say(Q()[0]+" "+Q()[1])}
+    function done(){game.classList.add("hide");finish.classList.remove("hide");finish.innerHTML=`<h3>Klasse gemacht.</h3><p>Du hast <strong>${M().n}</strong> geschafft. Kleine, klare Schritte helfen beim sicheren Umgang mit Tablet, Handy und Computer.</p><div class="stars">${Array.from({length:Math.max(st.round,1)},()=>"<span>&#9733;</span>").join("")}</div><div class="row"><button class="btn main" id="again">Noch einmal</button><button class="btn" id="home">Anderes Spiel</button></div>`;$("#again").onclick=()=>start(st.id);$("#home").onclick=home;say("Klasse gemacht. Du hast die Runde geschafft.")}
+    function home(){clearT();stop();menu.classList.remove("hide");game.classList.add("hide");finish.classList.add("hide")}
+    $("#start").onclick=()=>start("g");toggle.onclick=()=>{st.speech=!st.speech;toggle.textContent=st.speech?"Sprache an":"Sprache aus";stop();if(st.speech)say("Die Sprache ist jetzt an.")};
+    menuView();wallHtml();
+  </script>
 </body>
 </html>
