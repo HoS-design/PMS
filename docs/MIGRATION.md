@@ -23,5 +23,6 @@ Alle bisherigen Root-Links bleiben aktiv. Die alten Dateien leiten auf die neuen
 | `/rsinvasion.html` | `/portal/modules/rsinvasion/` |
 | `/schallschutz.html` | `/portal/modules/schallschutz/` |
 | `/suchmaschinen.html` | `/portal/modules/suchmaschinen/` |
+| `/zahlbilder-bis-100.html` | `/portal/modules/zahlbilder-bis-100/` |
 
 Hinweis: Die Root-Dateien sind jetzt Wrapper mit sofortigem Redirect, damit bestehende URLs in GitHub Pages weiterhin funktionieren.

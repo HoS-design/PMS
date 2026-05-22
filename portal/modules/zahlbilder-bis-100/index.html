@@ -1,0 +1,1040 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zahlbilder bis 100 | HoS Lern-App</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #64748b;
+      --line: #dbe3ee;
+      --soft: #eef6ff;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #15803d;
+      --green-soft: #dcfce7;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --shadow: 0 16px 44px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34rem),
+        linear-gradient(180deg, #ffffff 0%, var(--bg) 42%, #eef2f7 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(219, 227, 238, 0.95);
+      box-shadow: none;
+    }
+
+    .app-header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .brand-title { min-width: 0; }
+
+    .brand-title h1 {
+      margin: 3px 0 0;
+      font-size: clamp(1.25rem, 2.8vw, 1.85rem);
+      line-height: 1.05;
+      letter-spacing: 0;
+      color: #0f172a;
+    }
+
+    .badge-main {
+      display: inline-flex;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .app-header .brand-title h1,
+    .app-header .badge-main {
+      letter-spacing: 0;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #1e293b;
+      text-decoration: none;
+      font-weight: 850;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    main.shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 18px 52px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(219, 227, 238, 0.98);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .top-card {
+      padding: clamp(20px, 4vw, 30px);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .top-card h2 {
+      margin: 0;
+      font-size: clamp(1.9rem, 4.6vw, 3.2rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .top-pill {
+      flex-shrink: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      font-weight: 950;
+      font-size: 1.05rem;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 10px;
+      margin-bottom: 18px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(219, 227, 238, 0.95);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    button, input { font: inherit; }
+
+    .tab, .btn, .chip, .digit {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tab {
+      min-height: 60px;
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: #475569;
+      font-weight: 950;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    .tab:hover, .btn:hover, .chip:hover, .digit:hover, .small-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .tab.is-active {
+      background: #0f172a;
+      color: #fff;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.18);
+    }
+
+    .panel { display: none; }
+    .panel.is-active { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .section {
+      padding: clamp(20px, 3vw, 30px);
+    }
+
+    .section h3 {
+      margin: 0 0 14px;
+      font-size: clamp(1.55rem, 2.8vw, 2.15rem);
+      letter-spacing: 0;
+    }
+
+    .big-instruction {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 16px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: #1e293b;
+      font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+      font-weight: 950;
+      line-height: 1.2;
+    }
+
+    .instruction-icon {
+      display: inline-flex;
+      width: 48px;
+      height: 48px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      flex: 0 0 auto;
+    }
+
+    .number-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 130px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #f8fafc);
+      border-radius: 18px;
+      margin: 14px 0;
+    }
+
+    .big-number {
+      font-size: clamp(4rem, 14vw, 8.5rem);
+      font-weight: 1000;
+      letter-spacing: 0;
+      line-height: 0.88;
+      color: #0f172a;
+    }
+
+    .amount {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 16px;
+      align-items: start;
+      width: 100%;
+      margin: 16px 0;
+    }
+
+    .amount.big {
+      grid-template-columns: repeat(auto-fit, minmax(156px, 1fr));
+      gap: 18px;
+    }
+
+    .ten-frame {
+      background: #fff;
+      border: 3px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 14px 12px 10px;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-rows: auto auto auto;
+      column-gap: 8px;
+      row-gap: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.7), 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    .ten-frame::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: calc(14px + clamp(18px, 2.4vw, 26px) + 5px);
+      height: 3px;
+      background: #64748b;
+      border-radius: 999px;
+    }
+
+    .dot {
+      width: clamp(18px, 2.4vw, 26px);
+      height: clamp(18px, 2.4vw, 26px);
+      justify-self: center;
+      border-radius: 999px;
+      border: 3px solid #cbd5e1;
+      background: #f8fafc;
+      position: relative;
+      z-index: 1;
+    }
+
+    .dot.filled {
+      border-color: #1d4ed8;
+      background: radial-gradient(circle at 35% 30%, #60a5fa, #2563eb 64%);
+      box-shadow: 0 5px 12px rgba(37, 99, 235, 0.22);
+    }
+
+    .frame-label {
+      grid-column: 1 / -1;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: #475569;
+      font-size: 0.86rem;
+      font-weight: 950;
+      margin-top: -2px;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .fact {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 14px 12px;
+      text-align: center;
+    }
+
+    .fact strong {
+      display: block;
+      font-size: 2.15rem;
+      letter-spacing: 0;
+      color: #0f172a;
+      line-height: 1;
+    }
+
+    .fact span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .answer-box {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .input {
+      min-width: 160px;
+      flex: 1 1 190px;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 1000;
+      color: #0f172a;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      text-align: center;
+    }
+
+    .input:focus {
+      border-color: rgba(37, 99, 235, 0.58);
+      box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn {
+      min-height: 58px;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      background: #0f172a;
+      color: #fff;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    }
+
+    .btn.green { background: var(--green); }
+    .btn.light {
+      background: #fff;
+      color: #1e293b;
+      border: 1px solid var(--line);
+    }
+
+    .feedback {
+      min-height: 62px;
+      border-radius: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      color: #1e3a8a;
+      font-size: 1.2rem;
+      font-weight: 950;
+      line-height: 1.35;
+    }
+
+    .feedback.good {
+      background: var(--green-soft);
+      border-color: rgba(21, 128, 61, 0.22);
+      color: #166534;
+    }
+
+    .feedback.try {
+      background: var(--amber-soft);
+      border-color: rgba(180, 83, 9, 0.22);
+      color: #92400e;
+    }
+
+    .help-box {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 16px;
+      margin-top: 14px;
+    }
+
+    .mini-title {
+      margin: 0 0 10px;
+      color: #334155;
+      font-size: 1rem;
+      font-weight: 1000;
+      letter-spacing: 0;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: #334155;
+      font-size: 1.08rem;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      font-weight: 1000;
+      flex-shrink: 0;
+    }
+
+    .slider-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin: 12px 0;
+    }
+
+    .slider {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .small-btn {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #0f172a;
+      font-size: 1.6rem;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .digit-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .digit {
+      min-height: 58px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #0f172a;
+      font-size: 1.4rem;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0 16px;
+    }
+
+    .chip {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #334155;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease, color 0.16s ease;
+    }
+
+    .chip.is-active {
+      border-color: rgba(37, 99, 235, 0.36);
+      background: var(--blue-soft);
+      color: #1d4ed8;
+    }
+
+    .equation {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 10px 0 14px;
+      font-size: clamp(2.7rem, 8vw, 5.3rem);
+      font-weight: 1000;
+      letter-spacing: 0;
+      color: #0f172a;
+    }
+
+    .eq-part {
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 8px 16px 12px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    }
+
+    .hidden { display: none !important; }
+
+    .celebrate { animation: pop 0.3s ease; }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 940px) {
+      .top-card, .grid { grid-template-columns: 1fr; }
+      .top-card { align-items: flex-start; flex-direction: column; }
+      .amount, .amount.big { grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); }
+    }
+
+    @media (max-width: 680px) {
+      .app-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .home-link { width: 100%; }
+      .tabs { grid-template-columns: 1fr; }
+      .facts { grid-template-columns: 1fr; }
+      .input-row { display: grid; grid-template-columns: 1fr; }
+      .amount, .amount.big { grid-template-columns: repeat(auto-fit, minmax(136px, 1fr)); }
+      .ten-frame { column-gap: 6px; row-gap: 8px; padding: 12px 10px 9px; }
+      .dot { width: 20px; height: 20px; }
+      .ten-frame::before { left: 12px; right: 12px; top: 37px; }
+    }
+
+    @media print {
+      .app-header, .tabs, .answer-box, .btn, .digit-grid, .chip-row, .slider-row { display: none !important; }
+      body { background: #fff; }
+      main.shell { padding: 0; }
+      .card { box-shadow: none; border-color: #cbd5e1; }
+      .panel { display: block !important; page-break-inside: avoid; margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-mathe">Mathe</div>
+        <h1>Zahlbilder bis 100</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="card top-card">
+      <h2>Zahl sehen. Menge sehen.</h2>
+      <div class="top-pill">bis 100</div>
+    </section>
+
+    <nav class="tabs" aria-label="Übungsarten">
+      <button class="tab is-active" data-panel="learn">Schauen</button>
+      <button class="tab" data-panel="write">Schreiben</button>
+      <button class="tab" data-panel="calc">Rechnen</button>
+    </nav>
+
+    <section class="panel is-active" id="panel-learn">
+      <div class="grid">
+        <div class="card section">
+          <div class="big-instruction"><span class="instruction-icon">👀</span><span>Schau genau.</span></div>
+          <div class="number-stage"><div class="big-number" id="learnNumber">37</div></div>
+          <div class="slider-row">
+            <button class="small-btn" id="learnMinus" aria-label="Zahl kleiner">−</button>
+            <input class="slider" id="learnSlider" type="range" min="1" max="100" value="37" />
+            <button class="small-btn" id="learnPlus" aria-label="Zahl größer">+</button>
+          </div>
+          <div class="facts">
+            <div class="fact"><strong id="learnTens">3</strong><span>Zehner</span></div>
+            <div class="fact"><strong id="learnOnes">7</strong><span>Einer</span></div>
+            <div class="fact"><strong id="learnTotal">37</strong><span>Zahl</span></div>
+          </div>
+        </div>
+        <div class="card section">
+          <h3>Menge</h3>
+          <div id="learnAmount" class="amount big"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-write">
+      <div class="grid">
+        <div class="card section">
+          <div class="big-instruction"><span class="instruction-icon">✍️</span><span>Welche Zahl?</span></div>
+          <div id="writeAmount" class="amount big"></div>
+          <div class="answer-box">
+            <div class="input-row">
+              <input class="input" id="writeInput" inputmode="numeric" autocomplete="off" placeholder="Zahl" aria-label="Zahl eingeben" />
+              <button class="btn green" id="checkWriteBtn">Prüfen</button>
+              <button class="btn light" id="newWriteBtn">Neu</button>
+            </div>
+            <div class="feedback" id="writeFeedback">Zahl schreiben.</div>
+          </div>
+        </div>
+        <aside class="card section">
+          <h3>Hilfe</h3>
+          <button class="btn light" id="showWriteHelpBtn">Hilfe</button>
+          <div class="step-list" id="writeHelp"></div>
+          <div class="help-box">
+            <p class="mini-title">Tasten</p>
+            <div class="digit-grid" id="writeDigits"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-calc">
+      <div class="grid">
+        <div class="card section">
+          <div class="big-instruction"><span class="instruction-icon">🧮</span><span>Rechne.</span></div>
+          <div class="chip-row" aria-label="Rechenart">
+            <button class="chip is-active" data-op="plus">Plus</button>
+            <button class="chip" data-op="minus">Minus</button>
+            <button class="chip is-active" data-kind="mixed">gemischt</button>
+            <button class="chip" data-kind="easy">leicht</button>
+            <button class="chip" data-kind="cross">Zehner</button>
+          </div>
+          <div class="equation" aria-live="polite">
+            <span class="eq-part" id="calcA">28</span>
+            <span id="calcSign">+</span>
+            <span class="eq-part" id="calcB">5</span>
+            <span>=</span>
+            <span class="eq-part">?</span>
+          </div>
+          <h3>Start</h3>
+          <div id="calcStartAmount" class="amount big"></div>
+          <div class="answer-box">
+            <div class="input-row">
+              <input class="input" id="calcInput" inputmode="numeric" autocomplete="off" placeholder="Ergebnis" aria-label="Ergebnis eingeben" />
+              <button class="btn green" id="checkCalcBtn">Prüfen</button>
+              <button class="btn light" id="newCalcBtn">Neu</button>
+            </div>
+            <div class="feedback" id="calcFeedback">Ergebnis schreiben.</div>
+          </div>
+        </div>
+        <aside class="card section">
+          <h3>Weg</h3>
+          <div class="step-list" id="calcSteps"></div>
+          <div id="calcResultBox" class="hidden">
+            <h3>Ergebnis</h3>
+            <div id="calcResultAmount" class="amount"></div>
+          </div>
+          <div class="help-box">
+            <p class="mini-title">Tasten</p>
+            <div class="digit-grid" id="calcDigits"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      writeAnswer: 37,
+      writeHelpVisible: false,
+      calc: { op: 'plus', kind: 'mixed', a: 28, b: 5, answer: 33 }
+    };
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function splitNumber(value) {
+      return { tens: Math.floor(value / 10), ones: value % 10 };
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function makeTenFrame(filled, label) {
+      const frame = document.createElement('div');
+      frame.className = 'ten-frame';
+      for (let i = 0; i < 10; i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot';
+        if (i < filled) dot.classList.add('filled');
+        frame.appendChild(dot);
+      }
+      const lab = document.createElement('div');
+      lab.className = 'frame-label';
+      lab.textContent = label;
+      frame.appendChild(lab);
+      return frame;
+    }
+
+    function renderAmount(value, target) {
+      const el = typeof target === 'string' ? $(target) : target;
+      el.innerHTML = '';
+      const safe = clamp(Number(value) || 0, 0, 100);
+      const full = Math.floor(safe / 10);
+      const rest = safe % 10;
+      for (let i = 0; i < full; i++) el.appendChild(makeTenFrame(10, '10'));
+      if (rest > 0 || safe === 0) el.appendChild(makeTenFrame(rest, String(rest)));
+    }
+
+    function setFeedback(el, text, mode = '') {
+      el.textContent = text;
+      el.className = 'feedback';
+      if (mode) el.classList.add(mode);
+    }
+
+    function celebrate(el) {
+      el.classList.remove('celebrate');
+      void el.offsetWidth;
+      el.classList.add('celebrate');
+    }
+
+    function buildSteps(steps, target) {
+      const el = typeof target === 'string' ? $(target) : target;
+      el.innerHTML = '';
+      steps.forEach((text, index) => {
+        const row = document.createElement('div');
+        row.className = 'step';
+        row.innerHTML = `<span class="step-badge">${index + 1}</span><span>${text}</span>`;
+        el.appendChild(row);
+      });
+    }
+
+    function updateLearn() {
+      const value = Number($('#learnSlider').value);
+      const { tens, ones } = splitNumber(value);
+      $('#learnNumber').textContent = value;
+      $('#learnTens').textContent = tens;
+      $('#learnOnes').textContent = ones;
+      $('#learnTotal').textContent = value;
+      renderAmount(value, '#learnAmount');
+    }
+
+    function newWriteTask() {
+      state.writeAnswer = randomInt(1, 100);
+      state.writeHelpVisible = false;
+      $('#writeInput').value = '';
+      $('#writeHelp').innerHTML = '';
+      $('#showWriteHelpBtn').textContent = 'Hilfe';
+      renderAmount(state.writeAnswer, '#writeAmount');
+      setFeedback($('#writeFeedback'), 'Zahl schreiben.');
+      $('#writeInput').focus();
+    }
+
+    function checkWrite() {
+      const raw = $('#writeInput').value.trim();
+      const value = Number(raw);
+      if (raw === '' || !Number.isFinite(value)) {
+        setFeedback($('#writeFeedback'), 'Zahl fehlt.', 'try');
+        return;
+      }
+      if (value === state.writeAnswer) {
+        setFeedback($('#writeFeedback'), 'Super!', 'good');
+        celebrate($('#writeFeedback'));
+      } else {
+        const { tens, ones } = splitNumber(state.writeAnswer);
+        setFeedback($('#writeFeedback'), `${tens} Zehner, ${ones} Einer.`, 'try');
+        showWriteHelp(true);
+      }
+    }
+
+    function showWriteHelp(forceOpen = false) {
+      if (forceOpen) state.writeHelpVisible = false;
+      state.writeHelpVisible = !state.writeHelpVisible;
+      if (!state.writeHelpVisible) {
+        $('#writeHelp').innerHTML = '';
+        $('#showWriteHelpBtn').textContent = 'Hilfe';
+        return;
+      }
+      const { tens, ones } = splitNumber(state.writeAnswer);
+      buildSteps([
+        `${tens} Zehner = ${tens * 10}`,
+        `${ones} Einer`,
+        `Zahl: ${state.writeAnswer}`
+      ], '#writeHelp');
+      $('#showWriteHelpBtn').textContent = 'zu';
+    }
+
+    function appendDigit(inputSelector, digit) {
+      const input = $(inputSelector);
+      if (digit === 'del') input.value = input.value.slice(0, -1);
+      else if (digit === 'clear') input.value = '';
+      else if (input.value.length < 3) input.value += digit;
+      input.focus();
+    }
+
+    function buildDigits(target, inputSelector) {
+      const el = $(target);
+      el.innerHTML = '';
+      ['1','2','3','4','5','6','7','8','9','0','del','clear'].forEach(key => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'digit';
+        btn.textContent = key === 'del' ? '⌫' : key === 'clear' ? 'leer' : key;
+        btn.addEventListener('click', () => appendDigit(inputSelector, key));
+        el.appendChild(btn);
+      });
+    }
+
+    function plusCrossesTen(a, b) {
+      return (a % 10) !== 0 && (a % 10) + b >= 10;
+    }
+
+    function minusCrossesTen(a, b) {
+      return (a % 10) !== 0 && b > (a % 10);
+    }
+
+    function makeCalcTask() {
+      const op = state.calc.op;
+      const kind = state.calc.kind;
+      for (let tries = 0; tries < 800; tries++) {
+        if (op === 'plus') {
+          const a = randomInt(1, 99);
+          const b = randomInt(1, 9);
+          if (a + b > 100) continue;
+          const cross = plusCrossesTen(a, b);
+          if (kind === 'easy' && cross) continue;
+          if (kind === 'cross' && !cross) continue;
+          return { op, kind, a, b, answer: a + b };
+        }
+        const a = randomInt(2, 100);
+        const b = randomInt(1, Math.min(9, a));
+        const cross = minusCrossesTen(a, b);
+        if (kind === 'easy' && cross) continue;
+        if (kind === 'cross' && !cross) continue;
+        return { op, kind, a, b, answer: a - b };
+      }
+      return op === 'plus'
+        ? { op, kind, a: 28, b: 5, answer: 33 }
+        : { op, kind, a: 42, b: 5, answer: 37 };
+    }
+
+    function newCalcTask() {
+      state.calc = makeCalcTask();
+      $('#calcA').textContent = state.calc.a;
+      $('#calcB').textContent = state.calc.b;
+      $('#calcSign').textContent = state.calc.op === 'plus' ? '+' : '−';
+      $('#calcInput').value = '';
+      renderAmount(state.calc.a, '#calcStartAmount');
+      $('#calcSteps').innerHTML = '';
+      $('#calcResultBox').classList.add('hidden');
+      $('#calcResultAmount').innerHTML = '';
+      setFeedback($('#calcFeedback'), 'Ergebnis schreiben.');
+      $('#calcInput').focus();
+    }
+
+    function calcSteps(task) {
+      const { op, a, b, answer } = task;
+      if (op === 'plus') {
+        if (plusCrossesTen(a, b)) {
+          const toTen = 10 - (a % 10);
+          const rest = b - toTen;
+          const nextTen = a + toTen;
+          const steps = [`+ ${toTen} = ${nextTen}`];
+          if (rest > 0) steps.push(`+ ${rest} = ${answer}`);
+          steps.push(`Ergebnis: ${answer}`);
+          return steps;
+        }
+        return [`${a} + ${b}`, `Ergebnis: ${answer}`];
+      }
+      if (minusCrossesTen(a, b)) {
+        const ones = a % 10;
+        const rest = b - ones;
+        const lowerTen = a - ones;
+        return [`− ${ones} = ${lowerTen}`, `− ${rest} = ${answer}`, `Ergebnis: ${answer}`];
+      }
+      return [`${a} − ${b}`, `Ergebnis: ${answer}`];
+    }
+
+    function checkCalc() {
+      const raw = $('#calcInput').value.trim();
+      const value = Number(raw);
+      if (raw === '' || !Number.isFinite(value)) {
+        setFeedback($('#calcFeedback'), 'Ergebnis fehlt.', 'try');
+        return;
+      }
+      if (value === state.calc.answer) {
+        setFeedback($('#calcFeedback'), 'Super!', 'good');
+        celebrate($('#calcFeedback'));
+      } else {
+        setFeedback($('#calcFeedback'), `Ergebnis: ${state.calc.answer}`, 'try');
+      }
+      buildSteps(calcSteps(state.calc), '#calcSteps');
+      renderAmount(state.calc.answer, '#calcResultAmount');
+      $('#calcResultBox').classList.remove('hidden');
+    }
+
+    function bindTabs() {
+      $$('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          $$('.tab').forEach(t => t.classList.remove('is-active'));
+          $$('.panel').forEach(p => p.classList.remove('is-active'));
+          tab.classList.add('is-active');
+          $(`#panel-${tab.dataset.panel}`).classList.add('is-active');
+        });
+      });
+    }
+
+    function bindCalcChips() {
+      $$('[data-op]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $$('[data-op]').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          state.calc.op = btn.dataset.op;
+          newCalcTask();
+        });
+      });
+      $$('[data-kind]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          $$('[data-kind]').forEach(b => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          state.calc.kind = btn.dataset.kind;
+          newCalcTask();
+        });
+      });
+    }
+
+    function init() {
+      bindTabs();
+      bindCalcChips();
+      buildDigits('#writeDigits', '#writeInput');
+      buildDigits('#calcDigits', '#calcInput');
+
+      $('#learnSlider').addEventListener('input', updateLearn);
+      $('#learnMinus').addEventListener('click', () => {
+        $('#learnSlider').value = clamp(Number($('#learnSlider').value) - 1, 1, 100);
+        updateLearn();
+      });
+      $('#learnPlus').addEventListener('click', () => {
+        $('#learnSlider').value = clamp(Number($('#learnSlider').value) + 1, 1, 100);
+        updateLearn();
+      });
+
+      $('#newWriteBtn').addEventListener('click', newWriteTask);
+      $('#checkWriteBtn').addEventListener('click', checkWrite);
+      $('#showWriteHelpBtn').addEventListener('click', () => showWriteHelp(false));
+      $('#writeInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkWrite(); });
+
+      $('#newCalcBtn').addEventListener('click', newCalcTask);
+      $('#checkCalcBtn').addEventListener('click', checkCalc);
+      $('#calcInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkCalc(); });
+
+      updateLearn();
+      newWriteTask();
+      newCalcTask();
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
