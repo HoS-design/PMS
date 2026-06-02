@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assel-Abenteuer: Aufklärung im Acker</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <header class="hos-header">
+    <div class="hos-header-inner">
+      <a class="brand" href="/index.html" aria-label="Zur Startseite">
+        <img src="/chatisthisreal.png" alt="HoS Logo" onerror="this.style.display='none'">
+        <span>
+          <strong>Assel-Abenteuer: Aufklärung im Acker</strong>
+          <small>Bio-Lernspiel · 8. Schulstufe · Forschungsprotokoll</small>
+        </span>
+      </a>
+      <nav class="header-actions" aria-label="Modulnavigation">
+        <span class="badge">Andere · Biologie</span>
+        <a class="home-link" href="/index.html">Startseite</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="startScreen" class="start-screen" aria-label="Spielstart">
+      <div class="start-art" aria-hidden="true">
+        <span class="start-assel"></span>
+      </div>
+      <div class="start-copy">
+        <p class="start-kicker">Assel-Abenteuer</p>
+        <h1>Aufbruch der Acker-Assel</h1>
+        <p>Krabble durch feuchte Verstecke, erforsche den Boden und sichere deine Assel-Akten der Reihe nach.</p>
+        <div class="start-chips">
+          <span>WASD bewegen</span>
+          <span>Einrollen mit Leertaste</span>
+          <span>A1 bis A6</span>
+        </div>
+        <button id="startHeroBtn" class="start-cta">Ab ins Assel-Areal</button>
+      </div>
+    </section>
+
+    <div class="toolbar" aria-label="Werkzeuge">
+      <button id="startBtn">Spiel starten / fortsetzen</button>
+      <button class="secondary" id="fullscreenBtn">Vollbild</button>
+      <button class="secondary" id="protocolBtn">Protokoll-Vorlage anzeigen</button>
+      <button class="secondary" id="helpBtn">Auftrag erklären</button>
+      <button class="ghost" id="resetBtn">Zurücksetzen</button>
+    </div>
+
+    <section class="game-shell" aria-label="Assel-Spielbereich">
+      <div class="game-area">
+        <div id="gameCanvas" class="game-canvas" aria-label="Top-down-Spielfeld"></div>
+        <div class="legend" aria-label="Bodenzonen">
+          <span><i class="swatch sw-dry"></i> trockene Erde</span>
+          <span><i class="swatch sw-wet"></i> feuchte Erde</span>
+          <span><i class="swatch sw-leaf"></i> Laub-/Zersetzerbereich</span>
+          <span><i class="swatch sw-rock"></i> steiniger Boden</span>
+          <span><i class="swatch sw-dark"></i> dunkles Versteck</span>
+        </div>
+      </div>
+
+      <aside class="hud">
+        <div class="hud-card">
+          <div class="mini-title">Assel-Auswertung</div>
+          <div class="hud-row"><span>Aktiver Auftrag</span><strong id="activeMission">Start</strong></div>
+          <div class="hud-row"><span>Pflanzenreste</span><strong id="organicCount">0 / 5</strong></div>
+          <div class="hud-row"><span>Abwehr</span><strong id="defenseCount">0 vertrieben</strong></div>
+          <div class="hud-row"><span>Panzer</span><strong id="shellText">bereit</strong></div>
+          <div class="meter shell-meter" aria-label="Panzer-Energie"><span id="shellBar"></span></div>
+          <div class="hud-row"><span>Screenshots</span><strong id="screenshotCount">0 / 6</strong></div>
+          <div class="hud-row"><span>Feuchtigkeit</span><strong id="moistureText">70 %</strong></div>
+          <div class="meter" aria-label="Feuchtigkeitsanzeige"><span id="moistureBar"></span></div>
+          <p id="contextHint" class="hint">Drücke „Spiel starten“. Laufe danach mit WASD zu A1 bis A6.</p>
+        </div>
+        <div class="hud-card progress-card">
+          <div class="mini-title">Assel-Akten</div>
+          <div id="progressGrid" class="progress-grid compact"></div>
+        </div>
+        <div class="hud-card map-card">
+          <div class="mini-title">Acker-Übersicht</div>
+          <canvas id="miniMap" width="286" height="184" aria-label="Minikarte mit Aufträgen und Asselposition"></canvas>
+          <p id="wayHint" class="hint">Offene Stationen erscheinen auf der Übersicht.</p>
+        </div>
+        <div class="hud-card controls-card">
+          <div class="mini-title">Steuerung</div>
+          <div class="keys" aria-label="WASD-Tasten">
+            <span class="key w">W</span>
+            <span class="key a">A</span>
+            <span class="key s">S</span>
+            <span class="key d">D</span>
+          </div>
+          <div class="touch-pad" aria-label="Touch-Steuerung">
+            <button class="touch-btn up" data-dir="up" aria-label="nach oben">↑</button>
+            <button class="touch-btn left" data-dir="left" aria-label="nach links">←</button>
+            <button class="touch-btn down" data-dir="down" aria-label="nach unten">↓</button>
+            <button class="touch-btn right" data-dir="right" aria-label="nach rechts">→</button>
+          </div>
+          <button class="roll-btn" id="rollBtn" type="button">Einrollen</button>
+        </div>
+        <div class="hud-card">
+          <div class="mini-title">Screenshot-Stopp</div>
+          <p class="hint">Nach jedem erledigten Auftrag bleibt die Assel-Akte offen. Erst Screenshot machen, dann „Screenshot gesichert“ wählen.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section class="protocol" id="protocolSection" hidden>
+      <h2>Dokument-Vorlage für das Assel-Forschungsprotokoll</h2>
+      <p>Zu jedem Screenshot gehören 2-4 erklärende Sätze. Am Ende schreibst du ein Fazit mit mindestens 3 Sätzen.</p>
+      <textarea id="protocolTemplate" readonly></textarea>
+      <div class="toolbar">
+        <button class="secondary" id="copyProtocolBtn">Protokoll-Vorlage kopieren</button>
+        <button class="secondary" id="printBtn">Druckansicht</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal" aria-modal="true" role="dialog">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div>
+          <h2 id="modalTitle">Assel-Auftrag</h2>
+          <p id="modalLead"></p>
+        </div>
+        <button class="close" id="closeModal" aria-label="Fenster schließen">×</button>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
