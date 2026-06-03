@@ -1623,11 +1623,29 @@
   function missionDecomposer() {
     const carried = state.organic || 0;
     const delivered = Math.min(state.deliveredOrganic || 0, DECOMPOSER_SITE.needed);
+    const ready = delivered >= DECOMPOSER_SITE.needed;
     openModal(missions[2].name, "Sichere den Assel-Abfall-Abbau.", `
-      <div class="task-box ${delivered >= DECOMPOSER_SITE.needed ? "goodbox" : "akte"}">
+      <div class="task-box ${ready ? "goodbox" : "akte"}">
         Zersetzungsplatz: <strong>${delivered} / ${DECOMPOSER_SITE.needed}</strong> Reste abgeliefert<br>
         Getragen: <strong>${carried}</strong> Rest${carried === 1 ? "" : "e"}
       </div>
+      ${ready ? `
+        <div class="task-box goodbox">
+          Der Zersetzungsplatz ist fertig. Beantworte die Fachfragen, um die A3-Akte freizuschalten.
+        </div>
+        ${radioQuestion("q1", "Welche Aufgabe haben Asseln beim Abfall-Abbau?", [
+          ["a", "Sie helfen, abgestorbene organische Reste zu zerkleinern und in den Stoffkreislauf einzubinden."],
+          ["b", "Sie machen aus Steinen neue Blätter."],
+          ["c", "Sie vermeiden jeden Kontakt mit Laub und Holz."]
+        ])}
+        ${radioQuestion("q2", "Warum wächst am Zersetzungsplatz im Spiel eine Pflanze?", [
+          ["a", "Sie zeigt, dass beim Abbau Nährstoffe wieder für Pflanzen verfügbar werden können."],
+          ["b", "Sie zeigt, dass Asseln Photosynthese betreiben."],
+          ["c", "Sie zeigt, dass Plastik besonders gutes Assel-Futter ist."]
+        ])}
+        <button onclick="AsselGame.checkRadioMission(3,{q1:'a',q2:'a'})">Antwort prüfen</button>
+        <div id="feedback" class="feedback"></div>
+      ` : ""}
       <div class="task-box">
         Sammle abgestorbenes Laub, Holzreste und Pflanzenreste. Bringe sie zum Zersetzungsplatz im Laubbereich. Dort wächst die Pflanze als Zeichen dafür, dass Stoffe im Kreislauf weitergegeben werden.
       </div>
@@ -1774,6 +1792,7 @@
     saveState();
     renderHud();
     if (id === 3) {
+      closeModal(true);
       renderDecomposerSite(sceneRef);
       showToast("A3-Quiz erledigt. Der Screenshot-Hinweis erscheint über dem Zersetzungsplatz.");
     } else {
