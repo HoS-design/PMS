@@ -143,6 +143,7 @@
   let sceneRef;
   let modalLocked = false;
   const heldKeys = { up: false, left: false, down: false, right: false };
+  const joystick = { active: false, x: 0, y: 0 };
 
   function defaultState() {
     return {
@@ -152,7 +153,6 @@
       moisture: 70,
       organic: 0,
       deliveredOrganic: 0,
-      decomposerScreenshotReady: false,
       fieldwork: {},
       fieldMarkers: {},
       researchEvents: 0,
@@ -178,6 +178,8 @@
       loaded.fieldMarkers = loaded.fieldMarkers || {};
       loaded.dynamicCollected = loaded.dynamicCollected || {};
       loaded.researchEvents = loaded.researchEvents || 0;
+      loaded.webbedUntil = 0;
+      loaded.shellEnergy = Math.max(0, Math.min(100, Number.isFinite(Number(loaded.shellEnergy)) ? Number(loaded.shellEnergy) : 100));
       return loaded;
     } catch (error) {
       return defaultState();
@@ -185,7 +187,9 @@
   }
 
   function saveState() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const persisted = { ...state, webbedUntil: 0 };
+    delete persisted.decomposerScreenshotReady;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
   }
 
   function qs(id) {
@@ -237,6 +241,7 @@
     document.addEventListener("fullscreenchange", syncFullscreenState);
     bindTouchControls();
     bindRollControl();
+    bindJoystick();
 
     el.protocolTemplate.value = protocolText();
     renderHud();
@@ -264,7 +269,7 @@
   }
 
   function bindRollControl() {
-    const button = qs("rollBtn");
+    const buttons = [qs("rollBtn"), qs("shellOverlayBtn")].filter(Boolean);
     const start = (event) => {
       event.preventDefault();
       setRolling(true);
@@ -273,11 +278,57 @@
       event.preventDefault();
       setRolling(false);
     };
-    button.addEventListener("pointerdown", start);
-    button.addEventListener("pointerup", stop);
-    button.addEventListener("pointerleave", stop);
-    button.addEventListener("pointercancel", stop);
-    button.addEventListener("contextmenu", (event) => event.preventDefault());
+    buttons.forEach((button) => {
+      button.addEventListener("pointerdown", start);
+      button.addEventListener("pointerup", stop);
+      button.addEventListener("pointerleave", stop);
+      button.addEventListener("pointercancel", stop);
+      button.addEventListener("contextmenu", (event) => event.preventDefault());
+    });
+  }
+
+  function bindJoystick() {
+    const base = qs("joyBase");
+    const knob = qs("joyKnob");
+    if (!base || !knob) return;
+    const reset = () => {
+      joystick.active = false;
+      joystick.x = 0;
+      joystick.y = 0;
+      knob.style.transform = "translate(-50%, -50%)";
+    };
+    const update = (event) => {
+      const rect = base.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const max = rect.width * .34;
+      const dx = event.clientX - cx;
+      const dy = event.clientY - cy;
+      const len = Math.hypot(dx, dy);
+      const scale = len > max ? max / len : 1;
+      const px = dx * scale;
+      const py = dy * scale;
+      joystick.active = true;
+      joystick.x = Math.abs(px) < 6 ? 0 : px / max;
+      joystick.y = Math.abs(py) < 6 ? 0 : py / max;
+      knob.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;
+    };
+    base.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      try { base.setPointerCapture(event.pointerId); } catch (error) {}
+      update(event);
+    });
+    base.addEventListener("pointermove", (event) => {
+      if (!joystick.active) return;
+      event.preventDefault();
+      update(event);
+    });
+    base.addEventListener("pointerup", (event) => {
+      event.preventDefault();
+      reset();
+    });
+    base.addEventListener("pointercancel", reset);
+    base.addEventListener("contextmenu", (event) => event.preventDefault());
   }
 
   function startGame() {
@@ -350,6 +401,7 @@
     const dt = delta / 1000;
     syncRollFallback(this);
     updateShell(this, dt);
+    updateWebbedStatus(this);
     updateMoisture(this, dt);
     updateEnemies(this, dt);
     updateDynamicSystems(this);
@@ -1132,8 +1184,8 @@
     }
     const webbed = scene.time.now < (state.webbedUntil || 0);
     const speed = scene.player.rollState === "active" ? 70 : scene.player.rollState === "building" ? 95 : webbed ? 72 : state.moisture < 28 ? 92 : 170;
-    const vx = (heldKeys.right ? 1 : 0) - (heldKeys.left ? 1 : 0);
-    const vy = (heldKeys.down ? 1 : 0) - (heldKeys.up ? 1 : 0);
+    const vx = joystick.active ? joystick.x : (heldKeys.right ? 1 : 0) - (heldKeys.left ? 1 : 0);
+    const vy = joystick.active ? joystick.y : (heldKeys.down ? 1 : 0) - (heldKeys.up ? 1 : 0);
     const vec = new Phaser.Math.Vector2(vx, vy);
     if (vec.lengthSq() > 0) {
       vec.normalize().scale(speed);
@@ -1146,10 +1198,17 @@
     }
   }
 
+  function updateWebbedStatus(scene) {
+    if (state.webbedUntil && scene.time.now >= state.webbedUntil) {
+      state.webbedUntil = 0;
+      renderHud();
+    }
+  }
+
   function setRolling(active) {
     if (el.modal.classList.contains("open")) active = false;
     const button = qs("rollBtn");
-    if (button) button.classList.toggle("active", active);
+    [qs("rollBtn"), qs("shellOverlayBtn")].filter(Boolean).forEach((button) => button.classList.toggle("active", active));
     if (!sceneRef || !sceneRef.player) return;
     const player = sceneRef.player;
     player.rollHeld = active;
@@ -1196,10 +1255,9 @@
     } else if (!player.rollHeld) {
       leaveShell(player);
     }
-    const button = qs("rollBtn");
-    if (button) {
-      button.textContent = player.rollState === "building" ? "Panzer baut auf" : player.rollState === "active" ? "Panzer aktiv" : "Einrollen";
-    }
+    const label = player.rollState === "building" ? "Panzer baut auf" : player.rollState === "active" ? "Panzer aktiv" : "Einrollen";
+    if (qs("rollBtn")) qs("rollBtn").textContent = label;
+    if (qs("shellOverlayBtn")) qs("shellOverlayBtn").textContent = player.rollState === "active" ? "Aktiv" : "Panzer";
   }
 
   function activateShell(player) {
@@ -1209,6 +1267,7 @@
     player.body.setSize(54, 54).setOffset(15, 15);
     player.rotation = 0;
     player.setTint(0xbca18b);
+    vibrate(25);
     addFloatingLabel(sceneRef, player.x, player.y - 38, "Panzer aktiv", "#0f766e");
   }
 
@@ -1292,6 +1351,7 @@
     state.collected[pickup.pickupId] = true;
     state.organic = Math.min(DECOMPOSER_SITE.needed, state.organic + 1);
     addFloatingLabel(sceneRef, pickup.x, pickup.y - 18, `${pickupNames[pickup.kind]} gesammelt`, "#166534");
+    vibrate(12);
     pickup.destroy();
     saveState();
     renderHud();
@@ -1314,6 +1374,7 @@
     const count = fieldMarkers.filter((item) => item.mission === marker.mission && state.fieldMarkers[item.id]).length;
     const needed = markerGoals[marker.mission] || 1;
     addFloatingLabel(sceneRef, marker.x, marker.y - 20, `${marker.markerLabel} beobachtet`, "#075985");
+    vibrate(10);
     if (count >= needed) {
       unlockFieldwork(marker.mission, `A${marker.mission}: Feldauftrag erledigt. Das Quiz ist an der Station freigeschaltet.`);
     } else {
@@ -1337,6 +1398,7 @@
       state.defenseWins = (state.defenseWins || 0) + 1;
       saveState();
       addFloatingLabel(sceneRef, enemy.x, enemy.y - 20, `${enemy.enemyName} vertrieben`, "#0f766e");
+      vibrate([25, 35, 25]);
       showToast("Assel-Abwehr: Eingerollt schützt der Panzer. Der Gegner zieht sich zurück.");
       if (enemy.nameLabel) enemy.nameLabel.destroy();
       scheduleEnemyRespawn(sceneRef, enemy.enemyId);
@@ -1350,6 +1412,7 @@
     state.y = SAFE.y;
     saveState();
     addFloatingLabel(sceneRef, SAFE.x, SAFE.y - 36, "zur Sicherheitszone", "#991b1b");
+    vibrate(90);
     showToast(`${enemy.enemyName}: Bei Gefahr kann sich eine Assel einrollen. Halte Leertaste oder „Einrollen“, wenn du einen Gegner berührst.`);
   }
 
@@ -1366,12 +1429,14 @@
   function touchWeb(player, web) {
     if (player.rollState === "active") {
       addFloatingLabel(sceneRef, web.x, web.y - 16, "Netz abgewehrt", "#0f766e");
+      vibrate(20);
       web.destroy();
       return;
     }
     state.webbedUntil = sceneRef.time.now + 2600;
     web.destroy();
     addFloatingLabel(sceneRef, player.x, player.y - 36, "verlangsamt", "#0369a1");
+    vibrate([35, 25, 35]);
     showToast("Spinnennetz: Die Assel ist kurz verlangsamt. Einrollen schützt auch gegen Netze.");
   }
 
@@ -1916,7 +1981,7 @@
   }
 
   async function toggleFullscreen() {
-    const target = document.querySelector(".game-shell");
+    const target = document.documentElement;
     try {
       if (!document.fullscreenElement) {
         if (target.requestFullscreen) await target.requestFullscreen();
@@ -1979,6 +2044,10 @@
     el.toast.classList.add("show");
     clearTimeout(showToast.timer);
     showToast.timer = setTimeout(() => el.toast.classList.remove("show"), 3200);
+  }
+
+  function vibrate(pattern) {
+    if (navigator.vibrate) navigator.vibrate(pattern);
   }
 
   function protocolText() {

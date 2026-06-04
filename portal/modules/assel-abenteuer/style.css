@@ -349,6 +349,10 @@ button.warning { background: var(--amber); color: #241200; }
 
 .game-area { min-width: 0; }
 
+.play-stage {
+  position: relative;
+}
+
 .game-canvas {
   width: 100%;
   height: min(62vh, 620px);
@@ -364,6 +368,60 @@ button.warning { background: var(--amber); color: #241200; }
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+.mobile-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 20;
+}
+
+.joy-base {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: 126px;
+  height: 126px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, .18);
+  border: 2px solid rgba(255,255,255,.62);
+  box-shadow: inset 0 0 22px rgba(15,23,42,.18), 0 10px 24px rgba(15,23,42,.16);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.joy-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,.9);
+  border: 2px solid rgba(15,23,42,.28);
+  box-shadow: 0 8px 18px rgba(15,23,42,.22);
+}
+
+.shell-overlay-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 24px;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: rgba(15, 118, 110, .92);
+  border: 3px solid rgba(255,255,255,.75);
+  box-shadow: 0 12px 28px rgba(15,23,42,.24);
+  pointer-events: auto;
+  touch-action: none;
+}
+
+.shell-overlay-btn.active {
+  background: rgba(245, 158, 11, .94);
+  color: #172033;
 }
 
 .legend {
@@ -610,6 +668,10 @@ body.game-fullscreen .hud {
 
 .modal.open { display: flex; }
 
+body.game-fullscreen .modal {
+  z-index: 5000;
+}
+
 .modal-card {
   width: min(780px, 100%);
   max-height: min(88vh, 900px);
@@ -732,6 +794,7 @@ select {
   .progress-grid.compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .game-canvas { height: 58vh; }
   .touch-pad { display: grid; }
+  .mobile-overlay { display: block; }
 }
 
 @media (max-width: 640px) {
@@ -745,7 +808,7 @@ select {
   .game-shell,
   .protocol { border-radius: 14px; }
   .progress-grid.compact { grid-template-columns: 1fr; }
-  .game-canvas { min-height: 360px; height: 54vh; }
+  .game-canvas { min-height: 430px; height: 68vh; }
   .toolbar button { flex: 1 1 100%; }
   .match-row,
   .anatomy-panel { grid-template-columns: 1fr; }
@@ -756,21 +819,41 @@ select {
     padding: 8px;
   }
   body.game-fullscreen .game-canvas {
-    height: calc(100vh - 218px);
-    min-height: 280px;
+    height: calc(100vh - 142px);
+    min-height: 360px;
   }
   body.game-fullscreen .hud {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    max-height: 210px;
+    max-height: 134px;
   }
   body.game-fullscreen .hud-card {
     padding: 10px;
   }
   body.game-fullscreen .map-card,
+  body.game-fullscreen .progress-card,
+  body.game-fullscreen .controls-card,
   body.game-fullscreen .hud-card:last-child {
     display: none;
+  }
+  body.game-fullscreen .hud-card:first-child .hint,
+  body.game-fullscreen .hud-row:nth-of-type(2),
+  body.game-fullscreen .hud-row:nth-of-type(3),
+  body.game-fullscreen .hud-row:nth-of-type(5) {
+    display: none;
+  }
+  body.game-fullscreen .joy-base {
+    width: 118px;
+    height: 118px;
+    left: 14px;
+    bottom: 14px;
+  }
+  body.game-fullscreen .shell-overlay-btn {
+    width: 96px;
+    height: 96px;
+    right: 16px;
+    bottom: 16px;
   }
 }
 

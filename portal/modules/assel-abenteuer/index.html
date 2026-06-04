@@ -54,7 +54,15 @@
 
     <section class="game-shell" aria-label="Assel-Spielbereich">
       <div class="game-area">
-        <div id="gameCanvas" class="game-canvas" aria-label="Top-down-Spielfeld"></div>
+        <div class="play-stage">
+          <div id="gameCanvas" class="game-canvas" aria-label="Top-down-Spielfeld"></div>
+          <div id="mobileOverlay" class="mobile-overlay" aria-label="Mobile Steuerung">
+            <div id="joyBase" class="joy-base">
+              <div id="joyKnob" class="joy-knob"></div>
+            </div>
+            <button id="shellOverlayBtn" class="shell-overlay-btn" type="button">Panzer</button>
+          </div>
+        </div>
         <div class="legend" aria-label="Bodenzonen">
           <span><i class="swatch sw-dry"></i> trockene Erde</span>
           <span><i class="swatch sw-wet"></i> feuchte Erde</span>
