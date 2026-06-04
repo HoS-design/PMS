@@ -331,11 +331,19 @@
     base.addEventListener("contextmenu", (event) => event.preventDefault());
   }
 
+  function stopPlayerInput() {
+    Object.keys(heldKeys).forEach((dir) => {
+      heldKeys[dir] = false;
+    });
+    document.querySelectorAll(".touch-btn.active").forEach((button) => button.classList.remove("active"));
+    setRolling(false);
+  }
+
   function startGame() {
+    if (!game && !bootPhaser()) return;
     state.started = true;
     saveState();
     el.startScreen.classList.add("hidden");
-    if (!game) bootPhaser();
     renderHud();
     showToast("Assel-Abenteuer gestartet. Suche die Stationen A1 bis A6.");
   }
@@ -343,7 +351,7 @@
   function bootPhaser() {
     if (!window.Phaser) {
       showToast("Phaser konnte nicht geladen werden. Prüfe die Internetverbindung zum CDN.");
-      return;
+      return false;
     }
 
     game = new Phaser.Game({
@@ -362,6 +370,7 @@
       },
       scene: { preload, create, update }
     });
+    return true;
   }
 
   function preload() {
@@ -970,7 +979,7 @@
   }
 
   function createFieldMarkers(scene) {
-    scene.fieldMarkerGroup = scene.physics.add.staticGroup();
+    if (!scene.fieldMarkerGroup) scene.fieldMarkerGroup = scene.physics.add.staticGroup();
     fieldMarkers.forEach((marker) => {
       if (!missionUnlocked(marker.mission)) return;
       if (state.fieldMarkers[marker.id] || state.fieldwork[marker.mission] || state.completed[marker.mission]) return;
@@ -1043,6 +1052,17 @@
 
   function updateEnemies(scene) {
     if (!scene.enemyGroup) return;
+    if (el.modal.classList.contains("open")) {
+      scene.enemyGroup.getChildren().forEach((enemy) => {
+        if (enemy.body) enemy.setVelocity(0);
+      });
+      if (scene.webGroup) {
+        scene.webGroup.getChildren().forEach((web) => {
+          if (web.body) web.setVelocity(0);
+        });
+      }
+      return;
+    }
     scene.enemyGroup.getChildren().forEach((enemy) => {
       if (!enemy.body) return;
       const seesPlayer = enemyCanSeePlayer(scene, enemy);
@@ -1391,6 +1411,7 @@
   }
 
   function touchEnemy(player, enemy) {
+    if (el.modal.classList.contains("open")) return;
     if (enemy.cooldown && sceneRef.time.now < enemy.cooldown) return;
     enemy.cooldown = sceneRef.time.now + 900;
     if (player.rollState === "active") {
@@ -1427,6 +1448,7 @@
   }
 
   function touchWeb(player, web) {
+    if (el.modal.classList.contains("open")) return;
     if (player.rollState === "active") {
       addFloatingLabel(sceneRef, web.x, web.y - 16, "Netz abgewehrt", "#0f766e");
       vibrate(20);
@@ -1496,6 +1518,11 @@
   }
 
   function showLockedMission(id) {
+    const previous = missions.find((mission) => mission.id === id - 1);
+    if (previous && state.completed[previous.id] && !state.screenshots[previous.id]) {
+      showScreenshotStop(previous.id);
+      return;
+    }
     openModal(`A${id} noch gesperrt`, "Bearbeite die Assel-Aufträge der Reihe nach.", `
       <div class="task-box badbox">Zuerst müssen A${id - 1}, Quiz und Screenshot-Stopp abgeschlossen sein.</div>
       <button onclick="AsselGame.closeModal()">Zurück auf die Map</button>
@@ -1555,10 +1582,11 @@
       </div>`;
     }).join("");
 
-    const completed = missions.filter((m) => state.completed[m.id]).length;
     const shots = missions.filter((m) => state.screenshots[m.id]).length;
     const zone = sceneRef && sceneRef.player ? currentZone(sceneRef.player.x, sceneRef.player.y) : zones[1];
-    el.activeMission.textContent = completed === 6 ? "Abschlussprüfung" : `A${completed + 1}`;
+    const pendingShot = pendingScreenshotMission();
+    const nextOpen = missions.find((mission) => !state.completed[mission.id]);
+    el.activeMission.textContent = pendingShot ? `${pendingShot.code} Screenshot` : nextOpen ? nextOpen.code : "Abschlussprüfung";
     el.organicCount.textContent = `${state.organic || 0} dabei · ${Math.min(state.deliveredOrganic || 0, DECOMPOSER_SITE.needed)} / ${DECOMPOSER_SITE.needed}`;
     el.defenseCount.textContent = `${state.defenseWins || 0} vertrieben`;
     const shellEnergy = Math.round(state.shellEnergy ?? 100);
@@ -1575,7 +1603,16 @@
     updateStationLabels();
   }
 
+  function pendingScreenshotMission() {
+    return missions.find((mission) => state.completed[mission.id] && !state.screenshots[mission.id]);
+  }
+
   function nextTarget() {
+    const pendingShot = pendingScreenshotMission();
+    if (pendingShot) {
+      const station = stations.find((item) => item.id === pendingShot.id);
+      return { ...station, label: `${stationInfo[pendingShot.id].label}\nScreenshot` };
+    }
     const nextMission = missions.find((mission) => missionUnlocked(mission.id) && !state.completed[mission.id]);
     if (nextMission) {
       const station = stations.find((item) => item.id === nextMission.id);
@@ -1602,7 +1639,7 @@
     ctx.lineWidth = 1;
     ctx.strokeRect(.5, .5, canvas.width - 1, canvas.height - 1);
     stations.forEach((station) => {
-      const done = station.id !== 7 && state.completed[station.id];
+      const done = station.id !== 7 && state.completed[station.id] && state.screenshots[station.id];
       const final = station.id === 7;
       ctx.fillStyle = final ? "#7c3aed" : done ? "#16a34a" : "#111827";
       ctx.beginPath();
@@ -1623,6 +1660,8 @@
   function hintFor(zone) {
     if (!state.started) return "Drücke „Spiel starten“. Laufe danach mit WASD zu A1 bis A6.";
     if (state.moisture < 28) return "Assel-Alarm: Suche feuchte Erde oder ein dunkles Versteck, sonst wird die Assel langsam.";
+    const pendingShot = pendingScreenshotMission();
+    if (pendingShot) return `${zone.label}: Sichere den Screenshot-Stopp für ${pendingShot.code}, dann geht es weiter.`;
     const next = missions.find((mission) => !state.completed[mission.id]);
     if (sceneRef && sceneRef.time && sceneRef.time.now < (state.webbedUntil || 0)) return "Spinnennetz: Die Assel ist kurz verlangsamt. Suche Deckung oder rolle dich ein.";
     if (next && !state.fieldwork[next.id]) return `${zone.label}: Erledige den Feldauftrag für ${next.code} auf der Map.`;
@@ -1634,13 +1673,13 @@
     if (!sceneRef || !sceneRef.stationSprites) return;
     sceneRef.stationSprites.forEach((sprite) => {
       if (sprite.stationId === 7) return;
-      const done = Boolean(state.completed[sprite.stationId]);
+      const done = Boolean(state.completed[sprite.stationId] && state.screenshots[sprite.stationId]);
       sprite.setTexture(done ? "stationDone" : "station");
     });
   }
 
   function allMissionsCompleted() {
-    return missions.every((mission) => state.completed[mission.id]);
+    return missions.every((mission) => state.completed[mission.id] && state.screenshots[mission.id]);
   }
 
   function missionHabitat() {
@@ -1688,11 +1727,29 @@
   function missionDecomposer() {
     const carried = state.organic || 0;
     const delivered = Math.min(state.deliveredOrganic || 0, DECOMPOSER_SITE.needed);
+    const ready = delivered >= DECOMPOSER_SITE.needed;
     openModal(missions[2].name, "Sichere den Assel-Abfall-Abbau.", `
-      <div class="task-box ${delivered >= DECOMPOSER_SITE.needed ? "goodbox" : "akte"}">
+      <div class="task-box ${ready ? "goodbox" : "akte"}">
         Zersetzungsplatz: <strong>${delivered} / ${DECOMPOSER_SITE.needed}</strong> Reste abgeliefert<br>
         Getragen: <strong>${carried}</strong> Rest${carried === 1 ? "" : "e"}
       </div>
+      ${ready ? `
+        <div class="task-box goodbox">
+          Der Zersetzungsplatz ist fertig. Beantworte die Fachfragen, um die A3-Akte freizuschalten.
+        </div>
+        ${radioQuestion("q1", "Welche Aufgabe haben Asseln beim Abfall-Abbau?", [
+          ["a", "Sie helfen, abgestorbene organische Reste zu zerkleinern und in den Stoffkreislauf einzubinden."],
+          ["b", "Sie machen aus Steinen neue Blätter."],
+          ["c", "Sie vermeiden jeden Kontakt mit Laub und Holz."]
+        ])}
+        ${radioQuestion("q2", "Warum wächst am Zersetzungsplatz im Spiel eine Pflanze?", [
+          ["a", "Sie zeigt, dass beim Abbau Nährstoffe wieder für Pflanzen verfügbar werden können."],
+          ["b", "Sie zeigt, dass Asseln Photosynthese betreiben."],
+          ["c", "Sie zeigt, dass Plastik besonders gutes Assel-Futter ist."]
+        ])}
+        <button onclick="AsselGame.checkRadioMission(3,{q1:'a',q2:'a'})">Antwort prüfen</button>
+        <div id="feedback" class="feedback"></div>
+      ` : ""}
       <div class="task-box">
         Sammle abgestorbenes Laub, Holzreste und Pflanzenreste. Bringe sie zum Zersetzungsplatz im Laubbereich. Dort wächst die Pflanze als Zeichen dafür, dass Stoffe im Kreislauf weitergegeben werden.
       </div>
@@ -1840,7 +1897,8 @@
     renderHud();
     if (id === 3) {
       renderDecomposerSite(sceneRef);
-      showToast("A3-Quiz erledigt. Der Screenshot-Hinweis erscheint über dem Zersetzungsplatz.");
+      showScreenshotStop(3);
+      showToast("A3-Quiz erledigt. Sichere den Screenshot, dann wird A4 freigeschaltet.");
     } else {
       showScreenshotStop(id);
     }
@@ -1875,8 +1933,12 @@
   }
 
   function refreshFieldMarkers() {
-    if (!sceneRef || !sceneRef.fieldMarkerGroup) return;
-    sceneRef.fieldMarkerGroup.getChildren().forEach((marker) => {
+    if (!sceneRef) return;
+    if (!sceneRef.fieldMarkerGroup) {
+      createFieldMarkers(sceneRef);
+      return;
+    }
+    sceneRef.fieldMarkerGroup.getChildren().slice().forEach((marker) => {
       if (marker.textLabel) marker.textLabel.destroy();
       marker.destroy();
     });
@@ -1884,8 +1946,11 @@
   }
 
   function showLockedFinal() {
-    const missing = missions.filter((mission) => !state.completed[mission.id]).map((mission) => mission.code).join(", ");
-    openModal("Assel-Abschluss noch gesperrt", "Du brauchst zuerst alle sechs Assel-Akten.", `
+    const missing = missions
+      .filter((mission) => !state.completed[mission.id] || !state.screenshots[mission.id])
+      .map((mission) => state.completed[mission.id] ? `${mission.code} Screenshot` : mission.code)
+      .join(", ");
+    openModal("Assel-Abschluss noch gesperrt", "Du brauchst zuerst alle sechs Assel-Akten und Screenshot-Stopps.", `
       <div class="task-box badbox">Noch offen: <strong>${missing}</strong></div>
       <button onclick="AsselGame.closeModal()">Zurück ins Assel-Areal</button>
     `);
@@ -1968,6 +2033,8 @@
 
   function resetGame() {
     if (!confirm("Spielstand wirklich zurücksetzen?")) return;
+    stopPlayerInput();
+    closeModal(true);
     state = defaultState();
     saveState();
     if (game) {
@@ -1976,6 +2043,8 @@
       sceneRef = null;
       qs("gameCanvas").innerHTML = "";
     }
+    el.startScreen.classList.remove("hidden");
+    el.protocolSection.hidden = true;
     renderHud();
     showToast("Spielstand zurückgesetzt.");
   }
@@ -2021,6 +2090,7 @@
   }
 
   function openModal(title, lead, body, locked = false) {
+    stopPlayerInput();
     modalLocked = locked;
     el.modalTitle.textContent = title;
     el.modalLead.textContent = lead;
