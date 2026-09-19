@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="style.css">
+  <script src="generator.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -19,6 +20,8 @@
   </header>
   <main>
     <div class="intro"><span class="eyebrow">DEIN EINSTIEG · SCHRITT FÜR SCHRITT</span><p>Mit <strong>a</strong> und <strong>b</strong> rechnen lernen.</p><span>Schau dir ein Beispiel an. Dann bist du dran. Nimm dir Zeit.</span></div>
+    <div class="mode-switch" role="group" aria-label="Übungsmodus"><button id="guided-mode" aria-pressed="true">Schritt für Schritt</button><button id="endless-mode" aria-pressed="false">∞ Unendlich üben</button></div>
+    <p id="mode-description">Sechs Aufgaben je Bereich. Wähle deinen Lernbereich.</p>
     <nav id="steps" aria-label="Lernbereiche"></nav>
     <div class="workspace">
       <aside class="card lesson"><span class="eyebrow">SO GEHT’S</span><h2 id="lesson-title"></h2><div id="lesson"></div><div class="legend"><span class="tile a">a</span> und <span class="tile b">b</span><p>Buchstaben stehen für Zahlen.<br>Die Zahlen kennen wir noch nicht.</p></div></aside>
@@ -34,7 +37,7 @@
       </section>
     </div>
     <div class="footer"><span>Kein Zeitlimit. Fehler helfen beim Lernen.</span><button id="restart" class="secondary">Diesen Bereich neu beginnen</button></div>
-    <details class="teacher card"><summary>Hinweise für Lehrpersonen</summary><p>Für den ersten Zugang zu Termen in der 7. Schulstufe mit ASO-Lernbedarf: kurze Sätze, wiederkehrende Aufgabenformen, sechs Aufgaben je Bereich und beliebig viele Versuche. Alle Bereiche sind frei wählbar. Es gibt keine Zeitmessung und keine Benotung.</p><p>Verwendet werden ausschließlich a und b, natürliche Koeffizienten und Addition. Keine Potenzen, Klammern oder negativen Zahlen. Die beschrifteten Plättchen zeigen Summanden; a und b sind Platzhalter für Zahlen, keine Gegenstandsnamen. Unterschiedliche Buchstaben können auch denselben Zahlenwert haben.</p><p>Die Aufgaben unterscheiden ganze Terme von Gleichungen sowie einzelne Summanden nach ihrem Variablenteil. Bei gemischten Summen bleiben a- und b-Anteile getrennt. Der Fortschritt bleibt nur während dieser geöffneten Sitzung erhalten; es werden keine personenbezogenen Daten erhoben.</p></details>
+    <details class="teacher card"><summary>Hinweise für Lehrpersonen</summary><p>Für den ersten Zugang zu Termen in der 7. Schulstufe mit ASO-Lernbedarf: kurze Sätze, wiederkehrende Aufgabenformen, sechs Aufgaben je Bereich und beliebig viele Versuche. Alle Bereiche sind frei wählbar. Es gibt keine Zeitmessung und keine Benotung.</p><p>„Unendlich üben“ erzeugt im gewählten Bereich laufend zufällige Aufgaben aus geprüften Mustern. Zahlen von 1 bis 5 ergeben beim Zusammenfassen höchstens 10 je Variable. Die richtige Antwort wird aus den Zahlen berechnet. Auswahlantworten wechseln ihre Position. Aufgaben können später wiederkehren. Der Lernfortschritt des geführten Modus bleibt beim Wechsel erhalten.</p><p>Verwendet werden ausschließlich a und b, natürliche Koeffizienten und Addition. Keine Potenzen, Klammern oder negativen Zahlen. Die beschrifteten Plättchen zeigen Summanden; a und b sind Platzhalter für Zahlen, keine Gegenstandsnamen. Unterschiedliche Buchstaben können auch denselben Zahlenwert haben.</p><p>Die Aufgaben unterscheiden ganze Terme von Gleichungen sowie einzelne Summanden nach ihrem Variablenteil. Bei gemischten Summen bleiben a- und b-Anteile getrennt. Der Fortschritt bleibt nur während dieser geöffneten Sitzung erhalten; es werden keine personenbezogenen Daten erhoben.</p></details>
   </main>
 </body>
 </html>
