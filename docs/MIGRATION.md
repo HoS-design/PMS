@@ -24,5 +24,6 @@ Alle bisherigen Root-Links bleiben aktiv. Die alten Dateien leiten auf die neuen
 | `/schallschutz.html` | `/portal/modules/schallschutz/` |
 | `/suchmaschinen.html` | `/portal/modules/suchmaschinen/` |
 | `/zahlbilder-bis-100.html` | `/portal/modules/zahlbilder-bis-100/` |
+| `/terme-werkstatt.html` | `/portal/modules/terme-werkstatt/` |
 
 Hinweis: Die Root-Dateien sind jetzt Wrapper mit sofortigem Redirect, damit bestehende URLs in GitHub Pages weiterhin funktionieren.
