@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terme-Werkstatt | HoS Lern-App</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="HoS Logo" class="logo-img">
+      <div class="brand-title"><div class="badge-main is-mathe">Mathe · M-FA</div><h1>Terme-Werkstatt</h1></div>
+    </div>
+    <div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div>
+  </header>
+  <main>
+    <div class="intro"><span class="eyebrow">DEIN EINSTIEG · SCHRITT FÜR SCHRITT</span><p>Mit <strong>a</strong> und <strong>b</strong> rechnen lernen.</p><span>Schau dir ein Beispiel an. Dann bist du dran. Nimm dir Zeit.</span></div>
+    <nav id="steps" aria-label="Lernbereiche"></nav>
+    <div class="workspace">
+      <aside class="card lesson"><span class="eyebrow">SO GEHT’S</span><h2 id="lesson-title"></h2><div id="lesson"></div><div class="legend"><span class="tile a">a</span> und <span class="tile b">b</span><p>Buchstaben stehen für Zahlen.<br>Die Zahlen kennen wir noch nicht.</p></div></aside>
+      <section class="card exercise" aria-labelledby="question">
+        <div class="exercise-top"><span id="counter"></span><span id="progress-label"></span></div>
+        <progress id="progress" max="6" value="0" aria-label="Gelöste Aufgaben in diesem Bereich"></progress>
+        <h2 id="question" tabindex="-1"></h2>
+        <div id="expression" class="expression"></div><div id="visual" class="visual"></div>
+        <div id="answers" class="answers"></div>
+        <div id="feedback" role="status" aria-live="polite"></div>
+        <div class="actions"><button id="hint" class="secondary">Tipp anzeigen</button><button id="next" hidden>Weiter →</button></div>
+        <p id="hint-text" class="hint" hidden></p>
+      </section>
+    </div>
+    <div class="footer"><span>Kein Zeitlimit. Fehler helfen beim Lernen.</span><button id="restart" class="secondary">Diesen Bereich neu beginnen</button></div>
+    <details class="teacher card"><summary>Hinweise für Lehrpersonen</summary><p>Für den ersten Zugang zu Termen in der 7. Schulstufe mit ASO-Lernbedarf: kurze Sätze, wiederkehrende Aufgabenformen, sechs Aufgaben je Bereich und beliebig viele Versuche. Alle Bereiche sind frei wählbar. Es gibt keine Zeitmessung und keine Benotung.</p><p>Verwendet werden ausschließlich a und b, natürliche Koeffizienten und Addition. Keine Potenzen, Klammern oder negativen Zahlen. Die beschrifteten Plättchen zeigen Summanden; a und b sind Platzhalter für Zahlen, keine Gegenstandsnamen. Unterschiedliche Buchstaben können auch denselben Zahlenwert haben.</p><p>Die Aufgaben unterscheiden ganze Terme von Gleichungen sowie einzelne Summanden nach ihrem Variablenteil. Bei gemischten Summen bleiben a- und b-Anteile getrennt. Der Fortschritt bleibt nur während dieser geöffneten Sitzung erhalten; es werden keine personenbezogenen Daten erhoben.</p></details>
+  </main>
+</body>
+</html>
