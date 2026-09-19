@@ -1,6 +1,7 @@
 :root { color-scheme: light; --ink:#18304b; --blue:#2459be; }
 * { box-sizing:border-box; }
 #question { scroll-margin-top:130px; }
+.mode-switch { display:flex; flex-wrap:wrap; gap:10px; }.mode-switch button[aria-pressed="false"] { background:white; color:var(--blue); border-color:#afbfda; }#mode-description { font-size:16px; color:#536580; }
 body { margin:0; background:#f3f6fb; color:var(--ink); font-family:system-ui,sans-serif; font-size:18px; line-height:1.55; }
 .app-header { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:16px 5%; background:white; position:sticky; top:0; z-index:10; border-bottom:1px solid #dbe3ef; }
 .brand-row { display:flex; align-items:center; gap:14px; }.logo-img { width:52px; height:52px; object-fit:contain; }.brand-title h1 { font-size:24px; margin:2px 0; }.badge-main { font-size:12px; }.header-link { color:var(--blue); }

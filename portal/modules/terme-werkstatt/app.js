@@ -34,12 +34,28 @@ const banks = [
 ];
 let active = 0;
 const state = lessons.map(() => ({index:0, solved:false, complete:false}));
+let endless=false;
+const practice=lessons.map(()=>({index:0,solved:false,complete:false,task:null}));
+function currentState() { return (endless?practice:state)[active]; }
+function currentTask() {
+  const s=currentState();
+  if(!endless) return banks[active][s.index];
+  if(!s.task) s.task=generateTask(active);
+  return s.task;
+}
+function newPracticeTask(s) {
+  const previous=s.task;
+  for(let attempt=0;attempt<20;attempt++) {
+    s.task=generateTask(active);
+    if(!previous || s.task.prompt!==previous.prompt || s.task.expression!==previous.expression || s.task.options[s.task.answer]!==previous.options[previous.answer]) break;
+  }
+}
 const $ = id => document.getElementById(id);
 function renderNav() {
   $('steps').replaceChildren();
   lessons.forEach((lesson,i) => {
     const button = document.createElement('button');
-    button.innerHTML = `<small>${state[i].complete ? '✓ Geschafft' : 'Schritt '+(i+1)}</small>${lesson.title}`;
+    button.innerHTML = `<small>${endless ? '∞ Übungsbereich '+(i+1) : state[i].complete ? '✓ Geschafft' : 'Schritt '+(i+1)}</small>${lesson.title}`;
     if(i===active) button.setAttribute('aria-current','step');
     button.onclick = () => {active=i; render(); $('question').focus();};
     $('steps').append(button);
@@ -47,10 +63,15 @@ function renderNav() {
 }
 function render() {
   renderNav();
-  const s=state[active], task=banks[active][s.index];
+  const s=currentState(), task=currentTask();
+  $('guided-mode').setAttribute('aria-pressed',String(!endless));
+  $('endless-mode').setAttribute('aria-pressed',String(endless));
+  $('mode-description').textContent=endless?'Immer neue Aufgaben. Wähle oben deinen Übungsbereich. Du kannst jederzeit zurückwechseln.':'Sechs Aufgaben je Bereich. Wähle deinen Lernbereich.';
+  $('progress').hidden=endless;
+  $('restart').textContent=endless?'Übungszähler in diesem Bereich neu starten':'Diesen Bereich neu beginnen';
   $('lesson-title').textContent=lessons[active].title;
   $('lesson').innerHTML=lessons[active].text;
-  $('counter').textContent=`Aufgabe ${s.index+1} von 6`;
+  $('counter').textContent=endless?`Unendlich üben · Aufgabe ${s.index+1}`:`Aufgabe ${s.index+1} von 6`;
   $('progress-label').textContent=`${s.index+(s.solved?1:0)} geschafft`;
   $('progress').value=s.index+(s.solved?1:0);
   $('question').textContent=task.prompt;
@@ -74,23 +95,24 @@ function render() {
   $('hint-text').hidden=true; $('hint-text').textContent=task.hint;
   $('hint').hidden=s.solved;
   $('next').hidden=!s.solved;
-  $('next').textContent=s.index===5 ? (active===3?'Zum Lernüberblick →':'Zum nächsten Bereich →'):'Nächste Aufgabe →';
+  $('next').textContent=endless?'Neue Aufgabe →':s.index===5 ? (active===3?'Zum Lernüberblick →':'Zum nächsten Bereich →'):'Nächste Aufgabe →';
 }
 function answer(choice,button) {
-  const s=state[active],task=banks[active][s.index];
+  const s=currentState(),task=currentTask();
   if(s.solved) return;
   if(choice!==task.answer) {
     button.classList.add('incorrect');
     $('feedback').textContent='Noch nicht. '+task.hint+' Versuch es noch einmal.';
     return;
   }
-  s.solved=true; s.complete=s.index===5;
+  s.solved=true; s.complete=!endless && s.index===5;
   render(); $('next').focus();
 }
 $('hint').onclick=()=>{$('hint-text').hidden=false;};
 $('next').onclick=()=>{
-  const s=state[active];
+  const s=currentState();
   if(!s.solved) return;
+  if(endless) {s.index++;s.solved=false;newPracticeTask(s);render();$('question').focus();return;}
   if(s.index<5) {s.index++;s.solved=false;}
   else if(active<3) active++;
   else {
@@ -103,5 +125,7 @@ $('next').onclick=()=>{
   }
   render(); $('question').focus();
 };
-$('restart').onclick=()=>{state[active]={index:0,solved:false,complete:false};render();$('question').focus();};
+$('restart').onclick=()=>{(endless?practice:state)[active]={index:0,solved:false,complete:false,task:null};render();$('question').focus();};
+$('guided-mode').onclick=()=>{endless=false;render();$('question').focus();};
+$('endless-mode').onclick=()=>{endless=true;render();$('question').focus();};
 render();
