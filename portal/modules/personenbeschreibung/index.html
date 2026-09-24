@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personenbeschreibung · chatisthisreal</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row"><img src="/chatisthisreal.png" alt="Logo" class="logo-img"><div class="brand-title"><div class="badge-main is-deutsch">Deutsch</div><h1>Personenbeschreibung</h1></div></div>
+    <div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div>
+  </header>
+  <main>
+    <section class="intro"><span class="eyebrow">5. Schulstufe · Schreibwerkstatt</span><h2>Genau hinsehen. Treffend beschreiben.</h2><p>Übe gemeinsam am Beamer oder auf Papier. Dein Ziel: eine geordnete Personenbeschreibung mit etwa <strong>100 Wörtern</strong>.</p></section>
+    <section class="controls" aria-label="Vorlage und Druck einstellen">
+      <div class="toolbar"><button id="generate" class="primary">↻ Neue Person</button><label>Wortschatzhilfe <select id="level"><option value="help">Mit Hilfe</option><option value="independent">Ohne Hilfe</option></select></label><label><input type="checkbox" id="mono"> Schwarz-Weiß</label></div>
+      <p id="person-status" role="status"></p>
+      <div class="toolbar"><label>Drucken <select id="print-scope"><option value="all">Arbeitsheft + Schreibblatt (6 Seiten)</option><option value="exercises">Arbeitsheft (4 Seiten)</option><option value="writing">Schreibblatt (2 Seiten)</option><option value="current">Aktuelle Station</option><option value="solutions">Lösungen (2 Seiten)</option></select></label><button id="print">Drucken / als PDF speichern</button><button id="variants">3 verschiedene Schreibblätter drucken</button></div>
+      <p class="small">A4 · Für ein beidseitiges Schreibblatt: an der langen Kante wenden. Im Druckdialog Kopf- und Fußzeilen ausschalten. Lösungen werden separat gedruckt.</p>
+    </section>
+    <nav id="navigation" aria-label="Übungsstationen"></nav>
+    <div id="screen-content"></div>
+    <p class="source">Inhaltlich orientiert an „Deutschstunde 1 Sprachbuch“, S. 26–29 und 208. Eigene Aufgaben und Illustrationen. Satzanfänge und Präsensübungen ergänzen das Training.</p>
+  </main>
+  <div id="print-root" aria-hidden="true"></div>
+  <noscript>Bitte JavaScript aktivieren, damit die Personen und Druckvorlagen erzeugt werden können.</noscript>
+</body>
+</html>
