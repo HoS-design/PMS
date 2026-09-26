@@ -290,7 +290,7 @@
 
     .cards-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
     }
 
@@ -351,13 +351,14 @@
       background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
       display: grid;
       place-items: center;
-      padding: 8px;
+      padding: 0;
       overflow: hidden;
     }
 
     .scene-image {
       width: 100%;
-      height: 160px;
+      height: auto;
+      aspect-ratio: 3 / 2;
       object-fit: contain;
       display: block;
     }
@@ -651,6 +652,26 @@
         min-height: 90px;
       }
     }
+
+    @page { size: A4; margin: 12mm; }
+    .scene-zoom { display: block; width: 100%; border: 0; padding: 0; background: transparent; cursor: zoom-in; text-align: left; border-radius: 12px; overflow: hidden; }
+    .scene-zoom:focus-visible { outline: 4px solid #0369a1; outline-offset: 4px; }
+    .zoom-label { display: block; padding: 8px 12px; color: #0369a1; background: #f0f9ff; font-size: 0.85rem; font-weight: 700; }
+    .image-dialog { width: min(1100px, 96vw); max-height: 95vh; padding: 18px; border: 1px solid #cbd5e1; border-radius: 18px; overflow: auto; }
+    .image-dialog::backdrop { background: rgb(15 23 42 / 75%); }
+    .image-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+    .image-dialog-header h2 { margin: 0; font-size: 1.25rem; }
+    .image-dialog-header button { width: auto; }
+    .image-dialog img { display: block; width: 100%; height: auto; max-height: 70vh; object-fit: contain; }
+    .image-dialog p { color: #475569; line-height: 1.5; }
+    @media print {
+      .intro, .image-dialog, .zoom-label { display: none !important; }
+      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .scene-visual { min-height: 0; }
+      .scene-image { height: auto; width: 100%; }
+      .scene-card { padding: 8px; gap: 6px; }
+      .scene-zoom { border: 0; }
+    }
   </style>
 </head>
 <body>
@@ -821,6 +842,11 @@
     </section>
 
   </main>
+  <dialog id="imageDialog" class="image-dialog" aria-labelledby="imageDialogTitle">
+    <div class="image-dialog-header"><h2 id="imageDialogTitle">Bildansicht</h2><button type="button" id="closeImageDialog" autofocus>Schließen</button></div>
+    <img id="imageDialogImage" alt="">
+    <p id="imageDialogDescription"></p>
+  </dialog>
 
   <script>
     (function () {
@@ -849,7 +875,7 @@
             {
               id: 'hund-1',
               order: 1,
-              image: 'assets/hund-1-offene-gartentuer.svg',
+              image: 'assets/hund-1-illustration.webp',
               art: 'dog-gate',
               title: 'Die offene Gartentuer',
               desc: 'Ein Hund bemerkt eine offene Tuer und schleicht neugierig hinaus.'
@@ -857,7 +883,7 @@
             {
               id: 'hund-2',
               order: 2,
-              image: 'assets/hund-2-die-suche-beginnt.svg',
+              image: 'assets/hund-2-illustration.webp',
               art: 'child-search',
               title: 'Die Suche beginnt',
               desc: 'Ein Kind merkt, dass der Hund weg ist, und sucht aufgeregt nach Spuren.'
@@ -865,15 +891,15 @@
             {
               id: 'hund-3',
               order: 3,
-              image: 'assets/hund-3-hund-im-park.svg',
+              image: 'assets/hund-3-illustration.webp',
               art: 'dog-park',
               title: 'Hund im Park',
-              desc: 'Der Hund sitzt im Park und spielt froehlich mit einem Ball.'
+              desc: 'Der Hund spielt im Park froehlich mit einem Ball.'
             },
             {
               id: 'hund-4',
               order: 4,
-              image: 'assets/hund-4-wieder-zu-hause.svg',
+              image: 'assets/hund-4-illustration.webp',
               art: 'home-return',
               title: 'Wieder zu Hause',
               desc: 'Das Kind findet den Hund und bringt ihn erleichtert nach Hause.'
@@ -887,15 +913,15 @@
             {
               id: 'saft-1',
               order: 1,
-              image: 'assets/saft-1-zu-schnell-gelaufen.svg',
+              image: 'assets/saft-1-illustration.webp',
               art: 'juice-run',
               title: 'Zu schnell gelaufen',
-              desc: 'Ein Kind laeuft mit einem Becher Saft in der Hand durch das Zimmer.'
+              desc: 'Ein Kind laeuft mit einem Glas Saft in der Hand durch das Zimmer.'
             },
             {
               id: 'saft-2',
               order: 2,
-              image: 'assets/saft-2-oh-nein.svg',
+              image: 'assets/saft-2-illustration.webp',
               art: 'juice-spill',
               title: 'Oh nein!',
               desc: 'Der Saft kippt um und landet auf dem Tisch und auf den Heften.'
@@ -903,7 +929,7 @@
             {
               id: 'saft-3',
               order: 3,
-              image: 'assets/saft-3-schnell-helfen.svg',
+              image: 'assets/saft-3-illustration.webp',
               art: 'juice-clean',
               title: 'Schnell helfen',
               desc: 'Das Kind holt sofort ein Tuch und wischt alles vorsichtig auf.'
@@ -911,7 +937,7 @@
             {
               id: 'saft-4',
               order: 4,
-              image: 'assets/saft-4-alles-wieder-sauber.svg',
+              image: 'assets/saft-4-illustration.webp',
               art: 'juice-clean-finish',
               title: 'Alles wieder sauber',
               desc: 'Am Ende ist der Tisch wieder sauber und das Kind ist erleichtert.'
@@ -925,7 +951,7 @@
             {
               id: 'drachen-1',
               order: 1,
-              image: 'assets/drachen-1-windiger-nachmittag.svg',
+              image: 'assets/drachen-1-illustration.webp',
               art: 'kite-field',
               title: 'Windiger Nachmittag',
               desc: 'Ein Kind laesst auf einer Wiese einen Drachen steigen.'
@@ -933,7 +959,7 @@
             {
               id: 'drachen-2',
               order: 2,
-              image: 'assets/drachen-2-die-schnur-reisst.svg',
+              image: 'assets/drachen-2-illustration.webp',
               art: 'kite-string-break',
               title: 'Die Schnur reisst',
               desc: 'Ploetzlich reisst die Schnur und der Drachen fliegt davon.'
@@ -941,7 +967,7 @@
             {
               id: 'drachen-3',
               order: 3,
-              image: 'assets/drachen-3-im-baum-haengen-geblieben.svg',
+              image: 'assets/drachen-3-illustration.webp',
               art: 'kite-tree',
               title: 'Im Baum haengen geblieben',
               desc: 'Der Drachen bleibt oben in einem Baum haengen.'
@@ -949,7 +975,7 @@
             {
               id: 'drachen-4',
               order: 4,
-              image: 'assets/drachen-4-gemeinsam-geschafft.svg',
+              image: 'assets/drachen-4-illustration.webp',
               art: 'kite-help',
               title: 'Gemeinsam geschafft',
               desc: 'Ein Erwachsener hilft, und zusammen holen sie den Drachen herunter.'
@@ -1567,9 +1593,26 @@
         const moduleAssetsBase = getCurrentModuleBasePath();
         const resolvedImage = new URL(imagePath, window.location.origin + moduleAssetsBase).href;
 
-        return '<img class="scene-image" src="' + escapeAttr(resolvedImage) + '" alt="' + escapeAttr(scene.title || 'Bildszene') + '">' +
-          '<div class="scene-fallback hidden">' + fallback + '</div>';
+        return '<button type="button" class="scene-zoom" data-zoom-scene="' + escapeAttr(scene.id) + '" aria-label="Bild vergrößern: ' + escapeAttr(scene.title) + '">' +
+          '<img class="scene-image" src="' + escapeAttr(resolvedImage) + '" alt="' + escapeAttr(scene.desc || scene.title || 'Bildszene') + '" width="768" height="512" draggable="false" decoding="async">' +
+          '<div class="scene-fallback hidden">' + fallback + '</div><span class="zoom-label">Bild vergrößern ↗</span></button>';
       }
+
+      const imageDialog = document.getElementById('imageDialog');
+      const imageDialogImage = document.getElementById('imageDialogImage');
+      sceneGrid.addEventListener('click', function (event) {
+        const button = event.target.closest('[data-zoom-scene]');
+        if (!button) return;
+        const scene = getCurrentStory().scenes.find(function (item) { return item.id === button.dataset.zoomScene; });
+        if (!scene) return;
+        document.getElementById('imageDialogTitle').textContent = scene.title;
+        document.getElementById('imageDialogDescription').textContent = scene.desc;
+        imageDialogImage.src = new URL(scene.image, window.location.origin + getCurrentModuleBasePath()).href;
+        imageDialogImage.alt = scene.desc;
+        imageDialog.showModal();
+      });
+      document.getElementById('closeImageDialog').addEventListener('click', function () { imageDialog.close(); });
+      imageDialog.addEventListener('click', function (event) { if (event.target === imageDialog) imageDialog.close(); });
 
       document.addEventListener('error', function (event) {
         const target = event.target;
