@@ -1,17 +1,16 @@
 # Personenbeschreibung
 
-Deutsch, 5. Schulstufe. Eigene Übungen orientiert an Deutschstunde 1 Sprachbuch, S. 26–29 und 208. Keine übernommenen Buchbilder oder Buchtexte.
+Schreibwerkstatt für leistungsstarke 10- bis 11-Jährige, 5. Schulstufe mit AHS-orientiertem Anspruch. Eigene Aufgaben und Illustrationen.
 
-- Fünf Stationen zum Beobachten, Wortschatz, Aufbau, Formulieren und Überarbeiten.
-- Lokaler, deterministischer SVG-Personengenerator; `?person=1234` stellt dieselbe Figur wieder her.
-- Keine externen Dienste, Bilderzeugungs-APIs oder Schülerdatenspeicherung.
-- Mit/ohne Wortschatzhilfe und Schwarz-Weiß-Ansicht.
-- Drucken: 4 Übungsseiten, 2 Schreibseiten, 2 getrennte Lösungsseiten, aktuelle Station oder 3 unterschiedliche Schreibblätter (6 Seiten).
-- Etwa 100 Wörter als Schreibziel; dynamische Beispieltexte enthalten 97–101 Wörter.
-- Druckbereich wird aus der aktuellen Person aufgebaut. SVG-Muster haben instanzweise eindeutige IDs, damit ausgeblendete Bildschirmfiguren den Ausdruck nicht beeinflussen.
+- Fünf Stationen: Beobachtungen belegen, Wortschatz präzisieren, Aufbau begründen, Sätze verbinden, Texte überarbeiten.
+- Offene Aufgaben mit begründeten Lösungsmöglichkeiten statt überwiegend einfacher Auswahlfragen.
+- Schreibziel etwa 140 bis 180 Wörter. Genauigkeit und Textqualität gehen vor Wortzahl.
+- Relativsätze, variable Satzanfänge, Präsens und die Unterscheidung von Beobachtung, Eindruck und Charakterbehauptung.
+- Wortschatzimpulse optional, standardmäßig ausgeblendet.
+- Deterministischer SVG-Personengenerator: `?person=1234` reproduziert dieselbe Figur.
+- Keine externen Dienste oder Speicherung von Schülertexten. Bearbeitung am Beamer und handschriftlich.
+- Druck: fünf Übungsseiten, zwei Schreibseiten, zwei separate Lösungsseiten oder drei Schreibblattvarianten.
 
-## Prüfung
+## Lokal prüfen
 
-Im Browser (Edge/Chromium) geprüft: reproduzierbare Person nach Neuladen, neue Zufallsperson, Quizrückmeldungen, alle Zuordnungen, Navigation, Hilfestufen, Druckauswahl, drei Varianten mit unveränderter Bildschirmvorlage, keine JavaScript-Fehler und keine horizontale Überbreite bei 390 px. A4-PDF-Seitenzahlen: 6/4/2/2/6; Druckseiten visuell kontrolliert. Beispieltextlängen für 100 Seeds geprüft.
-
-Zum lokalen Prüfen das Repository mit einem HTTP-Server bereitstellen und `/portal/modules/personenbeschreibung/` öffnen. A4 bei 100 % drucken; Browser-Kopf-/Fußzeilen ausschalten. Das Schreibblatt beidseitig an der langen Kante drucken.
+Repository mit einem HTTP-Server bereitstellen und `/portal/modules/personenbeschreibung/` öffnen. Stationen, Auswahlrückmeldungen, Hilfen, Zufallsperson, schmale Ansicht und sämtliche Druckoptionen prüfen. A4 bei 100 %, Browser-Kopf- und Fußzeilen ausschalten. Schreibblatt beidseitig an der langen Kante drucken.
