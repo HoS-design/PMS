@@ -4,6 +4,7 @@ Alle bisherigen Root-Links bleiben aktiv. Die alten Dateien leiten auf die neuen
 
 | Alt (Root) | Neu (Portal) |
 | --- | --- |
+| `/Kunstgalerie.html` | `/portal/modules/kunstgalerie/` |
 | `/1weltkrieg.html` | `/portal/modules/1weltkrieg/` |
 | `/3dkoerperwerkstatt3.html` | `/portal/modules/3dkoerperwerkstatt3/` |
 | `/3dmaerchengenerator.html` | `/portal/modules/3dmaerchengenerator/` |
