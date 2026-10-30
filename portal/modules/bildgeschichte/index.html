@@ -672,6 +672,28 @@
       .scene-card { padding: 8px; gap: 6px; }
       .scene-zoom { border: 0; }
     }
+      /* 14"-Laptops (ca. 1366×650): Intro kompakt, Bildkarten in einer Reihe */
+    @media screen and (min-width: 1100px) {
+      .page { width: min(1260px, calc(100% - 24px)); margin-top: 12px; gap: 12px; }
+      .panel { padding: 14px 16px; }
+      .intro { grid-template-columns: 1fr; gap: 10px; }
+      .intro-main { gap: 8px 16px; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+      .intro-copy { grid-row: span 2; }
+      .eyebrow { display: none; }
+      .lead { max-width: none; line-height: 1.45; }
+      .steps { margin-top: 0; justify-content: flex-end; }
+      .intro-actions { justify-content: flex-end; }
+      .guide-panel { grid-column: 1 / -1; }
+      .stats { grid-template-columns: repeat(3, 1fr); }
+      .stat { padding: 8px 12px; display: flex; align-items: baseline; justify-content: space-between; }
+      .stat strong { margin-top: 0; }
+      .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+      .scene-card { padding: 10px; gap: 6px; }
+      .scene-visual { min-height: 0; }
+      .scene-text { min-height: 0; font-size: 0.9rem; }
+      .drag-hint { display: none; }
+      .storybar { margin-bottom: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -692,13 +714,13 @@
     <section class="panel intro">
       <div class="intro-main">
         <div class="intro-copy">
-          <div class="eyebrow">Bildgeschichte fuer die 5. Schulstufe</div>
-          <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Saetze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
+          <div class="eyebrow">Bildgeschichte für die 5. Schulstufe</div>
+          <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Sätze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
         </div>
         <div class="steps" aria-label="Arbeitsschritte">
           <span id="stepOrder" class="step-pill active">1. Bilder ordnen</span>
-          <span id="stepWrite" class="step-pill">2. Saetze schreiben</span>
-          <span id="stepCheck" class="step-pill">3. Geschichte pruefen</span>
+          <span id="stepWrite" class="step-pill">2. Sätze schreiben</span>
+          <span id="stepCheck" class="step-pill">3. Geschichte prüfen</span>
         </div>
         <div class="intro-actions">
           <button id="toggleGuideBtn" class="btn-soft" type="button" aria-expanded="false">Tipps anzeigen</button>
@@ -711,16 +733,20 @@
             </div>
             <div class="helper-card">
               <strong>Tipp 2</strong>
-              Nutze Reihenfolge-Woerter wie zuerst, dann, ploetzlich und am Ende.
+              Nutze Reihenfolge-Wörter wie zuerst, dann, plötzlich und am Ende.
             </div>
             <div class="helper-card">
               <strong>Tipp 3</strong>
-              Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fuehlen.
+              Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fühlen.
+            </div>
+            <div class="helper-card">
+              <strong>Tipp 4</strong>
+              Erzähle im Präteritum (Mitvergangenheit): er lief, sie rief, wir lachten. Baue direkte Rede ein.
             </div>
           </div>
         </div>
       </div>
-      <div class="stats" aria-label="Uebersicht">
+      <div class="stats" aria-label="Übersicht">
         <div class="stat">
           <span class="muted">Bilder</span>
           <strong id="stat-scenes">4</strong>
@@ -731,7 +757,7 @@
         </div>
         <div class="stat">
           <span class="muted">Checkliste</span>
-          <strong id="stat-check">0 / 5</strong>
+          <strong id="stat-check">0 / 8</strong>
         </div>
       </div>
     </section>
@@ -740,11 +766,11 @@
       <div class="storybar">
         <div class="storybar-left">
           <label class="select-label" for="storySelect">Bildergeschichte:</label>
-          <select id="storySelect" aria-label="Bildergeschichte waehlen"></select>
+          <select id="storySelect" aria-label="Bildergeschichte wählen"></select>
         </div>
         <div class="storybar-right">
           <button id="shuffleBtn" class="btn-secondary" type="button">Neu mischen</button>
-          <button id="checkBtn" class="btn-primary" type="button">Reihenfolge pruefen</button>
+          <button id="checkBtn" class="btn-primary" type="button">Reihenfolge prüfen</button>
         </div>
       </div>
       <p class="small-note">Du kannst die Karten mit der Maus verschieben oder mit den Pfeil-Buttons nach links und rechts bewegen.</p>
@@ -756,7 +782,7 @@
       <div class="section-head">
         <div class="storybar">
           <div class="storybar-left">
-            <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Saetze.</span>
+            <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Sätze.</span>
           </div>
           <div class="storybar-right">
             <button id="fillHelpBtn" class="btn-soft" type="button">Hilfen ausblenden</button>
@@ -766,7 +792,7 @@
       </div>
       <div class="section-body">
         <div id="helpArea" class="chip-block">
-          <div class="chip-title">Satzanfaenge</div>
+          <div class="chip-title">Satzanfänge</div>
           <div id="starterChips" class="chips"></div>
           <div class="chip-title">Wortbank</div>
           <div id="wordChips" class="chips"></div>
@@ -815,7 +841,7 @@
       <div id="checklistContent" class="section-body hidden">
         <div class="storybar">
           <div class="storybar-left">
-            <span class="small-note">Pruefe am Ende, ob deine Geschichte logisch, vollstaendig und gut lesbar ist.</span>
+            <span class="small-note">Prüfe am Ende, ob deine Geschichte logisch, vollständig und gut lesbar ist.</span>
           </div>
           <div class="storybar-right">
             <button id="scoreBtn" class="btn-good" type="button">Checkliste auswerten</button>
@@ -823,19 +849,22 @@
         </div>
 
         <div class="checklist" id="checklist">
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte beruecksichtigt.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Woerter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte berücksichtigt.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Wörter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
           <label class="check-item"><input type="checkbox" data-check> <span>Ich habe so geschrieben, dass man gut versteht, was passiert.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefuehle, Gedanken oder Reaktionen beschrieben.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefühle, Gedanken oder Reaktionen beschrieben.</span></label>
           <label class="check-item"><input type="checkbox" data-check> <span>Meine Geschichte hat einen Schluss.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe im Präteritum (Mitvergangenheit) erzählt.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe direkte Rede verwendet und die Redezeichen gesetzt.</span></label>
+          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe eine passende Überschrift gefunden.</span></label>
         </div>
 
         <div class="toolbar">
           <div class="toolbar-left">
-            <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 5</strong></div>
+            <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 8</strong></div>
           </div>
           <div class="toolbar-right">
-            <button id="resetAllBtn" class="btn-warn" type="button">Alles zuruecksetzen</button>
+            <button id="resetAllBtn" class="btn-warn" type="button">Alles zurücksetzen</button>
           </div>
         </div>
       </div>
@@ -851,34 +880,37 @@
   <script>
     (function () {
       const starterPhrases = [
+        'Eines Tages ',
         'Zuerst ',
         'Dann ',
         'Kurz darauf ',
-        'Ploetzlich ',
+        'Plötzlich ',
+        'In diesem Moment ',
         'Erschrocken ',
-        'Zum Glueck ',
+        'Zum Glück ',
         'Am Ende '
       ];
 
+      // Bildgeschichten werden im Präteritum erzählt (Sprachbuch Deutschstunde 1, S. 63)
       const wordBank = [
-        'rennt', 'schaut', 'sucht', 'entdeckt', 'hilft', 'ruft', 'lacht', 'erschrickt',
-        'freut sich', 'traurig', 'nervoes', 'aufgeregt', 'mutig', 'vorsichtig',
+        'rannte', 'schaute', 'suchte', 'entdeckte', 'half', 'rief', 'lachte', 'erschrak',
+        'freute sich', 'flüsterte', 'traurig', 'nervös', 'aufgeregt', 'mutig', 'vorsichtig', 'erleichtert',
         'auf dem Schulhof', 'im Park', 'neben der Bank', 'vor der Schule',
-        'ploetzlich', 'schliesslich', 'zum Schluss', 'gemeinsam'
+        'plötzlich', 'schließlich', 'zum Schluss', 'gemeinsam'
       ];
 
       const stories = [
         {
           id: 'hund',
-          title: 'Der ausgebuexte Hund',
+          title: 'Der ausgebüxte Hund',
           scenes: [
             {
               id: 'hund-1',
               order: 1,
               image: 'assets/hund-1-illustration.webp',
               art: 'dog-gate',
-              title: 'Die offene Gartentuer',
-              desc: 'Ein Hund bemerkt eine offene Tuer und schleicht neugierig hinaus.'
+              title: 'Die offene Gartentür',
+              desc: 'Ein Hund bemerkt eine offene Tür und schleicht neugierig hinaus.'
             },
             {
               id: 'hund-2',
@@ -894,7 +926,7 @@
               image: 'assets/hund-3-illustration.webp',
               art: 'dog-park',
               title: 'Hund im Park',
-              desc: 'Der Hund spielt im Park froehlich mit einem Ball.'
+              desc: 'Der Hund spielt im Park fröhlich mit einem Ball.'
             },
             {
               id: 'hund-4',
@@ -916,7 +948,7 @@
               image: 'assets/saft-1-illustration.webp',
               art: 'juice-run',
               title: 'Zu schnell gelaufen',
-              desc: 'Ein Kind laeuft mit einem Glas Saft in der Hand durch das Zimmer.'
+              desc: 'Ein Kind läuft mit einem Glas Saft in der Hand durch das Zimmer.'
             },
             {
               id: 'saft-2',
@@ -954,23 +986,23 @@
               image: 'assets/drachen-1-illustration.webp',
               art: 'kite-field',
               title: 'Windiger Nachmittag',
-              desc: 'Ein Kind laesst auf einer Wiese einen Drachen steigen.'
+              desc: 'Ein Kind lässt auf einer Wiese einen Drachen steigen.'
             },
             {
               id: 'drachen-2',
               order: 2,
               image: 'assets/drachen-2-illustration.webp',
               art: 'kite-string-break',
-              title: 'Die Schnur reisst',
-              desc: 'Ploetzlich reisst die Schnur und der Drachen fliegt davon.'
+              title: 'Die Schnur reißt',
+              desc: 'Plötzlich reißt die Schnur und der Drachen fliegt davon.'
             },
             {
               id: 'drachen-3',
               order: 3,
               image: 'assets/drachen-3-illustration.webp',
               art: 'kite-tree',
-              title: 'Im Baum haengen geblieben',
-              desc: 'Der Drachen bleibt oben in einem Baum haengen.'
+              title: 'Im Baum hängen geblieben',
+              desc: 'Der Drachen bleibt oben in einem Baum hängen.'
             },
             {
               id: 'drachen-4',
@@ -990,7 +1022,7 @@
         storyId: stories[0].id,
         order: [],
         texts: {},
-        checks: [false, false, false, false, false],
+        checks: Array.from(document.querySelectorAll('[data-check]'), function () { return false; }),
         helpVisible: false,
         guideVisible: false,
         previewVisible: false,
@@ -1170,7 +1202,7 @@
                 '<div class="scene-num">' + (index + 1) + '</div>',
                 '<div>',
                   '<p class="writing-scene-title">' + escapeHtml(scene.title) + '</p>',
-                  '<p class="small-note">Schreibe passende Saetze zu diesem Bild.</p>',
+                  '<p class="small-note">Schreibe passende Sätze zu diesem Bild.</p>',
                 '</div>',
               '</div>',
               '<textarea data-textarea-id="' + escapeHtml(scene.id) + '" placeholder="Schreibe hier ...">' + escapeHtml(value) + '</textarea>',
@@ -1310,7 +1342,7 @@
         buildPreview();
         updateOrderStat('offen');
         orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Reihenfolge veraendert. Pruefe jetzt, ob deine Geschichte logisch ist.';
+        orderFeedback.textContent = 'Reihenfolge verändert. Prüfe jetzt, ob deine Geschichte logisch ist.';
         updateStepPills();
         saveState();
       }
@@ -1439,7 +1471,7 @@
 
         if (score === state.checks.length) {
           orderFeedback.className = 'feedback good';
-          orderFeedback.textContent = 'Klasse! Deine Geschichte ist fertig ueberarbeitet.';
+          orderFeedback.textContent = 'Klasse! Deine Geschichte ist fertig überarbeitet.';
         } else if (score >= 3) {
           orderFeedback.className = 'feedback warn';
           orderFeedback.textContent = 'Schon gut! Lies deine Geschichte noch einmal und verbessere die fehlenden Punkte.';
@@ -1508,7 +1540,7 @@
         syncLayoutVisibility();
         updateOrderStat('offen');
         orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Alles wurde zurueckgesetzt. Du kannst neu beginnen.';
+        orderFeedback.textContent = 'Alles wurde zurückgesetzt. Du kannst neu beginnen.';
         updateStepPills();
         saveState();
       }

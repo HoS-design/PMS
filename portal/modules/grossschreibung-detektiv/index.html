@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Großschreibung-Detektiv | HoS Lern-Apps</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    :root { --subject-color: #ef4444; --red: #dc2626; --red-soft: #fef2f2; --ok: #16a34a; --ok-soft: #f0fdf4; --warn: #d97706; --warn-soft: #fffbeb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg, #f2f4f7); color: var(--ink, #1e293b); font-family: var(--font-sans, "Segoe UI", Arial, sans-serif); }
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 16px 16px 40px; }
+    .panel { background: #fff; border: 1px solid var(--line, #e2e8f0); border-radius: 20px; box-shadow: 0 8px 24px rgba(15,23,42,.06); padding: 22px; margin-bottom: 18px; }
+    .hero { display: grid; grid-template-columns: 1.3fr .7fr; gap: 18px; align-items: start; }
+    .over { display: inline-block; padding: 6px 12px; border-radius: 999px; background: var(--red-soft); color: var(--red); font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    h2 { margin: 12px 0 8px; font-size: clamp(26px, 4vw, 38px); line-height: 1.05; }
+    p { margin: 0; color: var(--muted, #64748b); line-height: 1.5; }
+    .levels { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 14px; border: 1.5px solid var(--line, #e2e8f0); background: #fff; color: var(--ink, #1e293b); font: inherit; font-weight: 800; cursor: pointer; }
+    .btn:hover { border-color: var(--red); }
+    .btn.main { background: var(--red); border-color: var(--red); color: #fff; }
+    .btn.active { background: var(--red-soft); border-color: var(--red); color: var(--red); }
+    .btn:disabled { opacity: .45; cursor: default; }
+    .rules { background: #f8fafc; border: 1px solid var(--line, #e2e8f0); border-radius: 16px; padding: 14px 16px; font-size: 14px; line-height: 1.5; }
+    .rules b { color: var(--red); }
+    .rules ul { margin: 6px 0 0; padding-left: 18px; }
+    .top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .pill { padding: 6px 12px; border-radius: 999px; background: #f1f5f9; font-size: 13px; font-weight: 700; }
+    .bar { height: 10px; border-radius: 999px; background: #fee2e2; overflow: hidden; margin: 14px 0 6px; }
+    .fill { height: 100%; width: 0; background: var(--red); transition: width .3s; }
+    .task { margin-top: 10px; font-size: 15px; color: var(--muted, #64748b); }
+    .sentence { display: flex; flex-wrap: wrap; gap: 8px 6px; align-items: baseline; margin: 16px 0 6px; font-size: clamp(22px, 3.4vw, 30px); line-height: 1.5; }
+    .w { font: inherit; padding: 2px 9px; border-radius: 10px; border: 2px solid transparent; background: #f8fafc; cursor: pointer; color: var(--ink, #1e293b); }
+    .w:hover { border-color: #fecaca; }
+    .w.cap { background: var(--red-soft); border-color: var(--red); font-weight: 800; }
+    .w.ok { background: var(--ok-soft); border-color: var(--ok); }
+    .w.bad { background: #fee2e2; border-color: var(--red); text-decoration: line-through; text-decoration-color: rgba(220,38,38,.5); }
+    .w.miss { background: var(--warn-soft); border-color: var(--warn); border-style: dashed; }
+    .w:disabled { cursor: default; }
+    .p { margin-left: -6px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    .feedback { margin-top: 16px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line, #e2e8f0); background: #fff; font-size: 15px; line-height: 1.5; }
+    .feedback.good { background: var(--ok-soft); border-color: #86efac; color: #166534; }
+    .feedback.retry { background: var(--warn-soft); border-color: #fcd34d; color: #92400e; }
+    .feedback ul { margin: 6px 0 0; padding-left: 18px; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted, #64748b); margin-top: 10px; }
+    .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 6px; vertical-align: -1px; border: 2px solid; }
+    .legend .l1::before { background: var(--ok-soft); border-color: var(--ok); }
+    .legend .l2::before { background: var(--warn-soft); border-color: var(--warn); border-style: dashed; }
+    .legend .l3::before { background: #fee2e2; border-color: var(--red); }
+    .result { text-align: center; }
+    .big { font-size: 56px; font-weight: 900; color: var(--red); margin: 6px 0; }
+    .hide { display: none !important; }
+    @media (max-width: 760px) { .hero { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Großschreibung-Detektiv</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel hero" id="hero">
+      <div>
+        <span class="over">Groß oder klein?</span>
+        <h2>Finde alle Wörter, die großgeschrieben werden.</h2>
+        <p>Die Sätze sind ganz klein geschrieben. Tippe auf jedes Wort, das einen <b>großen Anfangsbuchstaben</b> braucht. Dann prüfe deine Lösung.</p>
+        <div class="levels">
+          <button class="btn" data-level="1">Level 1 · Nomen &amp; Satzanfang</button>
+          <button class="btn" data-level="2">Level 2 · Signalwörter</button>
+        </div>
+      </div>
+      <div class="rules">
+        <b>Großgeschrieben werden …</b>
+        <ul>
+          <li>das erste Wort im Satz,</li>
+          <li>Nomen und Namen (<i>der Hund, die Angst, Lena</i>),</li>
+          <li>Wörter mit Signalwort davor: <i>das Lesen, beim Turnen, zum Schreiben, vom Laufen, alles Gute, etwas Neues</i>.</li>
+        </ul>
+        <p style="margin-top:8px;font-size:13px">Probe: Kann ich <i>der, die</i> oder <i>das</i> davorsetzen?</p>
+      </div>
+    </section>
+
+    <section class="panel hide" id="game">
+      <div class="top">
+        <button class="btn" id="menuBtn" style="padding:6px 12px">↩ Level &amp; Regeln</button>
+        <span class="pill" id="levelName">Level 1</span>
+        <span class="pill">Satz <b id="idx">1</b> / <span id="total">10</span></span>
+        <span class="pill">Punkte: <b id="points">0</b></span>
+      </div>
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div class="task">Tippe die Wörter an, die großgeschrieben werden. Nochmal tippen macht sie wieder klein.</div>
+      <div class="sentence" id="sentence" aria-live="polite"></div>
+      <div class="legend hide" id="legend"><span class="l1">richtig</span><span class="l2">vergessen</span><span class="l3">falsch groß</span></div>
+      <div class="actions">
+        <button class="btn main" id="checkBtn">Prüfen</button>
+        <button class="btn hide" id="nextBtn">Weiter</button>
+      </div>
+      <div class="feedback hide" id="feedback"></div>
+    </section>
+
+    <section class="panel result hide" id="result">
+      <p>Geschafft! Dein Ergebnis:</p>
+      <div class="big" id="score">0 / 10</div>
+      <p id="scoreText">Schreibe deine Punkte auf deinen Freiarbeitsplan.</p>
+      <div class="actions" style="justify-content:center">
+        <button class="btn main" id="againBtn">Nochmal spielen</button>
+        <button class="btn" id="otherBtn">Anderes Level</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* Sätze in richtiger Schreibung.
+       ^Wort = Nominalisierung (Signalwort davor), @Wort = Name. Alles andere Großgeschriebene ist Nomen oder Satzanfang. */
+    const LEVELS = {
+      1: { name: 'Level 1 · Nomen & Satzanfang', sentences: [
+        'Der kleine Hund spielt im Garten mit einem Ball.',
+        'Am Morgen packt @Lena ihre Schultasche.',
+        'Meine Oma backt zu Weihnachten einen Kuchen.',
+        'Im Winter fahren wir mit dem Zug nach @Graz.',
+        'Die Kinder haben große Angst vor dem Gewitter.',
+        'Nach der Pause schreibt die Klasse eine Geschichte.',
+        '@Tim hat eine tolle Idee. Er baut ein Vogelhaus.',
+        'Mein Bruder liest gern spannende Bücher.',
+        'Unsere Lehrerin erklärt die Hausübung an der Tafel.',
+        'Die Freude war groß, als der Brief endlich kam.',
+        'Im Herbst sammeln wir bunte Blätter im Wald.',
+        'Der neue Laptop liegt auf dem Tisch beim Fenster.'
+      ]},
+      2: { name: 'Level 2 · Signalwörter', sentences: [
+        'Das ^Lesen macht mir großen Spaß.',
+        'Beim ^Turnen bin ich besonders schnell.',
+        'Zum ^Schreiben brauche ich einen spitzen Bleistift.',
+        'Vom vielen ^Laufen tun mir die Füße weh.',
+        'Wir lesen heute ein spannendes Buch.',
+        'Das laute ^Singen hört man bis in den Hof.',
+        'Ich wünsche dir alles ^Gute zum Geburtstag.',
+        'Im Internet gibt es viel ^Interessantes zu entdecken.',
+        'Das ^Spielen am Handy ist erst nach der Hausübung erlaubt.',
+        'Beim ^Kochen hilft @Max seinem Vater.',
+        'Nach der Schule spielen wir im Park.',
+        'Zum Glück hat niemand etwas ^Schlimmes bemerkt.'
+      ]}
+    };
+    const ROUND = 10;
+    const SIGNAL_HINT = { das: 'Artikel davor', beim: 'beim = bei dem', zum: 'zum = zu dem', vom: 'vom = von dem', alles: 'Signalwort „alles“', viel: 'Signalwort „viel“', etwas: 'Signalwort „etwas“', nichts: 'Signalwort „nichts“' };
+
+    let level = 1, round = [], pos = 0, points = 0, checked = false;
+    const $ = (id) => document.getElementById(id);
+
+    function parse(sentence) {
+      // Wörter und Satzzeichen trennen, Grund für Großschreibung bestimmen
+      const parts = sentence.match(/[\^@]?[A-Za-zÄÖÜäöüß]+|[.,!?;:]/g);
+      const tokens = [];
+      let sentenceStart = true, prevWords = [];
+      for (const raw of parts) {
+        if (/^[.,!?;:]$/.test(raw)) { tokens.push({ punct: raw }); if (/[.!?]/.test(raw)) sentenceStart = true; continue; }
+        const mark = raw[0] === '^' || raw[0] === '@' ? raw[0] : '';
+        const word = mark ? raw.slice(1) : raw;
+        const upper = word[0] !== word[0].toLowerCase();
+        let reason = '';
+        if (upper) {
+          if (sentenceStart) reason = 'Satzanfang';
+          else if (mark === '@') reason = 'Name';
+          else if (mark === '^') {
+            const signal = prevWords.slice(-2).map(w => w.toLowerCase()).find(w => SIGNAL_HINT[w]) || 'das';
+            reason = 'Signalwort davor (' + SIGNAL_HINT[signal] + ') – das Wort wird zum Nomen';
+          } else reason = 'Nomen – Probe: der/die/das ' + word;
+        }
+        tokens.push({ word, lower: word[0].toLowerCase() + word.slice(1), upper, reason, cap: false });
+        prevWords.push(word);
+        sentenceStart = false;
+      }
+      return tokens;
+    }
+
+    function shuffle(a) { return a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]); }
+
+    function start(l) {
+      level = l;
+      document.querySelectorAll('[data-level]').forEach(b => b.classList.toggle('active', +b.dataset.level === l));
+      round = shuffle(LEVELS[l].sentences).slice(0, ROUND).map(parse);
+      pos = 0; points = 0;
+      $('levelName').textContent = LEVELS[l].name;
+      $('total').textContent = round.length;
+      $('result').classList.add('hide');
+      $('hero').classList.add('hide');
+      $('game').classList.remove('hide');
+      show();
+      window.scrollTo(0, 0);
+    }
+
+    function show() {
+      checked = false;
+      const tokens = round[pos];
+      const box = $('sentence');
+      box.innerHTML = '';
+      tokens.forEach((t, i) => {
+        if (t.punct) { const s = document.createElement('span'); s.className = 'p'; s.textContent = t.punct; box.appendChild(s); return; }
+        const b = document.createElement('button');
+        b.className = 'w';
+        b.type = 'button';
+        b.textContent = t.lower;
+        b.addEventListener('click', () => {
+          if (checked) return;
+          t.cap = !t.cap;
+          b.classList.toggle('cap', t.cap);
+          b.textContent = t.cap ? t.word[0].toUpperCase() + t.word.slice(1) : t.lower;
+        });
+        box.appendChild(b);
+        t.el = b;
+      });
+      $('idx').textContent = pos + 1;
+      $('points').textContent = points;
+      $('fill').style.width = (pos / round.length * 100) + '%';
+      $('feedback').classList.add('hide');
+      $('legend').classList.add('hide');
+      $('checkBtn').classList.remove('hide');
+      $('nextBtn').classList.add('hide');
+    }
+
+    function check() {
+      if (checked) return;
+      checked = true;
+      const notes = [];
+      let errors = 0;
+      round[pos].forEach(t => {
+        if (t.punct) return;
+        t.el.disabled = true;
+        const shown = t.word[0].toUpperCase() + t.word.slice(1);
+        if (t.upper && t.cap) { t.el.classList.add('ok'); }
+        else if (t.upper && !t.cap) { errors++; t.el.classList.add('miss'); t.el.textContent = shown; notes.push('<b>' + shown + '</b>: groß – ' + t.reason + '.'); }
+        else if (!t.upper && t.cap) { errors++; t.el.classList.remove('cap'); t.el.classList.add('bad'); notes.push('<b>' + t.lower + '</b>: klein – kein Nomen, kein Satzanfang. Probe: der/die/das ' + t.lower + '? Passt nicht.'); }
+      });
+      const fb = $('feedback');
+      if (errors === 0) {
+        points++;
+        fb.className = 'feedback good';
+        fb.innerHTML = '<b>Super, alles richtig!</b> ' + round[pos].filter(t => t.upper).map(t => t.word + ' (' + t.reason.split(' – ')[0] + ')').join(' · ');
+      } else {
+        fb.className = 'feedback retry';
+        fb.innerHTML = '<b>Fast!</b> Schau dir diese Wörter an:<ul><li>' + notes.join('</li><li>') + '</li></ul>';
+      }
+      $('points').textContent = points;
+      $('legend').classList.remove('hide');
+      $('checkBtn').classList.add('hide');
+      $('nextBtn').classList.remove('hide');
+      $('nextBtn').focus();
+    }
+
+    function next() {
+      pos++;
+      if (pos < round.length) { show(); return; }
+      $('fill').style.width = '100%';
+      $('game').classList.add('hide');
+      $('hero').classList.remove('hide');
+      $('result').classList.remove('hide');
+      $('score').textContent = points + ' / ' + round.length;
+      $('scoreText').textContent = (points >= 8 ? 'Stark! ' : points >= 5 ? 'Gut gemacht! ' : 'Übe noch ein bisschen – du schaffst das! ') + 'Schreibe deine Punkte (' + LEVELS[level].name + ') auf deinen Freiarbeitsplan.';
+    }
+
+    document.querySelectorAll('[data-level]').forEach(b => b.addEventListener('click', () => start(+b.dataset.level)));
+    $('checkBtn').addEventListener('click', check);
+    $('menuBtn').addEventListener('click', () => { $('hero').classList.remove('hide'); $('game').classList.add('hide'); window.scrollTo(0, 0); });
+    $('nextBtn').addEventListener('click', next);
+    $('againBtn').addEventListener('click', () => start(level));
+    $('otherBtn').addEventListener('click', () => start(level === 1 ? 2 : 1));
+    const urlLevel = +new URLSearchParams(location.search).get('level');
+    if (urlLevel === 1 || urlLevel === 2) start(urlLevel);
+  </script>
+</body>
+</html>

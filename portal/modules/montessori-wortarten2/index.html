@@ -341,6 +341,13 @@
     }
     .toast.show { opacity: 1; pointer-events: auto; }
 
+    /* Basis/Profi */
+    .mode-switch { display: inline-flex; gap: 4px; margin-right: 6px; }
+    .mode-switch .btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .tok.given .w { opacity: .5; cursor: default; }
+    .tok.given .slot { opacity: .6; }
+    .tok.given .slot .clear { display: none; }
+
     /* Footer text */
     .footer-note { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
 
@@ -371,6 +378,10 @@
         <div class="pill">Erledigt: <b id="done">0</b></div>
     </div>
     <div class="action-group">
+      <div class="mode-switch" role="group" aria-label="Level">
+        <button class="btn small" id="modeBasis" title="Nur Nomen, Artikel, Verb und Adjektiv">Basis</button>
+        <button class="btn small" id="modeProfi" title="Alle 8 Wortarten">Profi</button>
+      </div>
       <button class="btn warn" id="newBtn" title="Diesen Satz zurücksetzen">↺ Neu</button>
       <button class="btn" id="prevBtn" title="Vorheriger Satz">⬅</button>
       <button class="btn" id="nextBtn" title="Nächster Satz">➡</button>
@@ -414,7 +425,8 @@
       <div class="palette" id="palette"></div>
 
       <div class="footer-note">
-        Tasten <span class="kbd">1-8</span> wählen Symbol.<br>
+        Tasten <span class="kbd" id="keyRange">1-8</span> wählen Symbol.<br>
+        <b>Basis:</b> nur Nomen, Artikel, Verb, Adjektiv – die anderen Wörter sind schon gelöst.<br>
         Montessori-Standard (HoS).
       </div>
     </aside>
@@ -491,11 +503,11 @@ const EXERCISES = [
   { sentence: "Wow, meine Schwester liest ein Buch.",               types:["INT","PRO","N","V","ART","N"] },
   { sentence: "Ich gehe mit dir in das Kino.",                      types:["PRO","V","PRÄP","PRO","PRÄP","ART","N"] },
   { sentence: "Der alte Mann spricht laut.",                        types:["ART","ADJ","N","V","ADJ"] },
-  { sentence: "Aua! Das tut weh.",                                  types:["INT","PRO","V","ADJ"] },
+  { sentence: "Aua! Der Tee ist heiß.",                             types:["INT","ART","N","V","ADJ"] },
   { sentence: "Wir bleiben zu Hause.",                              types:["PRO","V","PRÄP","N"] },
   { sentence: "Die Kinder spielen fröhlich.",                       types:["ART","N","V","ADJ"] },
   { sentence: "Er hat auf den Bus gewartet.",                       types:["PRO","V","PRÄP","ART","N","V"] },
-  { sentence: "Oh nein, ich komme.",                                types:["INT","INT","PRO","V"] },
+  { sentence: "Oh, ich lache laut.",                                types:["INT","PRO","V","ADJ"] },
   { sentence: "Der Ball liegt auf dem Tisch.",                      types:["ART","N","V","PRÄP","ART","N"] },
   { sentence: "Sie arbeitet konzentriert.",                         types:["PRO","V","ADJ"] },
   { sentence: "Wow, der Film war spannend.",                        types:["INT","ART","N","V","ADJ"] },
@@ -506,14 +518,14 @@ const EXERCISES = [
   { sentence: "Er liest aufmerksam.",                               types:["PRO","V","ADJ"] },
   { sentence: "Meine Freunde warten geduldig.",                     types:["PRO","N","V","ADJ"] },
   { sentence: "Oh, das klingt gut.",                                types:["INT","PRO","V","ADJ"] },
-  { sentence: "Der Zug fährt los.",                                 types:["ART","N","V","ADJ"] },
+  { sentence: "Der lange Zug fährt schnell.",                       types:["ART","ADJ","N","V","ADJ"] },
   { sentence: "Sie bleibt in der Klasse.",                          types:["PRO","V","PRÄP","ART","N"] },
   { sentence: "Wow, ich habe gefroren.",                            types:["INT","PRO","V","V"] },
   { sentence: "Der Lehrer erklärt alles ruhig.",                    types:["ART","N","V","PRO","ADJ"] },
   { sentence: "Ach, wir sind fertig.",                              types:["INT","PRO","V","ADJ"] },
   { sentence: "Die Sonne scheint hell.",                            types:["ART","N","V","ADJ"] },
   { sentence: "Er spricht höflich.",                                types:["PRO","V","ADJ"] },
-  { sentence: "Oh nein, das klappt.",                               types:["INT","INT","PRO","V"] },
+  { sentence: "Oh, das klappt gut.",                                types:["INT","PRO","V","ADJ"] },
   { sentence: "Mein Bruder arbeitet sorgfältig.",                   types:["PRO","N","V","ADJ"] },
   { sentence: "Wow, das war cool.",                                 types:["INT","PRO","V","ADJ"] },
   { sentence: "Die Kinder gehen nach Hause.",                       types:["ART","N","V","PRÄP","N"] }
@@ -542,7 +554,7 @@ function showToast(text, type="info"){
   toastEl.textContent = text;
   toastEl.className = "toast show";
   if(type==="success") toastEl.style.background = "var(--ok)";
-  if(type==="error") toastEl.style.background = "var(--bad)";
+  else if(type==="error") toastEl.style.background = "var(--bad)";
   else toastEl.style.background = "var(--ink)";
 
   setTimeout(()=>{ toastEl.className = "toast"; }, 2000);
@@ -555,9 +567,25 @@ function updateProgress(){
   document.getElementById("idx").textContent = current + 1;
 }
 
+/* Basis-Modus: nur die vier Grundwortarten aktiv */
+const BASIS_KEYS = ["N","ART","V","ADJ"];
+let mode = new URLSearchParams(location.search).get("level") === "basis" ? "basis" : (localStorage.getItem("hosWortartenMode") || "profi");
+const activeSymbols = () => mode === "basis" ? SYMBOLS.filter(s => BASIS_KEYS.includes(s.key)) : SYMBOLS;
+const isGiven = (type) => mode === "basis" && !BASIS_KEYS.includes(type);
+
+function setMode(m){
+  mode = m;
+  localStorage.setItem("hosWortartenMode", m);
+  document.getElementById("modeBasis").classList.toggle("active", m === "basis");
+  document.getElementById("modeProfi").classList.toggle("active", m === "profi");
+  document.getElementById("keyRange").textContent = "1-" + activeSymbols().length;
+  renderPalette();
+  loadExercise(current);
+}
+
 function renderPalette(){
   paletteEl.innerHTML = "";
-  SYMBOLS.forEach((s, idx) => {
+  activeSymbols().forEach((s, idx) => {
     const item = document.createElement("div");
     item.className = "sym";
     item.setAttribute("draggable","true");
@@ -587,7 +615,7 @@ function setSelectedSymbol(key){
   const s = SYMBOLS.find(x=>x.key===key);
   document.getElementById("instruction").innerHTML = s
     ? `Gewählt: <b>${s.name}</b>. Klicke jetzt auf ein Wort.`
-    : `Wähle ein Symbol rechts (oder Taste 1-8).`;
+    : `Wähle ein Symbol rechts (oder Taste 1-${activeSymbols().length}).`;
 }
 
 function tokenize(str){
@@ -631,6 +659,17 @@ function loadExercise(i){
     wrap.className = "tok word";
     wrap.dataset.correct = correctType;
     wrap.dataset.assigned = "";
+
+    if(isGiven(correctType)){
+      const sym = SYMBOLS.find(s => s.key === correctType);
+      wrap.classList.add("given");
+      wrap.dataset.assigned = correctType;
+      wrap.title = sym.name + " (schon gelöst)";
+      wrap.innerHTML = `<div class="w">${escapeHtml(t.text)}</div><div class="slot"><div class="mini">${svgFor(sym, 28)}</div></div>`;
+      sentenceEl.appendChild(wrap);
+      wIndex++;
+      return;
+    }
 
     // Slot structure
     wrap.innerHTML = `
@@ -754,13 +793,17 @@ document.getElementById("clearSelBtn").addEventListener("click", () => setSelect
 window.addEventListener("keydown", e => {
   if(e.key === "Escape") setSelectedSymbol(null);
   const n = parseInt(e.key);
-  if(!isNaN(n) && n>=1 && n<=SYMBOLS.length) setSelectedSymbol(SYMBOLS[n-1].key);
+  const syms = activeSymbols();
+  if(!isNaN(n) && n>=1 && n<=syms.length) setSelectedSymbol(syms[n-1].key);
   if(e.key==="ArrowRight") loadExercise(current+1);
   if(e.key==="ArrowLeft") loadExercise(current-1);
 });
 
+document.getElementById("modeBasis").addEventListener("click", () => setMode("basis"));
+document.getElementById("modeProfi").addEventListener("click", () => setMode("profi"));
+
 // Init
-loadExercise(0);
+setMode(mode);
 
 </script>
 </body>
