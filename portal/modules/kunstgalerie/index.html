@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Kunstgalerie: Gemälde zuordnen | HoS Lern-Apps</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    :root { --subject-color:#d97706; --art:#8b5cf6; --art-pale:#f4efff; --art-ink:#30234e; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:#1f2937; background:#f4f5f9; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; }
+    [hidden] { display:none!important; }
+    button,select { font:inherit; }
+    button { cursor:pointer; }
+    button:disabled { cursor:not-allowed; opacity:.55; }
+    :focus-visible { outline:3px solid #7c3aed; outline-offset:3px; }
+    .app-header { position:sticky; top:0; z-index:30; }
+    .art-shell { max-width:1120px; margin:auto; padding:24px 20px 60px; }
+    .hero { display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap; padding:24px 28px; border-radius:22px; color:#fff; background:linear-gradient(120deg,#36265c,#7052b2); box-shadow:0 10px 24px #30234e1f; }
+    .hero h2 { font-size:clamp(1.4rem,3vw,2rem); margin:0 0 8px; }
+    .hero p { margin:0; max-width:670px; line-height:1.55; color:#f5efff; }
+    .hero-counter { border:1px solid #ffffff55; background:#ffffff1c; border-radius:16px; padding:14px 19px; text-align:center; min-width:125px; }
+    .hero-counter strong { display:block; font-size:1.7rem; }
+    .hero-counter span { font-size:.8rem; }
+    .mode-tabs { display:flex; gap:10px; padding:20px 0 16px; flex-wrap:wrap; }
+    .tab { border:1px solid #d7d1e5; border-radius:12px; padding:11px 18px; background:white; color:#342650; font-weight:750; }
+    .tab[aria-pressed="true"] { background:#36265c; color:white; border-color:#36265c; }
+    .panel { border-radius:20px; background:#fff; border:1px solid #e5e2ec; padding:22px; margin-bottom:18px; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin:0 0 14px; }
+    .section-title h3 { margin:0; color:var(--art-ink); font-size:1.2rem; }
+    .subtle { color:#596174; line-height:1.5; }
+    .styles-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(225px,1fr)); gap:12px; }
+    .style-card { border:1px solid #e6dff2; border-radius:14px; padding:16px; background:#fcfaff; }
+    .style-card strong { color:#4e3583; font-size:1.04rem; }
+    .style-card small { display:block; color:#6d6180; margin:4px 0 8px; }
+    .style-card p { margin:0; font-size:.94rem; line-height:1.48; }
+    .filter { min-height:42px; padding:9px; border:1px solid #cbc6d6; border-radius:10px; background:white; max-width:100%; }
+    .gallery-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    .art-card { border:1px solid #e5e2ec; border-radius:15px; overflow:hidden; background:white; box-shadow:0 4px 14px #1a14300a; }
+    .art-card img { width:100%; height:210px; object-fit:contain; background:#f5f2ec; display:block; }
+    .art-card-content { padding:14px; }
+    .art-card h4 { margin:0 0 5px; font-size:1rem; color:#292139; }
+    .art-card p { margin:0 0 8px; color:#4b5563; font-size:.9rem; }
+    .pill { display:inline-block; border-radius:999px; padding:5px 10px; background:#efe9ff; color:#523b87; font-size:.78rem; font-weight:750; }
+    .art-card details { margin-top:10px; font-size:.87rem; line-height:1.5; color:#4b5563; }
+    .art-card summary { cursor:pointer; color:#583f94; font-weight:750; }
+    .art-card a,.source { color:#6242a0; font-size:.84rem; }
+    .quiz-setup { display:flex; flex-wrap:wrap; align-items:end; gap:15px; }
+    .quiz-setup label { display:grid; gap:5px; font-weight:650; }
+    .action { border:0; border-radius:12px; padding:12px 18px; background:#6346a8; color:#fff; font-weight:750; }
+    .action:hover:not(:disabled) { background:#50368e; }
+    .action.secondary { background:#f0ebfa; color:#4d3681; border:1px solid #d6cbee; }
+    .quiz-top { display:flex; align-items:center; justify-content:space-between; gap:15px; flex-wrap:wrap; }
+    .quiz-top strong { color:#3f2b6e; }
+    .progress { background:#eeeaf5; height:9px; border-radius:999px; overflow:hidden; margin:12px 0 20px; }
+    .progress span { display:block; height:100%; width:0; background:#8060c0; transition:width .2s; }
+    .quiz-layout { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:22px; align-items:start; }
+    .picture { display:grid; place-items:center; background:#f4f1ee; border:1px solid #e7e0d8; min-height:330px; border-radius:14px; overflow:hidden; padding:10px; }
+    .picture img { display:block; width:100%; height:min(45vw,450px); min-height:280px; object-fit:contain; }
+    .picture-error { max-width:370px; line-height:1.5; text-align:center; padding:30px; }
+    .quiz-prompt { font-size:1.17rem; color:#292139; margin:0 0 14px; }
+    .answer-group { margin-bottom:18px; }
+    .answer-group h4 { margin:0 0 9px; font-size:.99rem; }
+    .choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+    .choice { padding:11px 9px; min-height:50px; border:2px solid #e2dced; border-radius:12px; background:#fff; color:#362e43; font-weight:650; text-align:center; }
+    .choice[aria-pressed="true"] { border-color:#6743b2; background:#f0eaff; color:#38246a; }
+    .choice.correct { border-color:#168451; background:#e7f7ee; color:#125d3a; }
+    .choice.wrong { border-color:#c93846; background:#fdebeb; color:#8b202d; }
+    .quiz-controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:15px; }
+    .feedback { margin-top:16px; border-left:4px solid #7052b2; padding:14px 17px; background:#f7f2ff; border-radius:10px; line-height:1.55; }
+    .feedback h4 { margin:0 0 7px; }
+    .feedback p { margin:0 0 8px; }
+    .feedback p:last-child { margin-bottom:0; }
+    .results { text-align:center; padding:32px; }
+    .results strong { display:block; color:#4f348f; font-size:2.6rem; margin:7px 0; }
+    .results p { line-height:1.6; }
+    .credit { margin-top:20px; font-size:.83rem; color:#647084; line-height:1.5; }
+    @media(max-width:780px) { .quiz-layout { grid-template-columns:1fr; } .picture { min-height:220px; } .picture img { height:300px; min-height:180px; } }
+    @media(max-width:480px) { .art-shell { padding:14px 12px 45px; } .panel { padding:16px; } .hero { padding:19px; } .choices { grid-template-columns:1fr; } .gallery-grid { grid-template-columns:repeat(auto-fit,minmax(165px,1fr)); gap:10px; } .art-card img { height:160px; } }
+    @media(prefers-reduced-motion:reduce) { * { transition:none!important; } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="HoS Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title"><div class="badge-main is-andere">Kunst</div><h1>Kunstgalerie</h1></div>
+    </div>
+    <div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div>
+  </header>
+
+  <main class="art-shell">
+    <div class="hero">
+      <div><h2>Schau genau hin!</h2><p>Entdecke bekannte Gemälde, lerne ihre Künstlerinnen und Künstler kennen und ordne sie den Kunstrichtungen zu.</p></div>
+      <div class="hero-counter"><strong>14</strong><span>Gemälde · 7 Richtungen</span></div>
+    </div>
+    <nav class="mode-tabs" aria-label="Lernmodus">
+      <button class="tab" id="tab-discover" type="button" aria-pressed="true">1. Entdecken</button>
+      <button class="tab" id="tab-practice" type="button" aria-pressed="false">2. Gemälde zuordnen</button>
+    </nav>
+
+    <section id="discover-view" aria-label="Kunst entdecken">
+      <div class="panel">
+        <div class="section-title"><h3>Sieben Kunstrichtungen im Überblick</h3></div>
+        <div id="styles-grid" class="styles-grid"></div>
+      </div>
+      <div class="panel">
+        <div class="section-title">
+          <h3>Gemäldegalerie</h3>
+          <label>Kunstrichtung <select id="style-filter" class="filter"><option value="all">Alle ansehen</option></select></label>
+        </div>
+        <p class="subtle">Betrachte die Bilder und achte auf Farben, Licht, Formen und Motive. Öffne bei jedem Werk die Bildmerkmale.</p>
+        <div id="gallery-grid" class="gallery-grid"></div>
+      </div>
+      <button type="button" class="action" id="go-practice">Jetzt zuordnen</button>
+    </section>
+
+    <section id="practice-view" aria-label="Kunst zuordnen" hidden>
+      <div class="panel" id="quiz-setup">
+        <div class="section-title"><h3>Wie gut erkennst du die Gemälde?</h3></div>
+        <p class="subtle">Du siehst ein Gemälde ohne Titel. Bestimme zuerst die Künstlerin oder den Künstler und dann die Kunstrichtung. Jede richtige Zuordnung bringt einen Punkt.</p>
+        <div class="quiz-setup">
+          <label for="round-length">Länge der Runde
+            <select id="round-length" class="filter"><option value="7">7 Gemälde (kurz)</option><option value="14">14 Gemälde (alle)</option></select>
+          </label>
+          <button type="button" id="start-quiz" class="action">Runde starten</button>
+          <span class="subtle" id="best-score">Bisher noch keine Runde gespielt.</span>
+        </div>
+      </div>
+
+      <div class="panel" id="quiz-game" hidden>
+        <div class="quiz-top"><strong id="question-count"></strong><span id="score-display"></span></div>
+        <div class="progress" aria-hidden="true"><span id="progress-fill"></span></div>
+        <div class="quiz-layout">
+          <div class="picture">
+            <img id="quiz-image" alt="Gemälde zum Zuordnen" decoding="async">
+            <div class="picture-error" id="picture-error" hidden>
+              <p>Das Bild konnte nicht geladen werden. Du kannst es überspringen, ohne dass es als Fehler zählt.</p>
+              <button type="button" class="action secondary" id="skip-picture">Bild überspringen</button>
+            </div>
+          </div>
+          <div>
+            <h3 class="quiz-prompt">Wem gehört dieses Bild und aus welcher Kunstrichtung stammt es?</h3>
+            <div class="answer-group">
+              <h4>1. Künstler oder Künstlerin</h4>
+              <div id="artist-choices" class="choices" role="group" aria-label="Künstler auswählen"></div>
+            </div>
+            <div class="answer-group">
+              <h4>2. Kunstrichtung</h4>
+              <div id="style-choices" class="choices" role="group" aria-label="Kunstrichtung auswählen"></div>
+            </div>
+            <div class="quiz-controls">
+              <button type="button" class="action" id="check-answer" disabled>Antwort prüfen</button>
+              <button type="button" class="action" id="next-question" hidden>Nächstes Gemälde</button>
+            </div>
+            <div id="quiz-feedback" class="feedback" aria-live="polite" hidden></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel results" id="quiz-results" hidden>
+        <h3>Runde geschafft!</h3><strong id="final-points"></strong>
+        <p id="final-message"></p>
+        <button type="button" class="action" id="play-again">Neue Runde</button>
+        <button type="button" class="action secondary" id="review-art">Zur Gemäldegalerie</button>
+      </div>
+    </section>
+    <p class="credit">Bildnachweise: gemeinfreie Gemälde, verlinkt über Wikimedia Commons. Für die Bildanzeige wird eine Internetverbindung benötigt. Die Übung speichert höchstens deinen besten Punktestand lokal auf diesem Gerät, keine Namen und keine Antworten auf einem Server.</p>
+  </main>
+
+  <script>
+    "use strict";
+    const STYLES = [
+      {name:"Renaissance",period:"ca. 1400–1600",info:"Menschen und Räume werden möglichst naturgetreu gezeigt. Perspektive, ausgewogene Formen und die Antike sind wichtig."},
+      {name:"Barock",period:"ca. 1600–1750",info:"Starke Hell-Dunkel-Kontraste, bewegte Szenen und Gefühle machen die Bilder eindrucksvoll."},
+      {name:"Romantik",period:"ca. 1790–1850",info:"Natur, Sehnsucht, Stimmungen und das Erhabene stehen im Mittelpunkt. Landschaften drücken oft Gefühle aus."},
+      {name:"Impressionismus",period:"ab ca. 1870",info:"Flüchtige Lichtstimmungen und das Leben im Augenblick zählen. Häufig siehst du lockere, sichtbare Pinselstriche."},
+      {name:"Postimpressionismus",period:"ca. 1885–1910",info:"Künstler entwickeln die Ideen des Impressionismus weiter. Ausdrucksstarke Farben und persönliche Bildsprachen werden wichtiger."},
+      {name:"Expressionismus",period:"ca. 1905–1925",info:"Gefühle sind wichtiger als naturgetreue Farben. Leuchtende Töne und vereinfachte Formen verstärken die Wirkung."},
+      {name:"Abstrakte Kunst",period:"besonders ab ca. 1910",info:"Linien, Flächen, Formen und Farben können selbst das Thema sein. Gegenstände müssen nicht mehr erkennbar sein."}
+    ];
+    const ARTWORKS = [
+      {title:"Mona Lisa",artist:"Leonardo da Vinci",style:"Renaissance",year:"ca. 1503–1506",file:"Leonardo da Vinci - Mona Lisa.jpg",feature:"Der weiche Übergang zwischen Licht und Schatten sowie die räumliche Landschaft sind typisch für Renaissance-Malerei."},
+      {title:"Die Geburt der Venus",artist:"Sandro Botticelli",style:"Renaissance",year:"ca. 1485",file:"Botticelli Venus.jpg",feature:"Die Szene aus der antiken Mythologie und die harmonisch angeordneten Figuren erinnern an die Ideale der Renaissance."},
+      {title:"Die Nachtwache",artist:"Rembrandt van Rijn",style:"Barock",year:"1642",file:"The Night Watch.jpg",feature:"Dramatisches Licht, tiefe Schatten und Bewegung machen die Szene besonders lebendig."},
+      {title:"Die Milchmagd",artist:"Johannes Vermeer",style:"Barock",year:"ca. 1658–1660",file:"Vermeer - The Milkmaid.jpg",feature:"Licht fällt durch ein Fenster auf eine stille Alltagsszene. Auch die ruhige niederländische Genremalerei gehört zum Barock."},
+      {title:"Der Wanderer über dem Nebelmeer",artist:"Caspar David Friedrich",style:"Romantik",year:"um 1818",file:"Caspar David Friedrich - Wanderer above the sea of fog.jpg",feature:"Der einsame Mensch vor einer mächtigen, geheimnisvollen Natur ist ein typisches Motiv der Romantik."},
+      {title:"Die kämpfende Temeraire",artist:"J. M. W. Turner",style:"Romantik",year:"1839",file:"Turner - The Fighting Temeraire.jpg",feature:"Die leuchtende Abendstimmung macht den Abschied von einem alten Kriegsschiff zu einem gefühlvollen Naturbild."},
+      {title:"Impression, Sonnenaufgang",artist:"Claude Monet",style:"Impressionismus",year:"1872",file:"Monet - Impression, Sunrise.jpg",feature:"Dunst, Spiegelungen und flüchtiges Morgenlicht wirken wichtiger als genaue Details. Das Werk gab dem Impressionismus seinen Namen."},
+      {title:"Bal du moulin de la Galette",artist:"Pierre-Auguste Renoir",style:"Impressionismus",year:"1876",file:"Pierre-Auguste Renoir, Le Moulin de la Galette.jpg",feature:"Lichtflecken, helle Farben und ein fröhlicher Moment des modernen Stadtlebens zeigen typische impressionistische Interessen."},
+      {title:"Sternennacht",artist:"Vincent van Gogh",style:"Postimpressionismus",year:"1889",file:"Vincent van Gogh Starry Night.jpg",feature:"Wirbelnde Pinselstriche und kräftige Farben lassen die Landschaft sehr persönlich und bewegt wirken."},
+      {title:"Das Schlafzimmer in Arles",artist:"Vincent van Gogh",style:"Postimpressionismus",year:"1889",file:"Vincent van Gogh - The Bedroom - Google Art Project.jpg",feature:"Kräftige Farben und bewusst vereinfachte Perspektive erzeugen einen eigenen, unverwechselbaren Ausdruck."},
+      {title:"Der Schrei",artist:"Edvard Munch",style:"Expressionismus",year:"1893",file:"Edvard-Munch-The-Scream.jpg",feature:"Die verzerrte Landschaft und die intensiven Farben zeigen Angst. Munch gilt als wichtiger Wegbereiter des Expressionismus."},
+      {title:"Blaues Pferd I",artist:"Franz Marc",style:"Expressionismus",year:"1911",file:"Franz Marc Blaues Pferd 1911.jpg",feature:"Das Pferd ist bewusst blau gemalt. Die Farbe soll eine Wirkung ausdrücken und nicht die Natur kopieren."},
+      {title:"Komposition II in Rot, Blau und Gelb",artist:"Piet Mondrian",style:"Abstrakte Kunst",year:"1930",file:"Piet Mondriaan, 1930 - Mondrian Composition II in Red, Blue, and Yellow.jpg",feature:"Rechtecke, schwarze Linien und Grundfarben bilden eine nichtgegenständliche Komposition (De Stijl)."},
+      {title:"Komposition VIII",artist:"Wassily Kandinsky",style:"Abstrakte Kunst",year:"1923",file:"Kandinsky - Composition 8, 1923.jpg",feature:"Kreise, Linien, Winkel und Farbflächen ergeben ein Bild, ohne eine gegenständliche Szene darzustellen."}
+    ];
+    const $ = id => document.getElementById(id);
+    const artists = [...new Set(ARTWORKS.map(a => a.artist))];
+    const styles = STYLES.map(s => s.name);
+    const KEY = "hos-kunstgalerie-best-v1";
+    const commonsPage = file => "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(file.replaceAll(" ","_"));
+    const pictureURL = file => "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file.replaceAll(" ","_")) + "?width=900";
+    const shuffled = arr => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+    let round = [], at = 0, points = 0, skipped = 0, selected = {artist:null, style:null}, checked = false;
+    let best = 0;
+    try { best = Number(localStorage.getItem(KEY)) || 0; } catch (_) {}
+
+    function showMode(mode) {
+      const discover = mode === "discover";
+      $("discover-view").hidden = !discover;
+      $("practice-view").hidden = discover;
+      $("tab-discover").setAttribute("aria-pressed", String(discover));
+      $("tab-practice").setAttribute("aria-pressed", String(!discover));
+    }
+    $("tab-discover").addEventListener("click", () => showMode("discover"));
+    $("tab-practice").addEventListener("click", () => showMode("practice"));
+    $("go-practice").addEventListener("click", () => { showMode("practice"); $("start-quiz").focus(); });
+
+    function renderDiscover() {
+      for (const s of STYLES) {
+        const card = document.createElement("article");
+        card.className = "style-card";
+        const title = document.createElement("strong"); title.textContent = s.name;
+        const period = document.createElement("small"); period.textContent = s.period;
+        const desc = document.createElement("p"); desc.textContent = s.info;
+        card.append(title, period, desc); $("styles-grid").appendChild(card);
+        const option = document.createElement("option");
+        option.value = s.name; option.textContent = s.name; $("style-filter").appendChild(option);
+      }
+      renderGallery();
+    }
+    function renderGallery() {
+      const grid = $("gallery-grid");
+      grid.replaceChildren();
+      const filter = $("style-filter").value;
+      ARTWORKS.filter(a => filter === "all" || a.style === filter).forEach(work => {
+        const card = document.createElement("article"); card.className = "art-card";
+        const img = document.createElement("img"); img.loading = "lazy";
+        img.src = pictureURL(work.file); img.alt = work.title + " von " + work.artist;
+        img.onerror = () => { img.alt = "Bild konnte nicht geladen werden"; };
+        const info = document.createElement("div"); info.className = "art-card-content";
+        const h = document.createElement("h4"); h.textContent = work.title;
+        const p = document.createElement("p"); p.textContent = work.artist + " · " + work.year;
+        const pill = document.createElement("span"); pill.className = "pill"; pill.textContent = work.style;
+        const details = document.createElement("details"); const summary = document.createElement("summary"); summary.textContent = "Woran erkenne ich es?";
+        const feature = document.createElement("p"); feature.textContent = work.feature;
+        const source = document.createElement("a"); source.href = commonsPage(work.file); source.target = "_blank"; source.rel = "noopener noreferrer"; source.textContent = "Bildquelle: Wikimedia Commons";
+        details.append(summary, feature, source); info.append(h,p,pill,details); card.append(img,info); grid.appendChild(card);
+      });
+    }
+    $("style-filter").addEventListener("change", renderGallery);
+    function updateBest() { $("best-score").textContent = best ? "Bisheriger Bestwert: " + best + " Punkte" : "Bisher noch keine Runde gespielt."; }
+    updateBest();
+
+    function makeChoices(containerId, values, correct, kind) {
+      const box = $(containerId); box.replaceChildren();
+      const others = shuffled(values.filter(v => v !== correct)).slice(0,3);
+      for (const value of shuffled([correct,...others])) {
+        const btn = document.createElement("button"); btn.type="button"; btn.className="choice";
+        btn.textContent = value; btn.dataset.value = value; btn.setAttribute("aria-pressed","false");
+        btn.addEventListener("click", () => {
+          if (checked) return;
+          selected[kind] = value;
+          box.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+          $("check-answer").disabled = !selected.artist || !selected.style;
+        });
+        box.appendChild(btn);
+      }
+    }
+    function startQuiz() {
+      round = shuffled(ARTWORKS).slice(0, Number($("round-length").value));
+      at = 0; points = 0; skipped = 0;
+      $("quiz-setup").hidden = true;
+      $("quiz-results").hidden = true;
+      $("quiz-game").hidden = false;
+      showQuestion();
+    }
+    function showQuestion() {
+      checked = false; selected = {artist:null,style:null};
+      const work = round[at];
+      $("question-count").textContent = "Gemälde " + (at + 1) + " von " + round.length;
+      $("score-display").textContent = points + " Punkte";
+      $("progress-fill").style.width = (100 * at / round.length) + "%";
+      $("quiz-feedback").hidden = true;
+      $("quiz-feedback").replaceChildren();
+      $("check-answer").hidden = false; $("check-answer").disabled = true;
+      $("next-question").hidden = true; $("next-question").textContent = at === round.length - 1 ? "Ergebnis ansehen" : "Nächstes Gemälde";
+      $("picture-error").hidden = true; $("quiz-image").hidden = false;
+      $("quiz-image").src = pictureURL(work.file);
+      $("quiz-image").alt = "Gemälde " + (at+1) + " zum Zuordnen";
+      makeChoices("artist-choices", artists, work.artist, "artist");
+      makeChoices("style-choices", styles, work.style, "style");
+    }
+    $("quiz-image").addEventListener("error", () => {
+      if ($("quiz-game").hidden || checked) return;
+      $("quiz-image").hidden = true;
+      $("picture-error").hidden = false;
+      $("check-answer").disabled = true;
+    });
+    $("skip-picture").addEventListener("click", () => { skipped++; advance(); });
+    function markChoices(containerId, truth) {
+      $(containerId).querySelectorAll("button").forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.value === truth) btn.classList.add("correct");
+        else if (btn.getAttribute("aria-pressed") === "true") btn.classList.add("wrong");
+      });
+    }
+    $("check-answer").addEventListener("click", () => {
+      if (checked || !selected.artist || !selected.style) return;
+      checked = true;
+      const work = round[at];
+      const artistOK = selected.artist === work.artist, styleOK = selected.style === work.style;
+      points += Number(artistOK) + Number(styleOK);
+      $("score-display").textContent = points + " Punkte";
+      markChoices("artist-choices",work.artist); markChoices("style-choices",work.style);
+      const feedback = $("quiz-feedback");
+      const heading = document.createElement("h4"); heading.textContent = artistOK && styleOK ? "Beide Zuordnungen richtig!" : artistOK || styleOK ? "Eine Zuordnung richtig!" : "Hier ist die Auflösung:";
+      const line1 = document.createElement("p"); line1.textContent = work.title + " (" + work.year + ") · " + work.artist + " · " + work.style;
+      const line2 = document.createElement("p"); line2.textContent = work.feature;
+      const link = document.createElement("a"); link.className = "source"; link.href=commonsPage(work.file); link.textContent="Original und Bildquelle auf Wikimedia Commons"; link.target="_blank"; link.rel="noopener noreferrer";
+      feedback.replaceChildren(heading,line1,line2,link); feedback.hidden = false;
+      $("check-answer").hidden = true; $("next-question").hidden = false; $("next-question").focus();
+    });
+    function advance() { at++; if (at < round.length) showQuestion(); else finish(); }
+    $("next-question").addEventListener("click", advance);
+    function finish() {
+      $("quiz-game").hidden = true; $("quiz-results").hidden = false;
+      const max = (round.length - skipped) * 2;
+      $("final-points").textContent = points + " / " + max + " Punkte";
+      let message = max === 0 ? "Kein Bild konnte geladen werden. Prüfe deine Internetverbindung und versuche es erneut." :
+        points / max >= .85 ? "Stark! Du erkennst schon sehr viele Künstler und Kunstrichtungen." :
+        points / max >= .55 ? "Gut gemacht! Schau dir die schwierigen Gemälde noch einmal in der Galerie an." :
+        "Das war ein guter Anfang. In der Entdecker-Galerie findest du alle Merkmale zum Üben.";
+      if (skipped) message += " " + skipped + " Bild(er) wurden wegen Ladeproblemen nicht gewertet.";
+      $("final-message").textContent = message;
+      if (points > best) { best = points; try { localStorage.setItem(KEY, String(best)); } catch (_) {} }
+      updateBest();
+    }
+    $("start-quiz").addEventListener("click",startQuiz);
+    $("play-again").addEventListener("click", () => { $("quiz-results").hidden = true; $("quiz-setup").hidden = false; $("start-quiz").focus(); });
+    $("review-art").addEventListener("click", () => showMode("discover"));
+    renderDiscover();
+  </script>
+</body>
+</html>
