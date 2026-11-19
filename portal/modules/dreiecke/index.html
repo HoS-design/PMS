@@ -170,7 +170,7 @@
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
     }
-    .kpi .big{font-size:1.2rem;font-weight:800;color:#eaf2ff}
+    .kpi .big{font-size:1.4rem;font-weight:800;color:var(--subject)}
     .kpi .lab{font-size:.85rem;color:var(--muted)}
     .hint{color:var(--muted);font-size:.92rem;line-height:1.35}
   
@@ -194,10 +194,22 @@
       padding:3px 8px; border-radius:99px;
     }
 
-</style>
+
+    /* Gemeinsames Layout */
+    .hos-stage { grid-template-columns: minmax(0, 1fr) 330px; }
+    .canvas-panel { display: flex; padding: 8px; }
+    .canvas-panel canvas { flex: 1; width: 100%; height: 100%; min-height: 0; border-radius: 12px; }
+    .side { display: flex; flex-direction: column; gap: 10px; }
+    .side .row + .row { margin-top: 0; }
+    .side .kpi { margin: 0; }
+    .hos-bottombar .status { flex: 1 1 260px; min-width: 0; margin: 0; font-weight: 700; color: var(--hos-ink); background: #fafaf9; padding: 7px 12px; }
+    .btn.active { background: var(--subject-soft); border-color: var(--subject); color: var(--subject-strong); }
+    .btn.primary { border-color: var(--subject-line); box-shadow: none; }
+
+  </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
 
 <header class="app-header">
   <div class="brand-row">
@@ -212,88 +224,58 @@
   </div>
 </header>
 
-  <div class="wrap">
-    <div class="app-intro">
-      <div>
-        <h1>Dreiecke · Winkelart üben <span style="color:var(--b)">HoS</span></h1>
-        <div class="sub">Erkennen & Herstellen: spitzwinkelig · rechtwinkelig · stumpfwinkelig</div>
-      </div>
-      <a class="toplink" href="/index.html">⬅︎ Startseite</a>
-      <div class="badge">📐 Mathe · Interaktiv</div>
+    <main class="hos-main">
+    <div class="hos-topbar">
+      <button class="btn active" id="modeRecognize">1) Erkennen</button>
+      <button class="btn" id="modeBuild">2) Herstellen</button>
+      <span class="pill" id="taskPill">Aufgabe</span>
+      <span class="pill" id="teacherPill" style="display:none">Lehrer-Modus</span>
+      <span class="hos-spacer"></span>
+      <button class="btn tiny" id="levelEasy">Level: easy</button>
+      <button class="btn tiny" id="levelMed">Level: medium</button>
+      <button class="btn tiny" id="levelHard">Level: hard</button>
     </div>
 
-    <div class="grid">
-      <section class="card">
-        <div class="switch">
-          <button class="btn active" id="modeRecognize">1) Erkennen</button>
-          <button class="btn" id="modeBuild">2) Herstellen</button>
-          <span class="pill" id="taskPill">Aufgabe</span>
-          <span class="pill" id="teacherPill" style="display:none">Lehrer-Modus</span>
-        </div>
-
-        <div class="body">
-          <canvas id="cv" width="980" height="640" aria-label="Dreieck-Canvas"></canvas>
-
-          <div class="row" style="margin-top:12px">
-            <span class="tag"><span class="dot"></span> Punkt A</span>
-            <span class="tag"><span class="dot b"></span> Punkt B</span>
-            <span class="tag"><span class="dot w"></span> Punkt C</span>
-            <div class="status" id="status">Modus „Erkennen“: nur auswählen (Punkte sind gesperrt). Modus „Herstellen“: Punkte ziehen & prüfen.</div>
-          </div>
-
-          <div class="sep"></div>
-
-          <div class="row" id="answerRow">
-            <button class="btn primary" data-ans="acute">Spitzwinkelig</button>
-            <button class="btn warn" data-ans="right">Rechtwinkelig</button>
-            <button class="btn bad" data-ans="obtuse">Stumpfwinkelig</button>
-            <button class="btn tiny" id="nextBtn">Nächste Aufgabe</button>
-          </div>
-
-          <div class="row" id="buildRow" style="display:none">
-            <button class="btn good" id="checkBuild">Prüfen</button>
-            <button class="btn tiny" id="resetBuild">Neu anordnen</button>
-            <button class="btn tiny" id="nextBuild">Nächste Vorgabe</button>
-            <span class="hint">Ziehe die Punkte. Ziel: die geforderte Winkelart herstellen.</span>
-          </div>
-
-          <div class="sep"></div>
-          <div class="hint">
-            <b>Hinweis:</b> Keine Lösung wird live angezeigt. (Lehrer-Modus: Taste <b>L</b>.)
-          </div>
-        </div>
+    <div class="hos-stage">
+      <section class="hos-panel canvas-panel">
+        <canvas id="cv" width="980" height="640" aria-label="Dreieck-Canvas"></canvas>
       </section>
 
-      <aside class="card">
-        <div class="body">
-          <div class="kpi">
-            <div class="box"><div class="big" id="score">0</div><div class="lab">Punkte</div></div>
-            <div class="box"><div class="big" id="streak">0</div><div class="lab">Streak</div></div>
-            <div class="box"><div class="big" id="done">0</div><div class="lab">Aufgaben</div></div>
-          </div>
-
-          <div class="sep"></div>
-
-          <div class="row">
-            <button class="btn tiny" id="toggleGrid">Raster: an/aus</button>
-            <button class="btn tiny" id="newTriangle">Neues Dreieck</button>
-          </div>
-
-          <div class="row">
-            <button class="btn tiny" id="levelEasy">Level: easy</button>
-            <button class="btn tiny" id="levelMed">Level: medium</button>
-            <button class="btn tiny" id="levelHard">Level: hard</button>
-          </div>
-
-          <div class="sep"></div>
-
-          <div class="hint">
-            <b>Lehrer-Modus (L):</b> zeigt Winkelwerte & Klassifikation im Canvas an (für Kontrolle/Erklärung). Standard: aus.
-          </div>
+      <aside class="hos-panel scroll side">
+        <div class="kpi">
+          <div class="box"><div class="big" id="score">0</div><div class="lab">Punkte</div></div>
+          <div class="box"><div class="big" id="streak">0</div><div class="lab">Streak</div></div>
+          <div class="box"><div class="big" id="done">0</div><div class="lab">Aufgaben</div></div>
         </div>
+        <div class="row">
+          <span class="tag"><span class="dot"></span> Punkt A</span>
+          <span class="tag"><span class="dot b"></span> Punkt B</span>
+          <span class="tag"><span class="dot w"></span> Punkt C</span>
+        </div>
+        <div class="row" id="answerRow">
+          <button class="btn primary" data-ans="acute">Spitzwinkelig</button>
+          <button class="btn warn" data-ans="right">Rechtwinkelig</button>
+          <button class="btn bad" data-ans="obtuse">Stumpfwinkelig</button>
+          <button class="btn tiny" id="nextBtn">Nächste Aufgabe →</button>
+        </div>
+        <div class="row" id="buildRow" style="display:none">
+          <button class="btn good" id="checkBuild">Prüfen</button>
+          <button class="btn tiny" id="resetBuild">Neu anordnen</button>
+          <button class="btn tiny" id="nextBuild">Nächste Vorgabe →</button>
+          <span class="hint">Ziehe die Punkte. Ziel: die geforderte Winkelart herstellen.</span>
+        </div>
+        <div class="row">
+          <button class="btn tiny" id="toggleGrid">Raster: an/aus</button>
+          <button class="btn tiny" id="newTriangle">Neues Dreieck</button>
+        </div>
+        <div class="hint"><b>Lehrer-Modus (Taste L):</b> zeigt Winkelwerte und Klassifikation im Bild an. Standard: aus.</div>
       </aside>
     </div>
-  </div>
+
+    <div class="hos-bottombar">
+      <div class="status" id="status">Modus „Erkennen“: nur auswählen (Punkte sind gesperrt). Modus „Herstellen“: Punkte ziehen und prüfen.</div>
+    </div>
+  </main>
 
 <script>
 (() => {

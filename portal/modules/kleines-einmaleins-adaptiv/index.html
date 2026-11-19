@@ -156,10 +156,18 @@
     .switch input{transform:translateY(1px)}
     .note{padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.65)}
     .sr-only{position:absolute;left:-9999px}
+  
+    /* Gemeinsames Layout: Rahmen füllt den Bildschirm, Inhalt scrollt nur innen */
+    .hos-fill { overflow: hidden; display: flex; }
+    .shell { flex: 1; min-height: 0; display: flex; flex-direction: column; box-shadow: none; border-radius: var(--hos-radius); }
+    .top { padding: 8px 12px; }
+    .content { flex: 1; min-height: 0; overflow: auto; padding: 10px; }
+    .card { box-shadow: none; padding: 12px; }
+
   </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -173,7 +181,7 @@
     </div>
   </header>
 
-  <main class="wrap">
+  <main class="wrap hos-fill">
     <section class="shell" aria-label="Kleines Einmaleins Trainer">
       <div class="top">
         <div class="title">
