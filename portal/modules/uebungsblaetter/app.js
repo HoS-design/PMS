@@ -17,7 +17,7 @@
   function readHash() {
     const mh = location.hash.match(/^#merkheft(?:-(mathe))?(?:-(\d))?$/);
     if (mh) { state.merkheft = true; state.fach = mh[1] || 'deutsch'; if (mh[2] && +mh[2] >= 1 && +mh[2] <= 4) state.klasse = +mh[2]; return; }
-    if (location.hash === '#mathe' || location.hash === '#deutsch') { state.fach = location.hash.slice(1); state.topic = null; return; }
+    if (location.hash === '#mathe' || location.hash === '#deutsch') { state.fach = location.hash.slice(1); state.topic = null; state.merkheft = false; return; }
     state.merkheft = false;
     const m = location.hash.replace('#', '').match(/^([a-z0-9-]+?)(?:-(\d))?(?:-(\d+|v\d+))?$/);
     if (!m) return;
@@ -152,6 +152,7 @@
     document.querySelectorAll('#fachSeg button').forEach(b => b.classList.toggle('active', b.dataset.fach === state.fach));
     document.body.classList.toggle('subject-deutsch', state.fach === 'deutsch');
     document.body.classList.toggle('subject-mathe', state.fach === 'mathe');
+    const fb = $('fachBadge'); if (fb) { fb.textContent = state.fach === 'mathe' ? 'Mathematik' : 'Deutsch'; fb.className = 'badge-main is-' + state.fach; }
     document.querySelectorAll('#fachSeg button').forEach(b => b.addEventListener('click', () => {
     if (state.fach === b.dataset.fach) return;
     state.fach = b.dataset.fach; state.topic = null; state.merkheft = false;

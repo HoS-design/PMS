@@ -141,9 +141,9 @@
   }
   // Rechtwinkeliges Dreieck mit Beschriftung (Pythagoras)
   function rtri(la, lb, lc) {
-    return svgBox(48, 32, '<polygon points="6,26 40,26 6,6" fill="#f3f6ff" stroke="#111" stroke-width="0.45"/>' +
-      '<rect x="6" y="22.5" width="3.5" height="3.5" fill="none" stroke="#111" stroke-width="0.3"/>' +
-      lbl(23, 30.5, la) + lbl(3, 17, lb, 'end') + lbl(25, 14, lc, 'start'));
+    return svgBox(58, 32, '<polygon points="18,26 52,26 18,6" fill="#f3f6ff" stroke="#111" stroke-width="0.45"/>' +
+      '<rect x="18" y="22.5" width="3.5" height="3.5" fill="none" stroke="#111" stroke-width="0.3"/>' +
+      lbl(35, 30.5, la) + lbl(16.5, 17, lb, 'end') + lbl(36.5, 14, lc, 'start'));
   }
   // Zahlenstrahl mit Markierungen
   function numberLine(start, step, count, marks) {
@@ -162,5 +162,8 @@
     return svgBox(W, 23, s);
   }
 
-  UB.M = { R, round, gcd, lcm, fmt, frac, fracR, mixed, karo, grid, task, info, rect, cuboid, angle, rtri, numberLine, NB, MINUS };
+  // n verschiedene Elemente erzeugen (key bestimmt, was als gleich gilt)
+  const uniq = (n, gen, key) => { const out = []; for (let t = 0; out.length < n && t < 300; t++) { const x = gen(); if (!out.some(o => key(o) === key(x))) out.push(x); } return out; };
+
+  UB.M = { uniq, R, round, gcd, lcm, fmt, frac, fracR, mixed, karo, grid, task, info, rect, cuboid, angle, rtri, numberLine, NB, MINUS };
 })();

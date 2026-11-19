@@ -123,3 +123,4 @@ svg.karo text, svg.mfig text { font-family: 'Atkinson Hyperlegible', Arial, sans
 svg.karo text { font-size: 4.1px; text-anchor: middle; fill: #111; }
 svg.karo text.gs { fill: #c62828; font-weight: 700; }
 svg.mfig { display: block; }
+.fr .blank { border-bottom: none; min-width: 2.6em !important; display: inline-block; height: 1.15em; }

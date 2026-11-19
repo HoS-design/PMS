@@ -144,13 +144,13 @@
   };
   const flaeche = (n, kinds) => ({ type: 'fn', fn: (rng) => {
     const unit = rng.pick(['cm', 'm']);
-    const its = [...Array(n)].map((_, i) => {
-      const k = kinds[i % kinds.length];
+    let idx = 0; const its = M.uniq(n, () => {
+      const k = kinds[idx++ % kinds.length];
       if (k === 'dreieck') { const g = R(rng, 4, 16), h = R(rng, 2, 12) * (g % 2 ? 2 : 1); return { k, fig: FIG.dreieck(g + ' ' + unit, h + ' ' + unit), A: g * h / 2, name: 'Dreieck' }; }
       if (k === 'parallelogramm') { const g = R(rng, 4, 15), h = R(rng, 3, 12); return { k, fig: FIG.parallelogramm(g + ' ' + unit, h + ' ' + unit), A: g * h, name: 'Parallelogramm' }; }
       if (k === 'trapez') { const a = R(rng, 8, 16), c = R(rng, 3, a - 2), h = R(rng, 2, 10) * ((a + c) % 2 ? 2 : 1); return { k, fig: FIG.trapez(a + ' ' + unit, c + ' ' + unit, h + ' ' + unit), A: (a + c) * h / 2, name: 'Trapez' }; }
       const e = R(rng, 4, 14), f = R(rng, 2, 10) * (e % 2 ? 2 : 1); return { k, fig: FIG.raute(e + ' ' + unit, f + ' ' + unit), A: e * f / 2, name: 'Raute' };
-    });
+    }, x => x.fig);
     const mk = (s) => '<div class="mgrid c2">' + its.map(x => '<div class="mi">' + x.fig + x.name + ': A = ' + (s ? UB.sol(F(x.A) + ' ' + unit + '²') : UB.blank(5)) + '</div>').join('') + '</div>';
     return { title: 'Flächeninhalt', instr: 'Berechne den Flächeninhalt. Schreib die Formel dazu.', body: mk(false), sol: mk(true) };
   } });

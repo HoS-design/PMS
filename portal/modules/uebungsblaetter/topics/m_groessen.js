@@ -74,7 +74,7 @@
   const U2 = ['mm²', 'cm²', 'dm²', 'm²', 'a', 'ha', 'km²'];
   const rechteck = (n, what) => ({ type: 'fn', fn: (rng, level) => {
     const unit = rng.pick(['cm', 'm', 'mm']);
-    const its = [...Array(n)].map(() => { const sq = rng.int(4) === 0; const a = R(rng, 3, level === 1 ? 15 : 40); const b = sq ? a : R(rng, 2, level === 1 ? 12 : 30); return { a, b: b === a && !sq ? b + 1 : b, sq }; });
+    const its = M.uniq(n, () => { const sq = rng.int(4) === 0; const a = R(rng, 3, level === 1 ? 15 : 40); const b = sq ? a : R(rng, 2, level === 1 ? 12 : 30); return { a, b: b === a && !sq ? b + 1 : b, sq }; }, x => x.a + '/' + x.b);
     const cell = (x, s) => '<div class="mi">' + rect(x.a, x.b, x.a + ' ' + unit, x.b + ' ' + unit) +
       '<div>' + (x.sq && x.a === x.b ? 'Quadrat' : 'Rechteck') + ': u = ' + (s ? UB.sol(F(2 * (x.a + x.b)) + ' ' + unit) : UB.blank(5)) + ' &nbsp; A = ' + (s ? UB.sol(F(x.a * x.b) + ' ' + unit + '²') : UB.blank(5)) + '</div></div>';
     const mk = (s) => '<div class="mgrid c2">' + its.map(x => cell(x, s)).join('') + '</div>';
@@ -115,7 +115,7 @@
 
   // ---------------------------------------------------------------- Quader und Würfel
   const quader = (n, withO) => ({ type: 'fn', fn: (rng, level) => {
-    const its = [...Array(n)].map(() => { const w = rng.int(4) === 0; const a = R(rng, 2, 12); return w ? { a, b: a, c: a, w } : { a, b: R(rng, 2, 10), c: R(rng, 2, 9), w }; });
+    const its = M.uniq(n, () => { const w = rng.int(4) === 0; const a = R(rng, 2, 12); return w ? { a, b: a, c: a, w } : { a, b: R(rng, 2, 10), c: R(rng, 2, 9), w }; }, x => [x.a, x.b, x.c].join('/'));
     const cell = (x, s) => {
       const V = x.a * x.b * x.c, O = 2 * (x.a * x.b + x.a * x.c + x.b * x.c);
       return '<div class="mi">' + cuboid(x.a + ' cm', x.b + ' cm', x.c + ' cm') + '<div>' + (x.w ? 'Würfel' : 'Quader') + ': V = ' + (s ? UB.sol(F(V) + ' cm³') : UB.blank(5)) +

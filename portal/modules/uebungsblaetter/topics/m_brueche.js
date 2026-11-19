@@ -83,7 +83,7 @@
     return '<svg class="mfig" width="38mm" height="' + (rows * ch + 2).toFixed(1) + 'mm" viewBox="0 0 38 ' + (rows * ch + 2).toFixed(1) + '" aria-hidden="true">' + s + '</svg>';
   }
   const teil = () => ({ type: 'fn', fn: (rng) => {
-    const its = [...Array(6)].map(() => { const n = rng.pick([2, 3, 4, 5, 6, 8, 10, 12]); return { n, k: R(rng, 1, n - 1) }; });
+    const its = M.uniq(6, () => { const n = rng.pick([2, 3, 4, 5, 6, 8, 10, 12]); return { n, k: R(rng, 1, n - 1) }; }, x => x.k + '/' + x.n);
     const mk = (s) => '<div class="mgrid c3">' + its.map(x => '<div class="mi">' + shade(x.k, x.n) + 'gefärbt: ' + (s ? UB.sol(frac(x.k, x.n)) : UB.blank(3)) + '</div>').join('') + '</div>';
     return { title: 'Welcher Bruchteil ist gefärbt?', instr: 'Schreibe den Bruch auf.', body: mk(false), sol: mk(true) };
   } });

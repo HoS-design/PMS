@@ -60,7 +60,7 @@
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
       <div class="brand-title">
-        <div class="badge-main is-deutsch">Deutsch</div>
+        <div class="badge-main is-deutsch" id="fachBadge">Deutsch</div>
         <h1>Übungsblätter zum Ausdrucken</h1>
       </div>
     </div>
@@ -79,8 +79,9 @@
         <button type="button" data-klasse="1">1.</button><button type="button" data-klasse="2">2.</button><button type="button" data-klasse="3">3.</button><button type="button" data-klasse="4">4.</button>
       </div>
       <span class="hos-spacer"></span>
+      <span class="hos-label">Stufe:</span>
       <div class="hos-seg" id="levelSeg" role="group" aria-label="Schwierigkeit">
-        <button type="button" data-level="1">Stufe 1 · leicht</button><button type="button" data-level="2">Stufe 2 · mittel</button><button type="button" data-level="3">Stufe 3 · schwer</button>
+        <button type="button" data-level="1">1 · leicht</button><button type="button" data-level="2">2 · mittel</button><button type="button" data-level="3">3 · schwer</button>
       </div>
       <span class="hos-label">Blatt:</span>
       <div class="blatt-btns" id="blattBtns"></div>
@@ -160,6 +161,7 @@
   <script src="topics/m_groessen.js"></script>
   <script src="topics/m_brueche.js"></script>
   <script src="topics/m_k2.js"></script>
+  <script src="topics/m_k3.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
