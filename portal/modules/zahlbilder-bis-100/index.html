@@ -617,10 +617,27 @@
       .card { box-shadow: none; border-color: #cbd5e1; }
       .panel { display: block !important; page-break-inside: avoid; margin-bottom: 12px; }
     }
+  
+    /* Gemeinsames Layout: Reiter oben, Übung füllt den Rest */
+    .top-card { display: none; }
+    main.shell.hos-fill { display: flex; flex-direction: column; gap: 8px; overflow: hidden; padding: 8px 14px 10px; }
+    .tabs { margin: 0; padding: 6px; flex: none; box-shadow: none; }
+    .tab { min-height: 42px; font-size: 1rem; }
+    .tab.is-active { background: var(--subject); }
+    .panel.is-active { flex: 1; min-height: 0; overflow: auto; }
+    .card { box-shadow: none; }
+    @media (max-width: 1000px) { main.shell.hos-fill { overflow: visible; } }
+
+  
+    .section { padding: 16px 20px; }
+    .big-instruction { margin: 0 0 10px; padding: 10px 14px; }
+    .number-stage { min-height: 0; padding: 10px; }
+    .big-number { font-size: clamp(4rem, 15vh, 8.5rem); }
+
   </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -634,7 +651,7 @@
     </div>
   </header>
 
-  <main class="shell">
+  <main class="shell hos-fill">
     <section class="card top-card">
       <h2>Zahl sehen. Menge sehen.</h2>
       <div class="top-pill">bis 100</div>
