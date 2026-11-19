@@ -322,6 +322,7 @@
     .result.warn .icon { color: #d97706; }
     .result small { display: block; color: #57534e; }
     .self-check { display: grid; gap: 4px; margin-top: 8px; }
+    .practice-link { display: inline-block; margin-top: 4px; font-size: .82rem; font-weight: 800; color: var(--subject-strong); text-decoration: none; border: 1px solid var(--subject-line); background: var(--subject-soft); border-radius: 999px; padding: 2px 10px; }
     .self-check label { display: flex; gap: 8px; align-items: start; font-size: .9rem; }
     .self-check input { accent-color: var(--accent); width: 16px; height: 16px; margin-top: 2px; }
 
@@ -1185,17 +1186,17 @@
         items.push({ ok: a.words >= WORD_MIN && a.words <= WORD_MAX, label: 'Länge: ' + a.words + ' Wörter (Ziel ' + WORD_MIN + '–' + WORD_MAX + ')',
           hint: a.words < WORD_MIN ? 'Erzähle mehr: Was dachte und fühlte deine Figur? Was sagte sie?' : (a.words > WORD_MAX ? 'Kürze Sätze, die nichts Neues erzählen.' : '') });
         const tenseOk = a.presentHits.length === 0 && a.pastCount >= 5;
-        items.push({ ok: tenseOk, label: 'Erzählt in der Vergangenheit (Präteritum)',
+        items.push({ ok: tenseOk, practice: 'praeteritum', label: 'Erzählt in der Vergangenheit (Präteritum)',
           hint: a.presentHits.length
             ? 'Diese Wörter klingen nach Gegenwart: ' + a.presentHits.join(', ') + '. Ändere sie, z. B. „läuft“ → „lief“, „ist“ → „war“.'
             : (tenseOk ? '' : 'Ich finde nur wenige Verben in der Vergangenheit. Prüfe die Zeitform: rannte, rief, war …') });
-        items.push({ ok: a.speeches >= 2, label: 'Direkte Rede: ' + a.speeches + '× (mindestens 2)',
+        items.push({ ok: a.speeches >= 2, practice: 'rede', label: 'Direkte Rede: ' + a.speeches + '× (mindestens 2)',
           hint: a.speeches >= 2 ? '' : 'Lass deine Figuren sprechen, mit Redezeichen: „Hilfe!“, rief ' + (name || 'Lena') + '.' });
         items.push({ ok: a.nameUsed, label: 'Hauptfigur mit Namen' + (name ? ' (' + name + ')' : ''),
           hint: a.nameUsed ? '' : 'Nenne deine Figur beim Namen statt nur „das Kind“.' });
-        items.push({ ok: a.feelings, label: 'Gefühle und Gedanken',
+        items.push({ ok: a.feelings, practice: 'erzaehlen', label: 'Gefühle und Gedanken',
           hint: a.feelings ? '' : 'Wie fühlte sich deine Figur? Erschrocken, erleichtert, wütend …?' });
-        items.push({ ok: a.repeated.length === 0, label: 'Abwechslungsreiche Satzanfänge',
+        items.push({ ok: a.repeated.length === 0, practice: 'anfaenge', label: 'Abwechslungsreiche Satzanfänge',
           hint: a.repeated.length ? 'Oft gleich: ' + a.repeated.map(function (r) { return '„' + capitalize(r.word) + '“ (' + r.count + '×)'; }).join(', ') + '. Probiere: Plötzlich, Kurz darauf, Zum Glück …' : '' });
         return items;
       }
@@ -1208,7 +1209,8 @@
         $('previewText').innerHTML = text.trim() ? highlight(text) : '<i>Du hast noch nichts geschrieben.</i>';
         $('results').innerHTML = a.items.map(function (item) {
           return '<div class="result ' + (item.ok ? 'good' : 'warn') + '"><span class="icon">' + (item.ok ? '✓' : '!') + '</span>' +
-            '<div><b>' + escapeHtml(item.label) + '</b>' + (item.hint ? '<small>' + escapeHtml(item.hint) + '</small>' : '') + '</div></div>';
+            '<div><b>' + escapeHtml(item.label) + '</b>' + (item.hint ? '<small>' + escapeHtml(item.hint) + '</small>' : '') +
+            (!item.ok && item.practice ? '<a class="practice-link" href="/portal/modules/bildgeschichte-trainer/#' + item.practice + '" target="_blank" rel="noopener">Im Trainer üben ↗</a>' : '') + '</div></div>';
         }).join('');
         const open = a.items.filter(function (i) { return !i.ok; }).length;
         setFeedback('checkFeedback', open ? 'warn' : 'good', open

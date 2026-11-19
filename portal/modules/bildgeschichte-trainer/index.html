@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bildgeschichte-Trainer</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
+  <style>
+    .task { display: flex; flex-direction: column; gap: 16px; padding: 22px 28px; overflow: auto; }
+    .task-label { color: var(--hos-muted); font-weight: 800; }
+    .task-text { margin: 0; font-size: clamp(1.25rem, 2.2vw, 1.6rem); font-weight: 700; line-height: 1.5; }
+    .task-text .hl { color: var(--subject); border-bottom: 3px solid var(--subject-line); }
+    .gap-input { font: inherit; font-weight: 800; color: var(--subject-strong); width: 8.5em; padding: 2px 8px; border-radius: 8px; border: 2px solid var(--subject-line); background: var(--subject-soft); text-align: center; }
+    .gap-input.ok { border-color: #16a34a; background: var(--hos-good-soft); color: var(--hos-good); }
+    .gap-input.no { border-color: #dc2626; background: var(--hos-bad-soft); color: var(--hos-bad); }
+    .gap { display: inline-block; min-width: 5em; border-bottom: 3px solid var(--subject); text-align: center; color: var(--subject-strong); }
+
+    .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+    .options.wide { grid-template-columns: 1fr; }
+    .option {
+      text-align: left; border-radius: 14px; border: 2px solid var(--hos-line); background: #fff;
+      padding: 12px 16px; font-weight: 700; font-size: 1.08rem; cursor: pointer; color: var(--hos-ink); line-height: 1.4;
+    }
+    .option:hover:not(:disabled) { border-color: var(--subject-line); background: var(--subject-soft); }
+    .option.selected { border-color: var(--subject); background: var(--subject-soft); }
+    .option.ok { border-color: #16a34a; background: var(--hos-good-soft); color: var(--hos-good); }
+    .option.no { border-color: #dc2626; background: var(--hos-bad-soft); color: var(--hos-bad); }
+    .option:disabled { cursor: default; }
+
+    /* Direkte Rede: Satzzeichen setzen */
+    .marks { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .mark-btn { min-width: 52px; height: 48px; border-radius: 12px; border: 2px solid var(--hos-line); background: #fff; font-size: 1.6rem; font-weight: 800; cursor: pointer; color: var(--hos-ink); }
+    .mark-btn.selected { border-color: var(--subject); background: var(--subject-soft); color: var(--subject-strong); }
+    .rede { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; font-size: clamp(1.3rem, 2.4vw, 1.75rem); font-weight: 700; line-height: 1.6; padding: 14px; border: 2px dashed var(--hos-line); border-radius: 14px; background: #fafaf9; }
+    .rede .word { padding: 0 2px; }
+    .rede .slot { min-width: 22px; height: 46px; margin: 0 3px; border-radius: 8px; border: 2px dashed #d6d3d1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--subject-strong); font-weight: 900; padding: 0 3px; }
+    .rede .slot:hover { border-color: var(--subject-line); background: #fff; }
+    .rede .slot.filled { border-color: var(--subject-line); background: #fff; }
+    .rede .slot.ok { border-color: #16a34a; color: var(--hos-good); background: var(--hos-good-soft); }
+    .rede .slot.no { border-color: #dc2626; color: var(--hos-bad); background: var(--hos-bad-soft); }
+    .rede .slot.missing { border-color: #dc2626; background: var(--hos-bad-soft); }
+    .rede-help { font-size: .9rem; color: var(--hos-muted); }
+
+    /* Satzanfänge */
+    .story-lines { display: grid; gap: 10px; font-size: 1.15rem; line-height: 1.5; }
+    .story-line { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .story-line select { font: inherit; font-weight: 800; color: var(--subject-strong); border: 2px solid var(--subject-line); border-radius: 10px; background: var(--subject-soft); padding: 4px 8px; }
+    .story-line select.ok { border-color: #16a34a; background: var(--hos-good-soft); color: var(--hos-good); }
+    .story-line select.no { border-color: #dc2626; background: var(--hos-bad-soft); color: var(--hos-bad); }
+    .story-line .fixed { font-weight: 800; }
+
+    .hos-step .tick { margin-left: 4px; }
+  </style>
+</head>
+<body class="hos-app subject-deutsch">
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Bildgeschichte-Trainer</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/portal/modules/bildgeschichte/" class="header-link">Zur Bildgeschichte</a>
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <nav class="hos-steps" id="areas" aria-label="Übungsbereiche"></nav>
+      <span class="hos-spacer"></span>
+      <span class="hos-pill" title="Richtige Antworten hintereinander">Serie: <b id="streak">0</b></span>
+      <span class="hos-pill">Richtig: <b id="right">0</b>&nbsp;/&nbsp;<b id="tries">0</b></span>
+      <div class="hos-seg" role="group" aria-label="Niveau">
+        <button type="button" data-level="basis" title="Auswählen">Basis</button>
+        <button type="button" data-level="profi" title="Selbst schreiben und setzen">Profi</button>
+      </div>
+    </div>
+
+    <div class="hos-stage">
+      <section class="hos-panel task" id="task" aria-live="polite"></section>
+    </div>
+
+    <div class="hos-bottombar">
+      <div class="hos-feedback" id="msg">Wähle oben einen Bereich.</div>
+      <button type="button" class="hos-btn soft" id="solveBtn">Lösung zeigen</button>
+      <button type="button" class="hos-btn primary" id="checkBtn">Prüfen</button>
+      <button type="button" class="hos-btn" id="nextBtn">Neue Aufgabe →</button>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ---------------------------------------------------------------
+    // Bausteine
+    // ---------------------------------------------------------------
+    const NAMES = ['Lena', 'Max', 'Mia', 'Noah', 'Emma', 'Ben', 'Lea', 'Paul', 'Sophie', 'Jonas', 'Anna', 'Luca', 'Elias', 'Hanna'];
+    const OPENERS = ['', '', 'Plötzlich', 'Kurz darauf', 'Sofort', 'Vor Schreck', 'Zum Glück', 'Am Nachmittag'];
+
+    // pr = Präsens (er/sie), pt = Präteritum, wrong = typischer Fehler; rest = Satzende
+    const VERBS = [
+      { inf: 'laufen', pr: 'läuft', pt: 'lief', wrong: 'laufte', rest: ['zur Haltestelle', 'über die Wiese', 'schnell nach Hause'], opener: true },
+      { inf: 'rennen', pr: 'rennt', pt: 'rannte', wrong: 'rennte', rest: ['zum Bus', 'durch den Park', 'hinter dem Hund her'], opener: true },
+      { inf: 'rufen', pr: 'ruft', pt: 'rief', wrong: 'rufte', rest: ['laut um Hilfe', 'nach dem Hund', 'nach ihrer Mutter'], opener: true },
+      { inf: 'schreien', pr: 'schreit', pt: 'schrie', wrong: 'schreite', rest: ['vor Schreck', 'so laut sie konnte'], opener: false },
+      { inf: 'sehen', pr: 'sieht', pt: 'sah', wrong: 'sehte', rest: ['den Drachen im Baum', 'einen Schatten im Garten', 'den Bus wegfahren'], opener: true },
+      { inf: 'finden', pr: 'findet', pt: 'fand', wrong: 'findete', rest: ['den Hamster im Hausschuh', 'den Schlüssel unter dem Bett'], opener: true },
+      { inf: 'gehen', pr: 'geht', pt: 'ging', wrong: 'gehte', rest: ['in die Küche', 'langsam zur Schule'], opener: true },
+      { inf: 'kommen', pr: 'kommt', pt: 'kam', wrong: 'kommte', rest: ['zu spät in die Klasse', 'gerade noch rechtzeitig'], opener: true },
+      { inf: 'fallen', pr: 'fällt', pt: 'fiel', wrong: 'fallte', rest: ['vom Fahrrad', 'in eine Pfütze'], opener: true },
+      { inf: 'nehmen', pr: 'nimmt', pt: 'nahm', wrong: 'nehmte', rest: ['das Glas vom Tisch', 'die Leine in die Hand'], opener: true },
+      { inf: 'geben', pr: 'gibt', pt: 'gab', wrong: 'gebte', rest: ['Mama das Geschenk', 'dem Hund ein Leckerli'], opener: true },
+      { inf: 'helfen', pr: 'hilft', pt: 'half', wrong: 'helfte', rest: ['dem kleinen Bruder', 'beim Aufräumen'], opener: true },
+      { inf: 'springen', pr: 'springt', pt: 'sprang', wrong: 'springte', rest: ['über die Pfütze', 'vom Sessel auf'], opener: true },
+      { inf: 'schlafen', pr: 'schläft', pt: 'schlief', wrong: 'schlafte', rest: ['noch tief und fest', 'auf dem Sofa ein'], opener: false },
+      { inf: 'stehen', pr: 'steht', pt: 'stand', wrong: 'stehte', rest: ['traurig an der Haltestelle', 'vor dem leeren Käfig'], opener: true },
+      { inf: 'sitzen', pr: 'sitzt', pt: 'saß', wrong: 'sitzte', rest: ['auf der Bank', 'ganz still im Gras'], opener: true },
+      { inf: 'denken', pr: 'denkt', pt: 'dachte', wrong: 'denkte', rest: ['an ihren Hamster', 'an den verpassten Bus'], opener: false },
+      { inf: 'bringen', pr: 'bringt', pt: 'brachte', wrong: 'bringte', rest: ['den Hund nach Hause', 'ein Tuch aus der Küche'], opener: true },
+      { inf: 'wissen', pr: 'weiß', pt: 'wusste', wrong: 'wisste', rest: ['nicht mehr weiter', 'sofort, was zu tun war'], opener: false },
+      { inf: 'sein', pr: 'ist', pt: 'war', wrong: 'seite', rest: ['sehr erleichtert', 'völlig außer Atem'], opener: true },
+      { inf: 'haben', pr: 'hat', pt: 'hatte', wrong: 'habte', rest: ['großen Hunger', 'eine tolle Idee'], opener: true },
+      { inf: 'werfen', pr: 'wirft', pt: 'warf', wrong: 'werfte', rest: ['einen Schneeball', 'den Ball über den Zaun'], opener: true },
+      { inf: 'tragen', pr: 'trägt', pt: 'trug', wrong: 'tragte', rest: ['die schwere Schultasche', 'das Glas vorsichtig zum Tisch'], opener: true },
+      { inf: 'erschrecken', pr: 'erschrickt', pt: 'erschrak', wrong: 'erschreckte sich', rest: ['fürchterlich', 'über den lauten Knall'], opener: false },
+      { inf: 'suchen', pr: 'sucht', pt: 'suchte', wrong: 'suchtete', rest: ['überall nach Krümel', 'unter dem Bett'], opener: true },
+      { inf: 'spielen', pr: 'spielt', pt: 'spielte', wrong: 'spielt', rest: ['mit dem roten Ball', 'im Schnee'], opener: true },
+      { inf: 'lachen', pr: 'lacht', pt: 'lachte', wrong: 'lachtete', rest: ['laut los', 'über den kaputten Schneemann'], opener: true },
+      { inf: 'holen', pr: 'holt', pt: 'holte', wrong: 'hol', rest: ['schnell ein Tuch', 'die Leiter aus dem Keller'], opener: true },
+      { inf: 'warten', pr: 'wartet', pt: 'wartete', wrong: 'wartet', rest: ['ungeduldig auf den Bus', 'vor der Tür'], opener: true },
+      { inf: 'öffnen', pr: 'öffnet', pt: 'öffnete', wrong: 'öffnet', rest: ['vorsichtig die Tür', 'das Geschenk'], opener: true },
+      { inf: 'schauen', pr: 'schaut', pt: 'schaute', wrong: 'schaut', rest: ['aus dem Fenster', 'erschrocken auf die Uhr'], opener: true }
+    ];
+
+    // Direkte Rede: Ausrufe (!), Fragen (?), Aussagen (.)
+    const SPEECH = [
+      { t: 'Hilfe', e: '!' }, { t: 'Oh nein', e: '!' }, { t: 'Pass auf', e: '!' }, { t: 'Komm sofort zurück', e: '!' },
+      { t: 'Das gibt es doch nicht', e: '!' }, { t: 'Mein Drachen fliegt weg', e: '!' },
+      { t: 'Wo bist du', e: '?' }, { t: 'Hast du meinen Hund gesehen', e: '?' }, { t: 'Kannst du mir helfen', e: '?' },
+      { t: 'Wie spät ist es', e: '?' }, { t: 'Wer war das', e: '?' },
+      { t: 'Ich habe den Bus verpasst', e: '.' }, { t: 'Der Drachen hängt im Baum', e: '.' }, { t: 'Das war knapp', e: '.' },
+      { t: 'Ich räume das sofort auf', e: '.' }
+    ];
+    // Eingeschoben (Profi): zwei Teile
+    const SPEECH_SPLIT = [
+      { a: 'Komm schnell', b: 'der Bus fährt gleich ab', e: '!' },
+      { a: 'Schau mal', b: 'da oben hängt dein Drachen', e: '!' },
+      { a: 'Weißt du', b: 'wo Krümel sein könnte', e: '?' },
+      { a: 'Keine Sorge', b: 'wir finden ihn bestimmt', e: '.' },
+      { a: 'Vorsicht', b: 'das Glas ist ganz voll', e: '!' }
+    ];
+    const verbFor = (e) => e === '?' ? 'fragte' : (e === '!' ? pick(['rief', 'schrie']) : pick(['sagte', 'meinte', 'erklärte']));
+
+    // Statt „sagte“: Situation → passendes Verb
+    const SAY = [
+      { cue: '{N} wollte nicht, dass die anderen etwas hören.', s: 'Der Schlüssel liegt unter der Matte.', v: 'flüsterte' },
+      { cue: '{N} wollte etwas wissen.', s: 'Wo ist mein Hamster?', v: 'fragte' },
+      { cue: '{N} hatte schreckliche Angst.', s: 'Hilfe, ein Hund!', v: 'schrie' },
+      { cue: '{N} freute sich riesig über das Tor.', s: 'Wir haben gewonnen!', v: 'jubelte' },
+      { cue: 'Die Lehrerin hatte etwas gefragt.', s: 'Ich habe verschlafen.', v: 'antwortete' },
+      { cue: '{N} war müde und traurig.', s: 'Jetzt ist alles kaputt.', v: 'seufzte' },
+      { cue: '{N} ärgerte sich über den Bruder.', s: 'Lass meine Sachen in Ruhe!', v: 'schimpfte' },
+      { cue: 'Der Hund war ganz weit weg im Park.', s: 'Bello, komm her!', v: 'rief' },
+      { cue: '{N} sprach leise mit sich selbst.', s: 'Wo habe ich nur mein Heft?', v: 'murmelte' },
+      { cue: '{N} wollte, dass alle es verstehen.', s: 'So baut man einen Schneemann.', v: 'erklärte' },
+      { cue: '{N} weinte, weil das Geschenk kaputt war.', s: 'Das war für Mama.', v: 'schluchzte' },
+      { cue: '{N} hatte eine Idee.', s: 'Wir holen eine lange Stange!', v: 'schlug vor' },
+      { cue: '{N} wollte unbedingt mitkommen.', s: 'Bitte, bitte, nimm mich mit!', v: 'bettelte' },
+      { cue: '{N} konnte es kaum glauben.', s: 'Das ist ja unglaublich!', v: 'staunte' }
+    ];
+    const SAY_VERBS = Array.from(new Set(SAY.map(x => x.v)));
+
+    // Satzanfänge: Geschichten mit „Dann“-Kette (Satz 1 fest, Sätze 2–5 im V2-Satzbau)
+    const DANN_STORIES = [
+      { first: 'An einem windigen Nachmittag ließ {N} einen Drachen steigen.', rest: ['riss die Schnur', 'flog der Drachen über die Wiese', 'blieb er in einem Baum hängen', 'holte die Nachbarin ihn mit einer Stange herunter'] },
+      { first: 'Am Montag verschlief {N}.', rest: ['sprang {N} aus dem Bett', 'rannte {N} zur Haltestelle', 'fuhr der Bus direkt vor {G} Nase ab', 'kam {N} zu spät in die Klasse'] },
+      { first: 'Eines Morgens stand die Käfigtür offen.', rest: ['bemerkte {N}, dass Krümel fehlte', 'suchte {N} mit der Taschenlampe unter dem Bett', 'entdeckte {N} den Hamster im Hausschuh', 'schloss {N} die Käfigtür ganz fest'] },
+      { first: '{N} lief mit einem Glas Saft durch das Zimmer.', rest: ['stolperte {N} über die Schultasche', 'kippte der Saft auf die Hefte', 'holte {N} schnell ein Tuch', 'war der Tisch wieder sauber'] },
+      { first: 'Im Garten stand das Tor offen.', rest: ['lief der Hund einfach davon', 'merkte {N}, dass der Korb leer war', 'fand {N} ihn im Park beim Ballspielen', 'brachte {N} den Hund an der Leine nach Hause'] },
+      { first: '{N} packte ein Geschenk für Mama ein.', rest: ['ging {N} kurz aus dem Zimmer', 'sprang die Katze auf den Tisch', 'zerriss sie das schöne Papier', 'freute sich Mama trotzdem riesig'] }
+    ];
+    const STARTERS_MID = ['Plötzlich', 'Kurz darauf', 'Sofort', 'Danach', 'In diesem Moment', 'Zum Glück', 'Wenig später', 'Vor Schreck'];
+    const STARTERS_END = ['Schließlich', 'Am Ende', 'Zum Schluss'];
+
+    // Erzählen statt beschreiben: d = beschreibt das Bild, p = erzählt im Präsens, n = erzählt im Präteritum (richtig)
+    const TELL = [
+      { d: 'Auf dem Bild sieht man ein Kind mit einem Glas Saft.', p: '{N} stolpert und der Saft kippt über die Hefte.', n: '{N} stolperte und der Saft kippte über die Hefte.' },
+      { d: 'Das Kind steht an der Haltestelle und der Bus fährt weg.', p: '{N} sieht dem Bus enttäuscht nach.', n: '{N} sah dem Bus enttäuscht nach.' },
+      { d: 'Im Baum hängt ein roter Drachen.', p: '{N} starrt verzweifelt auf den Drachen im Baum.', n: '{N} starrte verzweifelt auf den Drachen im Baum.' },
+      { d: 'Auf dem Bild ist ein leerer Käfig zu sehen.', p: '{N} erschrickt, als der Käfig leer ist.', n: '{N} erschrak, als der Käfig leer war.' },
+      { d: 'Ein Hund spielt im Park mit einem Ball.', p: '{N} entdeckt den Hund endlich im Park.', n: '{N} entdeckte den Hund endlich im Park.' },
+      { d: 'Auf dem Tisch liegt ein Geschenk mit zerrissenem Papier.', p: '{N} kommt zurück und traut den eigenen Augen nicht.', n: '{N} kam zurück und traute den eigenen Augen nicht.' },
+      { d: 'Zwei Kinder werfen Schneebälle.', p: 'Lachend wirft {N} einen Schneeball, doch er trifft den Schneemann.', n: 'Lachend warf {N} einen Schneeball, doch er traf den Schneemann.' },
+      { d: 'Das Kind liegt im Bett und der Wecker zeigt 7:45 Uhr.', p: '{N} wacht auf und bekommt einen riesigen Schreck.', n: '{N} wachte auf und bekam einen riesigen Schreck.' },
+      { d: 'Eine Frau hält eine lange Stange.', p: 'Zum Glück hilft die Nachbarin mit einer langen Stange.', n: 'Zum Glück half die Nachbarin mit einer langen Stange.' },
+      { d: 'Das Kind wischt den Tisch mit einem Tuch ab.', p: 'Schnell holt {N} ein Tuch und rettet die Hefte.', n: 'Schnell holte {N} ein Tuch und rettete die Hefte.' }
+    ];
+
+    const AREAS = [
+      { id: 'praeteritum', label: 'Präteritum', intro: 'Bildgeschichten erzählt man in der Vergangenheit (Präteritum).' },
+      { id: 'rede', label: 'Direkte Rede', intro: 'Was jemand sagt, steht zwischen „ und “.' },
+      { id: 'sagte', label: 'Statt „sagte“', intro: 'Ein genaues Verb zeigt, wie jemand spricht.' },
+      { id: 'anfaenge', label: 'Satzanfänge', intro: 'Abwechslungsreiche Satzanfänge statt „Dann … Dann …“.' },
+      { id: 'erzaehlen', label: 'Erzählen', intro: 'Erzähle, was passiert ist. Beschreibe nicht nur das Bild.' }
+    ];
+
+    // ---------------------------------------------------------------
+    // Zustand
+    // ---------------------------------------------------------------
+    const KEY = 'hos-bildgeschichte-trainer-v1';
+    const state = { area: 'praeteritum', level: 'basis', stats: {} };
+    let task = null;       // aktuelle Aufgabe
+    let answered = false;  // Aufgabe schon gewertet?
+    let usedSolution = false;
+
+    const $ = (id) => document.getElementById(id);
+    const taskEl = $('task');
+
+    load();
+    const hashArea = location.hash.replace('#', '');
+    if (AREAS.some(a => a.id === hashArea)) state.area = hashArea;
+    renderAreas();
+    renderLevel();
+    newTask();
+
+    // ---------------------------------------------------------------
+    // Hilfen
+    // ---------------------------------------------------------------
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      return a;
+    }
+    function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+    function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+    function fillName(s, name) {
+      const female = ['Lena', 'Mia', 'Emma', 'Lea', 'Sophie', 'Anna', 'Hanna'].includes(name);
+      return s.replace(/\{N\}/g, name).replace(/\{G\}/g, female ? 'ihrer' : 'seiner');
+    }
+    function norm(s) { return s.trim().replace(/\s+/g, ' ').toLowerCase(); }
+
+    function setFeedback(text, kind) {
+      const el = $('msg');
+      el.className = 'hos-feedback' + (kind ? ' ' + kind : '');
+      el.innerHTML = text;
+    }
+    function stats() {
+      if (!state.stats[state.area]) state.stats[state.area] = { right: 0, tries: 0, streak: 0, best: 0 };
+      return state.stats[state.area];
+    }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* egal */ } }
+    function load() {
+      try {
+        const d = JSON.parse(localStorage.getItem(KEY) || '{}');
+        if (AREAS.some(a => a.id === d.area)) state.area = d.area;
+        if (d.level === 'profi' || d.level === 'basis') state.level = d.level;
+        if (d.stats && typeof d.stats === 'object') state.stats = d.stats;
+      } catch (e) { /* egal */ }
+    }
+
+    function renderAreas() {
+      $('areas').innerHTML = AREAS.map(a => {
+        const st = state.stats[a.id];
+        const mastered = st && st.best >= 5;
+        return '<button type="button" class="hos-step' + (a.id === state.area ? ' current' : '') + (mastered ? ' done' : '') + '" data-area="' + a.id + '" title="' + esc(a.intro) + '">' + esc(a.label) + (mastered ? '<span class="tick">✓</span>' : '') + '</button>';
+      }).join('');
+      $('areas').querySelectorAll('[data-area]').forEach(b => b.addEventListener('click', () => {
+        state.area = b.dataset.area;
+        history.replaceState(null, '', '#' + state.area);
+        save(); renderAreas(); newTask();
+      }));
+      const st = stats();
+      $('streak').textContent = st.streak;
+      $('right').textContent = st.right;
+      $('tries').textContent = st.tries;
+    }
+    function renderLevel() {
+      document.querySelectorAll('[data-level]').forEach(b => b.classList.toggle('active', b.dataset.level === state.level));
+    }
+    document.querySelectorAll('[data-level]').forEach(b => b.addEventListener('click', () => {
+      state.level = b.dataset.level; save(); renderLevel(); newTask();
+    }));
+
+    function score(ok) {
+      if (answered) return;
+      answered = true;
+      const st = stats();
+      if (!usedSolution) {
+        st.tries++;
+        if (ok) { st.right++; st.streak++; st.best = Math.max(st.best, st.streak); } else { st.streak = 0; }
+      }
+      save(); renderAreas();
+      $('nextBtn').classList.add('primary');
+      $('checkBtn').classList.remove('primary');
+    }
+
+    // ---------------------------------------------------------------
+    // Aufgaben erzeugen
+    // ---------------------------------------------------------------
+    function newTask() {
+      answered = false; usedSolution = false;
+      $('nextBtn').classList.remove('primary');
+      $('checkBtn').classList.add('primary');
+      $('checkBtn').disabled = false;
+      const area = AREAS.find(a => a.id === state.area);
+      const builders = { praeteritum: taskPraeteritum, rede: taskRede, sagte: taskSagte, anfaenge: taskAnfaenge, erzaehlen: taskErzaehlen };
+      task = builders[state.area]();
+      setFeedback(esc(area.intro) + ' ' + task.hint, '');
+    }
+
+    // 1) Präteritum
+    function taskPraeteritum() {
+      const v = pick(VERBS);
+      const name = pick(NAMES);
+      const rest = pick(v.rest);
+      const opener = v.opener ? pick(OPENERS) : '';
+      const build = (verb) => opener ? opener + ' ' + verb + ' ' + name + ' ' + rest + '.' : name + ' ' + verb + ' ' + rest + '.';
+      const present = build('<span class="hl">' + esc(v.pr) + '</span>');
+      const gapped = (inner) => opener ? esc(opener) + ' ' + inner + ' ' + esc(name) + ' ' + esc(rest) + '.' : esc(name) + ' ' + inner + ' ' + esc(rest) + '.';
+      let html = '<div class="task-label">Gegenwart (Präsens):</div><p class="task-text">' + present + '</p>' +
+        '<div class="task-label">Erzähle in der Vergangenheit (Präteritum):</div>';
+      const t = { type: 'praeteritum', v, build, hint: '' };
+      if (state.level === 'profi') {
+        html += '<p class="task-text">' + gapped('<input class="gap-input" id="gapIn" autocomplete="off" spellcheck="false" aria-label="Verb im Präteritum">') + ' <span class="hos-muted">(' + esc(v.inf) + ')</span></p>';
+        t.hint = 'Tippe die Verbform ein und drücke Enter.';
+      } else {
+        const opts = shuffle(Array.from(new Set([v.pt, v.pr, v.wrong])));
+        html += '<p class="task-text">' + gapped('<span class="gap" id="gapShow">…</span>') + '</p><div class="options" id="opts">' +
+          opts.map(o => '<button type="button" class="option" data-val="' + esc(o) + '">' + esc(o) + '</button>').join('') + '</div>';
+        t.hint = 'Wähle die richtige Form.';
+      }
+      taskEl.innerHTML = html;
+      t.check = () => {
+        let given;
+        if (state.level === 'profi') {
+          const inp = $('gapIn');
+          given = inp.value;
+          if (!given.trim()) { setFeedback('Schreib zuerst die Verbform in die Lücke.', 'warn'); return; }
+          const ok = norm(given) === norm(v.pt);
+          inp.classList.toggle('ok', ok); inp.classList.toggle('no', !ok); inp.readOnly = true;
+          result(ok, ok ? 'Richtig: <b>' + esc(build(v.pt)) + '</b>' : 'Nicht ganz. ' + esc(v.inf) + ' → <b>' + esc(v.pt) + '</b>' + (norm(given) === norm(v.pr) ? ' (du hast die Gegenwart geschrieben)' : ''));
+        } else {
+          const sel = taskEl.querySelector('.option.selected');
+          if (!sel) { setFeedback('Wähle zuerst eine Form aus.', 'warn'); return; }
+          markOptions(v.pt, sel);
+          const ok = sel.dataset.val === v.pt;
+          $('gapShow').textContent = sel.dataset.val;
+          result(ok, ok ? 'Richtig: <b>' + esc(build(v.pt)) + '</b>' : 'Nicht ganz. ' + esc(v.inf) + ' → <b>' + esc(v.pt) + '</b>');
+        }
+      };
+      t.solve = () => {
+        if (state.level === 'profi') { $('gapIn').value = v.pt; } else { selectOption(v.pt); }
+        t.check();
+      };
+      bindOptions(true);
+      const inp = $('gapIn');
+      if (inp) { inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); answered ? newTask() : t.check(); } }); setTimeout(() => inp.focus(), 0); }
+      return t;
+    }
+
+    // 2) Direkte Rede
+    function taskRede() {
+      const name = pick(NAMES);
+      let form = pick(['vorne', 'hinten']);
+      if (state.level === 'profi') form = pick(['vorne', 'hinten', 'mitte']);
+      let words = [], gaps = [], full = '';
+      const push = (w) => { words.push(w); gaps.push(''); };
+      // gaps[i] = Zeichen NACH Wort i; startGap = Zeichen vor dem ersten Wort
+      let startGap = '';
+      if (form === 'vorne') {
+        const s = pick(SPEECH); const verb = verbFor(s.e);
+        push(name); push(verb); gaps[1] = ':';
+        const sw = s.t.split(' '); const first = words.length;
+        sw.forEach(push);
+        gaps[first - 1] += ' „'; // nach dem Verb: Doppelpunkt + öffnendes Zeichen
+        gaps[words.length - 1] = s.e + '“';
+        full = name + ' ' + verb + ': „' + s.t + s.e + '“';
+      } else if (form === 'hinten') {
+        const s = pick(SPEECH); const verb = verbFor(s.e);
+        startGap = '„';
+        s.t.split(' ').forEach(push);
+        gaps[words.length - 1] = (s.e === '.' ? '' : s.e) + '“,';
+        push(verb); push(name); gaps[words.length - 1] = '.';
+        full = '„' + s.t + (s.e === '.' ? '' : s.e) + '“, ' + verb + ' ' + name + '.';
+      } else {
+        const s = pick(SPEECH_SPLIT); const verb = s.e === '?' ? 'fragte' : pick(['rief', 'sagte']);
+        startGap = '„';
+        s.a.split(' ').forEach(push);
+        gaps[words.length - 1] = '“,';
+        push(verb); push(name); gaps[words.length - 1] = ', „';
+        s.b.split(' ').forEach(push);
+        gaps[words.length - 1] = s.e + '“';
+        full = '„' + s.a + '“, ' + verb + ' ' + name + ', „' + s.b + s.e + '“';
+      }
+      // Leerzeichen spielen beim Vergleich keine Rolle
+      const expected = [startGap].concat(gaps).map(g => g.replace(/\s/g, ''));
+      const t = { type: 'rede', hint: '', full };
+      const formName = { vorne: 'Begleitsatz vorne', hinten: 'Begleitsatz hinten', mitte: 'Begleitsatz in der Mitte' }[form];
+
+      if (state.level === 'basis') {
+        const wrongs = redeWrongs(form, full);
+        const opts = shuffle([full].concat(wrongs)).slice(0, 3);
+        if (!opts.includes(full)) opts[0] = full;
+        taskEl.innerHTML = '<div class="task-label">Welcher Satz ist richtig geschrieben? <span class="hos-pill">' + formName + '</span></div>' +
+          '<div class="options wide" id="opts">' + shuffle(opts).map(o => '<button type="button" class="option" data-val="' + esc(o) + '">' + esc(o) + '</button>').join('') + '</div>';
+        t.hint = 'Achte auf „ “, Doppelpunkt und Beistrich.';
+        t.check = () => {
+          const sel = taskEl.querySelector('.option.selected');
+          if (!sel) { setFeedback('Wähle zuerst einen Satz aus.', 'warn'); return; }
+          markOptions(full, sel);
+          result(sel.dataset.val === full, sel.dataset.val === full ? 'Richtig gesetzt!' : 'Richtig wäre: <b>' + esc(full) + '</b>');
+        };
+        t.solve = () => { selectOption(full); t.check(); };
+        bindOptions(false);
+        return t;
+      }
+
+      // Profi: Zeichen selbst setzen
+      const MARKS = ['„', '“', ':', ',', '.', '!', '?'];
+      let current = '„';
+      const placed = new Array(expected.length).fill('');
+      let html = '<div class="task-label">Setze die Satzzeichen. <span class="hos-pill">' + formName + '</span></div>' +
+        '<div class="marks" id="marks">' + MARKS.map(m => '<button type="button" class="mark-btn" data-mark="' + esc(m) + '" aria-label="Zeichen ' + esc(m) + '">' + esc(m) + '</button>').join('') +
+        '<span class="rede-help">Zeichen wählen, dann in die Lücke tippen. Lücke ohne Auswahl antippen = leeren.</span></div>' +
+        '<div class="rede" id="rede"><span class="slot" data-gap="0"></span>';
+      words.forEach((w, i) => { html += '<span class="word">' + esc(w) + '</span><span class="slot" data-gap="' + (i + 1) + '"></span>'; });
+      html += '</div>';
+      taskEl.innerHTML = html;
+      const marksEl = $('marks');
+      const selectMark = (m) => { current = m; marksEl.querySelectorAll('.mark-btn').forEach(b => b.classList.toggle('selected', b.dataset.mark === m)); };
+      selectMark('„');
+      marksEl.querySelectorAll('.mark-btn').forEach(b => b.addEventListener('click', () => selectMark(current === b.dataset.mark ? null : b.dataset.mark)));
+      const redraw = () => $('rede').querySelectorAll('.slot').forEach(sl => {
+        const i = Number(sl.dataset.gap); sl.textContent = placed[i]; sl.classList.toggle('filled', !!placed[i]); sl.classList.remove('ok', 'no', 'missing');
+      });
+      $('rede').querySelectorAll('.slot').forEach(sl => sl.addEventListener('click', () => {
+        if (answered) return;
+        const i = Number(sl.dataset.gap);
+        if (!current) placed[i] = ''; else if (placed[i].length < 3) placed[i] += current;
+        redraw();
+      }));
+      t.hint = 'Tipp: Am Ende des Satzes fehlt oft noch ein Zeichen.';
+      t.check = () => {
+        if (!placed.some(Boolean)) { setFeedback('Setze zuerst Zeichen in die Lücken.', 'warn'); return; }
+        let wrong = 0;
+        $('rede').querySelectorAll('.slot').forEach(sl => {
+          const i = Number(sl.dataset.gap);
+          const ok = placed[i] === expected[i];
+          if (!ok) wrong++;
+          sl.classList.remove('ok', 'no', 'missing');
+          if (expected[i] || placed[i]) sl.classList.add(ok ? 'ok' : (placed[i] ? 'no' : 'missing'));
+        });
+        result(wrong === 0, wrong === 0 ? 'Alle Zeichen richtig gesetzt!' : wrong + ' Stelle' + (wrong === 1 ? '' : 'n') + ' stimmen noch nicht. Richtig: <b>' + esc(full) + '</b>');
+      };
+      t.solve = () => { expected.forEach((g, i) => { placed[i] = g; }); redraw(); t.check(); };
+      return t;
+    }
+    function redeWrongs(form, full) {
+      const w = [];
+      if (form === 'vorne') {
+        w.push(full.replace(': „', ' „'));                 // Doppelpunkt fehlt
+        w.push(full.replace(': „', ', „'));                // Beistrich statt Doppelpunkt
+        w.push(full.replace(/([!?.])“$/, '“$1'));          // Satzzeichen nach dem Anführungszeichen
+      } else {
+        w.push(full.replace('“, ', '“ '));                 // Beistrich fehlt
+        w.push(full.replace(/“, (\S+) (\S+)\.$/, '“. $1 $2.')); // Punkt statt Beistrich
+        w.push(full.replace(/^„/, ''));                    // öffnendes Zeichen fehlt
+      }
+      return w.filter(x => x !== full);
+    }
+
+    // 3) Statt „sagte“
+    function taskSagte() {
+      const it = pick(SAY);
+      const name = pick(NAMES);
+      const n = state.level === 'profi' ? 6 : 4;
+      const opts = shuffle([it.v].concat(shuffle(SAY_VERBS.filter(v => v !== it.v)).slice(0, n - 1)));
+      const speech = it.s;
+      const tail = (verb) => {
+        const ends = /[.]$/.test(speech) ? speech.slice(0, -1) : speech;
+        return '„' + ends + '“, ' + verb + ' ' + name + '.';
+      };
+      taskEl.innerHTML = '<div class="task-label">Welches Verb passt am besten?</div>' +
+        '<p class="task-text" style="font-weight:600">' + esc(fillName(it.cue, name)) + '</p>' +
+        '<p class="task-text">' + esc(tail('§')).replace('§', '<span class="gap" id="gapShow">…</span>') + '</p>' +
+        '<div class="options" id="opts">' + opts.map(o => '<button type="button" class="option" data-val="' + esc(o) + '">' + esc(o) + '</button>').join('') + '</div>';
+      const t = { hint: 'Lies zuerst, in welcher Lage die Figur ist.' };
+      t.check = () => {
+        const sel = taskEl.querySelector('.option.selected');
+        if (!sel) { setFeedback('Wähle zuerst ein Verb aus.', 'warn'); return; }
+        markOptions(it.v, sel);
+        $('gapShow').textContent = sel.dataset.val;
+        result(sel.dataset.val === it.v, sel.dataset.val === it.v ? 'Genau! <b>' + esc(tail(it.v)) + '</b>' : 'Hier passt <b>' + esc(it.v) + '</b> besser. „sagte“ ginge auch, ist aber langweilig.');
+      };
+      t.solve = () => { selectOption(it.v); t.check(); };
+      bindOptions(false);
+      return t;
+    }
+
+    // 4) Satzanfänge
+    function taskAnfaenge() {
+      const st = pick(DANN_STORIES);
+      const name = pick(NAMES);
+      const first = fillName(st.first, name);
+      const rest = st.rest.map(r => fillName(r, name));
+      const mids = state.level === 'profi' ? STARTERS_MID : shuffle(STARTERS_MID).slice(0, 4);
+      const optsFor = (last) => ['Dann'].concat(last ? STARTERS_END.concat(mids.slice(0, 2)) : mids);
+      let html = '<div class="task-label">Hier beginnt jeder Satz mit „Dann“. Wähle bessere Satzanfänge.</div><div class="story-lines">' +
+        '<div class="story-line"><span>' + esc(first) + '</span></div>';
+      rest.forEach((r, i) => {
+        const last = i === rest.length - 1;
+        html += '<div class="story-line"><select data-i="' + i + '" aria-label="Satzanfang ' + (i + 2) + '">' +
+          optsFor(last).map(o => '<option>' + esc(o) + '</option>').join('') + '</select><span>' + esc(r) + '.</span></div>';
+      });
+      html += '</div><div class="hos-merke">Jeder Anfang nur einmal. Der letzte Satz zeigt das Ende: <b>Schließlich</b>, <b>Am Ende</b> oder <b>Zum Schluss</b>.</div>';
+      taskEl.innerHTML = html;
+      const sels = Array.from(taskEl.querySelectorAll('select'));
+      const t = { hint: 'Höchstens einmal „Dann“.' };
+      t.check = () => {
+        const vals = sels.map(s => s.value);
+        let problems = [];
+        sels.forEach((s, i) => {
+          const v = s.value, last = i === sels.length - 1;
+          let ok = true;
+          if (v === 'Dann' && vals.filter(x => x === 'Dann').length > 1) ok = false;
+          if (vals.filter(x => x === v).length > 1 && v !== 'Dann') ok = false;
+          if (last && !STARTERS_END.includes(v)) ok = false;
+          if (!last && STARTERS_END.includes(v)) ok = false;
+          s.classList.toggle('ok', ok); s.classList.toggle('no', !ok);
+          if (!ok) problems.push(i + 2);
+        });
+        const ok = problems.length === 0;
+        result(ok, ok ? 'Sehr abwechslungsreich! Lies die Geschichte jetzt noch einmal laut.' : 'Prüfe Satz ' + problems.join(', ') + ': kein Anfang doppelt, und nur der letzte Satz zeigt das Ende.');
+      };
+      t.solve = () => {
+        const mid = shuffle(mids.filter(m => m !== 'Vor Schreck'));
+        sels.forEach((s, i) => { s.value = i === sels.length - 1 ? 'Schließlich' : mid[i]; });
+        t.check();
+      };
+      return t;
+    }
+
+    // 5) Erzählen statt beschreiben
+    function taskErzaehlen() {
+      const it = pick(TELL);
+      const name = pick(NAMES);
+      const right = fillName(it.n, name);
+      const all = [{ v: right, why: '' }, { v: fillName(it.d, name), why: 'Dieser Satz beschreibt nur das Bild.' }];
+      if (state.level === 'profi') all.push({ v: fillName(it.p, name), why: 'Dieser Satz erzählt, aber in der Gegenwart.' });
+      const opts = shuffle(all);
+      taskEl.innerHTML = '<div class="task-label">Welcher Satz passt in eine Bildgeschichte?</div>' +
+        '<div class="options wide" id="opts">' + opts.map(o => '<button type="button" class="option" data-val="' + esc(o.v) + '">' + esc(o.v) + '</button>').join('') + '</div>';
+      const t = { hint: state.level === 'profi' ? 'Achte auch auf die Zeitform.' : 'Erzählt der Satz, was passiert ist?' };
+      t.check = () => {
+        const sel = taskEl.querySelector('.option.selected');
+        if (!sel) { setFeedback('Wähle zuerst einen Satz aus.', 'warn'); return; }
+        markOptions(right, sel);
+        const chosen = all.find(o => o.v === sel.dataset.val);
+        result(sel.dataset.val === right, sel.dataset.val === right ? 'Richtig! Er erzählt, was passiert ist, und steht im Präteritum.' : chosen.why + ' Richtig ist: <b>' + esc(right) + '</b>');
+      };
+      t.solve = () => { selectOption(right); t.check(); };
+      bindOptions(false);
+      return t;
+    }
+
+    // ---------------------------------------------------------------
+    // Gemeinsame Abläufe für Auswahl-Aufgaben
+    // ---------------------------------------------------------------
+    function bindOptions(fillGap) {
+      taskEl.querySelectorAll('.option').forEach(b => b.addEventListener('click', () => {
+        if (answered) return;
+        taskEl.querySelectorAll('.option').forEach(x => x.classList.toggle('selected', x === b));
+        const g = $('gapShow');
+        if (g) g.textContent = b.dataset.val;
+      }));
+    }
+    function selectOption(val) {
+      taskEl.querySelectorAll('.option').forEach(x => x.classList.toggle('selected', x.dataset.val === val));
+    }
+    function markOptions(correct, sel) {
+      taskEl.querySelectorAll('.option').forEach(x => {
+        x.disabled = true;
+        if (x.dataset.val === correct) x.classList.add('ok');
+        else if (x === sel) x.classList.add('no');
+      });
+    }
+    function result(ok, text) {
+      if (answered) return;
+      if (usedSolution) {
+        setFeedback('Das ist die Lösung. ' + text + ' Diese Aufgabe zählt nicht.', 'warn');
+        answered = true;
+        $('nextBtn').classList.add('primary'); $('checkBtn').classList.remove('primary');
+        return;
+      }
+      setFeedback(text, ok ? 'good' : 'bad');
+      score(ok);
+    }
+
+    $('checkBtn').addEventListener('click', () => { if (!answered && task) task.check(); });
+    $('solveBtn').addEventListener('click', () => { if (!answered && task) { usedSolution = true; task.solve(); } });
+    $('nextBtn').addEventListener('click', newTask);
+    window.addEventListener('hashchange', () => {
+      const h = location.hash.replace('#', '');
+      if (AREAS.some(a => a.id === h) && h !== state.area) { state.area = h; save(); renderAreas(); newTask(); }
+    });
+  })();
+  </script>
+</body>
+</html>
