@@ -57,8 +57,21 @@
         }
         .header-link:hover { background-color: #f1f5f9; color: #334155; }
     </style>
+  <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body>
+<body class="hos-app hos-legacy subject-deutsch">
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Satzglieder analysieren</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
     <div id="root"></div>
 
     <script type="text/babel">

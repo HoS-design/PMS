@@ -65,7 +65,7 @@ body.hos-app {
 }
 .hos-app *, .hos-app *::before, .hos-app *::after { box-sizing: border-box; }
 .hos-app [hidden] { display: none !important; }
-.hos-app button, .hos-app select, .hos-app input, .hos-app textarea { font: inherit; }
+.hos-app:not(.hos-legacy) button, .hos-app:not(.hos-legacy) select, .hos-app:not(.hos-legacy) input, .hos-app:not(.hos-legacy) textarea { font: inherit; }
 
 /* Kopf: kompakt, Fachfarbe im Badge */
 .hos-app .app-header { position: static; padding: 6px 16px; gap: 10px; box-shadow: none; }
@@ -195,14 +195,41 @@ body.hos-app {
 
 .hos-kbd { font-family: ui-monospace, monospace; font-size: .75rem; padding: 1px 5px; border-radius: 5px; background: #f1f0ef; border: 1px solid var(--hos-line); color: var(--hos-muted); }
 
-.hos-app input[type="text"], .hos-app select, .hos-app textarea {
+.hos-app:not(.hos-legacy) input[type="text"], .hos-app:not(.hos-legacy) select, .hos-app:not(.hos-legacy) textarea {
   border-radius: 10px;
   border: 1px solid var(--hos-line);
   padding: 7px 10px;
   background: #fff;
   color: var(--hos-ink);
 }
-.hos-app input:focus, .hos-app select:focus, .hos-app textarea:focus { outline: 3px solid var(--subject-line); border-color: var(--subject); }
+.hos-app:not(.hos-legacy) input:focus, .hos-app:not(.hos-legacy) select:focus, .hos-app:not(.hos-legacy) textarea:focus { outline: 3px solid var(--subject-line); border-color: var(--subject); }
+
+/* ---------- Übergang für ältere Apps ----------
+   <body class="hos-app hos-legacy subject-…">
+   Gleicher Kopf, Hintergrund, Schrift und Fachfarbe; die App behält ihr eigenes
+   Seitenlayout und scrollt bei Bedarf normal. */
+body.hos-app.hos-legacy {
+  display: block;
+  height: auto;
+  min-height: 100vh;
+  overflow: auto;
+  /* Akzentfarben der alten Apps auf die Fachfarbe umlenken */
+  --accent: var(--subject);
+  --accent-soft: var(--subject-soft);
+  --accent-light: var(--subject-soft);
+  --primary: var(--subject);
+  --primary-soft: var(--subject-soft);
+  --brand: var(--subject);
+  --brand-light: var(--subject-soft);
+  --brand-dark: var(--subject-strong);
+  --subject-color: var(--subject);
+  --bg: var(--hos-bg);
+  --bg-body: var(--hos-bg);
+  --bg-page: var(--hos-bg);
+  --bg-app: var(--hos-bg);
+  background: var(--hos-bg);
+}
+body.hos-app.hos-legacy > .app-header { position: sticky; top: 0; z-index: 50; }
 
 /* ---------- Kleine Bildschirme: normal scrollen ---------- */
 @media (max-width: 1000px), (max-height: 520px) {
