@@ -256,7 +256,7 @@
         return { title: t.title || spec.title, instr: t.instr || spec.instr || '', body: t.body, sol: t.sol };
       });
     };
-    def.pool = def.pool || (() => poolView(def));
+    def.pool = def.pool || (def.fach === 'mathe' ? (() => '<p>Die Aufgaben dieses Themas werden für jedes Blatt neu erzeugt, die Lösungen berechnet das Programm. Blatt 1–6 sind fest, „Neue Variante“ liefert beliebig viele weitere Blätter.</p>') : (() => poolView(def)));
     UB.register(def);
   };
 })();

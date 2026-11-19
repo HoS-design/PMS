@@ -1,6 +1,7 @@
 /* A4-Übungsblatt – Vorschau und Druck. Schwarz-Weiß-tauglich, Rot nur als Akzent. */
 .sheet {
   --red: #c62828;
+  --solc: #c62828;
   width: 210mm;
   min-height: 297mm;
   padding: 10mm 14mm 9mm;
@@ -36,7 +37,7 @@
 .blank { display: inline-block; height: 1.2em; border-bottom: 0.3mm solid #444; vertical-align: bottom; margin: 0 1mm; }
 .cbox { display: inline-block; width: 4mm; height: 4mm; border: 0.35mm solid #333; vertical-align: -0.6mm; }
 .numbox { display: inline-block; width: 8mm; height: 7mm; border: 0.35mm solid #333; vertical-align: middle; margin-left: 2mm; }
-.sol { color: var(--red); font-weight: 650; font-style: italic; }
+.sol { color: var(--solc); font-weight: 650; font-style: italic; }
 .bar { color: var(--red); }
 .opts { margin: 0.8mm 0 0 4mm; font-size: 10.5pt; }
 
@@ -97,3 +98,28 @@
 .mh-box h3 img { width: 8mm; height: 8mm; object-fit: contain; }
 .mh-box .mh-ok { margin-left: auto; font-size: 8.5pt; font-weight: 500; color: #555; }
 .sheet.merkheft .mh-body { margin-top: 2mm; }
+
+/* --- Fach Mathematik --- */
+.sheet.fach-mathe { --red: #1d4ed8; }
+.sheet.fach-mathe .mh-area { border-bottom-color: #bfd0f5; }
+
+/* --- Mathe-Baukasten --- */
+.fr { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; font-size: 0.92em; line-height: 1.05; margin: 0 0.4mm; }
+.fr > span:first-child { border-bottom: 0.25mm solid currentColor; padding: 0 0.6mm; }
+.fr > span:last-child { padding: 0 0.6mm; }
+.mgrid { display: grid; gap: 2mm 8mm; margin: 1mm 0 1mm; }
+.mgrid.c1 { grid-template-columns: 1fr; }
+.mgrid.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mgrid.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mgrid.c4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mi { font-size: 11.5pt; line-height: 1.5; break-inside: avoid; }
+.mi .blank { min-width: 4em; }
+.mi.tx { font-size: 11pt; line-height: 1.4; }
+.mi .ml { font-size: 10.5pt; margin-bottom: 0.8mm; }
+.mi .ma { margin-top: 1mm; }
+.mlet { color: var(--red); }
+svg.karo { display: block; margin: 1.2mm 0 0; }
+svg.karo text, svg.mfig text { font-family: 'Atkinson Hyperlegible', Arial, sans-serif; }
+svg.karo text { font-size: 4.1px; text-anchor: middle; fill: #111; }
+svg.karo text.gs { fill: #c62828; font-weight: 700; }
+svg.mfig { display: block; }

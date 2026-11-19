@@ -8,20 +8,23 @@
   const params = new URLSearchParams(location.search);
   const showDrafts = params.has('entwurf') || params.has('lehrer');
 
-  const state = { klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false };
+  const state = { fach: 'deutsch', klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false };
+  const fachOf = (t) => t.fach || 'deutsch';
 
   // ------------------------------------------------------------------
   // Adresse: #thema-stufe-blatt  bzw. #thema-stufe-v123456 ; ?klasse=2
   // ------------------------------------------------------------------
   function readHash() {
-    const mh = location.hash.match(/^#merkheft(?:-(\d))?$/);
-    if (mh) { state.merkheft = true; if (mh[1] && +mh[1] >= 1 && +mh[1] <= 4) state.klasse = +mh[1]; return; }
+    const mh = location.hash.match(/^#merkheft(?:-(mathe))?(?:-(\d))?$/);
+    if (mh) { state.merkheft = true; state.fach = mh[1] || 'deutsch'; if (mh[2] && +mh[2] >= 1 && +mh[2] <= 4) state.klasse = +mh[2]; return; }
+    if (location.hash === '#mathe' || location.hash === '#deutsch') { state.fach = location.hash.slice(1); state.topic = null; return; }
     state.merkheft = false;
     const m = location.hash.replace('#', '').match(/^([a-z0-9-]+?)(?:-(\d))?(?:-(\d+|v\d+))?$/);
     if (!m) return;
     const t = UB.topics.find(x => x.id === m[1]);
     if (!t || (t.review && !showDrafts)) return;
     state.topic = t.id;
+    state.fach = fachOf(t);
     if (m[2] && +m[2] >= 1 && +m[2] <= 3) state.level = +m[2];
     if (m[3]) {
       if (m[3].startsWith('v')) { state.variant = m[3].slice(1); state.blatt = null; }
@@ -31,7 +34,7 @@
     state.klasse = t.klassen.includes(k) ? k : t.klassen[0];
   }
   function writeHash() {
-    if (state.merkheft) { history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#merkheft-' + state.klasse); return; }
+    if (state.merkheft) { history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#merkheft-' + (state.fach === 'mathe' ? 'mathe-' : '') + state.klasse); return; }
     if (!state.topic) return;
     const h = '#' + state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt);
     history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + h);
@@ -42,7 +45,7 @@
   // Katalog
   // ------------------------------------------------------------------
   function visibleTopics() {
-    return UB.topics.filter(t => t.klassen.includes(state.klasse) && (!t.review || showDrafts));
+    return UB.topics.filter(t => fachOf(t) === state.fach && t.klassen.includes(state.klasse) && (!t.review || showDrafts));
   }
   function renderCatalog() {
     const list = visibleTopics();
@@ -93,8 +96,8 @@
     const code = state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt);
     const blattLabel = state.variant ? 'Zusatzblatt ' + state.variant : 'Blatt ' + state.blatt;
     const img = solution ? 'MiniHoS_Lob_Pokal' : t.img;
-    let html = '<article class="sheet' + (solution ? ' solution' : '') + '">' +
-      '<header class="sh-head"><div><div class="sh-kicker">Deutsch · ' + state.klasse + '. Klasse · ' + esc(UB.LEVEL_NAMES[state.level]) + '</div>' +
+    let html = '<article class="sheet fach-' + fachOf(t) + (solution ? ' solution' : '') + '">' +
+      '<header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[fachOf(t)] + ' · ' + state.klasse + '. Klasse · ' + esc(UB.LEVEL_NAMES[state.level]) + '</div>' +
       '<h1>' + esc(t.title) + '</h1><div class="sh-meta">' + esc(blattLabel) + '</div></div>' +
       '<img class="sh-img" src="' + IMG(img) + '" alt=""></header>';
     if (!solution) html += '<div class="sh-name"><span>Name:</span><span class="short">Klasse:</span><span class="short">Datum:</span></div>';
@@ -115,7 +118,7 @@
   // Merkheft: alle Merkkästen der Klasse, automatisch auf A4-Seiten verteilt
   // ------------------------------------------------------------------
   function merkPage(nr, body) {
-    return '<article class="sheet merkheft"><header class="sh-head"><div><div class="sh-kicker">Deutsch · ' + state.klasse + '. Klasse</div>' +
+    return '<article class="sheet merkheft fach-' + state.fach + '"><header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[state.fach] + ' · ' + state.klasse + '. Klasse</div>' +
       '<h1>Merkheft</h1><div class="sh-meta">Seite ' + nr + ' von %TOTAL%</div></div><img class="sh-img" src="' + IMG(nr === 1 ? 'MiniHoS_Original_Notizbuch' : 'MiniHoS_Erklaeren_Tafel-Idee') + '" alt=""></header>' +
       '<div class="mh-body">' + body + '</div><div class="sh-spacer"></div><footer class="sh-foot"><span>chatisthisreal.at/uebungsblaetter</span><span>Merkheft ' + state.klasse + '. Klasse</span></footer></article>';
   }
@@ -146,7 +149,16 @@
   // ------------------------------------------------------------------
   function render() {
     document.querySelectorAll('#klasseSeg button').forEach(b => b.classList.toggle('active', +b.dataset.klasse === state.klasse));
-    document.querySelectorAll('#levelSeg button').forEach(b => b.classList.toggle('active', +b.dataset.level === state.level));
+    document.querySelectorAll('#fachSeg button').forEach(b => b.classList.toggle('active', b.dataset.fach === state.fach));
+    document.body.classList.toggle('subject-deutsch', state.fach === 'deutsch');
+    document.body.classList.toggle('subject-mathe', state.fach === 'mathe');
+    document.querySelectorAll('#fachSeg button').forEach(b => b.addEventListener('click', () => {
+    if (state.fach === b.dataset.fach) return;
+    state.fach = b.dataset.fach; state.topic = null; state.merkheft = false;
+    history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#' + state.fach);
+    render();
+  }));
+  document.querySelectorAll('#levelSeg button').forEach(b => b.classList.toggle('active', +b.dataset.level === state.level));
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
     $('blattBtns').innerHTML = Array.from({ length: BLATT_COUNT }, (_, i) => '<button type="button" data-blatt="' + (i + 1) + '" class="' + (!state.variant && state.blatt === i + 1 ? 'active' : '') + '">' + (i + 1) + '</button>').join('');
     $('blattBtns').querySelectorAll('[data-blatt]').forEach(b => b.addEventListener('click', () => { state.blatt = +b.dataset.blatt; state.variant = null; state.merkheft = false; render(); }));

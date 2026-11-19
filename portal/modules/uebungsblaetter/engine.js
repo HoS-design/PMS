@@ -81,8 +81,13 @@
       sprache: 'Sprachbetrachtung',
       rechtschreibung: 'Rechtschreibung',
       schreiben: 'Texte und Schreiben',
-      lesen: 'Lesen'
+      lesen: 'Lesen',
+      zahlen: 'Zahlen und Rechnen',
+      variablen: 'Terme, Gleichungen, Funktionen',
+      geometrie: 'Figuren und Körper',
+      daten: 'Daten und Zufall'
     },
+    FACH: { deutsch: 'Deutsch', mathe: 'Mathematik' },
     LEVEL_NAMES: { 1: 'Stufe 1 · leicht', 2: 'Stufe 2 · mittel', 3: 'Stufe 3 · schwer' }
   };
 })();
