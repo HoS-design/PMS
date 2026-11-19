@@ -9,690 +9,356 @@
   <style>
     :root {
       --subject-color: #c62828;
-      --bg: #f3f6fa;
+      --bg: #f6f3f3;
       --card: #ffffff;
-      --line: #d9e2ec;
+      --line: #e5dede;
       --text: #1f2937;
       --muted: #667085;
-      --accent: #0ea5e9;
-      --accent-soft: #e0f2fe;
-      --accent-strong: #0369a1;
+      --accent: #c62828;
+      --accent-soft: #fdecec;
+      --accent-strong: #9f1d1d;
+      --good: #166534;
       --good-soft: #dcfce7;
+      --warn: #92400e;
       --warn-soft: #fef3c7;
-      --bad-soft: #fee2e2;
-      --shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
-      --radius-xl: 24px;
-      --radius-lg: 20px;
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
+    html, body { margin: 0; padding: 0; height: 100%; }
 
     body {
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      font-size: 15px;
     }
 
-    .page {
-      width: min(1080px, calc(100% - 24px));
-      margin: 18px auto 40px;
-      display: grid;
-      gap: 16px;
+    /* Kompakter Kopf, damit auf 14"-Bildschirmen genug Platz bleibt */
+    .app-header { padding: 6px 16px; gap: 10px; position: static; }
+    .app-header .logo-img { width: 34px; height: 34px; }
+    .app-header .brand-title h1 { font-size: 17px; }
+
+    button, select, textarea, input { font: inherit; }
+
+    button {
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 8px 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
     }
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-secondary { background: #fff; color: var(--text); border-color: var(--line); }
+    .btn-soft { background: #faf7f7; color: var(--text); border-color: var(--line); }
+    .btn-warn { background: var(--warn-soft); color: var(--warn); border-color: #fde68a; }
+
+    .app {
+      flex: 1;
+      min-height: 0;
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 8px 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Obere Leiste: Geschichte + Schritte */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+    }
+    .topbar label { font-weight: 800; }
+    select, input[type="text"] {
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      padding: 7px 10px;
+      background: #fff;
+      color: var(--text);
+    }
+    .steps { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+    .step-tab {
+      background: #fff;
+      border-color: var(--line);
+      color: var(--muted);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: .92rem;
+      transition: none;
+    }
+    .step-tab.current { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step-tab.done:not(.current) { background: var(--good-soft); border-color: #bbf7d0; color: var(--good); }
+
+    .stage { flex: 1; min-height: 0; }
+    .step {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      gap: 10px;
+      grid-template-rows: minmax(0, 1fr) auto;
+    }
+    .step[hidden] { display: none; }
 
     .panel {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow);
-      padding: 18px;
-      position: relative;
-    }
-
-    .intro {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) minmax(290px, 0.7fr);
-      gap: 20px;
-      align-items: start;
-    }
-
-    .intro-main {
-      display: grid;
-      gap: 16px;
-    }
-
-    .intro-copy {
-      display: grid;
-      gap: 10px;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: #f8fafc;
-      border: 1px solid var(--line);
-      font-weight: 800;
-      font-size: 0.92rem;
-      color: var(--accent-strong);
-      margin-bottom: 10px;
-    }
-
-    .lead {
-      margin: 0;
-      line-height: 1.6;
-      color: var(--muted);
-      max-width: 62ch;
-    }
-
-    .steps {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-    }
-
-    .step-pill,
-    .mini-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .step-pill.active {
-      background: var(--accent-soft);
-      border-color: #bae6fd;
-      color: var(--accent-strong);
-    }
-
-    .step-pill.done {
-      background: #ecfdf5;
-      border-color: #bbf7d0;
-      color: #166534;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      align-content: start;
-    }
-
-    .stat {
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--line);
-      background: #fbfdff;
-      padding: 14px;
+      border-radius: var(--radius);
+      padding: 12px;
       min-height: 0;
     }
+    .panel-title { margin: 0 0 8px; font-size: 1rem; font-weight: 800; }
+    .scroll { overflow: auto; }
 
-    .stat .muted {
-      display: block;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 1.2rem;
-      margin-top: 8px;
-    }
-
-    .storybar {
+    .bottombar {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .storybar-left,
-    .storybar-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .intro-actions {
-      display: flex;
-      justify-content: flex-start;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
-    }
-
-    .guide-panel {
-      display: grid;
-      gap: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--line);
-    }
-
-    .section-panel {
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .section-head {
-      padding: 18px 18px 14px;
-      background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
-    }
-
-    .section-head .storybar {
-      margin-bottom: 0;
-    }
-
-    .section-body {
-      display: grid;
-      gap: 14px;
-      padding: 0 18px 18px;
-    }
-
-    .select-label {
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    select,
-    button,
-    textarea {
-      font: inherit;
-    }
-
-    select {
-      border-radius: 14px;
+      background: var(--card);
       border: 1px solid var(--line);
-      padding: 10px 12px;
-      background: #fff;
-      color: var(--text);
-      min-width: 220px;
+      border-radius: var(--radius);
+      padding: 8px 10px;
     }
-
-    button {
-      border: 1px solid transparent;
-      border-radius: 14px;
-      padding: 10px 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 10px 18px rgba(14, 165, 233, 0.16);
-    }
-
-    .btn-secondary {
-      background: #fff;
-      color: var(--text);
-      border-color: var(--line);
-    }
-
-    .btn-good {
-      background: var(--good-soft);
-      color: #166534;
-      border-color: #bbf7d0;
-    }
-
-    .btn-warn {
-      background: var(--warn-soft);
-      color: #92400e;
-      border-color: #fde68a;
-    }
-
-    .btn-soft {
-      background: #f8fafc;
-      color: var(--text);
-      border-color: var(--line);
-    }
+    .bottombar .spacer { flex: 1; }
 
     .feedback {
-      margin-top: 14px;
-      border-radius: 16px;
-      padding: 12px 14px;
-      border: 1px solid var(--line);
-      background: #f8fafc;
+      border-radius: 12px;
+      padding: 7px 12px;
       font-weight: 700;
-    }
-
-    .feedback.good {
-      background: var(--good-soft);
-      border-color: #bbf7d0;
-      color: #166534;
-    }
-
-    .feedback.warn {
-      background: var(--warn-soft);
-      border-color: #fde68a;
-      color: #92400e;
-    }
-
-    .feedback.bad {
-      background: var(--bad-soft);
-      border-color: #fecaca;
-      color: #991b1b;
-    }
-
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .scene-card {
+      background: #faf7f7;
       border: 1px solid var(--line);
-      background: #fff;
-      border-radius: var(--radius-lg);
-      padding: 14px;
-      display: grid;
-      gap: 10px;
-      min-height: 100%;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+      flex: 1 1 220px;
+      line-height: 1.35;
     }
+    .feedback.good { background: var(--good-soft); border-color: #bbf7d0; color: var(--good); }
+    .feedback.warn { background: var(--warn-soft); border-color: #fde68a; color: var(--warn); }
 
-    .scene-card.dragging {
-      opacity: 0.62;
-      transform: rotate(1deg);
-    }
-
-    .scene-card.drop-target {
-      outline: 3px dashed #7dd3fc;
-      outline-offset: 4px;
-    }
-
-    .scene-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .scene-num {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
+    .merke {
+      flex: 2 1 380px;
+      border-left: 5px solid var(--accent);
       background: var(--accent-soft);
-      color: var(--accent-strong);
-      font-weight: 800;
-      flex: 0 0 auto;
+      padding: 7px 12px;
+      border-radius: 10px;
+      line-height: 1.35;
+      font-size: .93rem;
     }
 
-    .drag-hint {
-      font-size: 0.84rem;
-      color: var(--muted);
-      background: #f8fafc;
-      border: 1px dashed var(--line);
-      border-radius: 999px;
-      padding: 6px 10px;
-      white-space: nowrap;
-    }
-
-    .scene-visual {
-      min-height: 172px;
-      border-radius: 18px;
+    /* ---------- Schritt 1: Ordnen ---------- */
+    .cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; min-height: 0; align-items: center; }
+    .scene-card {
+      background: var(--card);
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
-      display: grid;
-      place-items: center;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .scene-image {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 3 / 2;
-      object-fit: contain;
-      display: block;
-    }
-
-    .scene-fallback {
-      width: 100%;
-      height: 160px;
-      display: block;
-    }
-
-    .scene-fallback svg {
-      width: 100%;
-      height: 160px;
-      display: block;
-    }
-
-    .scene-title {
-      font-size: 1rem;
-      font-weight: 800;
-      margin: 0;
-    }
-
-    .scene-text {
-      margin: 0;
-      color: var(--muted);
-      min-height: 44px;
-      line-height: 1.48;
-      font-size: 0.96rem;
-    }
-
-    .scene-controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      border-radius: var(--radius);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
+      min-height: 0;
+      max-height: 100%;
     }
-
-    .writing-grid {
-      display: grid;
-      gap: 14px;
-      grid-template-columns: repeat(2, 1fr);
+    .scene-card.dragging { opacity: .6; }
+    .scene-card.drop-target { outline: 3px dashed var(--accent); outline-offset: 3px; }
+    .scene-head { display: flex; align-items: center; gap: 8px; }
+    .num {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center; flex: 0 0 auto;
+      background: var(--accent-soft); color: var(--accent-strong); font-weight: 800;
     }
-
-    .writing-card {
+    .scene-head h3 { margin: 0; font-size: .98rem; }
+    .scene-media {
+      flex: 0 1 auto;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      min-height: 0;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
+      border-radius: 12px;
+      overflow: hidden;
       background: #fff;
-      padding: 14px;
-      display: grid;
-      gap: 12px;
-    }
-
-    .writing-head {
+      padding: 0;
+      cursor: zoom-in;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
     }
+    .scene-media img, .scene-media svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .scene-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .scene-controls button { padding: 6px 8px; }
 
-    .writing-scene-title {
-      font-weight: 800;
-      margin: 0;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 128px;
-      resize: vertical;
-      border-radius: 16px;
+    /* ---------- Schritt 2: Planen ---------- */
+    .plan-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 10px; min-height: 0; }
+    .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .q-card {
       border: 1px solid var(--line);
-      padding: 12px 14px;
-      background: #fcfdff;
-      color: var(--text);
-      line-height: 1.5;
-    }
-
-    textarea:focus,
-    select:focus {
-      outline: 3px solid rgba(14, 165, 233, 0.16);
-      border-color: #7dd3fc;
-    }
-
-    .chip-block {
+      border-radius: 12px;
+      padding: 8px;
       display: grid;
-      gap: 10px;
-    }
-
-    .chip-title {
-      font-weight: 800;
-      font-size: 0.95rem;
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
+      grid-template-columns: 110px minmax(0, 1fr);
       gap: 8px;
+      align-items: start;
     }
+    .q-card .thumb { width: 110px; aspect-ratio: 3 / 2; }
+    .thumb {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      padding: 0;
+      background: #fff;
+      cursor: zoom-in;
+      display: block;
+    }
+    .thumb img, .thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .q-title { font-weight: 800; font-size: .88rem; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .q-text { margin: 3px 0 0; font-size: .9rem; line-height: 1.35; color: #374151; }
+    .tag { font-size: .72rem; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: #f1f5f9; color: #475569; }
+    .tag.climax { background: var(--accent); color: #fff; }
 
+    .plan-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; align-content: start; }
+    .field { display: grid; gap: 3px; }
+    .field.wide { grid-column: 1 / -1; }
+    .field label { font-weight: 800; font-size: .9rem; }
+    .field small { color: var(--muted); font-size: .8rem; }
+    .field input, .field select { width: 100%; }
+    .field.missing input, .field.missing select { border-color: #f59e0b; background: #fffbeb; }
+
+    /* ---------- Schritt 3: Schreiben ---------- */
+    .write-layout {
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 270px;
+      gap: 10px;
+      min-height: 0;
+    }
+    .scene-list { display: grid; gap: 7px; align-content: start; }
+    .scene-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 8px; align-items: start; }
+    .scene-row .thumb { width: 92px; aspect-ratio: 3 / 2; }
+    .scene-row .q-text { font-size: .84rem; }
+
+    .editor { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+    .title-input { font-weight: 800; font-size: 1.05rem; width: 100%; }
+    textarea#storyText {
+      flex: 1;
+      min-height: 120px;
+      width: 100%;
+      resize: none;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      line-height: 1.55;
+      background: #fffdfd;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    textarea:focus, input:focus, select:focus { outline: 3px solid rgba(198, 40, 40, .15); border-color: #e57373; }
+
+    .meter { display: grid; gap: 4px; }
+    .meter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .88rem; font-weight: 700; }
+    .meter-bar { height: 9px; border-radius: 99px; background: #eee; position: relative; overflow: hidden; }
+    .meter-fill { position: absolute; inset: 0 auto 0 0; width: 0; background: #f59e0b; transition: width 150ms; }
+    .meter-fill.ok { background: #16a34a; }
+    .meter-fill.over { background: #dc2626; }
+    .meter-zone { position: absolute; top: 0; bottom: 0; border-left: 2px solid #16a34a; border-right: 2px solid #16a34a; background: rgba(22, 163, 74, .12); }
+    .pill { padding: 2px 8px; border-radius: 99px; background: #f1f5f9; }
+    .pill.good { background: var(--good-soft); color: var(--good); }
+    .pill.warn { background: var(--warn-soft); color: var(--warn); }
+
+    .helper { display: grid; gap: 8px; align-content: start; }
+    .plan-mini { font-size: .84rem; line-height: 1.4; display: grid; gap: 2px; }
+    .plan-mini b { font-weight: 800; }
+    .chip-title { font-weight: 800; font-size: .84rem; margin-top: 2px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
     .chip {
       border-radius: 999px;
-      border: 1px solid #bae6fd;
-      background: #f0f9ff;
-      color: #075985;
-      padding: 8px 11px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .chip.word {
-      background: #f8fafc;
-      border-color: var(--line);
+      border: 1px solid var(--line);
+      background: #faf7f7;
       color: var(--text);
+      padding: 4px 9px;
+      font-size: .84rem;
+      font-weight: 700;
     }
+    .chip.speech { background: var(--accent-soft); border-color: #f5c2c2; color: var(--accent-strong); }
 
-    .preview-box {
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--line);
-      background: #fcfdff;
-      padding: 16px;
-      line-height: 1.7;
-      min-height: 150px;
-      white-space: pre-wrap;
-    }
+    /* ---------- Schritt 4: Prüfen ---------- */
+    .check-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 10px; min-height: 0; }
+    .preview { display: flex; flex-direction: column; min-height: 0; }
+    .preview h2 { margin: 0 0 6px; font-size: 1.15rem; }
+    .preview-text { flex: 1; min-height: 0; overflow: auto; white-space: pre-wrap; line-height: 1.6; padding-right: 4px; }
+    .preview-text mark.present { background: #fde68a; border-bottom: 2px solid #d97706; padding: 0 1px; }
+    .preview-text .speech { background: #dcfce7; border-radius: 3px; }
+    .legend { display: flex; gap: 12px; font-size: .8rem; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+    .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -2px; }
+    .legend .l-present::before { background: #fde68a; border-bottom: 2px solid #d97706; }
+    .legend .l-speech::before { background: #dcfce7; }
 
-    .checklist {
+    .results { display: grid; gap: 6px; }
+    .result {
       display: grid;
-      gap: 12px;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: start;
-      gap: 12px;
+      grid-template-columns: 22px minmax(0, 1fr);
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 10px;
       border: 1px solid var(--line);
-      background: #fcfdff;
-      border-radius: 16px;
-      padding: 12px 14px;
-      line-height: 1.45;
+      font-size: .9rem;
+      line-height: 1.35;
     }
+    .result.good { background: #f3fdf6; border-color: #bbf7d0; }
+    .result.warn { background: #fffbeb; border-color: #fde68a; }
+    .result .icon { font-weight: 900; }
+    .result.good .icon { color: var(--good); }
+    .result.warn .icon { color: #d97706; }
+    .result small { display: block; color: #57534e; }
+    .self-check { display: grid; gap: 4px; margin-top: 8px; }
+    .self-check label { display: flex; gap: 8px; align-items: start; font-size: .9rem; }
+    .self-check input { accent-color: var(--accent); width: 16px; height: 16px; margin-top: 2px; }
 
-    .check-item input {
-      width: 18px;
-      height: 18px;
-      margin-top: 3px;
-      accent-color: var(--accent);
-    }
-
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-    }
-
-    .toolbar-left,
-    .toolbar-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .score-box {
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      padding: 14px;
-      background: #fbfdff;
-      font-weight: 800;
-    }
-
-    .score-box strong {
-      font-size: 1.3rem;
-    }
-
-    .small-note {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .helper-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .helper-card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px;
-      background: #fbfdff;
-    }
-
-    .helper-card strong {
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .hidden { display: none !important; }
-
-    @media (max-width: 980px) {
-      .cards-grid,
-      .writing-grid,
-      .helper-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .stats {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .intro {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 680px) {
-      .page {
-        width: min(100% - 14px, 1080px);
-      }
-
-      .cards-grid,
-      .writing-grid,
-      .stats,
-      .helper-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .section-head,
-      .section-body {
-        padding-left: 14px;
-        padding-right: 14px;
-      }
-
-      .storybar,
-      .toolbar {
-        align-items: stretch;
-      }
-
-      .storybar-left,
-      .storybar-right,
-      .toolbar-left,
-      .toolbar-right {
-        width: 100%;
-      }
-
-      .storybar-left > *,
-      .storybar-right > *,
-      .toolbar-left > *,
-      .toolbar-right > * {
-        flex: 1 1 auto;
-      }
-
-      button,
-      select {
-        width: 100%;
-      }
-    }
-
-    @media print {
-      body { background: #fff; }
-
-      .app-header,
-      .storybar,
-      .scene-controls,
-      .drag-hint,
-      .toolbar,
-      .feedback,
-      .chip,
-      .small-note,
-      .helper-grid {
-        display: none !important;
-      }
-
-      .page {
-        width: 100%;
-        margin: 0;
-      }
-
-      .panel,
-      .scene-card,
-      .writing-card {
-        box-shadow: none;
-        border-color: #cbd5e1;
-        break-inside: avoid;
-      }
-
-      textarea {
-        border-color: #cbd5e1;
-        min-height: 90px;
-      }
-    }
-
-    @page { size: A4; margin: 12mm; }
-    .scene-zoom { display: block; width: 100%; border: 0; padding: 0; background: transparent; cursor: zoom-in; text-align: left; border-radius: 12px; overflow: hidden; }
-    .scene-zoom:focus-visible { outline: 4px solid #0369a1; outline-offset: 4px; }
-    .zoom-label { display: block; padding: 8px 12px; color: #0369a1; background: #f0f9ff; font-size: 0.85rem; font-weight: 700; }
-    .image-dialog { width: min(1100px, 96vw); max-height: 95vh; padding: 18px; border: 1px solid #cbd5e1; border-radius: 18px; overflow: auto; }
+    /* Bild-Dialog */
+    .image-dialog { width: min(1000px, 96vw); max-height: 94vh; padding: 16px; border: 1px solid #cbd5e1; border-radius: 16px; }
     .image-dialog::backdrop { background: rgb(15 23 42 / 75%); }
-    .image-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
-    .image-dialog-header h2 { margin: 0; font-size: 1.25rem; }
-    .image-dialog-header button { width: auto; }
-    .image-dialog img { display: block; width: 100%; height: auto; max-height: 70vh; object-fit: contain; }
-    .image-dialog p { color: #475569; line-height: 1.5; }
-    @media print {
-      .intro, .image-dialog, .zoom-label { display: none !important; }
-      .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .scene-visual { min-height: 0; }
-      .scene-image { height: auto; width: 100%; }
-      .scene-card { padding: 8px; gap: 6px; }
-      .scene-zoom { border: 0; }
+    .image-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
+    .image-dialog-header h2 { margin: 0; font-size: 1.2rem; }
+    .image-dialog img { display: block; width: 100%; height: auto; max-height: 68vh; object-fit: contain; }
+    .image-dialog p { font-size: 1.05rem; line-height: 1.5; margin: 10px 0 0; }
+
+    .print-area { display: none; }
+
+    /* Kleine Bildschirme / sehr niedrige Fenster: normal scrollen */
+    @media (max-width: 1000px), (max-height: 520px) {
+      body { height: auto; overflow: auto; }
+      .step { height: auto; }
+      .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .scene-media { aspect-ratio: 3 / 2; flex: none; }
+      .plan-layout, .write-layout, .check-layout { grid-template-columns: 1fr; }
+      textarea#storyText { min-height: 320px; }
+      .preview-text { max-height: none; }
     }
-      /* 14"-Laptops (ca. 1366×650): Intro kompakt, Bildkarten in einer Reihe */
-    @media screen and (min-width: 1100px) {
-      .page { width: min(1260px, calc(100% - 24px)); margin-top: 12px; gap: 12px; }
-      .panel { padding: 14px 16px; }
-      .intro { grid-template-columns: 1fr; gap: 10px; }
-      .intro-main { gap: 8px 16px; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
-      .intro-copy { grid-row: span 2; }
-      .eyebrow { display: none; }
-      .lead { max-width: none; line-height: 1.45; }
-      .steps { margin-top: 0; justify-content: flex-end; }
-      .intro-actions { justify-content: flex-end; }
-      .guide-panel { grid-column: 1 / -1; }
-      .stats { grid-template-columns: repeat(3, 1fr); }
-      .stat { padding: 8px 12px; display: flex; align-items: baseline; justify-content: space-between; }
-      .stat strong { margin-top: 0; }
-      .cards-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-      .scene-card { padding: 10px; gap: 6px; }
-      .scene-visual { min-height: 0; }
-      .scene-text { min-height: 0; font-size: 0.9rem; }
-      .drag-hint { display: none; }
-      .storybar { margin-bottom: 8px; }
+    @media (max-width: 600px) {
+      .cards, .q-grid, .plan-form { grid-template-columns: 1fr; }
+      .steps { margin-left: 0; }
+    }
+
+    @media print {
+      @page { size: A4; margin: 14mm; }
+      body { display: block; height: auto; overflow: visible; background: #fff; }
+      .app-header, .app, .image-dialog { display: none !important; }
+      .print-area { display: block; font-size: 12pt; color: #000; }
+      .print-area h1 { font-size: 18pt; margin: 0 0 4mm; }
+      .print-area .meta { font-size: 10pt; color: #444; margin-bottom: 4mm; }
+      .print-images { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin-bottom: 6mm; }
+      .print-images img { width: 100%; height: auto; border: 1px solid #999; }
+      .print-text { white-space: pre-wrap; line-height: 1.7; }
     }
   </style>
 </head>
@@ -710,1101 +376,984 @@
     </div>
   </header>
 
-  <main class="page">
-    <section class="panel intro">
-      <div class="intro-main">
-        <div class="intro-copy">
-          <div class="eyebrow">Bildgeschichte für die 5. Schulstufe</div>
-          <p class="lead"><strong>So arbeitest du mit der App:</strong> Ordne zuerst die Bilder in eine sinnvolle Reihenfolge. Schreibe danach zu jedem Bild passende Sätze. Am Ende wird daraus deine ganze Bildgeschichte.</p>
-        </div>
-        <div class="steps" aria-label="Arbeitsschritte">
-          <span id="stepOrder" class="step-pill active">1. Bilder ordnen</span>
-          <span id="stepWrite" class="step-pill">2. Sätze schreiben</span>
-          <span id="stepCheck" class="step-pill">3. Geschichte prüfen</span>
-        </div>
-        <div class="intro-actions">
-          <button id="toggleGuideBtn" class="btn-soft" type="button" aria-expanded="false">Tipps anzeigen</button>
-        </div>
-        <div id="guidePanel" class="guide-panel hidden">
-          <div class="helper-grid" aria-label="Hilfen">
-            <div class="helper-card">
-              <strong>Tipp 1</strong>
-              Schau genau: Wer ist zu sehen? Wo spielt die Szene?
-            </div>
-            <div class="helper-card">
-              <strong>Tipp 2</strong>
-              Nutze Reihenfolge-Wörter wie zuerst, dann, plötzlich und am Ende.
-            </div>
-            <div class="helper-card">
-              <strong>Tipp 3</strong>
-              Schreibe nicht nur, was passiert, sondern auch, wie sich die Figuren fühlen.
-            </div>
-            <div class="helper-card">
-              <strong>Tipp 4</strong>
-              Erzähle im Präteritum (Mitvergangenheit): er lief, sie rief, wir lachten. Baue direkte Rede ein.
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="stats" aria-label="Übersicht">
-        <div class="stat">
-          <span class="muted">Bilder</span>
-          <strong id="stat-scenes">4</strong>
-        </div>
-        <div class="stat">
-          <span class="muted">Reihenfolge</span>
-          <strong id="stat-order">offen</strong>
-        </div>
-        <div class="stat">
-          <span class="muted">Checkliste</span>
-          <strong id="stat-check">0 / 8</strong>
-        </div>
-      </div>
-    </section>
+  <main class="app">
+    <div class="topbar">
+      <label for="storySelect">Bildgeschichte:</label>
+      <select id="storySelect"></select>
+      <nav class="steps" aria-label="Arbeitsschritte">
+        <button type="button" class="step-tab" data-step="1">1. Bilder ordnen</button>
+        <button type="button" class="step-tab" data-step="2">2. Planen</button>
+        <button type="button" class="step-tab" data-step="3">3. Erzählen</button>
+        <button type="button" class="step-tab" data-step="4">4. Prüfen</button>
+      </nav>
+    </div>
 
-    <section class="panel">
-      <div class="storybar">
-        <div class="storybar-left">
-          <label class="select-label" for="storySelect">Bildergeschichte:</label>
-          <select id="storySelect" aria-label="Bildergeschichte wählen"></select>
-        </div>
-        <div class="storybar-right">
+    <div class="stage">
+      <!-- Schritt 1 -->
+      <section class="step" id="step1" aria-label="Bilder ordnen">
+        <div id="sceneGrid" class="cards"></div>
+        <div class="bottombar">
+          <div class="merke"><b>Merke:</b> Eine Bildgeschichte <b>erzählt</b>, was passiert <b>ist</b>. Sie beschreibt nicht nur die Bilder.</div>
+          <div id="orderFeedback" class="feedback">Ziehe die Bilder in die richtige Reihenfolge oder verschiebe sie mit den Pfeilen.</div>
           <button id="shuffleBtn" class="btn-secondary" type="button">Neu mischen</button>
           <button id="checkBtn" class="btn-primary" type="button">Reihenfolge prüfen</button>
+          <button id="toPlanBtn" class="btn-primary" type="button" disabled>Weiter zum Planen →</button>
         </div>
-      </div>
-      <p class="small-note">Du kannst die Karten mit der Maus verschieben oder mit den Pfeil-Buttons nach links und rechts bewegen.</p>
-      <div id="orderFeedback" class="feedback">Ordne die Bildkarten so, dass eine stimmige Geschichte entsteht.</div>
-      <div id="sceneGrid" class="cards-grid" aria-live="polite"></div>
-    </section>
+      </section>
 
-    <section class="panel section-panel">
-      <div class="section-head">
-        <div class="storybar">
-          <div class="storybar-left">
-            <span class="mini-pill">Schreibe zu jedem Bild 1 bis 3 Sätze.</span>
+      <!-- Schritt 2 -->
+      <section class="step" id="step2" aria-label="Geschichte planen" hidden>
+        <div class="plan-layout">
+          <div class="panel scroll">
+            <h2 class="panel-title">Was ist passiert? Denk an diese Fragen:</h2>
+            <div id="questionGrid" class="q-grid"></div>
           </div>
-          <div class="storybar-right">
-            <button id="fillHelpBtn" class="btn-soft" type="button">Hilfen ausblenden</button>
-            <button id="clearTextsBtn" class="btn-secondary" type="button">Texte leeren</button>
+          <div class="panel scroll">
+            <h2 class="panel-title">Dein Schreibplan</h2>
+            <div class="plan-form" id="planForm">
+              <div class="field" data-field="name">
+                <label for="plan-name">Wie heißt deine Hauptfigur? *</label>
+                <input type="text" id="plan-name" data-plan="name" maxlength="30" placeholder="z. B. Lena" autocomplete="off">
+                <small>Ein Name statt „das Kind“.</small>
+              </div>
+              <div class="field" data-field="title">
+                <label for="plan-title">Überschrift</label>
+                <input type="text" id="plan-title" data-plan="title" maxlength="60" placeholder="z. B. Ein Schreck am Morgen" autocomplete="off">
+                <small>Macht neugierig, verrät aber nicht das Ende.</small>
+              </div>
+              <div class="field wide" data-field="when">
+                <label for="plan-when">Einleitung: Wann und wo beginnt die Geschichte? *</label>
+                <input type="text" id="plan-when" data-plan="when" maxlength="120" placeholder="z. B. An einem windigen Samstagnachmittag auf der Wiese hinter dem Haus …" autocomplete="off">
+              </div>
+              <div class="field" data-field="climax">
+                <label for="plan-climax">Höhepunkt: Welches Bild ist am spannendsten?</label>
+                <select id="plan-climax" data-plan="climax"></select>
+              </div>
+              <div class="field" data-field="ending">
+                <label for="plan-ending">Schluss: Wie fühlt sich deine Figur am Ende?</label>
+                <input type="text" id="plan-ending" data-plan="ending" maxlength="80" placeholder="z. B. erleichtert, weil …" autocomplete="off">
+              </div>
+              <div class="field wide" data-field="speech">
+                <label for="plan-speech">Was sagt oder ruft jemand? (direkte Rede) *</label>
+                <input type="text" id="plan-speech" data-plan="speech" maxlength="140" placeholder="z. B. „Oh nein, der Bus fährt ohne mich!“, rief Lena verzweifelt." autocomplete="off">
+                <small>Mit Redezeichen: „…“, rief Lena. Diesen Satz kannst du beim Erzählen mit einem Klick einfügen.</small>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="section-body">
-        <div id="helpArea" class="chip-block">
-          <div class="chip-title">Satzanfänge</div>
-          <div id="starterChips" class="chips"></div>
-          <div class="chip-title">Wortbank</div>
-          <div id="wordChips" class="chips"></div>
+        <div class="bottombar">
+          <button class="btn-secondary" type="button" data-goto="1">← Zurück</button>
+          <div id="planFeedback" class="feedback">Fülle mindestens die Felder mit * aus.</div>
+          <button id="toWriteBtn" class="btn-primary" type="button">Weiter zum Erzählen →</button>
         </div>
+      </section>
 
-        <div id="writingGrid" class="writing-grid"></div>
-      </div>
-    </section>
+      <!-- Schritt 3 -->
+      <section class="step" id="step3" aria-label="Geschichte erzählen" hidden>
+        <div class="write-layout">
+          <div class="panel scroll">
+            <h2 class="panel-title">Deine Bilder</h2>
+            <div id="sceneList" class="scene-list"></div>
+          </div>
+          <div class="panel editor">
+            <input type="text" id="titleInput" class="title-input" data-plan="title" maxlength="60" placeholder="Überschrift" aria-label="Überschrift" autocomplete="off">
+            <textarea id="storyText" spellcheck="true" aria-label="Deine Bildgeschichte"></textarea>
+            <div class="meter" aria-live="polite">
+              <div class="meter-bar"><div class="meter-zone" id="meterZone"></div><div class="meter-fill" id="meterFill"></div></div>
+              <div class="meter-row">
+                <span id="wordInfo">0 Wörter · Ziel: 170–200</span>
+                <span id="liveSpeech" class="pill">Direkte Rede: 0</span>
+                <span id="liveTense" class="pill">Zeitform: –</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel helper scroll">
+            <div>
+              <h2 class="panel-title">Dein Plan</h2>
+              <div id="planMini" class="plan-mini"></div>
+            </div>
+            <div class="chip-title">Direkte Rede</div>
+            <div class="chips">
+              <button type="button" class="chip speech" id="insertPlanSpeech">Meinen Rede-Satz einfügen</button>
+              <button type="button" class="chip speech" id="insertSpeechFrame">„ … “, rief …</button>
+            </div>
+            <div class="chip-title">Satzanfänge</div>
+            <div id="starterChips" class="chips"></div>
+            <div class="chip-title">Verben (Präteritum)</div>
+            <div id="verbChips" class="chips"></div>
+            <div class="chip-title">Gefühle</div>
+            <div id="feelingChips" class="chips"></div>
+          </div>
+        </div>
+        <div class="bottombar">
+          <button class="btn-secondary" type="button" data-goto="2">← Plan</button>
+          <div class="feedback" id="writeFeedback">Erzähle in der Vergangenheit (Präteritum): Lena <b>rannte</b>, sie <b>rief</b>, sie <b>war</b> erleichtert.</div>
+          <button id="toCheckBtn" class="btn-primary" type="button">Geschichte prüfen →</button>
+        </div>
+      </section>
 
-    <section class="panel section-panel">
-      <div class="section-head">
-        <div class="storybar">
-          <div class="storybar-left">
-            <span class="mini-pill">Deine ganze Geschichte</span>
+      <!-- Schritt 4 -->
+      <section class="step" id="step4" aria-label="Geschichte prüfen" hidden>
+        <div class="check-layout">
+          <div class="panel preview">
+            <h2 id="previewTitle">Ohne Überschrift</h2>
+            <div id="previewText" class="preview-text"></div>
+            <div class="legend"><span class="l-present">klingt nach Gegenwart: ändern!</span><span class="l-speech">direkte Rede</span></div>
           </div>
-          <div class="storybar-right">
-            <button id="buildPreviewBtn" class="btn-primary" type="button">Geschichte zusammensetzen</button>
-            <button id="togglePreviewBtn" class="btn-soft" type="button" aria-expanded="false">Vorschau anzeigen</button>
-          </div>
-        </div>
-      </div>
-      <div id="previewContent" class="section-body hidden">
-        <div id="previewBox" class="preview-box">Hier erscheint deine Bildgeschichte.</div>
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <span class="small-note">Tipp: Lies deinen Text am Ende noch einmal durch. Klingt die Geschichte logisch und rund?</span>
-          </div>
-          <div class="toolbar-right">
-            <button id="printBtn" class="btn-secondary" type="button">Drucken</button>
+          <div class="panel scroll">
+            <h2 class="panel-title">Automatische Prüfung</h2>
+            <div id="results" class="results"></div>
+            <div class="self-check" id="selfCheck">
+              <div class="chip-title">Prüfe selbst:</div>
+              <label><input type="checkbox" data-self="0"> Ich habe zu allen vier Bildern etwas erzählt.</label>
+              <label><input type="checkbox" data-self="1"> Man merkt, welcher Moment der spannendste ist.</label>
+              <label><input type="checkbox" data-self="2"> Ich habe meine Geschichte noch einmal ganz durchgelesen.</label>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="panel section-panel">
-      <div class="section-head">
-        <div class="storybar">
-          <div class="storybar-left">
-            <span class="mini-pill">Schreib-Checkliste</span>
-          </div>
-          <div class="storybar-right">
-            <button id="toggleChecklistBtn" class="btn-soft" type="button" aria-expanded="false">Checkliste anzeigen</button>
-          </div>
+        <div class="bottombar">
+          <button class="btn-secondary" type="button" data-goto="3">← Weiter überarbeiten</button>
+          <div id="checkFeedback" class="feedback">Überarbeite die gelben Punkte. Dann ist deine Bildgeschichte fertig.</div>
+          <button id="printBtn" class="btn-secondary" type="button">Drucken</button>
+          <button id="resetBtn" class="btn-warn" type="button">Neu beginnen</button>
         </div>
-      </div>
-      <div id="checklistContent" class="section-body hidden">
-        <div class="storybar">
-          <div class="storybar-left">
-            <span class="small-note">Prüfe am Ende, ob deine Geschichte logisch, vollständig und gut lesbar ist.</span>
-          </div>
-          <div class="storybar-right">
-            <button id="scoreBtn" class="btn-good" type="button">Checkliste auswerten</button>
-          </div>
-        </div>
-
-        <div class="checklist" id="checklist">
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe alle Bilder in meiner Geschichte berücksichtigt.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe passende Reihenfolge-Wörter verwendet, zum Beispiel zuerst, dann oder am Ende.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe so geschrieben, dass man gut versteht, was passiert.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe Gefühle, Gedanken oder Reaktionen beschrieben.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Meine Geschichte hat einen Schluss.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe im Präteritum (Mitvergangenheit) erzählt.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe direkte Rede verwendet und die Redezeichen gesetzt.</span></label>
-          <label class="check-item"><input type="checkbox" data-check> <span>Ich habe eine passende Überschrift gefunden.</span></label>
-        </div>
-
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <div id="scoreBox" class="score-box">Ergebnis: <strong>0 / 8</strong></div>
-          </div>
-          <div class="toolbar-right">
-            <button id="resetAllBtn" class="btn-warn" type="button">Alles zurücksetzen</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
+      </section>
+    </div>
   </main>
+
+  <div class="print-area" id="printArea"></div>
+
   <dialog id="imageDialog" class="image-dialog" aria-labelledby="imageDialogTitle">
-    <div class="image-dialog-header"><h2 id="imageDialogTitle">Bildansicht</h2><button type="button" id="closeImageDialog" autofocus>Schließen</button></div>
+    <div class="image-dialog-header"><h2 id="imageDialogTitle">Bild</h2><button type="button" id="closeImageDialog" class="btn-secondary" autofocus>Schließen</button></div>
     <img id="imageDialogImage" alt="">
-    <p id="imageDialogDescription"></p>
+    <p id="imageDialogPrompt"></p>
   </dialog>
 
   <script>
     (function () {
-      const starterPhrases = [
-        'Eines Tages ',
-        'Zuerst ',
-        'Dann ',
-        'Kurz darauf ',
-        'Plötzlich ',
-        'In diesem Moment ',
-        'Erschrocken ',
-        'Zum Glück ',
-        'Am Ende '
-      ];
+      'use strict';
 
-      // Bildgeschichten werden im Präteritum erzählt (Sprachbuch Deutschstunde 1, S. 63)
-      const wordBank = [
-        'rannte', 'schaute', 'suchte', 'entdeckte', 'half', 'rief', 'lachte', 'erschrak',
-        'freute sich', 'flüsterte', 'traurig', 'nervös', 'aufgeregt', 'mutig', 'vorsichtig', 'erleichtert',
-        'auf dem Schulhof', 'im Park', 'neben der Bank', 'vor der Schule',
-        'plötzlich', 'schließlich', 'zum Schluss', 'gemeinsam'
-      ];
-
+      // ---------------------------------------------------------------
+      // Inhalte
+      // prompt: Leitfrage zum Bild, bewusst im Präteritum formuliert
+      //         (Vorbild für die Zeitform), regt Gefühle und Rede an.
+      // desc:   neutrale Beschreibung, nur noch als Alternativtext.
+      // ---------------------------------------------------------------
       const stories = [
-        {
-          id: 'hund',
-          title: 'Der ausgebüxte Hund',
-          scenes: [
-            {
-              id: 'hund-1',
-              order: 1,
-              image: 'assets/hund-1-illustration.webp',
-              art: 'dog-gate',
-              title: 'Die offene Gartentür',
-              desc: 'Ein Hund bemerkt eine offene Tür und schleicht neugierig hinaus.'
-            },
-            {
-              id: 'hund-2',
-              order: 2,
-              image: 'assets/hund-2-illustration.webp',
-              art: 'child-search',
-              title: 'Die Suche beginnt',
-              desc: 'Ein Kind merkt, dass der Hund weg ist, und sucht aufgeregt nach Spuren.'
-            },
-            {
-              id: 'hund-3',
-              order: 3,
-              image: 'assets/hund-3-illustration.webp',
-              art: 'dog-park',
-              title: 'Hund im Park',
-              desc: 'Der Hund spielt im Park fröhlich mit einem Ball.'
-            },
-            {
-              id: 'hund-4',
-              order: 4,
-              image: 'assets/hund-4-illustration.webp',
-              art: 'home-return',
-              title: 'Wieder zu Hause',
-              desc: 'Das Kind findet den Hund und bringt ihn erleichtert nach Hause.'
-            }
-          ]
-        },
-        {
-          id: 'saft',
-          title: 'Das Missgeschick mit dem Saft',
-          scenes: [
-            {
-              id: 'saft-1',
-              order: 1,
-              image: 'assets/saft-1-illustration.webp',
-              art: 'juice-run',
-              title: 'Zu schnell gelaufen',
-              desc: 'Ein Kind läuft mit einem Glas Saft in der Hand durch das Zimmer.'
-            },
-            {
-              id: 'saft-2',
-              order: 2,
-              image: 'assets/saft-2-illustration.webp',
-              art: 'juice-spill',
-              title: 'Oh nein!',
-              desc: 'Der Saft kippt um und landet auf dem Tisch und auf den Heften.'
-            },
-            {
-              id: 'saft-3',
-              order: 3,
-              image: 'assets/saft-3-illustration.webp',
-              art: 'juice-clean',
-              title: 'Schnell helfen',
-              desc: 'Das Kind holt sofort ein Tuch und wischt alles vorsichtig auf.'
-            },
-            {
-              id: 'saft-4',
-              order: 4,
-              image: 'assets/saft-4-illustration.webp',
-              art: 'juice-clean-finish',
-              title: 'Alles wieder sauber',
-              desc: 'Am Ende ist der Tisch wieder sauber und das Kind ist erleichtert.'
-            }
-          ]
-        },
-        {
-          id: 'drachen',
-          title: 'Der Drachen fliegt davon',
-          scenes: [
-            {
-              id: 'drachen-1',
-              order: 1,
-              image: 'assets/drachen-1-illustration.webp',
-              art: 'kite-field',
-              title: 'Windiger Nachmittag',
-              desc: 'Ein Kind lässt auf einer Wiese einen Drachen steigen.'
-            },
-            {
-              id: 'drachen-2',
-              order: 2,
-              image: 'assets/drachen-2-illustration.webp',
-              art: 'kite-string-break',
-              title: 'Die Schnur reißt',
-              desc: 'Plötzlich reißt die Schnur und der Drachen fliegt davon.'
-            },
-            {
-              id: 'drachen-3',
-              order: 3,
-              image: 'assets/drachen-3-illustration.webp',
-              art: 'kite-tree',
-              title: 'Im Baum hängen geblieben',
-              desc: 'Der Drachen bleibt oben in einem Baum hängen.'
-            },
-            {
-              id: 'drachen-4',
-              order: 4,
-              image: 'assets/drachen-4-illustration.webp',
-              art: 'kite-help',
-              title: 'Gemeinsam geschafft',
-              desc: 'Ein Erwachsener hilft, und zusammen holen sie den Drachen herunter.'
-            }
-          ]
-        },
-        {
-          id: 'bus',
-          title: 'Den Bus verpasst',
-          scenes: [
-            {
-              id: 'bus-1',
-              order: 1,
-              image: 'assets/bus-1-illustration.webp',
-              art: 'bus-sleep',
-              title: 'Verschlafen',
-              desc: 'Ein Kind schläft noch tief, obwohl der Wecker schon viel zu spät zeigt.'
-            },
-            {
-              id: 'bus-2',
-              order: 2,
-              image: 'assets/bus-2-illustration.webp',
-              art: 'bus-run',
-              title: 'Schnell, schnell!',
-              desc: 'Mit der Schultasche rennt das Kind aus dem Haus zur Haltestelle.'
-            },
-            {
-              id: 'bus-3',
-              order: 3,
-              image: 'assets/bus-3-illustration.webp',
-              art: 'bus-gone',
-              title: 'Zu spät!',
-              desc: 'Der Bus fährt gerade ab. Das Kind steht traurig an der Haltestelle.'
-            },
-            {
-              id: 'bus-4',
-              order: 4,
-              image: 'assets/bus-4-illustration.webp',
-              art: 'bus-late',
-              title: 'In der Klasse',
-              desc: 'Das Kind kommt zu spät in die Klasse. Die Lehrerin schaut erstaunt auf die Uhr.'
-            }
-          ]
-        },
-        {
-          id: 'hamster',
-          title: 'Wo ist Krümel?',
-          scenes: [
-            {
-              id: 'hamster-1',
-              order: 1,
-              image: 'assets/hamster-1-illustration.webp',
-              art: 'ham-empty',
-              title: 'Der leere Käfig',
-              desc: 'Die Käfigtür steht offen. Der Hamster Krümel ist verschwunden.'
-            },
-            {
-              id: 'hamster-2',
-              order: 2,
-              image: 'assets/hamster-2-illustration.webp',
-              art: 'ham-search',
-              title: 'Die Suche',
-              desc: 'Das Kind sucht mit einer Taschenlampe unter dem Bett.'
-            },
-            {
-              id: 'hamster-3',
-              order: 3,
-              image: 'assets/hamster-3-illustration.webp',
-              art: 'ham-found',
-              title: 'Gefunden!',
-              desc: 'Krümel sitzt gemütlich in einem Hausschuh. Das Kind staunt.'
-            },
-            {
-              id: 'hamster-4',
-              order: 4,
-              image: 'assets/hamster-4-illustration.webp',
-              art: 'ham-home',
-              title: 'Wieder daheim',
-              desc: 'Krümel ist zurück im Käfig. Das Kind schließt die Tür gut zu.'
-            }
-          ]
-        },
-        {
-          id: 'schneemann',
-          title: 'Der Schneemann',
-          scenes: [
-            {
-              id: 'schneemann-1',
-              order: 1,
-              image: 'assets/schneemann-1-illustration.webp',
-              art: 'snow-build',
-              title: 'Ein Schneemann entsteht',
-              desc: 'Ein Kind baut im Schnee einen großen Schneemann mit Hut.'
-            },
-            {
-              id: 'schneemann-2',
-              order: 2,
-              image: 'assets/schneemann-2-illustration.webp',
-              art: 'snow-fight',
-              title: 'Schneeballschlacht',
-              desc: 'Zwei Kinder werfen sich Schneebälle zu.'
-            },
-            {
-              id: 'schneemann-3',
-              order: 3,
-              image: 'assets/schneemann-3-illustration.webp',
-              art: 'snow-oops',
-              title: 'Hoppla!',
-              desc: 'Ein Schneeball trifft den Schneemann. Sein Kopf fällt herunter.'
-            },
-            {
-              id: 'schneemann-4',
-              order: 4,
-              image: 'assets/schneemann-4-illustration.webp',
-              art: 'snow-fix',
-              title: 'Gemeinsam repariert',
-              desc: 'Die beiden Kinder setzen dem Schneemann den Kopf wieder auf.'
-            }
-          ]
-        },
-        {
-          id: 'geschenk',
-          title: 'Das Geschenk und die Katze',
-          scenes: [
-            {
-              id: 'geschenk-1',
-              order: 1,
-              image: 'assets/geschenk-1-illustration.webp',
-              art: 'gift-wrap',
-              title: 'Geschenk einpacken',
-              desc: 'Ein Kind packt ein Geschenk mit Papier und Schleife ein.'
-            },
-            {
-              id: 'geschenk-2',
-              order: 2,
-              image: 'assets/geschenk-2-illustration.webp',
-              art: 'gift-leave',
-              title: 'Kurz weg',
-              desc: 'Das Kind lässt das Geschenk auf dem Tisch liegen und geht aus dem Zimmer.'
-            },
-            {
-              id: 'geschenk-3',
-              order: 3,
-              image: 'assets/geschenk-3-illustration.webp',
-              art: 'gift-cat',
-              title: 'Die Katze',
-              desc: 'Die Katze springt auf den Tisch und zerreißt das Geschenkpapier.'
-            },
-            {
-              id: 'geschenk-4',
-              order: 4,
-              image: 'assets/geschenk-4-illustration.webp',
-              art: 'gift-mama',
-              title: 'Die Überraschung',
-              desc: 'Das Kind gibt Mama das Geschenk. Mama freut sich und lacht.'
-            }
-          ]
-        }
+        { id: 'hund', title: 'Der ausgebüxte Hund', scenes: [
+          { id: 'hund-1', image: 'assets/hund-1-illustration.webp', art: 'dog-gate', title: 'Die offene Gartentür',
+            prompt: 'Warum stand das Gartentor offen? Was hatte der Hund vor, als niemand aufpasste?',
+            desc: 'Ein Hund schleicht durch ein offenes Gartentor hinaus.' },
+          { id: 'hund-2', image: 'assets/hund-2-illustration.webp', art: 'child-search', title: 'Die Suche beginnt',
+            prompt: 'Wie fühlte sich deine Figur, als der Korb leer war? Was rief sie?',
+            desc: 'Ein besorgtes Kind steht mit einer roten Leine neben dem leeren Hundekorb.' },
+          { id: 'hund-3', image: 'assets/hund-3-illustration.webp', art: 'dog-park', title: 'Hund im Park',
+            prompt: 'Wo steckte der Hund die ganze Zeit? Was machte er dort?',
+            desc: 'Der Hund spielt im Park mit einem roten Ball.' },
+          { id: 'hund-4', image: 'assets/hund-4-illustration.webp', art: 'home-return', title: 'Wieder zu Hause',
+            prompt: 'Was sagte deine Figur zum Hund? Was nahm sie sich für das nächste Mal vor?',
+            desc: 'Das Kind führt den Hund an der Leine nach Hause.' }
+        ] },
+        { id: 'saft', title: 'Das Missgeschick mit dem Saft', scenes: [
+          { id: 'saft-1', image: 'assets/saft-1-illustration.webp', art: 'juice-run', title: 'Zu schnell gelaufen',
+            prompt: 'Warum hatte es deine Figur so eilig?',
+            desc: 'Ein Kind läuft mit einem Glas Orangensaft zum Tisch.' },
+          { id: 'saft-2', image: 'assets/saft-2-illustration.webp', art: 'juice-spill', title: 'Oh nein!',
+            prompt: 'Was passierte plötzlich? Was rief deine Figur erschrocken?',
+            desc: 'Das Glas kippt um, Saft läuft über Tisch und Hefte.' },
+          { id: 'saft-3', image: 'assets/saft-3-illustration.webp', art: 'juice-clean', title: 'Schnell helfen',
+            prompt: 'Wie rettete sie die Hefte? Was dachte sie dabei?',
+            desc: 'Das Kind wischt den Saft mit einem Tuch auf.' },
+          { id: 'saft-4', image: 'assets/saft-4-illustration.webp', art: 'juice-clean-finish', title: 'Alles wieder sauber',
+            prompt: 'Wie ging es deiner Figur am Ende? Was hatte sie gelernt?',
+            desc: 'Der Tisch ist sauber, das Kind steht erleichtert daneben.' }
+        ] },
+        { id: 'drachen', title: 'Der Drachen fliegt davon', scenes: [
+          { id: 'drachen-1', image: 'assets/drachen-1-illustration.webp', art: 'kite-field', title: 'Windiger Nachmittag',
+            prompt: 'Wie war das Wetter? Wie fühlte es sich an, als der Drachen so hoch flog?',
+            desc: 'Ein Kind lässt auf einer Wiese einen Drachen steigen.' },
+          { id: 'drachen-2', image: 'assets/drachen-2-illustration.webp', art: 'kite-string-break', title: 'Die Schnur reißt',
+            prompt: 'Was geschah mit der Schnur? Was schrie deine Figur?',
+            desc: 'Die Drachenschnur reißt.' },
+          { id: 'drachen-3', image: 'assets/drachen-3-illustration.webp', art: 'kite-tree', title: 'Im Baum hängen geblieben',
+            prompt: 'Wo landete der Drachen? Was dachte deine Figur in diesem Moment?',
+            desc: 'Der Drachen hängt in den Ästen eines Baumes.' },
+          { id: 'drachen-4', image: 'assets/drachen-4-illustration.webp', art: 'kite-help', title: 'Gemeinsam geschafft',
+            prompt: 'Wer half? Was sagten die beiden, als der Drachen wieder unten war?',
+            desc: 'Eine Erwachsene hat den Drachen mit einer Stange heruntergeholt, das Kind hält ihn.' }
+        ] },
+        { id: 'bus', title: 'Den Bus verpasst', scenes: [
+          { id: 'bus-1', image: 'assets/bus-1-illustration.webp', art: 'bus-sleep', title: 'Verschlafen',
+            prompt: 'Warum wachte deine Figur nicht rechtzeitig auf? Was dachte sie beim Blick auf den Wecker?',
+            desc: 'Ein Kind schläft, der Wecker zeigt eine späte Uhrzeit.' },
+          { id: 'bus-2', image: 'assets/bus-2-illustration.webp', art: 'bus-run', title: 'Schnell, schnell!',
+            prompt: 'Wie beeilte sie sich? Was murmelte sie beim Laufen?',
+            desc: 'Das Kind rennt mit der Schultasche zur Haltestelle.' },
+          { id: 'bus-3', image: 'assets/bus-3-illustration.webp', art: 'bus-gone', title: 'Zu spät!',
+            prompt: 'Was sah sie an der Haltestelle? Wie fühlte sie sich?',
+            desc: 'Der Bus fährt ab, das Kind steht an der Haltestelle.' },
+          { id: 'bus-4', image: 'assets/bus-4-illustration.webp', art: 'bus-late', title: 'In der Klasse',
+            prompt: 'Was sagte die Lehrerin? Was antwortete deine Figur?',
+            desc: 'Das Kind kommt zu spät in die Klasse, die Lehrerin blickt zur Uhr.' }
+        ] },
+        { id: 'hamster', title: 'Wo ist Krümel?', scenes: [
+          { id: 'hamster-1', image: 'assets/hamster-1-illustration.webp', art: 'ham-empty', title: 'Der leere Käfig',
+            prompt: 'Was entdeckte deine Figur am Käfig? Was rief sie?',
+            desc: 'Die Käfigtür steht offen, der Hamster ist weg.' },
+          { id: 'hamster-2', image: 'assets/hamster-2-illustration.webp', art: 'ham-search', title: 'Die Suche',
+            prompt: 'Wo suchte sie überall? Wie fühlte sie sich dabei?',
+            desc: 'Das Kind sucht mit einer Taschenlampe unter dem Bett.' },
+          { id: 'hamster-3', image: 'assets/hamster-3-illustration.webp', art: 'ham-found', title: 'Gefunden!',
+            prompt: 'Wo steckte Krümel? Was sagte deine Figur, als sie ihn fand?',
+            desc: 'Der Hamster sitzt in einem Hausschuh.' },
+          { id: 'hamster-4', image: 'assets/hamster-4-illustration.webp', art: 'ham-home', title: 'Wieder daheim',
+            prompt: 'Was tat sie, damit so etwas nicht noch einmal passierte?',
+            desc: 'Der Hamster ist zurück im Käfig, das Kind schließt die Tür.' }
+        ] },
+        { id: 'schneemann', title: 'Der Schneemann', scenes: [
+          { id: 'schneemann-1', image: 'assets/schneemann-1-illustration.webp', art: 'snow-build', title: 'Ein Schneemann entsteht',
+            prompt: 'Wer baute den Schneemann? Worauf war deine Figur besonders stolz?',
+            desc: 'Ein Kind baut einen Schneemann mit Hut.' },
+          { id: 'schneemann-2', image: 'assets/schneemann-2-illustration.webp', art: 'snow-fight', title: 'Schneeballschlacht',
+            prompt: 'Wie begann die Schneeballschlacht? Was riefen die Kinder?',
+            desc: 'Zwei Kinder werfen Schneebälle.' },
+          { id: 'schneemann-3', image: 'assets/schneemann-3-illustration.webp', art: 'snow-oops', title: 'Hoppla!',
+            prompt: 'Was passierte mit dem Schneemann? Wie reagierten die Kinder?',
+            desc: 'Ein Schneeball trifft den Schneemann, sein Kopf fällt herunter.' },
+          { id: 'schneemann-4', image: 'assets/schneemann-4-illustration.webp', art: 'snow-fix', title: 'Gemeinsam repariert',
+            prompt: 'Wie lösten die Kinder das Problem? Was sagten sie zueinander?',
+            desc: 'Die Kinder setzen dem Schneemann den Kopf wieder auf.' }
+        ] },
+        { id: 'geschenk', title: 'Das Geschenk und die Katze', scenes: [
+          { id: 'geschenk-1', image: 'assets/geschenk-1-illustration.webp', art: 'gift-wrap', title: 'Geschenk einpacken',
+            prompt: 'Für wen war das Geschenk? Warum gab sich deine Figur so viel Mühe?',
+            desc: 'Ein Kind packt ein Geschenk ein.' },
+          { id: 'geschenk-2', image: 'assets/geschenk-2-illustration.webp', art: 'gift-leave', title: 'Kurz weg',
+            prompt: 'Warum ging sie aus dem Zimmer? Wer schlich herein?',
+            desc: 'Das Geschenk liegt auf dem Tisch, das Kind verlässt das Zimmer.' },
+          { id: 'geschenk-3', image: 'assets/geschenk-3-illustration.webp', art: 'gift-cat', title: 'Die Katze',
+            prompt: 'Was stellte die Katze an? Was rief deine Figur, als sie zurückkam?',
+            desc: 'Die Katze zerreißt das Geschenkpapier.' },
+          { id: 'geschenk-4', image: 'assets/geschenk-4-illustration.webp', art: 'gift-mama', title: 'Die Überraschung',
+            prompt: 'Wie reagierte Mama? Was sagte sie?',
+            desc: 'Das Kind überreicht Mama das Geschenk, Mama lacht.' }
+        ] }
       ];
 
-      const STORAGE_KEY = 'hos-bildgeschichte-v2';
+      const starterPhrases = ['Eines Tages ', 'An einem ', 'Zuerst ', 'Kurz darauf ', 'Plötzlich ', 'In diesem Moment ', 'Vor Schreck ', 'Zum Glück ', 'Schließlich ', 'Am Abend '];
+      const verbBank = ['rannte', 'lief', 'schaute', 'suchte', 'entdeckte', 'bemerkte', 'erschrak', 'stolperte', 'half', 'holte', 'rief', 'schrie', 'flüsterte', 'fragte', 'antwortete', 'murmelte', 'jubelte', 'seufzte', 'war', 'hatte'];
+      const feelingBank = ['erschrocken', 'aufgeregt', 'verzweifelt', 'besorgt', 'wütend', 'enttäuscht', 'neugierig', 'erleichtert', 'glücklich', 'stolz', 'mit klopfendem Herzen'];
 
+      // Typische Gegenwartsformen (3. Person) – außerhalb der direkten Rede ein Hinweis auf Präsens.
+      // Bewusst ohne Formen, die auch Partizip/Adjektiv sein können (z. B. entdeckt, passiert, weiß).
+      const PRESENT_FORMS = new Set(('ist sind hat wird kann will muss darf soll mag möchte ' +
+        'geht läuft rennt springt fällt fliegt reißt kommt sieht schaut guckt sucht findet ' +
+        'sagt ruft schreit fragt antwortet flüstert murmelt jubelt denkt merkt ' +
+        'spielt holt hilft bringt nimmt gibt packt lässt steht sitzt liegt bleibt hängt ' +
+        'schläft wacht fährt wartet macht tut freut lacht weint staunt erschrickt ' +
+        'wirft trifft baut setzt legt stellt zerreißt kippt wischt putzt trägt öffnet schließt ' +
+        'zieht klettert isst trinkt beginnt landet bellt schnüffelt wedelt streichelt ärgert ' +
+        'schimpft kriecht schleicht rutscht stolpert weckt klingelt zeigt hält heißt').split(/\s+/));
+
+      const PAST_FORMS = new Set(('war waren hatte hatten wurde wurden konnte konnten wollte wollten musste mussten durfte sollte mochte ' +
+        'ging gingen lief liefen rannte rannten sprang sprangen fiel fielen flog flogen riss kam kamen sah sahen schaute suchte fand fanden ' +
+        'sagte sagten rief riefen schrie schrien fragte fragten antwortete flüsterte murmelte jubelte dachte dachten merkte bemerkte entdeckte ' +
+        'spielte spielten holte holten half halfen brachte nahm nahmen gab packte ließ stand standen saß saßen lag blieb hing ' +
+        'schlief wachte fuhr wartete machte machten tat freute freuten lachte lachten weinte staunte erschrak ' +
+        'warf warfen traf baute bauten setzte setzten legte stellte zerriss kippte wischte putzte trug öffnete schloss ' +
+        'zog kletterte aß trank begann landete bellte schnüffelte wedelte streichelte ärgerte schimpfte kroch schlich rutschte stolperte weckte ' +
+        'klingelte zeigte hielt hieß seufzte beschloss passierte versuchte umarmte wusste kannte rollte schnappte').split(/\s+/));
+
+      const FEELING_RE = /(traurig|froh|fröhlich|glücklich|erleichter|erschr|ängstlich|angst|wütend|sauer|aufgeregt|nervös|besorgt|sorge|stolz|enttäusch|überrasch|staun|verzweifel|panik|panisch|freute|freude|ärger|weinte|tränen|lachte|schäm|peinlich|zufrieden|herz|mutig|neugierig|verwirrt|genervt|erstaunt|fassungslos|seufz|zitter|jubel)/i;
+
+      // Direkte Rede: Text zwischen Redezeichen („…“, "…", »…«)
+      const SPEECH_RE = /[„“"»«][^„“"»«”\n]*[“"«»”]/g;
+      const WORD_MIN = 170;
+      const WORD_MAX = 200;
+      const STORAGE_KEY = 'hos-bildgeschichte-v3';
+      const OLD_STORAGE_KEY = 'hos-bildgeschichte-v2';
+
+      // ---------------------------------------------------------------
+      // Zustand
+      // ---------------------------------------------------------------
       const state = {
-        storyId: stories[Math.floor(Math.random() * stories.length)].id, // Zufallsstart, damit nicht alle dieselbe Geschichte bearbeiten
+        storyId: stories[Math.floor(Math.random() * stories.length)].id, // Zufallsstart
         order: [],
+        orderStatus: 'offen',
+        step: 1,
+        plans: {},
         texts: {},
-        checks: Array.from(document.querySelectorAll('[data-check]'), function () { return false; }),
-        helpVisible: false,
-        guideVisible: false,
-        previewVisible: false,
-        checklistVisible: false,
-        activeTextareaId: null,
-        orderStatus: 'offen'
+        selfChecks: {}
       };
 
-      const storySelect = document.getElementById('storySelect');
-      const sceneGrid = document.getElementById('sceneGrid');
-      const writingGrid = document.getElementById('writingGrid');
-      const orderFeedback = document.getElementById('orderFeedback');
-      const previewBox = document.getElementById('previewBox');
-      const scoreBox = document.getElementById('scoreBox');
-      const helpArea = document.getElementById('helpArea');
-      const guidePanel = document.getElementById('guidePanel');
-      const previewContent = document.getElementById('previewContent');
-      const checklistContent = document.getElementById('checklistContent');
-      const statScenes = document.getElementById('stat-scenes');
-      const statOrder = document.getElementById('stat-order');
-      const statCheck = document.getElementById('stat-check');
-      const starterChips = document.getElementById('starterChips');
-      const wordChips = document.getElementById('wordChips');
-      const checkboxes = Array.from(document.querySelectorAll('[data-check]'));
-      const stepOrder = document.getElementById('stepOrder');
-      const stepWrite = document.getElementById('stepWrite');
-      const stepCheck = document.getElementById('stepCheck');
-      const toggleGuideBtn = document.getElementById('toggleGuideBtn');
-      const togglePreviewBtn = document.getElementById('togglePreviewBtn');
-      const toggleChecklistBtn = document.getElementById('toggleChecklistBtn');
+      const $ = function (id) { return document.getElementById(id); };
+      const storySelect = $('storySelect');
+      const sceneGrid = $('sceneGrid');
+      const storyText = $('storyText');
 
-      document.getElementById('shuffleBtn').addEventListener('click', shuffleCurrentStory);
-      document.getElementById('checkBtn').addEventListener('click', checkOrder);
-      toggleGuideBtn.addEventListener('click', toggleGuide);
-      document.getElementById('fillHelpBtn').addEventListener('click', toggleHelp);
-      document.getElementById('clearTextsBtn').addEventListener('click', clearTexts);
-      document.getElementById('buildPreviewBtn').addEventListener('click', openPreview);
-      togglePreviewBtn.addEventListener('click', togglePreview);
-      toggleChecklistBtn.addEventListener('click', toggleChecklist);
-      document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
-      document.getElementById('scoreBtn').addEventListener('click', openChecklistAndEvaluate);
-      document.getElementById('resetAllBtn').addEventListener('click', resetAll);
-
-      checkboxes.forEach((cb, index) => {
-        cb.addEventListener('change', function () {
-          state.checks[index] = cb.checked;
-          updateChecklistStat();
-          updateStepPills();
-          saveState();
-        });
-      });
-
-      storySelect.addEventListener('change', function () {
-        state.storyId = storySelect.value;
-        state.orderStatus = 'offen';
-        state.guideVisible = false;
-        state.previewVisible = false;
-        state.checklistVisible = false;
-        initStory(true);
-      });
-
-      initSelect();
       loadState();
+      initSelect();
+      bindStatic();
       initStory(false);
-      renderHelpChips();
-      syncLayoutVisibility();
+
+      // ---------------------------------------------------------------
+      // Grundgerüst
+      // ---------------------------------------------------------------
+      function getStory() {
+        return stories.find(function (s) { return s.id === state.storyId; }) || stories[0];
+      }
+      function getPlan() {
+        const id = getStory().id;
+        if (!state.plans[id]) state.plans[id] = { name: '', title: '', when: '', climax: '', ending: '', speech: '' };
+        return state.plans[id];
+      }
+      function getText() { return state.texts[getStory().id] || ''; }
+      function getSelfChecks() {
+        const id = getStory().id;
+        if (!Array.isArray(state.selfChecks[id])) state.selfChecks[id] = [false, false, false];
+        return state.selfChecks[id];
+      }
+      function orderedScenes() {
+        const story = getStory();
+        return state.order.map(function (id) { return story.scenes.find(function (s) { return s.id === id; }); }).filter(Boolean);
+      }
+      function figureName() { return (getPlan().name || '').trim(); }
 
       function initSelect() {
-        storySelect.innerHTML = stories.map(function (story) {
-          return '<option value="' + escapeHtml(story.id) + '">' + escapeHtml(story.title) + '</option>';
+        storySelect.innerHTML = stories.map(function (s) {
+          return '<option value="' + escapeAttr(s.id) + '">' + escapeHtml(s.title) + '</option>';
         }).join('');
       }
 
-      function getCurrentStory() {
-        return stories.find(function (story) {
-          return story.id === state.storyId;
-        }) || stories[0];
+      function bindStatic() {
+        storySelect.addEventListener('change', function () {
+          state.storyId = storySelect.value;
+          state.orderStatus = 'offen';
+          state.step = 1;
+          initStory(true);
+        });
+
+        document.querySelectorAll('.step-tab').forEach(function (btn) {
+          btn.addEventListener('click', function () { goStep(Number(btn.dataset.step)); });
+        });
+        document.querySelectorAll('[data-goto]').forEach(function (btn) {
+          btn.addEventListener('click', function () { goStep(Number(btn.dataset.goto)); });
+        });
+
+        $('shuffleBtn').addEventListener('click', function () {
+          state.order = shuffleArray(getStory().scenes.map(function (s) { return s.id; }));
+          state.orderStatus = 'offen';
+          setFeedback('orderFeedback', '', 'Neu gemischt. Bringe die Bilder in die richtige Reihenfolge.');
+          renderAll();
+        });
+        $('checkBtn').addEventListener('click', checkOrder);
+        $('toPlanBtn').addEventListener('click', function () { goStep(2); });
+        $('toWriteBtn').addEventListener('click', function () {
+          const missing = missingPlanFields();
+          markMissing(missing);
+          if (missing.length) {
+            setFeedback('planFeedback', 'warn', 'Bitte noch ausfüllen: ' + missing.map(fieldLabel).join(', ') + '.');
+            return;
+          }
+          goStep(3);
+        });
+        $('toCheckBtn').addEventListener('click', function () { goStep(4); });
+
+        document.querySelectorAll('[data-plan]').forEach(function (input) {
+          input.addEventListener('input', function () {
+            getPlan()[input.dataset.plan] = input.value;
+            syncPlanInputs(input);
+            if (input.dataset.plan === 'climax') renderSceneLists();
+            markMissing([]);
+            renderPlanMini();
+            showStep();
+            saveState();
+          });
+          input.addEventListener('change', function () {
+            getPlan()[input.dataset.plan] = input.value;
+            if (input.dataset.plan === 'climax') renderSceneLists();
+            renderPlanMini();
+            saveState();
+          });
+        });
+
+        storyText.addEventListener('input', function () {
+          state.texts[getStory().id] = storyText.value;
+          updateLiveMeter();
+          saveState();
+        });
+
+        $('insertPlanSpeech').addEventListener('click', function () {
+          const speech = (getPlan().speech || '').trim();
+          if (!speech) {
+            setFeedback('writeFeedback', 'warn', 'Du hast im Plan noch keinen Satz mit direkter Rede. Nutze den Baustein daneben.');
+            return;
+          }
+          insertAtCursor(speech + ' ');
+        });
+        $('insertSpeechFrame').addEventListener('click', function () {
+          const name = figureName() || 'Name';
+          insertAtCursor('„“, rief ' + name + '. ', 1);
+        });
+
+        $('printBtn').addEventListener('click', function () { buildPrintArea(); window.print(); });
+        $('resetBtn').addEventListener('click', resetStory);
+
+        document.querySelectorAll('[data-self]').forEach(function (cb) {
+          cb.addEventListener('change', function () {
+            getSelfChecks()[Number(cb.dataset.self)] = cb.checked;
+            saveState();
+          });
+        });
+
+        renderChips('starterChips', starterPhrases);
+        renderChips('verbChips', verbBank.map(function (w) { return w + ' '; }));
+        renderChips('feelingChips', feelingBank.map(function (w) { return w + ' '; }));
+
+        // Bilder vergrößern (alle Ansichten)
+        document.addEventListener('click', function (event) {
+          const button = event.target.closest('[data-zoom]');
+          if (!button) return;
+          openZoom(button.dataset.zoom);
+        });
+        $('closeImageDialog').addEventListener('click', function () { $('imageDialog').close(); });
+        $('imageDialog').addEventListener('click', function (event) { if (event.target === $('imageDialog')) $('imageDialog').close(); });
+
+        document.addEventListener('error', function (event) {
+          const target = event.target;
+          if (!target || !target.dataset || !target.dataset.fallback) return;
+          const scene = getStory().scenes.find(function (s) { return s.id === target.dataset.fallback; });
+          const wrapper = document.createElement('span');
+          wrapper.innerHTML = renderSceneArtwork(scene ? scene.art : '');
+          target.replaceWith(wrapper.firstChild);
+        }, true);
       }
 
       function initStory(forceShuffle) {
-        const story = getCurrentStory();
+        const story = getStory();
         storySelect.value = story.id;
-        statScenes.textContent = String(story.scenes.length);
-
-        const existingOrder = Array.isArray(state.order) ? state.order.slice() : [];
-        const validExistingOrder = existingOrder.length === story.scenes.length && existingOrder.every(function (id) {
-          return story.scenes.some(function (scene) {
-            return scene.id === id;
-          });
+        const valid = state.order.length === story.scenes.length && state.order.every(function (id) {
+          return story.scenes.some(function (s) { return s.id === id; });
         });
-
-        if (forceShuffle || !validExistingOrder) {
-          state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
+        if (forceShuffle || !valid) {
+          state.order = shuffleArray(story.scenes.map(function (s) { return s.id; }));
+          state.orderStatus = 'offen';
         }
+        if (state.orderStatus !== 'richtig') state.step = 1;
+        setFeedback('orderFeedback', state.orderStatus === 'richtig' ? 'good' : '',
+          state.orderStatus === 'richtig' ? 'Richtig! Jetzt planst du deine Geschichte.' : 'Ziehe die Bilder in die richtige Reihenfolge oder verschiebe sie mit den Pfeilen.');
+        renderAll();
+      }
 
-        story.scenes.forEach(function (scene) {
-          if (typeof state.texts[scene.id] !== 'string') state.texts[scene.id] = '';
-        });
-
-        if (!story.scenes.some(function (scene) {
-          return scene.id === state.activeTextareaId;
-        })) {
-          state.activeTextareaId = null;
-        }
-
+      function renderAll() {
         renderSceneGrid();
-        renderWritingGrid();
-        buildPreview();
-        updateOrderStat(state.orderStatus || 'offen');
-        orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Ordne die Bildkarten so, dass eine stimmige Geschichte entsteht.';
-        restoreChecklistUi();
-        syncLayoutVisibility();
-        updateStepPills();
+        renderSceneLists();
+        renderPlanForm();
+        renderPlanMini();
+        storyText.value = getText();
+        updateStoryPlaceholder();
+        updateLiveMeter();
+        restoreSelfChecks();
+        if (state.step === 4) renderCheck();
+        showStep();
         saveState();
       }
 
+      // ---------------------------------------------------------------
+      // Schritte
+      // ---------------------------------------------------------------
+      function stepAllowed(n) {
+        if (n <= 1) return true;
+        if (state.orderStatus !== 'richtig') return false;
+        if (n >= 3 && missingPlanFields().length) return false;
+        return true;
+      }
+
+      function goStep(n) {
+        if (!stepAllowed(n)) {
+          if (state.orderStatus !== 'richtig') {
+            state.step = 1;
+            setFeedback('orderFeedback', 'warn', 'Prüfe zuerst die Reihenfolge der Bilder.');
+          } else {
+            state.step = 2;
+            const missing = missingPlanFields();
+            markMissing(missing);
+            setFeedback('planFeedback', 'warn', 'Bitte noch ausfüllen: ' + missing.map(fieldLabel).join(', ') + '.');
+          }
+        } else {
+          state.step = n;
+        }
+        if (state.step === 4) renderCheck();
+        showStep();
+        saveState();
+        if (state.step === 3) setTimeout(function () { storyText.focus(); }, 0);
+      }
+
+      function showStep() {
+        [1, 2, 3, 4].forEach(function (n) { $('step' + n).hidden = state.step !== n; });
+        document.querySelectorAll('.step-tab').forEach(function (btn) {
+          const n = Number(btn.dataset.step);
+          btn.classList.toggle('current', n === state.step);
+          btn.classList.toggle('done', isStepDone(n));
+          btn.disabled = !stepAllowed(n);
+          btn.setAttribute('aria-current', n === state.step ? 'step' : 'false');
+        });
+        $('toPlanBtn').disabled = state.orderStatus !== 'richtig';
+      }
+
+      function isStepDone(n) {
+        if (n === 1) return state.orderStatus === 'richtig';
+        if (n === 2) return state.orderStatus === 'richtig' && !missingPlanFields().length;
+        if (n === 3) { const w = countWords(getText()); return w >= WORD_MIN && w <= WORD_MAX; }
+        if (n === 4) return analyze().allGood;
+        return false;
+      }
+
+      // ---------------------------------------------------------------
+      // Schritt 1: Ordnen
+      // ---------------------------------------------------------------
       function renderSceneGrid() {
-        const story = getCurrentStory();
-        const orderScenes = state.order.map(function (id) {
-          return story.scenes.find(function (scene) {
-            return scene.id === id;
-          });
-        }).filter(Boolean);
-
-        sceneGrid.innerHTML = orderScenes.map(function (scene, index) {
-          return [
-            '<article class="scene-card" draggable="true" data-scene-id="' + escapeHtml(scene.id) + '">',
-              '<div class="scene-header">',
-                '<div class="scene-num">' + (index + 1) + '</div>',
-                '<div class="drag-hint">ziehen oder schieben</div>',
-              '</div>',
-              '<div class="scene-visual">' + renderSceneMedia(scene) + '</div>',
-              '<h3 class="scene-title">' + escapeHtml(scene.title) + '</h3>',
-              '<p class="scene-text">' + escapeHtml(scene.desc) + '</p>',
-              '<div class="scene-controls">',
-                '<button type="button" class="btn-soft" data-action="left" data-scene-id="' + escapeHtml(scene.id) + '">◀ Nach links</button>',
-                '<button type="button" class="btn-soft" data-action="right" data-scene-id="' + escapeHtml(scene.id) + '">Nach rechts ▶</button>',
-              '</div>',
-            '</article>'
-          ].join('');
+        sceneGrid.innerHTML = orderedScenes().map(function (scene, index) {
+          return '<article class="scene-card" draggable="true" data-scene-id="' + escapeAttr(scene.id) + '">' +
+            '<div class="scene-head"><span class="num">' + (index + 1) + '</span><h3>' + escapeHtml(scene.title) + '</h3></div>' +
+            '<button type="button" class="scene-media" data-zoom="' + escapeAttr(scene.id) + '" aria-label="Bild vergrößern: ' + escapeAttr(scene.title) + '">' + imgTag(scene) + '</button>' +
+            '<div class="scene-controls">' +
+              '<button type="button" class="btn-soft" data-move="left" data-id="' + escapeAttr(scene.id) + '"' + (index === 0 ? ' disabled' : '') + '>← nach links</button>' +
+              '<button type="button" class="btn-soft" data-move="right" data-id="' + escapeAttr(scene.id) + '"' + (index === 3 ? ' disabled' : '') + '>nach rechts →</button>' +
+            '</div></article>';
         }).join('');
 
-        sceneGrid.querySelectorAll('[data-action]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            moveScene(btn.getAttribute('data-scene-id'), btn.getAttribute('data-action'));
-          });
+        sceneGrid.querySelectorAll('[data-move]').forEach(function (btn) {
+          btn.addEventListener('click', function () { moveScene(btn.dataset.id, btn.dataset.move); });
         });
-
         bindDragAndDrop();
-        normalizeSceneControlLabels();
       }
 
-      function normalizeSceneControlLabels() {
-        sceneGrid.querySelectorAll('[data-action="left"]').forEach(function (btn) {
-          btn.innerHTML = '&larr; Nach links';
-        });
-
-        sceneGrid.querySelectorAll('[data-action="right"]').forEach(function (btn) {
-          btn.innerHTML = 'Nach rechts &rarr;';
-        });
-      }
-
-      function renderWritingGrid() {
-        const story = getCurrentStory();
-        const orderedScenes = state.order.map(function (id) {
-          return story.scenes.find(function (scene) {
-            return scene.id === id;
-          });
-        }).filter(Boolean);
-
-        writingGrid.innerHTML = orderedScenes.map(function (scene, index) {
-          const value = state.texts[scene.id] || '';
-          return [
-            '<section class="writing-card">',
-              '<div class="writing-head">',
-                '<div class="scene-num">' + (index + 1) + '</div>',
-                '<div>',
-                  '<p class="writing-scene-title">' + escapeHtml(scene.title) + '</p>',
-                  '<p class="small-note">Schreibe passende Sätze zu diesem Bild.</p>',
-                '</div>',
-              '</div>',
-              '<textarea data-textarea-id="' + escapeHtml(scene.id) + '" placeholder="Schreibe hier ...">' + escapeHtml(value) + '</textarea>',
-            '</section>'
-          ].join('');
-        }).join('');
-
-        writingGrid.querySelectorAll('textarea').forEach(function (textarea) {
-          textarea.addEventListener('focus', function () {
-            state.activeTextareaId = textarea.getAttribute('data-textarea-id');
-            saveState();
-          });
-
-          textarea.addEventListener('input', function () {
-            const sceneId = textarea.getAttribute('data-textarea-id');
-            state.texts[sceneId] = textarea.value;
-            buildPreview();
-            updateStepPills();
-            saveState();
-          });
-        });
-      }
-
-      function renderHelpChips() {
-        starterChips.innerHTML = starterPhrases.map(function (text) {
-          return '<button type="button" class="chip" data-insert="' + escapeAttr(text) + '">' + escapeHtml(text.trim()) + '</button>';
-        }).join('');
-
-        wordChips.innerHTML = wordBank.map(function (text) {
-          return '<button type="button" class="chip word" data-insert="' + escapeAttr(text + ' ') + '">' + escapeHtml(text) + '</button>';
-        }).join('');
-
-        helpArea.querySelectorAll('[data-insert]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            insertIntoActiveTextarea(btn.getAttribute('data-insert'));
-          });
-        });
-
-        helpArea.classList.toggle('hidden', !state.helpVisible);
-        document.getElementById('fillHelpBtn').textContent = state.helpVisible ? 'Hilfen ausblenden' : 'Hilfen einblenden';
-      }
-
-      function toggleGuide() {
-        state.guideVisible = !state.guideVisible;
-        syncLayoutVisibility();
-        saveState();
-      }
-
-      function togglePreview() {
-        state.previewVisible = !state.previewVisible;
-        syncLayoutVisibility();
-        saveState();
-      }
-
-      function openPreview() {
-        state.previewVisible = true;
-        syncLayoutVisibility();
-        buildPreview();
-        saveState();
-      }
-
-      function toggleChecklist() {
-        state.checklistVisible = !state.checklistVisible;
-        syncLayoutVisibility();
-        saveState();
-      }
-
-      function openChecklistAndEvaluate() {
-        state.checklistVisible = true;
-        syncLayoutVisibility();
-        evaluateChecklist();
-      }
-
-      function syncLayoutVisibility() {
-        guidePanel.classList.toggle('hidden', !state.guideVisible);
-        toggleGuideBtn.textContent = state.guideVisible ? 'Tipps ausblenden' : 'Tipps anzeigen';
-        toggleGuideBtn.setAttribute('aria-expanded', String(state.guideVisible));
-        syncToggleSection(togglePreviewBtn, previewContent, state.previewVisible, 'Vorschau anzeigen', 'Vorschau ausblenden');
-        syncToggleSection(toggleChecklistBtn, checklistContent, state.checklistVisible, 'Checkliste anzeigen', 'Checkliste ausblenden');
-      }
-
-      function syncToggleSection(button, content, isVisible, closedLabel, openLabel) {
-        content.classList.toggle('hidden', !isVisible);
-        button.textContent = isVisible ? openLabel : closedLabel;
-        button.setAttribute('aria-expanded', String(isVisible));
+      function moveScene(id, direction) {
+        const i = state.order.indexOf(id);
+        const j = direction === 'left' ? i - 1 : i + 1;
+        if (i < 0 || j < 0 || j >= state.order.length) return;
+        const tmp = state.order[i]; state.order[i] = state.order[j]; state.order[j] = tmp;
+        orderChanged();
       }
 
       function bindDragAndDrop() {
-        const cards = Array.from(sceneGrid.querySelectorAll('.scene-card'));
-        let draggedId = null;
-
-        cards.forEach(function (card) {
-          card.addEventListener('dragstart', function () {
-            draggedId = card.getAttribute('data-scene-id');
+        let dragId = null;
+        sceneGrid.querySelectorAll('.scene-card').forEach(function (card) {
+          card.addEventListener('dragstart', function (e) {
+            dragId = card.dataset.sceneId;
             card.classList.add('dragging');
+            if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId); }
           });
-
           card.addEventListener('dragend', function () {
             card.classList.remove('dragging');
-            cards.forEach(function (item) {
-              item.classList.remove('drop-target');
-            });
+            sceneGrid.querySelectorAll('.drop-target').forEach(function (c) { c.classList.remove('drop-target'); });
           });
-
-          card.addEventListener('dragover', function (event) {
-            event.preventDefault();
-            if (card.getAttribute('data-scene-id') !== draggedId) {
-              card.classList.add('drop-target');
-            }
-          });
-
-          card.addEventListener('dragleave', function () {
-            card.classList.remove('drop-target');
-          });
-
-          card.addEventListener('drop', function (event) {
-            event.preventDefault();
-            const targetId = card.getAttribute('data-scene-id');
-            card.classList.remove('drop-target');
-            if (!draggedId || draggedId === targetId) return;
-            reorderByDrag(draggedId, targetId);
+          card.addEventListener('dragover', function (e) { e.preventDefault(); card.classList.add('drop-target'); });
+          card.addEventListener('dragleave', function () { card.classList.remove('drop-target'); });
+          card.addEventListener('drop', function (e) {
+            e.preventDefault();
+            const targetId = card.dataset.sceneId;
+            if (!dragId || dragId === targetId) return;
+            const from = state.order.indexOf(dragId);
+            const to = state.order.indexOf(targetId);
+            state.order.splice(from, 1);
+            state.order.splice(to, 0, dragId);
+            orderChanged();
           });
         });
       }
 
-      function reorderByDrag(sourceId, targetId) {
-        const oldOrder = state.order.slice();
-        const sourceIndex = oldOrder.indexOf(sourceId);
-        const targetIndex = oldOrder.indexOf(targetId);
-        if (sourceIndex < 0 || targetIndex < 0) return;
-        oldOrder.splice(sourceIndex, 1);
-        oldOrder.splice(targetIndex, 0, sourceId);
-        state.order = oldOrder;
-        state.orderStatus = 'offen';
-        renderSceneGrid();
-        renderWritingGrid();
-        buildPreview();
-        updateOrderStat('offen');
-        orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Reihenfolge verändert. Prüfe jetzt, ob deine Geschichte logisch ist.';
-        updateStepPills();
-        saveState();
-      }
-
-      function moveScene(sceneId, direction) {
-        const idx = state.order.indexOf(sceneId);
-        if (idx < 0) return;
-        if (direction === 'left' && idx > 0) {
-          const tmpLeft = state.order[idx - 1];
-          state.order[idx - 1] = state.order[idx];
-          state.order[idx] = tmpLeft;
+      function orderChanged() {
+        if (state.orderStatus === 'richtig') {
+          state.orderStatus = 'offen';
+          setFeedback('orderFeedback', 'warn', 'Du hast die Reihenfolge verändert. Prüfe sie noch einmal.');
         }
-        if (direction === 'right' && idx < state.order.length - 1) {
-          const tmpRight = state.order[idx + 1];
-          state.order[idx + 1] = state.order[idx];
-          state.order[idx] = tmpRight;
-        }
-        state.orderStatus = 'offen';
         renderSceneGrid();
-        renderWritingGrid();
-        buildPreview();
-        updateOrderStat('offen');
-        orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Gut! Du hast die Karten verschoben.';
-        updateStepPills();
-        saveState();
-      }
-
-      function shuffleCurrentStory() {
-        const story = getCurrentStory();
-        state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
-        state.orderStatus = 'offen';
-        renderSceneGrid();
-        renderWritingGrid();
-        buildPreview();
-        updateOrderStat('offen');
-        orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Die Bildkarten wurden neu gemischt.';
-        updateStepPills();
+        renderSceneLists();
+        showStep();
         saveState();
       }
 
       function checkOrder() {
-        const story = getCurrentStory();
-        const correct = story.scenes.every(function (scene, index) {
-          return state.order[index] === scene.id;
-        });
-
-        if (correct) {
-          orderFeedback.className = 'feedback good';
-          orderFeedback.textContent = 'Sehr gut! Die Reihenfolge passt.';
+        const story = getStory();
+        let correct = 0;
+        state.order.forEach(function (id, i) { if (story.scenes[i].id === id) correct++; });
+        if (correct === story.scenes.length) {
           state.orderStatus = 'richtig';
-          updateOrderStat('richtig');
+          setFeedback('orderFeedback', 'good', 'Richtig! Klicke auf „Weiter zum Planen“.');
+          renderSceneLists();
+          renderPlanForm();
         } else {
-          const correctCount = story.scenes.reduce(function (count, scene, index) {
-            return count + (state.order[index] === scene.id ? 1 : 0);
-          }, 0);
-          orderFeedback.className = 'feedback warn';
-          orderFeedback.textContent = 'Noch nicht ganz. ' + correctCount + ' von ' + story.scenes.length + ' Bildern stehen bereits an der richtigen Stelle.';
-          state.orderStatus = 'teilweise';
-          updateOrderStat('teilweise');
+          state.orderStatus = 'offen';
+          setFeedback('orderFeedback', 'warn', correct + ' von ' + story.scenes.length + ' Bildern stehen schon richtig. Was passiert zuerst, was danach?');
         }
-
-        updateStepPills();
+        showStep();
         saveState();
       }
 
-      function toggleHelp() {
-        state.helpVisible = !state.helpVisible;
-        renderHelpChips();
-        saveState();
+      // ---------------------------------------------------------------
+      // Schritt 2: Planen
+      // ---------------------------------------------------------------
+      function sceneRole(index) {
+        const climax = getPlan().climax;
+        if (climax && Number(climax) === index + 1) return '<span class="tag climax">Höhepunkt</span>';
+        if (index === 0) return '<span class="tag">Einleitung</span>';
+        if (index === 3) return '<span class="tag">Schluss</span>';
+        return '<span class="tag">Hauptteil</span>';
       }
 
-      function clearTexts() {
-        const story = getCurrentStory();
-        story.scenes.forEach(function (scene) {
-          state.texts[scene.id] = '';
+      function renderSceneLists() {
+        const scenes = orderedScenes();
+        $('questionGrid').innerHTML = scenes.map(function (scene, i) {
+          return '<div class="q-card">' +
+            '<button type="button" class="thumb" data-zoom="' + escapeAttr(scene.id) + '" aria-label="Bild ' + (i + 1) + ' vergrößern">' + imgTag(scene) + '</button>' +
+            '<div><div class="q-title">Bild ' + (i + 1) + ' ' + sceneRole(i) + '</div><p class="q-text">' + escapeHtml(scene.prompt) + '</p></div></div>';
+        }).join('');
+        $('sceneList').innerHTML = scenes.map(function (scene, i) {
+          return '<div class="scene-row">' +
+            '<button type="button" class="thumb" data-zoom="' + escapeAttr(scene.id) + '" aria-label="Bild ' + (i + 1) + ' vergrößern">' + imgTag(scene) + '</button>' +
+            '<div><div class="q-title">' + (i + 1) + ' ' + sceneRole(i) + '</div><p class="q-text">' + escapeHtml(scene.prompt) + '</p></div></div>';
+        }).join('');
+      }
+
+      function renderPlanForm() {
+        const plan = getPlan();
+        const scenes = orderedScenes();
+        $('plan-climax').innerHTML = '<option value="">– auswählen –</option>' + scenes.map(function (scene, i) {
+          return '<option value="' + (i + 1) + '">Bild ' + (i + 1) + ': ' + escapeHtml(scene.title) + '</option>';
+        }).join('');
+        document.querySelectorAll('[data-plan]').forEach(function (input) {
+          input.value = plan[input.dataset.plan] || '';
         });
-        state.previewVisible = false;
-        renderWritingGrid();
-        buildPreview();
-        syncLayoutVisibility();
-        updateStepPills();
-        saveState();
+        markMissing([]);
+        setFeedback('planFeedback', '', 'Fülle mindestens die Felder mit * aus.');
       }
 
-      function insertIntoActiveTextarea(text) {
-        const activeId = state.activeTextareaId || (state.order[0] || '');
-        if (!activeId) return;
-        const textarea = writingGrid.querySelector('textarea[data-textarea-id="' + cssEscape(activeId) + '"]');
-        if (!textarea) return;
-        textarea.focus();
-        const start = textarea.selectionStart || 0;
-        const end = textarea.selectionEnd || 0;
-        const currentValue = textarea.value;
-        const nextValue = currentValue.slice(0, start) + text + currentValue.slice(end);
-        textarea.value = nextValue;
-        textarea.selectionStart = textarea.selectionEnd = start + text.length;
-        state.texts[activeId] = nextValue;
-        buildPreview();
-        updateStepPills();
-        saveState();
-      }
-
-      function buildPreview() {
-        const parts = state.order.map(function (id) {
-          return state.texts[id] || '';
-        }).map(function (text) {
-          return text.trim();
-        }).filter(Boolean);
-
-        if (!parts.length) {
-          previewBox.textContent = 'Hier erscheint deine Bildgeschichte.';
-          updateStepPills();
-          return;
-        }
-
-        previewBox.textContent = parts.join('\n\n');
-        updateStepPills();
-      }
-
-      function evaluateChecklist() {
-        const score = state.checks.filter(Boolean).length;
-        scoreBox.innerHTML = 'Ergebnis: <strong>' + score + ' / ' + state.checks.length + '</strong>';
-        updateChecklistStat();
-
-        if (score === state.checks.length) {
-          orderFeedback.className = 'feedback good';
-          orderFeedback.textContent = 'Klasse! Deine Geschichte ist fertig überarbeitet.';
-        } else if (score >= 3) {
-          orderFeedback.className = 'feedback warn';
-          orderFeedback.textContent = 'Schon gut! Lies deine Geschichte noch einmal und verbessere die fehlenden Punkte.';
-        } else {
-          orderFeedback.className = 'feedback bad';
-          orderFeedback.textContent = 'Schau dir deine Geschichte noch einmal genau an. Die Checkliste hilft dir beim Verbessern.';
-        }
-
-        updateStepPills();
-        saveState();
-      }
-
-      function updateChecklistStat() {
-        const checked = state.checks.filter(Boolean).length;
-        statCheck.textContent = checked + ' / ' + state.checks.length;
-        scoreBox.innerHTML = 'Ergebnis: <strong>' + checked + ' / ' + state.checks.length + '</strong>';
-      }
-
-      function updateOrderStat(text) {
-        statOrder.textContent = text;
-      }
-
-      function restoreChecklistUi() {
-        checkboxes.forEach(function (cb, index) {
-          cb.checked = !!state.checks[index];
+      function syncPlanInputs(source) {
+        document.querySelectorAll('[data-plan="' + source.dataset.plan + '"]').forEach(function (input) {
+          if (input !== source) input.value = source.value;
         });
-        updateChecklistStat();
+        if (source.dataset.plan === 'name' || source.dataset.plan === 'when') updateStoryPlaceholder();
       }
 
-      function updateStepPills() {
-        const filledTexts = state.order.filter(function (id) {
-          return (state.texts[id] || '').trim().length > 0;
-        }).length;
-        const allTextsDone = filledTexts === state.order.length && state.order.length > 0;
-        const checkCount = state.checks.filter(Boolean).length;
-
-        setStepState(stepOrder, state.orderStatus === 'richtig' ? 'done' : 'active');
-        setStepState(stepWrite, allTextsDone ? 'done' : (filledTexts > 0 ? 'active' : 'default'));
-        setStepState(stepCheck, checkCount === state.checks.length ? 'done' : (checkCount > 0 ? 'active' : 'default'));
+      function missingPlanFields() {
+        const plan = getPlan();
+        return ['name', 'when', 'speech'].filter(function (key) { return !(plan[key] || '').trim(); });
       }
-
-      function setStepState(el, stateName) {
-        el.classList.remove('active', 'done');
-        if (stateName === 'active') el.classList.add('active');
-        if (stateName === 'done') el.classList.add('done');
+      function fieldLabel(key) {
+        return { name: 'Name der Hauptfigur', when: 'Wann und wo', speech: 'Satz mit direkter Rede' }[key] || key;
       }
-
-      function resetAll() {
-        const story = getCurrentStory();
-        state.order = shuffleArray(story.scenes.map(function (scene) { return scene.id; }));
-        story.scenes.forEach(function (scene) {
-          state.texts[scene.id] = '';
+      function markMissing(keys) {
+        document.querySelectorAll('#planForm .field').forEach(function (field) {
+          field.classList.toggle('missing', keys.indexOf(field.dataset.field) !== -1);
         });
-        state.checks = state.checks.map(function () { return false; });
-        state.helpVisible = false;
-        state.guideVisible = false;
-        state.previewVisible = false;
-        state.checklistVisible = false;
-        state.activeTextareaId = null;
+      }
+
+      function renderPlanMini() {
+        const plan = getPlan();
+        const climax = plan.climax ? 'Bild ' + plan.climax : '–';
+        $('planMini').innerHTML =
+          '<div><b>Figur:</b> ' + escapeHtml(plan.name || '–') + '</div>' +
+          '<div><b>Wann/wo:</b> ' + escapeHtml(plan.when || '–') + '</div>' +
+          '<div><b>Höhepunkt:</b> ' + escapeHtml(climax) + '</div>' +
+          '<div><b>Schluss:</b> ' + escapeHtml(plan.ending || '–') + '</div>' +
+          '<div><b>Rede:</b> ' + escapeHtml(plan.speech || '–') + '</div>';
+      }
+
+      // ---------------------------------------------------------------
+      // Schritt 3: Erzählen
+      // ---------------------------------------------------------------
+      function updateStoryPlaceholder() {
+        const plan = getPlan();
+        const start = (plan.when || '').trim() || 'An einem …';
+        storyText.placeholder = 'Beginne mit deiner Einleitung (wer, wann, wo), zum Beispiel:\n' + start +
+          '\n\nErzähle dann in der Vergangenheit, was ' + (figureName() || 'deine Figur') + ' erlebte, dachte und sagte.';
+      }
+
+      function renderChips(containerId, items) {
+        const box = $(containerId);
+        box.innerHTML = items.map(function (text) {
+          return '<button type="button" class="chip" data-insert="' + escapeAttr(text) + '">' + escapeHtml(text.trim()) + '</button>';
+        }).join('');
+        box.querySelectorAll('[data-insert]').forEach(function (btn) {
+          btn.addEventListener('click', function () { insertAtCursor(btn.dataset.insert); });
+        });
+      }
+
+      // cursorOffset: Cursor so viele Zeichen nach Beginn des Einschubs setzen (z. B. zwischen die Redezeichen)
+      function insertAtCursor(text, cursorOffset) {
+        const start = storyText.selectionStart != null ? storyText.selectionStart : storyText.value.length;
+        const end = storyText.selectionEnd != null ? storyText.selectionEnd : start;
+        const before = storyText.value.slice(0, start);
+        const needsSpace = before && !/\s$/.test(before) ? ' ' : '';
+        storyText.value = before + needsSpace + text + storyText.value.slice(end);
+        const pos = start + needsSpace.length + (typeof cursorOffset === 'number' ? cursorOffset : text.length);
+        storyText.focus();
+        storyText.setSelectionRange(pos, pos);
+        state.texts[getStory().id] = storyText.value;
+        updateLiveMeter();
+        saveState();
+      }
+
+      function updateLiveMeter() {
+        const a = analyze();
+        const words = a.words;
+        const max = WORD_MAX + 40;
+        $('meterZone').style.left = (WORD_MIN / max * 100) + '%';
+        $('meterZone').style.width = ((WORD_MAX - WORD_MIN) / max * 100) + '%';
+        const fill = $('meterFill');
+        fill.style.width = Math.min(100, words / max * 100) + '%';
+        fill.className = 'meter-fill' + (words > WORD_MAX ? ' over' : (words >= WORD_MIN ? ' ok' : ''));
+        let info = words + ' Wörter · Ziel: ' + WORD_MIN + '–' + WORD_MAX;
+        if (words < WORD_MIN) info += ' (noch ' + (WORD_MIN - words) + ')';
+        else if (words > WORD_MAX) info += ' (' + (words - WORD_MAX) + ' zu viel, kürze etwas)';
+        else info += ' ✓';
+        $('wordInfo').textContent = info;
+
+        const sp = $('liveSpeech');
+        sp.textContent = 'Direkte Rede: ' + a.speeches;
+        sp.className = 'pill ' + (a.speeches >= 2 ? 'good' : (words > 30 ? 'warn' : ''));
+
+        const tense = $('liveTense');
+        if (words < 10) { tense.textContent = 'Zeitform: –'; tense.className = 'pill'; }
+        else if (a.presentHits.length) { tense.textContent = 'Gegenwart? ' + a.presentHits.slice(0, 3).join(', '); tense.className = 'pill warn'; }
+        else { tense.textContent = 'Zeitform: Vergangenheit ✓'; tense.className = 'pill good'; }
+        showStep();
+      }
+
+      // ---------------------------------------------------------------
+      // Schritt 4: Prüfen
+      // ---------------------------------------------------------------
+      function countWords(text) {
+        return (String(text).match(/[A-Za-zÄÖÜäöüßéèàáíóú0-9]+(?:[-'’][A-Za-zÄÖÜäöüß]+)*/g) || []).length;
+      }
+
+      function analyze() {
+        const text = getText();
+        const plan = getPlan();
+        const speeches = (text.match(SPEECH_RE) || []).length;
+        const narration = text.replace(SPEECH_RE, ' § ');
+        const tokens = narration.match(/[A-Za-zÄÖÜäöüß]+/g) || [];
+        const presentHits = [];
+        let pastCount = 0;
+        tokens.forEach(function (t) {
+          const w = t.toLowerCase();
+          if (PRESENT_FORMS.has(w) && presentHits.indexOf(w) === -1) presentHits.push(w);
+          if (PAST_FORMS.has(w)) pastCount++;
+        });
+
+        const starts = {};
+        narration.split(/[.!?…]+|\n+/).forEach(function (sentence) {
+          const s = sentence.trim();
+          if (!s || s.charAt(0) === '§' || s.charAt(0) === ',') return;
+          const first = (s.match(/[A-Za-zÄÖÜäöüß]+/) || [''])[0].toLowerCase();
+          if (first) starts[first] = (starts[first] || 0) + 1;
+        });
+        // Auffällig: Füllwörter wie „Dann“ ab 3×, sonst wenn ein Wort mehr als ein Viertel der Sätze beginnt
+        const sentenceCount = Object.keys(starts).reduce(function (sum, k) { return sum + starts[k]; }, 0);
+        const FILLERS = ['dann', 'und', 'da', 'danach', 'also', 'aber'];
+        const repeated = Object.keys(starts).filter(function (k) {
+          return starts[k] >= 3 && (FILLERS.indexOf(k) !== -1 || starts[k] / sentenceCount > 0.25);
+        })
+          .map(function (k) { return { word: k, count: starts[k] }; });
+
+        const name = figureName();
+        const nameUsed = !!name && new RegExp('(^|[^A-Za-zÄÖÜäöüß])' + escapeRegExp(name) + '([^A-Za-zÄÖÜäöüß]|$)', 'i').test(text);
+
+        const words = countWords(text);
+        const result = {
+          words: words,
+          speeches: speeches,
+          presentHits: presentHits,
+          pastCount: pastCount,
+          repeated: repeated,
+          feelings: FEELING_RE.test(narration),
+          nameUsed: nameUsed,
+          hasTitle: !!(plan.title || '').trim()
+        };
+        result.items = buildResultItems(result, name);
+        result.allGood = result.items.every(function (i) { return i.ok; });
+        return result;
+      }
+
+      function buildResultItems(a, name) {
+        const items = [];
+        items.push({ ok: a.hasTitle, label: 'Überschrift',
+          hint: a.hasTitle ? '' : 'Schreibe oben im Schreibfeld eine Überschrift.' });
+        items.push({ ok: a.words >= WORD_MIN && a.words <= WORD_MAX, label: 'Länge: ' + a.words + ' Wörter (Ziel ' + WORD_MIN + '–' + WORD_MAX + ')',
+          hint: a.words < WORD_MIN ? 'Erzähle mehr: Was dachte und fühlte deine Figur? Was sagte sie?' : (a.words > WORD_MAX ? 'Kürze Sätze, die nichts Neues erzählen.' : '') });
+        const tenseOk = a.presentHits.length === 0 && a.pastCount >= 5;
+        items.push({ ok: tenseOk, label: 'Erzählt in der Vergangenheit (Präteritum)',
+          hint: a.presentHits.length
+            ? 'Diese Wörter klingen nach Gegenwart: ' + a.presentHits.join(', ') + '. Ändere sie, z. B. „läuft“ → „lief“, „ist“ → „war“.'
+            : (tenseOk ? '' : 'Ich finde nur wenige Verben in der Vergangenheit. Prüfe die Zeitform: rannte, rief, war …') });
+        items.push({ ok: a.speeches >= 2, label: 'Direkte Rede: ' + a.speeches + '× (mindestens 2)',
+          hint: a.speeches >= 2 ? '' : 'Lass deine Figuren sprechen, mit Redezeichen: „Hilfe!“, rief ' + (name || 'Lena') + '.' });
+        items.push({ ok: a.nameUsed, label: 'Hauptfigur mit Namen' + (name ? ' (' + name + ')' : ''),
+          hint: a.nameUsed ? '' : 'Nenne deine Figur beim Namen statt nur „das Kind“.' });
+        items.push({ ok: a.feelings, label: 'Gefühle und Gedanken',
+          hint: a.feelings ? '' : 'Wie fühlte sich deine Figur? Erschrocken, erleichtert, wütend …?' });
+        items.push({ ok: a.repeated.length === 0, label: 'Abwechslungsreiche Satzanfänge',
+          hint: a.repeated.length ? 'Oft gleich: ' + a.repeated.map(function (r) { return '„' + capitalize(r.word) + '“ (' + r.count + '×)'; }).join(', ') + '. Probiere: Plötzlich, Kurz darauf, Zum Glück …' : '' });
+        return items;
+      }
+
+      function renderCheck() {
+        const plan = getPlan();
+        const text = getText();
+        const a = analyze();
+        $('previewTitle').textContent = (plan.title || '').trim() || 'Ohne Überschrift';
+        $('previewText').innerHTML = text.trim() ? highlight(text) : '<i>Du hast noch nichts geschrieben.</i>';
+        $('results').innerHTML = a.items.map(function (item) {
+          return '<div class="result ' + (item.ok ? 'good' : 'warn') + '"><span class="icon">' + (item.ok ? '✓' : '!') + '</span>' +
+            '<div><b>' + escapeHtml(item.label) + '</b>' + (item.hint ? '<small>' + escapeHtml(item.hint) + '</small>' : '') + '</div></div>';
+        }).join('');
+        const open = a.items.filter(function (i) { return !i.ok; }).length;
+        setFeedback('checkFeedback', open ? 'warn' : 'good', open
+          ? 'Noch ' + open + ' Punkt' + (open === 1 ? '' : 'e') + ' zum Überarbeiten. Klicke auf „Weiter überarbeiten“.'
+          : 'Super! Deine Bildgeschichte erfüllt alle Punkte. Hake unten noch die Selbstkontrolle ab.');
+        restoreSelfChecks();
+      }
+
+      function highlight(text) {
+        let html = '';
+        let last = 0;
+        text.replace(SPEECH_RE, function (match, offset) {
+          html += markPresent(text.slice(last, offset));
+          html += '<span class="speech">' + escapeHtml(match) + '</span>';
+          last = offset + match.length;
+          return match;
+        });
+        html += markPresent(text.slice(last));
+        return html;
+      }
+      function markPresent(part) {
+        return escapeHtml(part).replace(/[A-Za-zÄÖÜäöüß]+/g, function (w) {
+          return PRESENT_FORMS.has(w.toLowerCase()) ? '<mark class="present">' + w + '</mark>' : w;
+        });
+      }
+
+      function restoreSelfChecks() {
+        const checks = getSelfChecks();
+        document.querySelectorAll('[data-self]').forEach(function (cb) { cb.checked = !!checks[Number(cb.dataset.self)]; });
+      }
+
+      function buildPrintArea() {
+        const plan = getPlan();
+        const scenes = orderedScenes();
+        $('printArea').innerHTML =
+          '<h1>' + escapeHtml((plan.title || '').trim() || getStory().title) + '</h1>' +
+          '<div class="meta">Bildgeschichte · ' + countWords(getText()) + ' Wörter · Name: ____________________</div>' +
+          '<div class="print-images">' + scenes.map(function (s) {
+            return '<img src="' + escapeAttr(assetUrl(s.image)) + '" alt="' + escapeAttr(s.desc) + '">';
+          }).join('') + '</div>' +
+          '<div class="print-text">' + escapeHtml(getText()) + '</div>';
+      }
+
+      function resetStory() {
+        if (!window.confirm('Willst du diese Bildgeschichte wirklich neu beginnen? Dein Text und dein Plan werden gelöscht.')) return;
+        const id = getStory().id;
+        delete state.plans[id];
+        delete state.texts[id];
+        delete state.selfChecks[id];
         state.orderStatus = 'offen';
-        restoreChecklistUi();
-        renderSceneGrid();
-        renderWritingGrid();
-        buildPreview();
-        renderHelpChips();
-        syncLayoutVisibility();
-        updateOrderStat('offen');
-        orderFeedback.className = 'feedback';
-        orderFeedback.textContent = 'Alles wurde zurückgesetzt. Du kannst neu beginnen.';
-        updateStepPills();
-        saveState();
+        state.step = 1;
+        initStory(true);
       }
 
+      // ---------------------------------------------------------------
+      // Bilder
+      // ---------------------------------------------------------------
+      function getModuleBasePath() {
+        let path = window.location.pathname;
+        const marker = '/portal/modules/bildgeschichte/';
+        if (path.indexOf(marker) !== -1) return path.slice(0, path.indexOf(marker) + marker.length);
+        return marker;
+      }
+      function assetUrl(rel) { return new URL(rel, window.location.origin + getModuleBasePath()).href; }
+
+      function imgTag(scene) {
+        if (!scene.image) return renderSceneArtwork(scene.art);
+        return '<img src="' + escapeAttr(assetUrl(scene.image)) + '" alt="' + escapeAttr(scene.desc) + '" width="768" height="512" draggable="false" decoding="async" data-fallback="' + escapeAttr(scene.id) + '">';
+      }
+
+      function openZoom(id) {
+        const scene = getStory().scenes.find(function (s) { return s.id === id; });
+        if (!scene) return;
+        const pos = state.order.indexOf(id) + 1;
+        $('imageDialogTitle').textContent = (state.orderStatus === 'richtig' ? 'Bild ' + pos + ': ' : '') + scene.title;
+        $('imageDialogImage').src = assetUrl(scene.image);
+        $('imageDialogImage').alt = scene.desc;
+        $('imageDialogPrompt').textContent = state.orderStatus === 'richtig' ? scene.prompt : '';
+        $('imageDialog').showModal();
+      }
+
+      // ---------------------------------------------------------------
+      // Speichern
+      // ---------------------------------------------------------------
       function saveState() {
         try {
-          const payload = {
-            storyId: state.storyId,
-            order: state.order,
-            texts: state.texts,
-            checks: state.checks,
-            helpVisible: state.helpVisible,
-            guideVisible: state.guideVisible,
-            previewVisible: state.previewVisible,
-            checklistVisible: state.checklistVisible,
-            activeTextareaId: state.activeTextareaId,
-            orderStatus: state.orderStatus
-          };
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        } catch (error) {
-          // ignore storage errors
-        }
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            storyId: state.storyId, order: state.order, orderStatus: state.orderStatus, step: state.step,
+            plans: state.plans, texts: state.texts, selfChecks: state.selfChecks
+          }));
+        } catch (e) { /* Speicher nicht verfügbar */ }
       }
 
       function loadState() {
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return;
-          const data = JSON.parse(raw);
-          if (data && typeof data === 'object') {
-            if (typeof data.storyId === 'string' && stories.some(function (story) { return story.id === data.storyId; })) {
-              state.storyId = data.storyId;
+          if (raw) {
+            const data = JSON.parse(raw);
+            if (data && typeof data === 'object') {
+              if (stories.some(function (s) { return s.id === data.storyId; })) state.storyId = data.storyId;
+              if (Array.isArray(data.order)) state.order = data.order.slice();
+              if (data.orderStatus === 'richtig') state.orderStatus = 'richtig';
+              if ([1, 2, 3, 4].indexOf(data.step) !== -1) state.step = data.step;
+              if (data.plans && typeof data.plans === 'object') state.plans = data.plans;
+              if (data.texts && typeof data.texts === 'object') state.texts = data.texts;
+              if (data.selfChecks && typeof data.selfChecks === 'object') state.selfChecks = data.selfChecks;
             }
-            if (Array.isArray(data.order)) state.order = data.order.slice();
-            if (data.texts && typeof data.texts === 'object') state.texts = Object.assign({}, data.texts);
-            if (Array.isArray(data.checks) && data.checks.length === state.checks.length) {
-              state.checks = data.checks.map(Boolean);
-            }
-            state.helpVisible = data.helpVisible === true;
-            state.guideVisible = data.guideVisible === true;
-            state.previewVisible = data.previewVisible === true;
-            state.checklistVisible = data.checklistVisible === true;
-            if (typeof data.activeTextareaId === 'string') state.activeTextareaId = data.activeTextareaId;
-            if (typeof data.orderStatus === 'string') state.orderStatus = data.orderStatus;
+            return;
           }
-        } catch (error) {
-          // ignore broken state
-        }
+          // Übernahme aus der alten Version: Einzeltexte pro Bild zu einem Text zusammenfügen
+          const oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
+          if (!oldRaw) return;
+          const old = JSON.parse(oldRaw);
+          if (!old || !old.texts) return;
+          stories.forEach(function (story) {
+            const joined = story.scenes.map(function (s) { return (old.texts[s.id] || '').trim(); }).filter(Boolean).join('\n\n');
+            if (joined) state.texts[story.id] = joined;
+          });
+          if (stories.some(function (s) { return s.id === old.storyId; })) state.storyId = old.storyId;
+        } catch (e) { /* defekter Speicher */ }
+      }
+
+      // ---------------------------------------------------------------
+      // Hilfsfunktionen
+      // ---------------------------------------------------------------
+      function setFeedback(id, kind, text) {
+        const el = $(id);
+        el.className = 'feedback' + (kind ? ' ' + kind : '');
+        el.textContent = text;
       }
 
       function shuffleArray(items) {
         const arr = items.slice();
-        for (let i = arr.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          const tmp = arr[i];
-          arr[i] = arr[j];
-          arr[j] = tmp;
-        }
+        let tries = 0;
+        do {
+          for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+          }
+          tries++;
+        } while (arr.every(function (v, i) { return v === items[i]; }) && tries < 10);
         return arr;
       }
 
-      function getCurrentModuleBasePath() {
-        // Pfad für GitHub Pages (repo-bindings) und Root-Deployments abfangen.
-        // Beispiel: /PMS/portal/modules/bildgeschichte/
-        let path = window.location.pathname;
-        if (!path.endsWith('/')) {
-          path += '/';
-        }
-        // Das Skript läuft in /portal/modules/bildgeschichte/, daher entfern wir alles nach /bildgeschichte/ nicht!
-        // Achtung: Unterseiten wie /index.html werden ebenfalls behandelt.
-        if (path.includes('/portal/modules/bildgeschichte/')) {
-          return path.slice(0, path.indexOf('/portal/modules/bildgeschichte/') + '/portal/modules/bildgeschichte/'.length);
-        }
-        return '/portal/modules/bildgeschichte/';
-      }
-
-      function renderSceneMedia(scene) {
-        const imagePath = (scene.image || '').trim();
-        const fallback = renderSceneArtwork(scene.art || '');
-        if (!imagePath) return fallback;
-
-        const moduleAssetsBase = getCurrentModuleBasePath();
-        const resolvedImage = new URL(imagePath, window.location.origin + moduleAssetsBase).href;
-
-        return '<button type="button" class="scene-zoom" data-zoom-scene="' + escapeAttr(scene.id) + '" aria-label="Bild vergrößern: ' + escapeAttr(scene.title) + '">' +
-          '<img class="scene-image" src="' + escapeAttr(resolvedImage) + '" alt="' + escapeAttr(scene.desc || scene.title || 'Bildszene') + '" width="768" height="512" draggable="false" decoding="async">' +
-          '<div class="scene-fallback hidden">' + fallback + '</div><span class="zoom-label">Bild vergrößern ↗</span></button>';
-      }
-
-      const imageDialog = document.getElementById('imageDialog');
-      const imageDialogImage = document.getElementById('imageDialogImage');
-      sceneGrid.addEventListener('click', function (event) {
-        const button = event.target.closest('[data-zoom-scene]');
-        if (!button) return;
-        const scene = getCurrentStory().scenes.find(function (item) { return item.id === button.dataset.zoomScene; });
-        if (!scene) return;
-        document.getElementById('imageDialogTitle').textContent = scene.title;
-        document.getElementById('imageDialogDescription').textContent = scene.desc;
-        imageDialogImage.src = new URL(scene.image, window.location.origin + getCurrentModuleBasePath()).href;
-        imageDialogImage.alt = scene.desc;
-        imageDialog.showModal();
-      });
-      document.getElementById('closeImageDialog').addEventListener('click', function () { imageDialog.close(); });
-      imageDialog.addEventListener('click', function (event) { if (event.target === imageDialog) imageDialog.close(); });
-
-      document.addEventListener('error', function (event) {
-        const target = event.target;
-        if (!target || !target.classList || !target.classList.contains('scene-image')) return;
-        target.style.display = 'none';
-        const fallback = target.nextElementSibling;
-        if (fallback) fallback.classList.remove('hidden');
-      }, true);
+      function capitalize(w) { return w.charAt(0).toUpperCase() + w.slice(1); }
+      function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
       function renderSceneArtwork(kind) {
         const art = {
@@ -1853,11 +1402,6 @@
 
       function escapeAttr(value) {
         return escapeHtml(value).replace(/`/g, '&#96;');
-      }
-
-      function cssEscape(value) {
-        if (window.CSS && typeof window.CSS.escape === 'function') return window.CSS.escape(value);
-        return String(value).replace(/([ #;?%&,.+*~\':"!^$[\]()=>|\/])/g, '\$1');
       }
     })();
   </script>
