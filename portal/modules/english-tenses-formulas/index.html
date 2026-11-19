@@ -301,10 +301,21 @@
       color: var(--text-muted);
     }
     .kpi-pill strong { color: var(--text-main); }
+  
+    /* Gemeinsames Layout: Reiter oben, Inhalt füllt den Bildschirm */
+    .app-wrapper.hos-fill { display: flex; flex-direction: column; overflow: hidden; margin: 0 auto; padding: 8px 14px 10px; }
+    .hos-tabs { margin: 0 0 8px; padding: 6px 10px; border: 1px solid var(--hos-line); border-radius: var(--hos-radius); background: #fff; flex: none; }
+    .app-wrapper.hos-fill > main { flex: 1; min-height: 0; overflow: auto; }
+    .hos-card { box-shadow: none; padding: 14px; margin-bottom: 10px; }
+    body.hos-app { padding-bottom: 0; }
+    .hos-grid { gap: 10px; }
+    .formula-area { padding: 12px; min-height: 70px; }
+    @media (max-width: 1000px) { .app-wrapper.hos-fill { overflow: visible; } }
+
   </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-englisch">
+<body class="hos-app subject-englisch">
 
   <header class="app-header">
     <div class="brand-row">
@@ -319,7 +330,7 @@
     </div>
   </header>
 
-  <div class="app-wrapper">
+  <div class="app-wrapper hos-fill">
     
     <div class="hos-tabs" role="tablist">
       <button class="hos-tab" type="button" role="tab" id="tab-train" aria-selected="true">Training</button>

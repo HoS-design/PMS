@@ -424,13 +424,23 @@
       line-height: 1.2;
     }
 
+  
+    /* Gemeinsames Layout: Kopfzeile + Reiter in einer Leiste, Inhalt füllt den Rest */
+    .wrap.hos-fill { display: flex; flex-direction: column; gap: 8px; overflow: hidden; padding: 8px 14px 10px; }
+    .topbar { margin: 0; padding: 6px 12px; flex-direction: row !important; align-items: center !important; justify-content: space-between; background: #fff; border: 1px solid var(--hos-line); border-radius: var(--hos-radius); }
+    .topbar .title h1 { font-size: 1.05rem; }
+    .tabs-wrapper { margin: 0 !important; flex: none; }
+    .grid { flex: 1; min-height: 0; gap: 10px; align-items: stretch; grid-template-rows: minmax(0, 1fr); margin: 0; }
+    .grid > .card { min-height: 0; overflow: auto; box-shadow: none; }
+    @media (max-width: 1000px) { .wrap.hos-fill { overflow: visible; } }
+
   </style>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
 
-<body class="hos-app hos-legacy subject-andere">
+<body class="hos-app subject-andere">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -443,7 +453,7 @@
       <a href="/index.html" class="header-link">Startseite</a>
     </div>
   </header>
-  <div class="wrap">
+  <div class="wrap hos-fill">
     <!-- Header Area -->
     <div class="topbar">
       <div class="title">

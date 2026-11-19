@@ -49,17 +49,22 @@
 .hos-app.subject-andere   { --subject: #ca8a04; --subject-strong: #854d0e; --subject-soft: #fdf6e3; --subject-line: #f1dca0; }
 
 /* ---------- Seite ---------- */
-html:has(> body.hos-app), body.hos-app { height: 100%; }
-body.hos-app {
+html:has(> body.hos-app:not(.hos-legacy)), body.hos-app:not(.hos-legacy) { height: 100%; }
+body.hos-app:not(.hos-legacy) {
   margin: 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+}
+body.hos-app {
   background: var(--hos-bg);
-  color: var(--hos-ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body.hos-app:not(.hos-legacy) {
+  padding: 0;
+  color: var(--hos-ink);
   font-size: 15px;
   line-height: 1.45;
 }
@@ -68,7 +73,8 @@ body.hos-app {
 :where(.hos-app:not(.hos-legacy)) :where(button, select, input, textarea) { font: inherit; }
 
 /* Kopf: kompakt, Fachfarbe im Badge */
-.hos-app .app-header { position: static; padding: 6px 16px; gap: 10px; box-shadow: none; }
+.hos-app .app-header { padding: 6px 16px; gap: 10px; box-shadow: none; }
+.hos-app:not(.hos-legacy) .app-header { position: static; }
 .hos-app .app-header .logo-img { width: 34px; height: 34px; }
 .hos-app .app-header .brand-title h1 { font-size: 17px; }
 .hos-app .app-header .badge-main { background: var(--subject); }
@@ -236,14 +242,8 @@ body.hos-app {
 
 /* ---------- Übergang für ältere Apps ----------
    <body class="hos-app hos-legacy subject-…">
-   Gleicher Kopf, Hintergrund, Schrift und Fachfarbe; die App behält ihr eigenes
-   Seitenlayout und scrollt bei Bedarf normal. */
-body.hos-app.hos-legacy {
-  display: block;
-  height: auto;
-  min-height: 100vh;
-  overflow: auto;
-}
+   Gleicher Kopf, Hintergrund, Schrift und Fachfarbe; Seitenaufbau, Scrollen und
+   Kopfposition bleiben so, wie die App sie selbst festlegt. */
 /* Akzentfarben der alten Apps auf die Fachfarbe umlenken (gilt auch nach dem Umstellen) */
 body.hos-app {
   --accent: var(--subject);
@@ -261,11 +261,10 @@ body.hos-app {
   --bg-app: var(--hos-bg);
   background: var(--hos-bg);
 }
-body.hos-app.hos-legacy > .app-header { position: sticky; top: 0; z-index: 50; }
 
 /* ---------- Kleine Bildschirme: normal scrollen ---------- */
 @media (max-width: 1000px), (max-height: 520px) {
-  body.hos-app { height: auto; overflow: auto; }
+  body.hos-app:not(.hos-legacy) { height: auto; overflow: auto; }
   .hos-stage { grid-template-columns: 1fr !important; }
 }
 

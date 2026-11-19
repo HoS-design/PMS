@@ -7,6 +7,10 @@
  <script type="importmap">{"imports":{"three":"/lib/three.module.js","three/addons/controls/OrbitControls.js":"/lib/OrbitControls.js"}}</script>
  <script type="module" src="workshop.mjs"></script>
   <link rel="stylesheet" href="/css/app-layout.css">
+  <style>
+    /* Gemeinsamer Kopf ist niedriger: Arbeitsfläche bekommt den Platz */
+    .workshop { height: calc(100dvh - 62px); min-height: 480px; }
+  </style>
 </head>
 <body class="hos-app hos-legacy subject-mathe">
  <header class="app-header"><div class="brand-row"><img src="/chatisthisreal.png" alt="Logo" class="logo-img"><div class="brand-title"><div class="badge-main is-mathe">Mathe</div><h1>Körperwerkstatt 3D</h1></div></div><div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div></header>
