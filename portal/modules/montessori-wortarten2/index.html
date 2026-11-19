@@ -1,361 +1,113 @@
 <!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Montessori – Wortarten-Symbole zuordnen</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Montessori – Wortarten-Symbole zuordnen</title>
-
+  <link rel="stylesheet" href="/css/app-layout.css">
   <style>
-    :root{
-      --subject-color:#ef4444; /* Fallback, wird durch Portal-CSS ggf. überschrieben */
-
-      /* Base UI Colors */
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --ink:#1e293b;
-      --muted:#64748b;
-      --line:#e2e8f0;
-      --accent:#3b82f6; /* Haupt-Aktionsfarbe */
-      --shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
-      --radius:12px;
-
+    :root {
       /* Montessori-Farben */
-      --noun:#111827;         /* Nomen: schwarz */
-      --article:#93c5fd;      /* Artikel: hellblau */
-      --adj:#2563eb;          /* Adjektiv: blau */
-      --verb:#ef4444;         /* Verb: rot */
-      --pron:#7c3aed;         /* Pronomen: lila */
-      --prep:#22c55e;         /* Präposition: grün */
-      --conj:#ec4899;         /* Konjunktion: rosa */
-      --interj:#fbbf24;       /* Interjektion: gold */
-
-      /* Feedback Colors */
-      --ok:#10b981;
-      --bad:#ef4444;
-      --warn:#f59e0b;
-
-      --focus: rgba(59, 130, 246, 0.4);
+      --noun: #111827;     /* Nomen: schwarz */
+      --article: #93c5fd;  /* Artikel: hellblau */
+      --adj: #2563eb;      /* Adjektiv: blau */
+      --verb: #ef4444;     /* Verb: rot */
+      --pron: #7c3aed;     /* Pronomen: lila */
+      --prep: #22c55e;     /* Präposition: grün */
+      --conj: #ec4899;     /* Konjunktion: rosa */
+      --interj: #fbbf24;   /* Interjektion: gold */
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--ink);
-      background:var(--bg);
-      line-height: 1.5;
-    }
+    .hos-stage { grid-template-columns: minmax(0, 1fr) 380px; }
 
-    /* Portal Standard Header overrides/additions handled by global CSS usually,
-       but strictly ensuring local layout is clean */
-    .app-header {
-      /* Ensuring standard look based on requirement */
-      background: #fff;
-      border-bottom: 1px solid var(--line);
-      padding: 12px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:40px; height:40px; object-fit:contain; border-radius:8px; }
-    .app-header .brand-title h1 { font-size: 18px; margin:0; color: var(--ink); font-weight: 700; }
-    .app-header .header-link { text-decoration: none; color: var(--muted); font-size: 14px; font-weight: 500; }
-    .app-header .header-link:hover { color: var(--accent); }
-
-    .wrap{max-width:1080px;margin:0 auto;padding:24px 16px}
-
-    /* Action Bar (Toolbar) */
-    .action-bar {
+    /* Satzbereich */
+    .sentence-panel { display: flex; flex-direction: column; gap: 10px; }
+    .how { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .how .hos-pill.now { background: var(--subject-soft); border-color: var(--subject-line); color: var(--subject-strong); }
+    .sentence {
+      flex: 1;
+      min-height: 0;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      padding: 12px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      align-content: center;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 16px 10px;
+      padding: 18px;
+      border: 2px dashed var(--hos-line);
+      border-radius: 14px;
+      background: #fafaf9;
+      overflow: auto;
     }
-    .action-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* Buttons */
-    .btn{
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--ink);
-      border-radius:8px;
-      padding:8px 14px;
-      font-weight:600;
-      font-size: 14px;
-      cursor:pointer;
-      box-shadow:0 1px 2px rgba(0,0,0,.05);
-      transition: all .2s ease;
-      display: inline-flex; align-items: center; gap: 6px;
-      user-select:none;
-    }
-    .btn:hover{background: #f8fafc; border-color:#cbd5e1}
-    .btn:active{transform:translateY(1px)}
-    .btn:focus-visible{outline:none; box-shadow:0 0 0 3px var(--focus)}
-
-    .btn.primary{
-      background:var(--accent);
-      color:#fff;
-      border-color:var(--accent);
-    }
-    .btn.primary:hover{background: #2563eb; border-color:#2563eb}
-
-    .btn.good{background:var(--ok); border-color:var(--ok); color:#fff}
-    .btn.good:hover{filter:brightness(0.95)}
-
-    .btn.warn{background:#fff; border-color:var(--line); color:var(--muted)}
-    .btn.warn:hover{color:var(--bad); border-color:var(--bad); background: #fef2f2}
-
-    .btn.small{padding:6px 10px; font-size:12px; border-radius:6px}
-
-    /* Main Grid */
-    main{
-      display:grid;
-      grid-template-columns: 1fr 340px;
-      gap:20px;
-      align-items: start;
-    }
-    @media (max-width: 900px){
-      main{grid-template-columns: 1fr;}
-      .action-bar { flex-direction: column; align-items: stretch; gap: 12px; }
-      .action-group { justify-content: space-between; }
-    }
-
-    /* Cards */
-    .card{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:24px;
-      box-shadow:var(--shadow);
-      position: relative;
-      overflow: hidden; /* For progress bar */
-    }
-    .card h2{
-      font-size:16px;
-      margin:0 0 16px 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      color: var(--ink);
-    }
-    .sub{color:var(--muted);font-size:14px;margin-bottom: 16px; line-height:1.4}
-
-    /* Progress Bar */
-    .progress-track {
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 4px;
-      background: #f1f5f9;
-    }
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      width: 0%;
-      transition: width 0.4s ease;
-    }
-
-    /* Sentence area */
-    .sentence{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px 8px;
-      padding:24px;
-      border:2px dashed var(--line);
-      border-radius:12px;
-      background:#f8fafc;
-      align-items:flex-end;
-      min-height:160px;
-      justify-content: flex-start;
-    }
-
-    /* Tokens / Words */
-    .tok{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:8px;
-      position: relative;
-    }
-    .tok.word{
+    .tok { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .tok.word {
       background: #fff;
-      border-radius: 12px;
-      padding: 6px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-      border: 1px solid transparent; /* prevent jump on select */
+      border: 2px solid transparent;
+      border-radius: 14px;
+      padding: 6px 6px 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .05);
+      cursor: pointer;
     }
-    .tok.word.selected {
-      border-color: var(--accent);
-      background: #eff6ff;
+    .tok.word:hover { border-color: var(--hos-line); }
+    .tok.word.selected { border-color: var(--subject); background: var(--subject-soft); }
+    .tok .w { font-size: 26px; font-weight: 700; padding: 2px 8px; user-select: none; }
+    .tok.punct .w { font-size: 26px; font-weight: 700; padding-bottom: 72px; }
+    .slot {
+      width: 62px; height: 58px;
+      border-radius: 10px;
+      border: 2px solid var(--hos-line);
+      background: #fff;
+      display: grid; place-items: center;
+      position: relative;
     }
-    .tok.punct{
-      padding: 0 0 14px 0; /* Align text with words */
-      min-width:auto;
+    .slot svg { width: 40px; height: 40px; display: block; }
+    .slot.ok { border-color: #16a34a; background: #f0fdf4; }
+    .slot.bad { border-color: #dc2626; background: #fef2f2; }
+    .slot.drop { border-color: var(--subject); background: var(--subject-soft); }
+    .slot .clear {
+      position: absolute; right: -9px; top: -9px;
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 1px solid var(--hos-line); background: #fff; color: var(--hos-muted);
+      display: grid; place-items: center; font-weight: 800; font-size: 13px; line-height: 1;
+      cursor: pointer; opacity: 0; padding: 0;
     }
-
-    .tok .w{
-      font-size:18px;
-      font-weight:600;
-      cursor:pointer;
-      padding:4px 8px;
-      border-radius:6px;
-      color: var(--ink);
-      user-select:none;
-    }
-
-    /* Slot (Symbol Container) */
-    .slot{
-      width:48px;height:44px;
-      border-radius:8px;
-      border:2px solid var(--line);
-      background:#fff;
-      display:grid;place-items:center;
-      position:relative;
-      transition: all 0.2s ease;
-    }
-    .slot.ok{border-color:var(--ok); background: #f0fdf4;}
-    .slot.bad{border-color:var(--bad); background: #fef2f2;}
-    .slot.drop{
-      border-color:var(--accent);
-      background:#eff6ff;
-      transform: scale(1.05);
-    }
-
-    .slot .mini svg{width:30px;height:30px}
-
-    /* Touch Optimized Clear Button */
-    .slot .clear{
-      position:absolute;
-      /* Visual positioning */
-      right:-10px;
-      top:-10px;
-      /* Visual Size */
-      width:24px;
-      height:24px;
-      border-radius:50%;
-      background:#fff;
-      border:1px solid var(--line);
-      color: var(--muted);
-      /* Centering content */
-      display:grid; place-items:center;
-      font-weight:bold;
-      font-size:14px;
-      line-height: 1;
-      cursor:pointer;
-      opacity:0;
-      transition:opacity .15s ease, transform 0.1s;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      z-index: 10;
-    }
-    /* Invisible Hit Area expansion for Touch (min 44px) */
-    .slot .clear::after {
-        content: '';
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 44px; height: 44px;
-        transform: translate(-50%, -50%);
-        /* background: rgba(255,0,0,0.2); Debug only */
-    }
-    .tok.word:hover .slot .clear,
-    .slot .clear:focus, /* Accessibility */
-    .tok.word.selected .slot .clear /* Show when selected too for mobile clarity */
-    { opacity:1; }
-
-    .slot .clear:hover { background: var(--bad); color: #fff; border-color: var(--bad); }
-
-    /* Palette */
-    .palette{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-    .sym{
-      display:flex; align-items:center; gap:10px;
-      padding:12px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      cursor:grab;
-      user-select:none;
-      transition: all 0.1s ease;
-    }
-    .sym:hover { border-color: var(--accent); transform: translateY(-1px); }
-    .sym:active{cursor:grabbing; transform: scale(0.98);}
-    .sym.selected{
-      border-color:var(--accent);
-      background:#eff6ff;
-      ring: 2px solid var(--focus);
-    }
-    .sym .stack{display:flex;flex-direction:column;line-height:1.2}
-    .sym .label{font-weight:700;font-size:13px; color: var(--ink);}
-    .sym .hint{font-size:11px;color:var(--muted);}
-
-    /* Stats & Status */
-    .status-box{
-      display:flex; gap:12px; flex-wrap:wrap;
-      align-items:center; justify-content:space-between;
-      margin-top:20px;
-      padding:16px;
-      border-radius:12px;
-      background:#f8fafc;
-      border: 1px solid var(--line);
-    }
-    .pill{
-      padding:4px 10px; border-radius:99px; background:#fff; border:1px solid var(--line);
-      font-size:12px; color:var(--muted); font-weight: 500;
-    }
-    .pill b{color:var(--ink)}
-
-    .kbd{
-      font-family: monospace;
-      padding: 2px 5px; background: #e2e8f0; border-radius: 4px; font-size: 11px;
-    }
-
-    /* Toast */
-    .toast{
-      position: fixed;
-      bottom: 20px; left: 50%; transform: translateX(-50%);
-      padding:12px 20px;
-      border-radius:99px;
-      background: var(--ink);
-      color: #fff;
-      font-size:14px;
-      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-      z-index: 100;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s;
-    }
-    .toast.show { opacity: 1; pointer-events: auto; }
-
-    /* Basis/Profi */
-    .mode-switch { display: inline-flex; gap: 4px; margin-right: 6px; }
-    .mode-switch .btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .tok.given .w { opacity: .5; cursor: default; }
+    .tok.word:hover .clear, .tok.word.selected .clear, .slot .clear:focus { opacity: 1; }
+    .tok.given { cursor: default; }
+    .tok.given .w { opacity: .45; }
     .tok.given .slot { opacity: .6; }
-    .tok.given .slot .clear { display: none; }
 
-    /* Footer text */
-    .footer-note { font-size: 12px; color: var(--muted); margin-top: 10px; text-align: center; }
+    /* Symbol-Palette */
+    .symbols-panel { display: flex; flex-direction: column; gap: 8px; }
+    .palette { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sym {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 2px solid var(--hos-line);
+      background: #fff;
+      cursor: pointer;
+      text-align: left;
+      position: relative;
+      user-select: none;
+    }
+    .sym:hover { border-color: #d6d3d1; }
+    .sym.selected { border-color: var(--subject); background: var(--subject-soft); }
+    .sym svg { width: 36px; height: 36px; display: block; }
+    .sym .label { font-weight: 800; font-size: .92rem; display: block; white-space: nowrap; }
+    .sym .hint { font-size: .78rem; color: var(--hos-muted); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sym .hos-kbd { position: absolute; top: 3px; left: 4px; font-size: .68rem; padding: 0 4px; }
+    .palette-note { font-size: .82rem; color: var(--hos-muted); line-height: 1.4; margin-top: auto; }
 
+    .counter { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; }
   </style>
 </head>
-<body>
+<body class="hos-app subject-deutsch">
 
-<!-- 1. STANDARD HEADER (MUSS-REGEL) -->
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -369,72 +121,46 @@
   </div>
 </header>
 
-<div class="wrap">
-
-  <!-- Action Bar / Toolbar -->
-  <div class="action-bar">
-    <div class="action-group">
-        <div class="pill">Satz <b id="idx">1</b>/<span id="total">30</span></div>
-        <div class="pill">Erledigt: <b id="done">0</b></div>
-    </div>
-    <div class="action-group">
-      <div class="mode-switch" role="group" aria-label="Level">
-        <button class="btn small" id="modeBasis" title="Nur Nomen, Artikel, Verb und Adjektiv">Basis</button>
-        <button class="btn small" id="modeProfi" title="Alle 8 Wortarten">Profi</button>
-      </div>
-      <button class="btn warn" id="newBtn" title="Diesen Satz zurücksetzen">↺ Neu</button>
-      <button class="btn" id="prevBtn" title="Vorheriger Satz">⬅</button>
-      <button class="btn" id="nextBtn" title="Nächster Satz">➡</button>
-      <button class="btn good" id="checkBtn" title="Überprüfen">✅ Prüfen</button>
-      <button class="btn primary" id="solveBtn" title="Lösung anzeigen">💡 Lösung</button>
+<main class="hos-main">
+  <div class="hos-topbar">
+    <span class="counter">Satz <span id="idx">1</span> von <span id="total">30</span></span>
+    <div class="hos-progress" style="width: 220px" title="Erledigte Sätze"><span id="progressBar"></span></div>
+    <span class="hos-pill">Erledigt: <b id="done">0</b></span>
+    <span class="hos-spacer"></span>
+    <span class="hos-label">Niveau:</span>
+    <div class="hos-seg" role="group" aria-label="Niveau">
+      <button type="button" id="modeBasis" title="Nur Nomen, Artikel, Verb und Adjektiv">Basis (4)</button>
+      <button type="button" id="modeProfi" title="Alle 8 Wortarten">Profi (8)</button>
     </div>
   </div>
 
-  <main>
-    <section class="card">
-      <!-- Visueller Fortschritt -->
-      <div class="progress-track">
-        <div class="progress-fill" id="progressBar"></div>
+  <div class="hos-stage">
+    <section class="hos-panel sentence-panel" aria-label="Satz">
+      <div class="how">
+        <span class="hos-pill" id="howSym"><b>1</b> Symbol wählen</span>
+        <span aria-hidden="true">→</span>
+        <span class="hos-pill" id="howWord"><b>2</b> Wort antippen</span>
+        <span class="hos-muted" id="instruction"></span>
       </div>
-
-      <h2>
-        <span>Satz</span>
-      </h2>
-
-      <div class="sub">
-        <span id="instruction">Wähle ein Symbol und klicke auf ein Wort (oder ziehe es).</span>
-      </div>
-
       <div id="sentence" class="sentence" aria-label="Satzbereich"></div>
-
-      <div class="status-box">
-        <div id="msg">Bereit.</div>
-        <div style="display:flex; gap:8px">
-          <span class="pill" style="color:var(--ok)">✓ <b id="right">0</b></span>
-          <span class="pill" style="color:var(--bad)">✗ <b id="wrong">0</b></span>
-        </div>
-      </div>
     </section>
 
-    <aside class="card">
-      <h2>
-        <span>Symbole</span>
-        <button class="btn small" id="clearSelBtn" title="Auswahl aufheben">ESC</button>
-      </h2>
-
+    <aside class="hos-panel symbols-panel" aria-label="Symbole">
+      <h2 class="hos-panel-title">Symbole</h2>
       <div class="palette" id="palette"></div>
-
-      <div class="footer-note">
-        Tasten <span class="kbd" id="keyRange">1-8</span> wählen Symbol.<br>
-        <b>Basis:</b> nur Nomen, Artikel, Verb, Adjektiv – die anderen Wörter sind schon gelöst.<br>
-        Montessori-Standard (HoS).
-      </div>
+      <div class="palette-note" id="paletteNote"></div>
     </aside>
-  </main>
-</div>
+  </div>
 
-<!-- Toast Notification -->
-<div class="toast" id="toast">Feedback Nachricht</div>
+  <div class="hos-bottombar">
+    <button type="button" class="hos-btn soft" id="prevBtn" title="Vorheriger Satz (Pfeil links)">← Zurück</button>
+    <div class="hos-feedback" id="msg" aria-live="polite">Wähle ein Symbol und tippe dann auf ein Wort.</div>
+    <button type="button" class="hos-btn soft" id="newBtn" title="Diesen Satz zurücksetzen">↺ Neu</button>
+    <button type="button" class="hos-btn soft" id="solveBtn">Lösung zeigen</button>
+    <button type="button" class="hos-btn primary" id="checkBtn">Prüfen</button>
+    <button type="button" class="hos-btn" id="nextBtn" title="Nächster Satz (Pfeil rechts)">Weiter →</button>
+  </div>
+</main>
 
 <script>
 /* =========================================================
@@ -465,7 +191,7 @@ function svgFor(sym, size=34){
   const circle = (r=34) => `<circle cx="50" cy="52" r="${r}" fill="${color}" />`;
 
   const crescent = () => `
-    <g transform="rotate(270 50 50)">
+    <g transform="rotate(90 50 50)">
       <path d="M63 20 A30 30 0 1 0 63 84 A22 30 0 1 1 63 20 Z" fill="${color}" />
       <path d="M71 24 A24 28 0 1 0 71 80 A18 28 0 1 1 71 24 Z" fill="white" opacity="0.9"/>
     </g>
@@ -531,183 +257,206 @@ const EXERCISES = [
   { sentence: "Die Kinder gehen nach Hause.",                       types:["ART","N","V","PRÄP","N"] }
 ];
 
-document.getElementById("total").textContent = EXERCISES.length;
-
 /* =========================================================
-   State & Setup
+   Zustand
 ========================================================= */
+const BASIS_KEYS = ["N", "ART", "V", "ADJ"];
+const PROGRESS_KEY = "hosWortartenProgress";
+
 let current = 0;
 let selectedSymbolKey = null;
+let selectedWordEl = null;
+let usedSolution = false;
 let doneSet = new Set();
-let score = 0;
-
-const sentenceEl = document.getElementById("sentence");
-const paletteEl  = document.getElementById("palette");
-const toastEl    = document.getElementById("toast");
-const progressBar = document.getElementById("progressBar");
-
-function escapeHtml(str){
-  return str.replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-function showToast(text, type="info"){
-  toastEl.textContent = text;
-  toastEl.className = "toast show";
-  if(type==="success") toastEl.style.background = "var(--ok)";
-  else if(type==="error") toastEl.style.background = "var(--bad)";
-  else toastEl.style.background = "var(--ink)";
-
-  setTimeout(()=>{ toastEl.className = "toast"; }, 2000);
-}
-
-function updateProgress(){
-  const pct = (doneSet.size / EXERCISES.length) * 100;
-  progressBar.style.width = pct + "%";
-  document.getElementById("done").textContent = doneSet.size;
-  document.getElementById("idx").textContent = current + 1;
-}
-
-/* Basis-Modus: nur die vier Grundwortarten aktiv */
-const BASIS_KEYS = ["N","ART","V","ADJ"];
 let mode = new URLSearchParams(location.search).get("level") === "basis" ? "basis" : (localStorage.getItem("hosWortartenMode") || "profi");
+
+const $ = (id) => document.getElementById(id);
+const sentenceEl = $("sentence");
+const paletteEl = $("palette");
+
 const activeSymbols = () => mode === "basis" ? SYMBOLS.filter(s => BASIS_KEYS.includes(s.key)) : SYMBOLS;
 const isGiven = (type) => mode === "basis" && !BASIS_KEYS.includes(type);
 
-function setMode(m){
+$("total").textContent = EXERCISES.length;
+loadProgress();
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+function setFeedback(text, kind) {
+  const el = $("msg");
+  el.className = "hos-feedback" + (kind ? " " + kind : "");
+  el.textContent = text;
+}
+
+function loadProgress() {
+  try {
+    const data = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    const list = data[mode];
+    doneSet = new Set(Array.isArray(list) ? list.filter(n => Number.isInteger(n) && n < EXERCISES.length) : []);
+  } catch (e) { doneSet = new Set(); }
+}
+function saveProgress() {
+  try {
+    const data = JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}");
+    data[mode] = Array.from(doneSet);
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(data));
+  } catch (e) { /* Speicher nicht verfügbar */ }
+}
+
+function updateProgress() {
+  $("progressBar").style.width = (doneSet.size / EXERCISES.length * 100) + "%";
+  $("done").textContent = doneSet.size + " / " + EXERCISES.length;
+  $("idx").textContent = current + 1;
+}
+
+/* =========================================================
+   Niveau
+========================================================= */
+function setMode(m) {
   mode = m;
   localStorage.setItem("hosWortartenMode", m);
-  document.getElementById("modeBasis").classList.toggle("active", m === "basis");
-  document.getElementById("modeProfi").classList.toggle("active", m === "profi");
-  document.getElementById("keyRange").textContent = "1-" + activeSymbols().length;
+  $("modeBasis").classList.toggle("active", m === "basis");
+  $("modeProfi").classList.toggle("active", m === "profi");
+  $("paletteNote").innerHTML =
+    "Tasten <span class=\"hos-kbd\">1–" + activeSymbols().length + "</span> wählen ein Symbol, <span class=\"hos-kbd\">Esc</span> hebt die Auswahl auf." +
+    (m === "basis" ? "<br><b>Basis:</b> Nur Nomen, Artikel, Verb und Adjektiv. Die anderen Wörter sind schon gelöst." : "");
+  loadProgress();
   renderPalette();
   loadExercise(current);
 }
 
-function renderPalette(){
+/* =========================================================
+   Palette
+========================================================= */
+function renderPalette() {
   paletteEl.innerHTML = "";
   activeSymbols().forEach((s, idx) => {
-    const item = document.createElement("div");
+    const item = document.createElement("button");
+    item.type = "button";
     item.className = "sym";
-    item.setAttribute("draggable","true");
+    item.draggable = true;
     item.dataset.sym = s.key;
-    item.innerHTML = `
-      ${svgFor(s, 32)}
-      <div class="stack">
-        <div class="label">${s.name}</div>
-        <div class="hint">${s.hint}</div>
-      </div>
-    `;
-
+    item.innerHTML = svgFor(s, 40) +
+      "<span><span class=\"label\">" + s.name + "</span><span class=\"hint\">" + s.hint + "</span></span>" +
+      "<span class=\"hos-kbd\">" + (idx + 1) + "</span>";
     item.addEventListener("dragstart", (ev) => {
       ev.dataTransfer.setData("text/plain", s.key);
       setSelectedSymbol(s.key);
     });
-
-    item.addEventListener("click", () => setSelectedSymbol(s.key));
+    item.addEventListener("click", () => {
+      // Wort zuerst gewählt? Dann gleich zuordnen.
+      if (selectedWordEl) {
+        applySymbol(selectedWordEl, s.key);
+        selectWord(null);
+        return;
+      }
+      setSelectedSymbol(selectedSymbolKey === s.key ? null : s.key);
+    });
     paletteEl.appendChild(item);
   });
 }
-renderPalette();
 
-function setSelectedSymbol(key){
+function setSelectedSymbol(key) {
   selectedSymbolKey = key;
   document.querySelectorAll(".sym").forEach(el => el.classList.toggle("selected", el.dataset.sym === key));
-  const s = SYMBOLS.find(x=>x.key===key);
-  document.getElementById("instruction").innerHTML = s
-    ? `Gewählt: <b>${s.name}</b>. Klicke jetzt auf ein Wort.`
-    : `Wähle ein Symbol rechts (oder Taste 1-${activeSymbols().length}).`;
+  const s = SYMBOLS.find(x => x.key === key);
+  $("howSym").classList.toggle("now", !s && !selectedWordEl);
+  $("howWord").classList.toggle("now", !!s);
+  $("instruction").innerHTML = s ? "Gewählt: <b>" + s.name + "</b>. Tippe auf alle passenden Wörter." : "";
 }
 
-function tokenize(str){
+function selectWord(wrap) {
+  selectedWordEl = wrap;
+  document.querySelectorAll(".tok.word").forEach(x => x.classList.toggle("selected", x === wrap));
+  if (wrap) {
+    $("howSym").classList.add("now");
+    $("howWord").classList.remove("now");
+    $("instruction").innerHTML = "Wort gewählt. Welches Symbol passt?";
+  } else {
+    setSelectedSymbol(selectedSymbolKey);
+  }
+}
+
+/* =========================================================
+   Satz
+========================================================= */
+function tokenize(str) {
   const re = /([A-Za-zÄÖÜäöüß]+(?:[-’'][A-Za-zÄÖÜäöüß]+)*)|([0-9]+)|([^\sA-Za-zÄÖÜäöüß0-9])/g;
   const out = [];
   let m;
-  while((m=re.exec(str))!==null){
-    if(m[1]||m[2]) out.push({kind:"word", text:m[1]||m[2]});
-    else if(m[3]) out.push({kind:"punct", text:m[3]});
+  while ((m = re.exec(str)) !== null) {
+    if (m[1] || m[2]) out.push({ kind: "word", text: m[1] || m[2] });
+    else if (m[3]) out.push({ kind: "punct", text: m[3] });
   }
   return out;
 }
 
-function loadExercise(i){
-  current = (i + EXERCISES.length) % EXERCISES.length;
-  updateProgress();
+function applySymbol(wrap, key) {
+  const sym = SYMBOLS.find(s => s.key === key);
+  if (!sym || wrap.classList.contains("given")) return;
+  const slot = wrap.querySelector(".slot");
+  slot.innerHTML = svgFor(sym, 40) + "<button type=\"button\" class=\"clear\" title=\"Symbol entfernen\" aria-label=\"Symbol entfernen\">×</button>";
+  slot.classList.remove("ok", "bad");
+  wrap.dataset.assigned = key;
+  slot.querySelector(".clear").addEventListener("click", (e) => {
+    e.stopPropagation();
+    wrap.dataset.assigned = "";
+    slot.innerHTML = "";
+    slot.classList.remove("ok", "bad");
+  });
+}
 
-  // Reset Stats for this sentence view (not global)
-  document.getElementById("right").textContent = "0";
-  document.getElementById("wrong").textContent = "0";
-  document.getElementById("msg").textContent = "Neuer Satz.";
+function loadExercise(i) {
+  current = (i + EXERCISES.length) % EXERCISES.length;
+  usedSolution = false;
+  updateProgress();
+  selectedWordEl = null;
+  setSelectedSymbol(null);
+  setFeedback(doneSet.has(current) ? "Diesen Satz hast du schon gelöst. Du kannst ihn noch einmal üben." : "Wähle ein Symbol und tippe dann auf ein Wort.", "");
+  $("nextBtn").classList.remove("primary");
 
   const ex = EXERCISES[current];
   sentenceEl.innerHTML = "";
-  setSelectedSymbol(null);
-
-  const tokens = tokenize(ex.sentence);
   let wIndex = 0;
 
-  tokens.forEach(t => {
-    if(t.kind === "punct"){
+  tokenize(ex.sentence).forEach(t => {
+    if (t.kind === "punct") {
       const p = document.createElement("div");
       p.className = "tok punct";
-      p.innerHTML = `<div class="w" style="cursor:default;padding:0;background:transparent">${escapeHtml(t.text)}</div>`;
+      p.innerHTML = "<div class=\"w\">" + escapeHtml(t.text) + "</div>";
       sentenceEl.appendChild(p);
       return;
     }
-
-    const correctType = ex.types[wIndex];
+    const correctType = ex.types[wIndex++];
     const wrap = document.createElement("div");
     wrap.className = "tok word";
     wrap.dataset.correct = correctType;
     wrap.dataset.assigned = "";
 
-    if(isGiven(correctType)){
+    if (isGiven(correctType)) {
       const sym = SYMBOLS.find(s => s.key === correctType);
       wrap.classList.add("given");
       wrap.dataset.assigned = correctType;
       wrap.title = sym.name + " (schon gelöst)";
-      wrap.innerHTML = `<div class="w">${escapeHtml(t.text)}</div><div class="slot"><div class="mini">${svgFor(sym, 28)}</div></div>`;
+      wrap.innerHTML = "<div class=\"w\">" + escapeHtml(t.text) + "</div><div class=\"slot\">" + svgFor(sym, 40) + "</div>";
       sentenceEl.appendChild(wrap);
-      wIndex++;
       return;
     }
 
-    // Slot structure
-    wrap.innerHTML = `
-      <div class="w" tabindex="0">${escapeHtml(t.text)}</div>
-      <div class="slot" aria-label="Symbol Platzhalter">
-         <div class="clear" title="Entfernen">×</div>
-      </div>
-    `;
-
-    const wordBtn = wrap.querySelector(".w");
+    wrap.tabIndex = 0;
+    wrap.setAttribute("role", "button");
+    wrap.setAttribute("aria-label", "Wort " + t.text);
+    wrap.innerHTML = "<div class=\"w\">" + escapeHtml(t.text) + "</div><div class=\"slot\"></div>";
     const slot = wrap.querySelector(".slot");
 
-    // Logic
-    const applySymbol = (key) => {
-       const sym = SYMBOLS.find(s=>s.key === key);
-       if(!sym) return;
-       slot.innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear" title="Entfernen">×</div>`;
-       wrap.dataset.assigned = key;
-       slot.classList.remove("ok","bad");
-       wrap.classList.remove("selected");
-
-       // Re-attach clear listener
-       slot.querySelector(".clear").addEventListener("click", (e)=>{
-         e.stopPropagation();
-         wrap.dataset.assigned = "";
-         slot.innerHTML = `<div class="clear">×</div>`;
-         slot.classList.remove("ok","bad");
-       });
+    const activate = () => {
+      if (selectedSymbolKey) applySymbol(wrap, selectedSymbolKey);
+      else selectWord(selectedWordEl === wrap ? null : wrap);
     };
-
-    wordBtn.addEventListener("click", () => {
-      if(selectedSymbolKey) applySymbol(selectedSymbolKey);
-      else {
-        document.querySelectorAll(".tok.word").forEach(x=>x.classList.remove("selected"));
-        wrap.classList.add("selected");
-        document.getElementById("instruction").innerHTML = "Wähle jetzt ein Symbol aus der Leiste.";
-      }
-    });
+    wrap.addEventListener("click", activate);
+    wrap.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); } });
 
     slot.addEventListener("dragover", e => { e.preventDefault(); slot.classList.add("drop"); });
     slot.addEventListener("dragleave", () => slot.classList.remove("drop"));
@@ -715,96 +464,80 @@ function loadExercise(i){
       e.preventDefault();
       slot.classList.remove("drop");
       const k = e.dataTransfer.getData("text/plain");
-      if(k) applySymbol(k);
+      if (k) applySymbol(wrap, k);
     });
 
     sentenceEl.appendChild(wrap);
-    wIndex++;
   });
-}
-
-function check(){
-  let right=0, wrong=0, missing=0;
-  document.querySelectorAll(".tok.word").forEach(w => {
-    const slot = w.querySelector(".slot");
-    slot.classList.remove("ok","bad");
-    const assigned = w.dataset.assigned;
-
-    if(!assigned) {
-      missing++;
-    } else if(assigned === w.dataset.correct || (assigned==="ADJ" && w.dataset.correct.includes("ADJ"))){
-      // simple tolerant check (logic simplified from original)
-      // Actually strictly checking key match
-      if (assigned === w.dataset.correct) {
-          right++;
-          slot.classList.add("ok");
-      } else {
-          wrong++;
-          slot.classList.add("bad");
-      }
-    } else {
-      wrong++;
-      slot.classList.add("bad");
-    }
-  });
-
-  document.getElementById("right").textContent = right;
-  document.getElementById("wrong").textContent = wrong;
-
-  if(missing === 0 && wrong === 0){
-    doneSet.add(current);
-    updateProgress();
-    document.getElementById("msg").textContent = "Perfekt!";
-    showToast("Fantastisch!", "success");
-  } else if (wrong > 0) {
-    document.getElementById("msg").textContent = `${wrong} Fehler gefunden.`;
-    showToast("Schau nochmal genau hin.", "error");
-  } else {
-    document.getElementById("msg").textContent = `${missing} fehlen noch.`;
-    showToast("Da fehlt noch was.");
-  }
-}
-
-function solve(){
-  document.querySelectorAll(".tok.word").forEach(w => {
-    const correct = w.dataset.correct;
-    // Simulate finding the symbol key. Since keys match types 1:1 in this set:
-    const sym = SYMBOLS.find(s => s.key === correct);
-    if(sym){
-       w.querySelector(".slot").innerHTML = `<div class="mini">${svgFor(sym, 28)}</div><div class="clear">×</div>`;
-       w.dataset.assigned = correct;
-       w.querySelector(".slot").classList.remove("bad");
-       w.querySelector(".slot").classList.add("ok");
-    }
-  });
-  check();
 }
 
 /* =========================================================
-   Event Listeners
+   Prüfen / Lösung
 ========================================================= */
-document.getElementById("newBtn").addEventListener("click", () => loadExercise(current));
-document.getElementById("prevBtn").addEventListener("click", () => loadExercise(current-1));
-document.getElementById("nextBtn").addEventListener("click", () => loadExercise(current+1));
-document.getElementById("checkBtn").addEventListener("click", check);
-document.getElementById("solveBtn").addEventListener("click", solve);
-document.getElementById("clearSelBtn").addEventListener("click", () => setSelectedSymbol(null));
+function check() {
+  let right = 0, wrong = 0, missing = 0;
+  document.querySelectorAll(".tok.word:not(.given)").forEach(w => {
+    const slot = w.querySelector(".slot");
+    slot.classList.remove("ok", "bad");
+    if (!w.dataset.assigned) { missing++; return; }
+    if (w.dataset.assigned === w.dataset.correct) { right++; slot.classList.add("ok"); }
+    else { wrong++; slot.classList.add("bad"); }
+  });
+
+  if (missing === 0 && wrong === 0 && usedSolution) {
+    $("nextBtn").classList.add("primary");
+    setFeedback("Mit der Lösung stimmt alles. Dieser Satz zählt aber erst als erledigt, wenn du ihn selbst löst (↺ Neu).", "warn");
+  } else if (missing === 0 && wrong === 0) {
+    doneSet.add(current);
+    saveProgress();
+    updateProgress();
+    $("nextBtn").classList.add("primary");
+    setFeedback(doneSet.size === EXERCISES.length
+      ? "Perfekt! Du hast alle " + EXERCISES.length + " Sätze gelöst."
+      : "Perfekt! Alle " + right + " Wörter stimmen. Weiter zum nächsten Satz.", "good");
+  } else if (wrong > 0) {
+    setFeedback(right + " richtig, " + wrong + " falsch" + (missing ? ", " + missing + " fehlen noch" : "") + ". Die rot markierten Wörter noch einmal ansehen.", "bad");
+  } else {
+    setFeedback(right + " richtig. Bei " + missing + " Wort" + (missing === 1 ? "" : "en") + " fehlt noch ein Symbol.", "warn");
+  }
+}
+
+function solve() {
+  usedSolution = true;
+  document.querySelectorAll(".tok.word:not(.given)").forEach(w => {
+    applySymbol(w, w.dataset.correct);
+    w.querySelector(".slot").classList.add("ok");
+  });
+  selectWord(null);
+  setFeedback("Das ist die Lösung. Lies den Satz mit den Symbolen noch einmal durch und klicke dann auf „Weiter“.", "warn");
+  $("nextBtn").classList.add("primary");
+}
+
+/* =========================================================
+   Ereignisse
+========================================================= */
+$("newBtn").addEventListener("click", () => loadExercise(current));
+$("prevBtn").addEventListener("click", () => loadExercise(current - 1));
+$("nextBtn").addEventListener("click", () => loadExercise(current + 1));
+$("checkBtn").addEventListener("click", check);
+$("solveBtn").addEventListener("click", solve);
+$("modeBasis").addEventListener("click", () => setMode("basis"));
+$("modeProfi").addEventListener("click", () => setMode("profi"));
 
 window.addEventListener("keydown", e => {
-  if(e.key === "Escape") setSelectedSymbol(null);
-  const n = parseInt(e.key);
+  if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if (e.key === "Escape") { selectWord(null); setSelectedSymbol(null); }
+  const n = parseInt(e.key, 10);
   const syms = activeSymbols();
-  if(!isNaN(n) && n>=1 && n<=syms.length) setSelectedSymbol(syms[n-1].key);
-  if(e.key==="ArrowRight") loadExercise(current+1);
-  if(e.key==="ArrowLeft") loadExercise(current-1);
+  if (!isNaN(n) && n >= 1 && n <= syms.length) {
+    if (selectedWordEl) { applySymbol(selectedWordEl, syms[n - 1].key); selectWord(null); }
+    else setSelectedSymbol(syms[n - 1].key);
+  }
+  if (e.key === "ArrowRight") loadExercise(current + 1);
+  if (e.key === "ArrowLeft") loadExercise(current - 1);
 });
 
-document.getElementById("modeBasis").addEventListener("click", () => setMode("basis"));
-document.getElementById("modeProfi").addEventListener("click", () => setMode("profi"));
-
-// Init
 setMode(mode);
-
 </script>
 </body>
 </html>
