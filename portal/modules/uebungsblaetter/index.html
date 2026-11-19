@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Übungsblätter zum Ausdrucken</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
+  <link rel="stylesheet" href="sheet.css">
+  <style>
+    .hos-stage { grid-template-columns: 270px minmax(0, 1fr); }
+    .catalog { display: flex; flex-direction: column; gap: 10px; }
+    .cat-area { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--hos-muted); margin: 4px 0 0; }
+    .cat-item {
+      display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: center;
+      text-align: left; border: 2px solid var(--hos-line); border-radius: 12px; background: #fff; padding: 6px 8px; cursor: pointer; width: 100%;
+    }
+    .cat-item:hover { border-color: #d6d3d1; }
+    .cat-item.current { border-color: var(--subject); background: var(--subject-soft); }
+    .cat-item img { width: 40px; height: 40px; object-fit: contain; }
+    .cat-item b { display: block; font-size: .95rem; }
+    .cat-item small { color: var(--hos-muted); font-size: .78rem; }
+    .cat-item .draft { color: #92400e; font-weight: 800; }
+    .cat-empty { color: var(--hos-muted); font-size: .9rem; }
+
+    .preview-panel { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+    .preview-tabs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .preview-scroll { flex: 1; min-height: 0; overflow: auto; background: #e7e5e4; border-radius: 12px; padding: 12px; }
+    .preview-scale { transform-origin: top left; }
+    .preview-scale .sheet { box-shadow: 0 6px 20px rgba(0,0,0,.12); margin: 0 auto; }
+
+    .blatt-btns { display: inline-flex; gap: 4px; }
+    .blatt-btns button { width: 34px; height: 32px; border-radius: 9px; border: 1px solid var(--hos-line); background: #fff; font-weight: 800; cursor: pointer; color: var(--hos-muted); }
+    .blatt-btns button.active { background: var(--subject); border-color: var(--subject); color: #fff; }
+
+    .pool-dialog { width: min(1000px, 96vw); max-height: 92vh; border: 1px solid var(--hos-line); border-radius: 16px; padding: 18px; }
+    .pool-dialog::backdrop { background: rgb(15 23 42 / 60%); }
+    .pool-dialog .ubt { font-size: .9rem; }
+    .pool-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .pool-head h2 { margin: 0; font-size: 1.15rem; }
+
+    #printArea { display: none; }
+    @media print {
+      @page { size: A4; margin: 0; }
+      body.hos-app { display: block !important; height: auto !important; overflow: visible !important; background: #fff !important; }
+      body > *:not(#printArea) { display: none !important; }
+      #printArea { display: block !important; }
+      #printArea .sheet { box-shadow: none; margin: 0; break-after: page; }
+      #printArea .sheet:last-child { break-after: auto; }
+    }
+  </style>
+</head>
+<body class="hos-app subject-deutsch">
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title">
+        <div class="badge-main is-deutsch">Deutsch</div>
+        <h1>Übungsblätter zum Ausdrucken</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="/index.html" class="header-link">Startseite</a>
+    </div>
+  </header>
+
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Klasse:</span>
+      <div class="hos-seg" id="klasseSeg" role="group" aria-label="Klasse">
+        <button type="button" data-klasse="1">1.</button><button type="button" data-klasse="2">2.</button><button type="button" data-klasse="3">3.</button><button type="button" data-klasse="4">4.</button>
+      </div>
+      <span class="hos-spacer"></span>
+      <div class="hos-seg" id="levelSeg" role="group" aria-label="Schwierigkeit">
+        <button type="button" data-level="1">Stufe 1 · leicht</button><button type="button" data-level="2">Stufe 2 · mittel</button><button type="button" data-level="3">Stufe 3 · schwer</button>
+      </div>
+      <span class="hos-label">Blatt:</span>
+      <div class="blatt-btns" id="blattBtns"></div>
+      <button type="button" class="hos-btn small soft" id="variantBtn" title="Ein neues, zufälliges Blatt zum Weiterüben">↻ Neue Variante</button>
+    </div>
+
+    <div class="hos-stage">
+      <aside class="hos-panel scroll catalog" id="catalog" aria-label="Themen"></aside>
+      <section class="hos-panel preview-panel">
+        <div class="preview-tabs">
+          <div class="hos-seg" role="group" aria-label="Ansicht">
+            <button type="button" data-view="blatt" class="active">Übungsblatt</button><button type="button" data-view="loesung">Lösung</button>
+          </div>
+          <span class="hos-muted" id="sheetInfo"></span>
+        </div>
+        <div class="preview-scroll" id="previewScroll"><div class="preview-scale" id="previewScale"></div></div>
+      </section>
+    </div>
+
+    <div class="hos-bottombar">
+      <div class="hos-feedback" id="msg">Wähle links ein Thema, dann Stufe und Blatt.</div>
+      <button type="button" class="hos-btn soft" id="poolBtn" title="Alle Sätze dieses Themas mit Lösungen (für Lehrkräfte)">Lehrer-Ansicht</button>
+      <button type="button" class="hos-btn soft" id="linkBtn">Link kopieren</button>
+      <button type="button" class="hos-btn" id="printSolBtn">Lösung drucken</button>
+      <button type="button" class="hos-btn primary" id="printBtn">Blatt drucken</button>
+    </div>
+  </main>
+
+  <div id="printArea"></div>
+
+  <dialog id="poolDialog" class="pool-dialog" aria-labelledby="poolTitle">
+    <div class="pool-head"><h2 id="poolTitle">Lehrer-Ansicht</h2><button type="button" class="hos-btn soft" id="poolClose">Schließen</button></div>
+    <div id="poolBody"></div>
+  </dialog>
+
+  <script src="engine.js"></script>
+  <script src="topics/zeitformen.js"></script>
+  <script src="topics/faelle.js"></script>
+  <script src="topics/satzglieder.js"></script>
+  <script src="topics/dasdass.js"></script>
+  <script src="topics/direkterede.js"></script>
+  <script src="topics/aktivpassiv.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

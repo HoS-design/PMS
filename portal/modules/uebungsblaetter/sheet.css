@@ -1,0 +1,65 @@
+/* A4-Übungsblatt – Vorschau und Druck. Schwarz-Weiß-tauglich, Rot nur als Akzent. */
+.sheet {
+  --red: #c62828;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 10mm 14mm 9mm;
+  box-sizing: border-box;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 11pt;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+}
+.sheet * { box-sizing: border-box; }
+.sh-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 6mm; border-bottom: 0.8mm solid var(--red); padding-bottom: 3mm; }
+.sh-kicker { font-size: 9pt; font-weight: 700; color: #444; text-transform: uppercase; letter-spacing: .04em; }
+.sh-head h1 { margin: 0.5mm 0 0; font-size: 19pt; line-height: 1.1; color: var(--red); }
+.sh-meta { font-size: 10pt; color: #444; margin-top: 1mm; }
+.sh-img { width: 22mm; height: 22mm; object-fit: contain; flex: none; }
+.sh-name { display: flex; gap: 6mm; font-size: 10pt; margin: 3mm 0 1mm; }
+.sh-name span { flex: 1; border-bottom: 0.3mm solid #555; padding-bottom: 1mm; }
+.sh-name span.short { flex: 0 0 30mm; }
+
+.task { margin-top: 3.5mm; break-inside: avoid; }
+.task h3 { display: flex; align-items: center; gap: 2.5mm; margin: 0 0 0.6mm; font-size: 12pt; }
+.task .nr { display: inline-grid; place-items: center; width: 7mm; height: 7mm; border-radius: 50%; background: var(--red); color: #fff; font-size: 10.5pt; flex: none; }
+.task .instr { margin: 0 0 1.2mm; color: #333; font-size: 10.5pt; }
+.item { margin: 1.1mm 0; }
+.item.roomy { margin: 3mm 0; font-size: 12.5pt; letter-spacing: .02em; }
+.hint { color: #555; font-size: 9.5pt; }
+
+.wlines { margin: 0.5mm 0 2mm; }
+.wline { height: 7.5mm; border-bottom: 0.3mm solid #8a8a8a; }
+.blank { display: inline-block; height: 1.2em; border-bottom: 0.3mm solid #444; vertical-align: bottom; margin: 0 1mm; }
+.cbox { display: inline-block; width: 4mm; height: 4mm; border: 0.35mm solid #333; vertical-align: -0.6mm; }
+.numbox { display: inline-block; width: 8mm; height: 7mm; border: 0.35mm solid #333; vertical-align: middle; margin-left: 2mm; }
+.sol { color: var(--red); font-weight: 650; font-style: italic; }
+.bar { color: var(--red); }
+.opts { margin: 0.8mm 0 0 4mm; font-size: 10.5pt; }
+
+.wordbox { border: 0.35mm dashed #777; border-radius: 2mm; padding: 2mm 3mm; margin: 1mm 0 2.5mm; font-weight: 600; text-align: center; }
+.merk { border-left: 1.2mm solid var(--red); background: #f6f6f6; padding: 2mm 3mm; margin: 1mm 0 2.5mm; font-size: 10.5pt; }
+
+.ubt { width: 100%; border-collapse: collapse; margin: 1mm 0; font-size: 10.5pt; }
+.ubt th, .ubt td { border: 0.3mm solid #aaa; padding: 1mm 2mm; text-align: left; vertical-align: middle; }
+.ubt th { background: #f1f1f1; font-weight: 700; }
+.ubt td { height: 7mm; }
+.ubt.center-cols td:not(:first-child), .ubt.center-cols th:not(:first-child) { text-align: center; width: 24mm; }
+
+.sg-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 2mm 2.5mm; margin: 2mm 0 2.5mm; font-size: 12pt; }
+.sg { display: inline-flex; flex-direction: column; align-items: center; min-width: 14mm; }
+.sg-t { border: 0.3mm solid #999; border-radius: 1.5mm; padding: 0.6mm 2mm; }
+.sg-l { display: block; min-height: 6mm; width: 100%; border-bottom: 0.3mm solid #666; text-align: center; font-size: 10pt; padding-top: 1mm; }
+.sg-dot { font-size: 12pt; padding-bottom: 7mm; }
+
+.sh-spacer { flex: 1; }
+.sh-ichkann { margin-top: 3mm; border: 0.4mm solid var(--red); border-radius: 2.5mm; padding: 2.5mm 3.5mm; font-size: 10pt; break-inside: avoid; }
+.sh-ichkann b { color: var(--red); }
+.sh-ichkann table { width: 100%; border-collapse: collapse; margin-top: 1mm; }
+.sh-ichkann td { padding: 0.8mm 0; vertical-align: top; }
+.sh-ichkann td.self { white-space: nowrap; text-align: right; color: #444; font-size: 9pt; padding-left: 3mm; }
+.sh-foot { margin-top: 3mm; display: flex; justify-content: space-between; font-size: 8.5pt; color: #666; }
+.sheet.solution .sh-head h1::after { content: " – Lösung"; }

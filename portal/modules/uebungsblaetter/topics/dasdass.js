@@ -1,0 +1,124 @@
+/* das oder dass – 2. Klasse
+   t: A = Artikel, R = Relativpronomen, D = Demonstrativpronomen, K = Konjunktion */
+(function () {
+  const { esc, lines, sol, blank, table, box } = UB;
+
+  const TYPES = {
+    A: { de: 'Begleiter (Artikel)', fach: 'Artikel', probe: 'Ersatzprobe: ein / dieses' },
+    R: { de: 'bezügliches Fürwort', fach: 'Relativpronomen', probe: 'Ersatzprobe: welches' },
+    D: { de: 'hinweisendes Fürwort', fach: 'Demonstrativpronomen', probe: 'Ersatzprobe: dieses' },
+    K: { de: 'Bindewort', fach: 'Konjunktion', probe: 'kein Ersatz möglich' }
+  };
+
+  const ITEMS = [
+    { s: '___ Fahrrad steht im Hof.', t: 'A' },
+    { s: 'Ich lese ___ Buch über Drachen.', t: 'A' },
+    { s: '___ Wetter ist heute schön.', t: 'A' },
+    { s: 'Wir füttern ___ Pferd.', t: 'A' },
+    { s: 'Gib mir bitte ___ Heft!', t: 'A' },
+    { s: '___ Kind lacht laut.', t: 'A' },
+    { s: 'Wo liegt ___ Lineal?', t: 'A' },
+    { s: '___ Fenster ist offen.', t: 'A' },
+    { s: 'Das Buch, ___ ich gerade lese, ist spannend.', t: 'R' },
+    { s: 'Das Haus, ___ am Waldrand steht, ist sehr alt.', t: 'R' },
+    { s: 'Das Geschenk, ___ Mia bekommen hat, ist toll.', t: 'R' },
+    { s: 'Das Lied, ___ wir singen, kennt jeder.', t: 'R' },
+    { s: 'Das Fahrrad, ___ ich mir wünsche, ist rot.', t: 'R' },
+    { s: 'Das Mädchen, ___ neben mir sitzt, heißt Emma.', t: 'R' },
+    { s: 'Das Spiel, ___ wir gestern gespielt haben, war lustig.', t: 'R' },
+    { s: '___ habe ich nicht gewusst.', t: 'D' },
+    { s: '___ ist mein Lieblingsspiel.', t: 'D' },
+    { s: '___ glaube ich dir nicht.', t: 'D' },
+    { s: 'Hast du ___ wirklich selbst gebaut?', t: 'D' },
+    { s: 'Ich hoffe, ___ du morgen kommst.', t: 'K' },
+    { s: 'Mama sagt, ___ das Essen fertig ist.', t: 'K' },
+    { s: 'Wir wissen, ___ die Prüfung schwer wird.', t: 'K' },
+    { s: 'Es ist schön, ___ du da bist.', t: 'K' },
+    { s: 'Paul glaubt, ___ es morgen schneit.', t: 'K' },
+    { s: 'Ich freue mich, ___ die Ferien beginnen.', t: 'K' },
+    { s: 'Lena merkt, ___ ihr Heft fehlt.', t: 'K' },
+    { s: 'Es ist wichtig, ___ wir pünktlich sind.', t: 'K' }
+  ];
+
+  const JOIN = [
+    { a: 'Mia weiß es.', b: 'Der Test ist morgen.', s: 'Mia weiß, dass der Test morgen ist.' },
+    { a: 'Ich hoffe es.', b: 'Du wirst bald gesund.', s: 'Ich hoffe, dass du bald gesund wirst.' },
+    { a: 'Papa sagt es.', b: 'Das Essen ist fertig.', s: 'Papa sagt, dass das Essen fertig ist.' },
+    { a: 'Wir glauben es.', b: 'Unsere Mannschaft gewinnt.', s: 'Wir glauben, dass unsere Mannschaft gewinnt.' },
+    { a: 'Lena merkt es.', b: 'Ihr Fahrrad ist weg.', s: 'Lena merkt, dass ihr Fahrrad weg ist.' },
+    { a: 'Es freut mich.', b: 'Du hilfst mir.', s: 'Es freut mich, dass du mir hilfst.' },
+    { a: 'Ben erzählt es.', b: 'Sein Hund kann Kunststücke.', s: 'Ben erzählt, dass sein Hund Kunststücke kann.' },
+    { a: 'Die Lehrerin erklärt es.', b: 'Der Ausflug findet morgen statt.', s: 'Die Lehrerin erklärt, dass der Ausflug morgen stattfindet.' }
+  ];
+
+  const answer = (t) => t === 'K' ? 'dass' : 'das';
+  const fill = (s, w, cap) => {
+    const start = s.startsWith('___');
+    const a = w ? (start ? w.charAt(0).toUpperCase() + w.slice(1) : w) : null;
+    return esc(s).replace('___', a ? sol(esc(a)) : blank(4));
+  };
+
+  function taskEinsetzen(level, rng) {
+    const types = level === 1 ? ['A', 'K'] : (level === 2 ? ['A', 'R', 'K'] : ['A', 'R', 'D', 'K']);
+    const pool = ITEMS.filter(x => types.includes(x.t));
+    const first = types.map(t => rng.pick(pool.filter(x => x.t === t)));
+    const its = rng.shuffle(first.concat(rng.sample(pool.filter(x => !first.includes(x)), (level === 1 ? 8 : 9) - first.length)));
+    if (level < 3) {
+      return {
+        title: 'das oder dass?',
+        instr: level === 1 ? 'Setze das oder dass ein. Tipp: Kannst du „ein“ einsetzen, schreibst du das.' : 'Setze das oder dass ein. Mach die Ersatzprobe mit „ein“, „dieses“ oder „welches“.',
+        body: its.map(x => '<div class="item">' + fill(x.s) + '</div>').join(''),
+        sol: its.map(x => '<div class="item">' + fill(x.s, answer(x.t)) + ' <span class="hint">(' + esc(TYPES[x.t].de) + ')</span></div>').join('')
+      };
+    }
+    return {
+      title: 'das oder dass? Bestimme auch die Wortart.',
+      instr: 'Setze ein und schreibe dazu: Artikel, Relativpronomen, Demonstrativpronomen oder Konjunktion.',
+      body: table(['Satz', 'Wortart'], its.map(x => [fill(x.s), blank(10)])),
+      sol: table(['Satz', 'Wortart'], its.map(x => [fill(x.s, answer(x.t)), sol(esc(TYPES[x.t].fach))]))
+    };
+  }
+
+  function taskVerbinden(level, rng) {
+    const its = rng.fresh(JOIN, 3, x => x.s);
+    return {
+      title: 'Verbinde zu einem Satz mit „dass“.',
+      instr: 'Achte darauf: Im dass-Satz steht das Verb am Ende. Vor „dass“ steht ein Beistrich.',
+      body: its.map(x => '<div class="item">' + esc(x.a) + ' ' + esc(x.b) + '</div>' + lines(1)).join(''),
+      sol: its.map(x => '<div class="item">' + esc(x.a) + ' ' + esc(x.b) + '<br>' + sol(esc(x.s)) + '</div>').join('')
+    };
+  }
+
+  function taskRegel(level) {
+    return {
+      title: 'Die Regel',
+      instr: 'Ergänze den Merksatz.',
+      body: '<div class="item">„dass“ ist ein ' + blank(8) + '. Man kann es <b>nicht</b> durch ' + blank(5) + ', ' + blank(5) + ' oder ' + blank(5) + ' ersetzen.</div>' +
+        '<div class="item">Vor „dass“ steht immer ein ' + blank(7) + '.</div>',
+      sol: '<div class="item">„dass“ ist ein ' + sol(level === 3 ? 'Bindewort (Konjunktion)' : 'Bindewort') + '. Man kann es nicht durch ' + sol('ein') + ', ' + sol('dieses') + ' oder ' + sol('welches') + ' ersetzen.</div>' +
+        '<div class="item">Vor „dass“ steht immer ein ' + sol('Beistrich') + '.</div>'
+    };
+  }
+
+  UB.register({
+    id: 'das-dass',
+    title: 'das oder dass',
+    area: 'rechtschreibung',
+    klassen: [2],
+    img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+    levels: {
+      1: { ichkann: ['Du kannst „das“ als Begleiter und „dass“ als Bindewort unterscheiden.', 'Du kennst die Ersatzprobe mit „ein“.'] },
+      2: { ichkann: ['Du kannst „das“ und „dass“ mit der Ersatzprobe richtig schreiben.', 'Du kannst zwei Sätze mit „dass“ verbinden.'] },
+      3: { ichkann: ['Du kannst „das“ als Artikel, Relativpronomen oder Demonstrativpronomen bestimmen.', 'Du kannst „dass“ als Konjunktion erkennen und richtig verwenden.'] }
+    },
+    build(level, rng) {
+      if (level === 1) return [taskEinsetzen(1, rng), taskRegel(1)];
+      if (level === 2) return [taskEinsetzen(2, rng), taskVerbinden(2, rng), taskRegel(2)];
+      return [taskEinsetzen(3, rng), taskVerbinden(3, rng)];
+    },
+    pool() {
+      return table(['Satz', 'Lösung', 'Wortart'], ITEMS.map(x => [fill(x.s), esc(answer(x.t)), esc(TYPES[x.t].fach)])) +
+        table(['Satz 1', 'Satz 2', 'Lösung'], JOIN.map(x => [esc(x.a), esc(x.b), esc(x.s)]));
+    }
+  });
+})();

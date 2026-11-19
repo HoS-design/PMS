@@ -280,6 +280,21 @@
             .header-content { flex-direction: column; align-items: stretch; }
             .search-wrapper { max-width: 100%; }
         }
+
+        /* --- Übungsblätter-Banner --- */
+        .ub-banner { display:flex; align-items:center; gap:18px; margin:24px 0 8px; padding:16px 20px;
+            background:var(--surface); border:1px solid var(--line); border-left:6px solid var(--de-accent);
+            border-radius:var(--radius); box-shadow:var(--shadow-md); }
+        .ub-banner img { width:64px; height:64px; object-fit:contain; flex:none; }
+        .ub-banner .ub-text { flex:1; min-width:0; }
+        .ub-banner h2 { margin:0 0 2px; font-size:1.15rem; color:var(--ink); }
+        .ub-banner p { margin:0; color:var(--muted); font-size:.92rem; }
+        .ub-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+        .ub-links a { text-decoration:none; font-size:.85rem; font-weight:600; padding:6px 12px; border-radius:999px;
+            background:var(--de-bg); color:#b91c1c; border:1px solid #fecaca; }
+        .ub-links a:hover { background:#fee2e2; }
+        .ub-links a.ub-all { background:var(--de-accent); color:#fff; border-color:var(--de-accent); }
+        @media (max-width: 640px) { .ub-banner { align-items:flex-start; } .ub-banner img { width:48px; height:48px; } }
     </style>
 </head>
 <body>
@@ -302,6 +317,23 @@
     </header>
 
     <div class="container">
+
+        <a id="uebungsblaetter"></a>
+        <div class="ub-banner">
+            <img src="/assets/minihos/MiniHoS_Schreiben_Stift-Heft.webp" alt="" loading="lazy">
+            <div class="ub-text">
+                <h2>🖨️ Übungsblätter zum Ausdrucken</h2>
+                <p>Grammatik üben – in 3 Stufen, mit Lösungsblatt. Daheim ausdrucken: <strong>chatisthisreal.at/uebungsblaetter</strong></p>
+                <div class="ub-links">
+                    <a href="/uebungsblaetter/#zeitformen">Zeitformen</a>
+                    <a href="/uebungsblaetter/#faelle">Die vier Fälle</a>
+                    <a href="/uebungsblaetter/#das-dass">das oder dass</a>
+                    <a href="/uebungsblaetter/#direkte-rede">Direkte Rede</a>
+                    <a href="/uebungsblaetter/#aktiv-passiv">Aktiv und Passiv</a>
+                    <a class="ub-all" href="/uebungsblaetter/">Alle Blätter →</a>
+                </div>
+            </div>
+        </div>
 
         <div class="section sec-de" id="sec-deutsch">
             <div class="section-header">
@@ -359,6 +391,14 @@
                     title: "3D Märchen-Generator",
                     description: "Interaktive Würfel für kreative Schreibanlässe. Helden, Orte und Bösewichte kombinieren.",
                     keywords: "märchen schreiben geschichten würfel generator",
+                    isNew: true
+                },
+                {
+                    href: "/uebungsblaetter/",
+                    icon: "🖨️",
+                    title: "Übungsblätter",
+                    description: "Arbeitsblätter zum Ausdrucken in 3 Stufen mit Lösung: Zeitformen, Fälle, das/dass, direkte Rede, Aktiv/Passiv.",
+                    keywords: "übungsblätter arbeitsblätter ausdrucken drucken pdf lösung zeitformen fälle das dass direkte rede aktiv passiv grammatik schularbeit",
                     isNew: true
                 },
                 {
