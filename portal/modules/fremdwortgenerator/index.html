@@ -1,255 +1,73 @@
 <!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fremdwörter im Kontext – Generator</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fremdwörter im Kontext – Generator</title>
+  <link rel="stylesheet" href="/css/app-layout.css">
   <style>
-    :root{
-      --subject-color:#ef4444;
-      --bg:#f2f4f7;
-      --surface:#ffffff;
-      --ink:#1e293b;
-      --muted:#64748b;
-      --line:#e2e8f0;
-      --accent:#3b82f6;
-      --accent2:#10b981;
-      --shadow:0 10px 30px rgba(0,0,0,.12);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--ink);
-      background:var(--bg);
-      min-height:100vh;
-    }
-
-    .wrap{width:min(980px,100%); margin:0 auto; padding:22px;}
-
-    /* HoS Hero Header (wie Speedrunde-Ziel) */
-    .hero{
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:18px;
-      align-items:start;
-      padding:10px 6px 6px;
-      margin:4px 0 18px;
-    }
-    .minirow{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-      flex-wrap:wrap;
-    }
-    .mini-logo{
-      width:34px;height:34px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      object-fit:cover;
-    }
-    .badge-main{
-      display:inline-flex;
-      align-items:center;
-      background: var(--subject-color);
-      color: #fff;
-      font-size:10px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.5px;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.04);
-      white-space:nowrap;
-    }
-    .hero-title{
-      margin:0;
-      font-size: clamp(28px, 3.2vw, 40px);
-      line-height:1.12;
-      letter-spacing:-0.02em;
-    }
-    .hero-sub{
-      margin:10px 0 0;
-      color:var(--muted);
-      font-size:15px;
-    }
-    .hero-sticker{
-      width:110px;
-      height:auto;
-      border-radius:14px;
-      transform: rotate(-6deg);
-      opacity:.95;
-      justify-self:end;
-      align-self:start;
-    }
-
-    @media (max-width: 720px){
-      .hero{ grid-template-columns: 1fr; }
-      .hero-sticker{ justify-self:start; width:96px; transform: rotate(-4deg); }
-    }
-
-    /* Card */
-    .card{
-      background:var(--surface);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      padding:20px;
-    }
-
-    .toprow{
-      display:flex;
-      gap:12px;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      align-items:flex-start;
-      margin-bottom:12px;
-    }
-
-    .badge{
-      white-space:nowrap;
-      background: #eff6ff;
-      border:1px solid var(--line);
-      padding:8px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color:var(--ink);
-    }
-
-    h2{margin:0}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
-    button{
-      background:var(--accent);
-      color:#fff;
-      border:1px solid var(--accent);
-      padding:10px 14px;
-      border-radius:12px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    button.secondary{
-      background:transparent;
-      color:var(--ink);
-      border:1px solid var(--line);
-      font-weight:700;
-    }
-    .word{font-size:36px;font-weight:950;margin:14px 0 4px}
-    .meta{color:var(--muted);font-size:13px;margin:0 0 10px}
-    .box{
-      border:1px solid var(--line);
-      border-radius:14px;
-      padding:12px;
-      background:var(--surface);
-      margin:12px 0;
-    }
-    .auftrag{
-      background:#ecfdf5;
-      border:1px solid #a7f3d0;
-    }
-    a{color:var(--accent2);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .stats{
-      display:flex; gap:10px; flex-wrap:wrap;
-      color:var(--muted); font-size:12px; margin-top:10px
-    }
-    .pill{
-      border:1px solid var(--line);
-      background:#eff6ff;
-      border-radius:999px;
-      padding:6px 10px;
-    }
-    .kbd{
-      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
-      border:1px solid var(--line);
-      background:var(--bg);
-      padding:2px 6px;
-      border-radius:8px;
-      color:var(--ink);
-    }
-    .app-intro .hero-title,
-    .app-intro .minirow,
-    .app-intro .hero-sticker{
-      display:none;
-    }
-
+    .hos-stage { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
+    .word-card { display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 24px 32px; }
+    .word { margin: 0; font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 900; color: var(--subject); line-height: 1.05; word-break: break-word; }
+    .word.empty { color: #d6d3d1; }
+    .meaning-label { font-weight: 800; color: var(--hos-muted); font-size: .9rem; text-transform: uppercase; letter-spacing: .04em; }
+    .meaning { margin: 0; font-size: 1.35rem; line-height: 1.4; }
+    .duden { align-self: flex-start; text-decoration: none; }
+    .word-card .hos-pill { align-self: flex-start; }
+    .task { display: flex; flex-direction: column; gap: 10px; }
+    .task textarea { flex: 1; min-height: 110px; resize: none; line-height: 1.5; font-size: 1.05rem; padding: 10px 12px; }
+    .task-status { font-size: .9rem; }
   </style>
 </head>
-<body>
+<body class="hos-app subject-deutsch">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
       <div class="brand-title">
         <div class="badge-main is-deutsch">Deutsch</div>
-        <h1>Fremdwoerter im Kontext</h1>
+        <h1>Fremdwörter im Kontext</h1>
       </div>
     </div>
     <div class="header-actions">
       <a href="/index.html" class="header-link">Startseite</a>
     </div>
   </header>
-  <div class="wrap">
 
-    <div class="hero app-intro">
-      <div class="hero-left">
-        <div class="minirow">
-          <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'">
-          <span class="badge-main">Deutsch</span>
-          <span class="badge">Station • HoS</span>
-        </div>
-        <h1 class="hero-title">Fremdwörter im Kontext</h1>
-        <p class="hero-sub">Zufälliges Fremdwort · kurze Bedeutung · Duden-Link · ohne Beispielsatz</p>
-      </div>
-
-      <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'">
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Fremdwort <span id="usedCount">0</span> von <span id="totalCount">0</span></span>
+      <div class="hos-progress" style="width: 240px" aria-label="Fortschritt"><span id="bar"></span></div>
+      <span class="hos-spacer"></span>
+      <span class="hos-muted">Tastatur: <span class="hos-kbd">N</span> neues Wort · <span class="hos-kbd">R</span> von vorne</span>
     </div>
 
-    <div class="card">
-      <div class="toprow">
+    <div class="hos-stage">
+      <section class="hos-panel word-card" aria-live="polite">
+        <span class="hos-pill" id="pos" hidden></span>
+        <h2 class="word empty" id="word">?</h2>
         <div>
-          <h2 style="margin:0">Generator</h2>
-          <p class="meta" style="margin:6px 0 0">Klicke auf „Neues Fremdwort“ (oder drücke <span class="kbd">N</span>).</p>
+          <div class="meaning-label">Bedeutung</div>
+          <p class="meaning" id="meaning">Klicke auf „Neues Fremdwort“.</p>
         </div>
-      </div>
+        <a class="hos-btn soft duden" id="duden" href="#" target="_blank" rel="noopener" hidden>Im Duden nachschlagen ↗</a>
+      </section>
 
-      <div class="row">
-        <button id="newWord" title="Neues Wort (N)">Neues Fremdwort</button>
-        <button id="reset" class="secondary" title="Reset (R)">Reset</button>
-      </div>
-
-      <div class="stats">
-        <span class="pill">Benutzt: <b id="usedCount">0</b></span>
-        <span class="pill">Verfügbar: <b id="leftCount">0</b></span>
-        <span class="pill">Gesamt: <b id="totalCount">0</b></span>
-        <span class="pill">Tastatur: <span class="kbd">N</span> / <span class="kbd">R</span></span>
-      </div>
-
-      <h3 class="word" id="word">–</h3>
-      <p class="meta" id="pos">–</p>
-
-      <div class="box">
-        <b>Bedeutung</b>
-        <p id="meaning" style="margin:8px 0 0">–</p>
-      </div>
-
-      <div class="box auftrag">
-        <b>✏️ Arbeitsauftrag</b>
-        <p style="margin:8px 0 0">
-          Schreibe <b>einen eigenen Satz</b>, in dem das Fremdwort sinnvoll verwendet wird.<br>
-          Der Satz muss zeigen, dass du die Bedeutung verstanden hast.
-        </p>
-      </div>
-
-      <div class="box">
-        <b>Duden-Link</b><br>
-        <a id="duden" href="#" target="_blank" rel="noopener">–</a>
-      </div>
+      <section class="hos-panel task">
+        <h2 class="hos-panel-title">Arbeitsauftrag</h2>
+        <div class="hos-merke">Schreibe <b>einen eigenen Satz</b>, in dem das Fremdwort sinnvoll vorkommt. Der Satz muss zeigen, dass du die Bedeutung verstanden hast.</div>
+        <textarea id="sentence" placeholder="Dein Satz (hier oder ins Heft) …" aria-label="Dein Satz" disabled></textarea>
+        <span class="task-status hos-muted" id="taskStatus"></span>
+      </section>
     </div>
-  </div>
+
+    <div class="hos-bottombar">
+      <button id="reset" class="hos-btn soft" type="button" title="Von vorne (R)">↺ Von vorne</button>
+      <div class="hos-feedback" id="msg">Jedes Wort kommt nur einmal dran, bis alle verwendet wurden.</div>
+      <button id="newWord" class="hos-btn primary" type="button" title="Neues Wort (N)">Neues Fremdwort →</button>
+    </div>
+  </main>
 
   <script>
   const duden = w => `https://www.duden.de/rechtschreibung/${encodeURIComponent(w)}`;
@@ -346,51 +164,80 @@
   ];
 
   let used = new Set();
-
+  let currentWord = null;
   const $ = (id) => document.getElementById(id);
 
-  function updateStats(){
-    $("totalCount").textContent = words.length;
-    $("usedCount").textContent = used.size;
-    $("leftCount").textContent = Math.max(0, words.length - used.size);
+  function setFeedback(text, kind) {
+    const el = $("msg");
+    el.className = "hos-feedback" + (kind ? " " + kind : "");
+    el.textContent = text;
   }
 
-  function newWord(){
-    if (used.size >= words.length){
-      alert("Alle Wörter wurden verwendet. Bitte Reset drücken.");
+  function updateStats() {
+    $("totalCount").textContent = words.length;
+    $("usedCount").textContent = used.size;
+    $("bar").style.width = (used.size / words.length * 100) + "%";
+  }
+
+  function newWord() {
+    if (used.size >= words.length) {
+      setFeedback("Alle " + words.length + " Wörter wurden verwendet. Klicke auf „Von vorne“.", "warn");
       return;
     }
     let i;
-    do { i = Math.floor(Math.random() * words.length); }
-    while (used.has(i));
+    do { i = Math.floor(Math.random() * words.length); } while (used.has(i));
     used.add(i);
+    currentWord = words[i];
 
-    const x = words[i];
-    $("word").textContent = x.w;
-    $("pos").textContent = x.p;
-    $("meaning").textContent = x.m;
-    $("duden").textContent = x.d;
-    $("duden").href = x.d;
-
+    $("word").textContent = currentWord.w;
+    $("word").classList.remove("empty");
+    $("pos").textContent = currentWord.p;
+    $("pos").hidden = false;
+    $("meaning").textContent = currentWord.m;
+    $("duden").href = currentWord.d;
+    $("duden").hidden = false;
+    $("sentence").disabled = false;
+    $("sentence").value = "";
+    $("sentence").placeholder = "Dein Satz mit „" + currentWord.w + "“ (hier oder ins Heft) …";
+    $("taskStatus").textContent = ""; $("taskStatus").className = "task-status";
+    setFeedback("Lies die Bedeutung und schreibe deinen Satz.", "");
     updateStats();
   }
 
-  function reset(){
+  function reset() {
     used.clear();
-    $("word").textContent = "–";
-    $("pos").textContent = "–";
-    $("meaning").textContent = "–";
-    $("duden").textContent = "–";
-    $("duden").href = "#";
+    currentWord = null;
+    $("word").textContent = "?";
+    $("word").classList.add("empty");
+    $("pos").hidden = true;
+    $("meaning").textContent = "Klicke auf „Neues Fremdwort“.";
+    $("duden").hidden = true;
+    $("sentence").value = "";
+    $("sentence").disabled = true;
+    $("taskStatus").textContent = ""; $("taskStatus").className = "task-status";
+    setFeedback("Neu gestartet. Jedes Wort kommt nur einmal dran, bis alle verwendet wurden.", "");
     updateStats();
   }
+
+  // Kurzer Hinweis, ob das Wort im Satz vorkommt (Wortstamm, damit auch gebeugte Formen zählen)
+  $("sentence").addEventListener("input", () => {
+    if (!currentWord) return;
+    const text = $("sentence").value.trim();
+    const stem = currentWord.w.toLowerCase().slice(0, Math.max(4, currentWord.w.length - 2));
+    const el = $("taskStatus");
+    if (!text) { el.textContent = ""; el.className = "task-status"; return; }
+    if (!text.toLowerCase().includes(stem)) { el.textContent = "Das Fremdwort fehlt noch in deinem Satz."; el.className = "task-status hos-pill warn"; }
+    else if (!/[.!?]\s*$/.test(text)) { el.textContent = "Das Wort ist drin. Vergiss das Satzzeichen am Ende nicht."; el.className = "task-status hos-pill warn"; }
+    else { el.textContent = "Das Fremdwort kommt vor. Passt die Bedeutung? Lies den Satz noch einmal."; el.className = "task-status hos-pill good"; }
+  });
 
   $("newWord").addEventListener("click", newWord);
   $("reset").addEventListener("click", reset);
 
   document.addEventListener("keydown", (e) => {
-    if(e.key.toLowerCase() === "n") newWord();
-    if(e.key.toLowerCase() === "r") reset();
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (e.key.toLowerCase() === "n") newWord();
+    if (e.key.toLowerCase() === "r") reset();
   });
 
   updateStats();

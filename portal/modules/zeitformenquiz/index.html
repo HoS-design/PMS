@@ -1,239 +1,40 @@
 <!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zeitformen-Quiz • HoS</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Zeitformen-Quiz • HoS</title>
+  <link rel="stylesheet" href="/css/app-layout.css">
   <style>
-    :root{
-      --subject-color:#ef4444;
-      --bg:#f2f4f7;
-      --surface:#ffffff;
-      --ink:#1e293b;
-      --muted:#64748b;
-      --line:#e2e8f0;
-      --accent:#3b82f6;
-      --accent-soft:#eff6ff;
-      --success:#10b981;
-      --danger:#ef4444;
-      --shadow: 0 18px 50px rgba(0,0,0,.12);
-      --radius:22px;
-      --a: var(--accent);
-      --b: var(--success);
-      --c: #38bdf8;
-      --d: #f59e0b;
+    .quiz { display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 24px 32px; }
+    .quiz-label { color: var(--hos-muted); font-weight: 700; }
+    .question { margin: 0; font-size: clamp(1.6rem, 3vw, 2.3rem); font-weight: 800; line-height: 1.25; }
+    .answers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .option {
+      text-align: left;
+      border-radius: 14px;
+      border: 2px solid var(--hos-line);
+      padding: 14px 16px;
+      background: #fff;
+      color: var(--hos-ink);
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--ink);
-      background:var(--bg);
-      min-height:100vh;
-    }
-    .wrap{
-      width:min(980px, 100%);
-      margin:0 auto;
-      display:grid;
-      gap:14px;
-      padding:22px;
-    }
-
-    /* HoS Hero Header (wie Speedrunde-Ziel) */
-    .hero{
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap:18px;
-      align-items:start;
-      padding:10px 6px 6px;
-      margin:4px 0 6px;
-    }
-    .minirow{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:10px;
-      flex-wrap:wrap;
-    }
-    .mini-logo{
-      width:34px;height:34px;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:#fff;
-      object-fit:cover;
-    }
-    .badge-main{
-      display:inline-flex;
-      align-items:center;
-      background: var(--subject-color);
-      color: #fff;
-      font-size:10px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.5px;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid rgba(0,0,0,.04);
-      white-space:nowrap;
-    }
-    .badge{
-      display:inline-flex;
-      gap:.5rem;
-      align-items:center;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: var(--accent-soft);
-      color:var(--muted);
-      font-size:.95rem;
-      white-space:nowrap;
-    }
-    .hero-title{
-      margin:0;
-      font-size: clamp(28px, 3.2vw, 40px);
-      line-height:1.12;
-      letter-spacing:-0.02em;
-    }
-    .hero-sub{
-      margin:10px 0 0;
-      color:var(--muted);
-      max-width:75ch;
-      line-height:1.5;
-      font-size:15px;
-    }
-    .hero-sticker{
-      width:110px;
-      height:auto;
-      border-radius:14px;
-      transform: rotate(-6deg);
-      opacity:.95;
-      justify-self:end;
-      align-self:start;
-    }
-    @media (max-width: 720px){
-      .hero{ grid-template-columns: 1fr; }
-      .hero-sticker{ justify-self:start; width:96px; transform: rotate(-4deg); }
-    }
-
-    /* Card styles (aus deiner Datei, leicht bereinigt) */
-    .card{
-      background: var(--surface);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      padding:16px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
-    }
-    .card::before{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(59,130,246,.08), rgba(255,255,255,0));
-      pointer-events:none;
-    }
-    .card > *{position:relative}
-
-    .toprow{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:12px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:.45rem;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: var(--accent-soft);
-      color:var(--ink);
-      font-size:.95rem;
-      white-space:nowrap;
-    }
-    .q{ margin:10px 0 0; font-size:1.05rem; }
-    .answers{ margin-top:12px; display:grid; gap:10px; }
-
-    button.option{
-      width:100%;
-      text-align:left;
-      border-radius:16px;
-      border:1px solid var(--line);
-      padding:12px 12px;
-      background: var(--surface);
-      color:var(--ink);
-      cursor:pointer;
-      transition: transform .12s ease, background .12s ease;
-      font-size:1rem;
-    }
-    button.option:hover{ transform: translateY(-1px); background: var(--accent-soft); }
-    button.option[disabled]{opacity:.75; cursor:not-allowed; transform:none}
-    .ok{ outline:2px solid rgba(16,185,129,.55); }
-    .no{ outline:2px solid rgba(239,68,68,.55); }
-
-    .controls{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:14px;
-      justify-content:space-between;
-      align-items:center;
-    }
-    .btn{
-      border:1px solid var(--accent);
-      padding:10px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:700;
-      color:#fff;
-      background: var(--accent);
-      box-shadow: 0 10px 24px rgba(15,23,42,.12);
-    }
-    .btn.secondary{
-      background: var(--surface);
-      color:var(--ink);
-      border:1px solid var(--line);
-      font-weight:650;
-    }
-    .hint{ color:var(--muted); font-size:.95rem; }
-    .result{
-      display:none;
-      margin-top:14px;
-      padding:12px;
-      border-radius:16px;
-      border:1px dashed var(--line);
-      background: var(--accent-soft);
-    }
-    .result strong{ color: var(--accent); }
-    .tiny{ font-size:.9rem; color:var(--muted); }
-    .progress{
-      height:10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: var(--bg);
-      overflow:hidden;
-      width:min(360px, 100%);
-    }
-    .bar{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, var(--a), var(--c), var(--b), var(--d));
-      transition: width .25s ease;
-    }
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-    .app-intro .hero-title,
-    .app-intro .minirow,
-    .app-intro .hero-sticker{
-      display:none;
-    }
-
+    .option:hover:not(:disabled) { transform: translateY(-1px); border-color: var(--subject-line); background: var(--subject-soft); }
+    .option:disabled { cursor: default; }
+    .option.ok { border-color: #16a34a; background: var(--hos-good-soft); color: var(--hos-good); }
+    .option.no { border-color: #dc2626; background: var(--hos-bad-soft); color: var(--hos-bad); }
+    .result { text-align: center; display: grid; gap: 10px; justify-items: center; }
+    .result .big { font-size: 3rem; font-weight: 900; color: var(--subject); line-height: 1; }
+    .result p { margin: 0; font-size: 1.15rem; }
+    @media (max-width: 700px) { .answers { grid-template-columns: 1fr 1fr; } .quiz { padding: 16px; } }
   </style>
 </head>
-
-<body>
+<body class="hos-app subject-deutsch">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -246,104 +47,80 @@
       <a href="/index.html" class="header-link">Startseite</a>
     </div>
   </header>
-  <div class="wrap">
 
-    <div class="hero app-intro">
-      <div class="hero-left">
-        <div class="minirow">
-          <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'">
-          <span class="badge-main">Deutsch</span>
-          <span class="badge">Zeitformen-Quiz • HoS</span>
-        </div>
-        <h1 class="hero-title">Welche Zeitform ist das? 🤹‍♂️</h1>
-        <p class="hero-sub">Klicke die richtige Zeitform an. Du bekommst sofort Feedback – und am Ende deinen Score.</p>
-      </div>
-      <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'">
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Frage <span id="qNo">1</span> von <span id="qTotal">6</span></span>
+      <div class="hos-progress" style="width: 260px" aria-label="Fortschritt"><span id="bar"></span></div>
+      <span class="hos-spacer"></span>
+      <span class="hos-pill">Punkte: <b id="score">0</b></span>
     </div>
 
-    <main class="card">
-      <div class="toprow">
-        <div class="pill">Frage <span id="qNo">1</span>/<span id="qTotal">6</span></div>
-        <div class="progress" aria-label="Fortschritt"><div class="bar" id="bar"></div></div>
-        <div class="pill">Punkte: <span id="score">0</span> 🧠</div>
-      </div>
+    <div class="hos-stage">
+      <section class="hos-panel quiz" id="quiz">
+        <div class="quiz-label">Welche Zeitform ist das?</div>
+        <p class="question" id="questionText"></p>
+        <div class="answers" id="answers"></div>
+      </section>
+      <section class="hos-panel quiz result" id="resultBox" hidden></section>
+    </div>
 
-      <div class="q" id="questionText"></div>
-      <div class="answers" id="answers"></div>
-
-      <div class="controls">
-        <div class="hint" id="hint">Tipp: Achte auf Hilfsverben wie „haben/sein/werden“ 😉</div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button class="btn secondary" id="skipBtn" type="button">Überspringen 🙈</button>
-          <button class="btn" id="nextBtn" type="button">Weiter ➜</button>
-          <button class="btn secondary" id="restartBtn" type="button">Neustart 🔁</button>
-        </div>
-      </div>
-
-      <div class="result" id="resultBox"></div>
-      <div class="tiny" style="margin-top:10px;">Hinweis: Dieses Quiz läuft als normale HTML-Seite. In Google Sites am besten per „Einbetten → Von URL“ einbinden.</div>
-    </main>
-    
-
-  </div>
+    <div class="hos-bottombar">
+      <button class="hos-btn soft" id="restartBtn" type="button">↺ Neustart</button>
+      <div class="hos-feedback" id="hint" aria-live="polite">Tipp: Achte auf Hilfsverben wie haben, sein und werden.</div>
+      <button class="hos-btn soft" id="skipBtn" type="button">Überspringen</button>
+      <button class="hos-btn primary" id="nextBtn" type="button">Weiter →</button>
+    </div>
+  </main>
 
   <script>
     const questions = [
-      { text: "Ich gehe morgen spazieren.", answer: "Präsens", tip: "Mit Zeitangabe kann Präsens Zukunft meinen." },
-      { text: "Ich ging nach Hause.", answer: "Präteritum", tip: "Erzählzeit, oft in Geschichten." },
-      { text: "Ich habe gegessen.", answer: "Perfekt", tip: "haben/sein + Partizip II." },
-      { text: "Ich hatte gegessen, bevor ich ging.", answer: "Plusquamperfekt", tip: "hatte/war + Partizip II (Vorvergangenheit)." },
-      { text: "Ich werde lernen.", answer: "Futur I", tip: "werden + Infinitiv." },
-      { text: "Ich werde gelernt haben.", answer: "Futur II", tip: "werden + Partizip II + haben/sein." }
+      { text: "Ich gehe morgen spazieren.", answer: "Präsens", tip: "Mit Zeitangabe kann das Präsens auch Zukunft meinen." },
+      { text: "Ich ging nach Hause.", answer: "Präteritum", tip: "Das Präteritum ist die Erzählzeit, oft in Geschichten." },
+      { text: "Ich habe gegessen.", answer: "Perfekt", tip: "Perfekt: haben/sein + Partizip II." },
+      { text: "Ich hatte gegessen, bevor ich ging.", answer: "Plusquamperfekt", tip: "Plusquamperfekt: hatte/war + Partizip II (Vorvergangenheit)." },
+      { text: "Ich werde lernen.", answer: "Futur I", tip: "Futur I: werden + Infinitiv." },
+      { text: "Ich werde gelernt haben.", answer: "Futur II", tip: "Futur II: werden + Partizip II + haben/sein." }
     ];
-
     const options = ["Präsens", "Präteritum", "Perfekt", "Plusquamperfekt", "Futur I", "Futur II"];
+    const GENERAL_TIP = "Tipp: Achte auf Hilfsverben wie haben, sein und werden.";
 
     let i = 0;
     let score = 0;
     let locked = false;
 
-    const qNo = document.getElementById("qNo");
-    const qTotal = document.getElementById("qTotal");
-    const questionText = document.getElementById("questionText");
-    const answersEl = document.getElementById("answers");
-    const scoreEl = document.getElementById("score");
-    const hintEl = document.getElementById("hint");
-    const nextBtn = document.getElementById("nextBtn");
-    const restartBtn = document.getElementById("restartBtn");
-    const skipBtn = document.getElementById("skipBtn");
-    const resultBox = document.getElementById("resultBox");
-    const bar = document.getElementById("bar");
+    const $ = (id) => document.getElementById(id);
+    const answersEl = $("answers");
+    $("qTotal").textContent = String(questions.length);
 
-    qTotal.textContent = String(questions.length);
-
-    function shuffle(arr){
+    function shuffle(arr) {
       const a = arr.slice();
-      for(let j=a.length-1; j>0; j--){
-        const k = Math.floor(Math.random()*(j+1));
+      for (let j = a.length - 1; j > 0; j--) {
+        const k = Math.floor(Math.random() * (j + 1));
         [a[j], a[k]] = [a[k], a[j]];
       }
       return a;
     }
 
-    function setProgress(){
-      const pct = Math.round(((i) / questions.length) * 100);
-      bar.style.width = pct + "%";
+    function setFeedback(text, kind) {
+      const el = $("hint");
+      el.className = "hos-feedback" + (kind ? " " + kind : "");
+      el.textContent = text;
     }
 
-    function render(){
+    function render() {
       locked = false;
-      resultBox.style.display = "none";
-      nextBtn.textContent = (i === questions.length - 1) ? "Auswertung 🎯" : "Weiter ➜";
-
-      qNo.textContent = String(i+1);
-      questionText.innerHTML = `🧩 <b>${questions[i].text}</b>`;
-      hintEl.textContent = "Tipp: " + questions[i].tip;
+      $("quiz").hidden = false;
+      $("resultBox").hidden = true;
+      $("skipBtn").disabled = false;
+      $("nextBtn").disabled = false;
+      $("nextBtn").textContent = (i === questions.length - 1) ? "Auswertung →" : "Weiter →";
+      $("qNo").textContent = String(i + 1);
+      $("questionText").textContent = questions[i].text;
+      setFeedback(GENERAL_TIP, "");
 
       answersEl.innerHTML = "";
-      const shuffled = shuffle(options);
-
-      shuffled.forEach(opt => {
+      shuffle(options).forEach(opt => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "option";
@@ -351,76 +128,54 @@
         btn.addEventListener("click", () => choose(opt, btn));
         answersEl.appendChild(btn);
       });
-
-      setProgress();
+      $("bar").style.width = Math.round(i / questions.length * 100) + "%";
     }
 
-    function choose(opt, btn){
-      if(locked) return;
+    function choose(opt, btn) {
+      if (locked) return;
       locked = true;
-
-      const correct = questions[i].answer;
+      const q = questions[i];
       const buttons = Array.from(answersEl.querySelectorAll("button"));
       buttons.forEach(b => b.disabled = true);
-
-      if(opt === correct){
+      if (opt === q.answer) {
         score++;
-        scoreEl.textContent = String(score);
+        $("score").textContent = String(score);
         btn.classList.add("ok");
-        hintEl.textContent = "YES! 🎉 Das war richtig.";
+        setFeedback("Richtig! " + q.tip, "good");
       } else {
         btn.classList.add("no");
-        const correctBtn = buttons.find(b => b.textContent === correct);
-        if(correctBtn) correctBtn.classList.add("ok");
-        hintEl.textContent = `Fast! 😅 Richtig wäre: ${correct}.`;
+        const correctBtn = buttons.find(b => b.textContent === q.answer);
+        if (correctBtn) correctBtn.classList.add("ok");
+        setFeedback("Leider falsch. Richtig ist: " + q.answer + ". " + q.tip, "bad");
       }
     }
 
-    function finish(){
-      bar.style.width = "100%";
+    function finish() {
+      $("bar").style.width = "100%";
       const max = questions.length;
-      const pct = Math.round((score / max) * 100);
-
-      let mood = "Solide! 😄";
-      if(pct >= 90) mood = "Zeitformen-Meister*in! 🏆";
-      else if(pct >= 70) mood = "Richtig stark! 🚀";
-      else if(pct >= 50) mood = "Guter Start! 🌱";
-      else mood = "Übung macht Magie ✨";
-
-      resultBox.style.display = "block";
-      resultBox.innerHTML = `
-        <div style="font-size:1.1rem;">
-          <strong>Ergebnis:</strong> ${score}/${max} (${pct}%) – ${mood}
-        </div>
-        <div style="margin-top:8px; color: rgba(255,255,255,.85);">
-          Tipp: Mach’s nochmal – beim zweiten Durchlauf sitzt’s oft schon viel besser 😎
-        </div>
-      `;
+      const pct = Math.round(score / max * 100);
+      let mood;
+      if (pct >= 90) mood = "Zeitformen-Profi!";
+      else if (pct >= 70) mood = "Richtig stark!";
+      else if (pct >= 50) mood = "Guter Start!";
+      else mood = "Übung macht den Meister.";
+      $("quiz").hidden = true;
+      const box = $("resultBox");
+      box.hidden = false;
+      box.innerHTML = '<div class="quiz-label">Dein Ergebnis</div><div class="big">' + score + " / " + max + "</div><p><b>" + mood + "</b></p>";
+      setFeedback("Starte noch einmal. Beim zweiten Durchgang sitzt es oft schon viel besser.", pct >= 70 ? "good" : "warn");
+      $("skipBtn").disabled = true;
+      $("nextBtn").disabled = true;
     }
 
-    nextBtn.addEventListener("click", () => {
-      if(i < questions.length - 1){
-        i++;
-        render();
-      } else {
-        finish();
-      }
-    });
+    function advance() {
+      if (i < questions.length - 1) { i++; render(); } else { finish(); }
+    }
 
-    restartBtn.addEventListener("click", () => {
-      i = 0;
-      score = 0;
-      scoreEl.textContent = "0";
-      render();
-    });
-
-    skipBtn.addEventListener("click", () => {
-      if(i < questions.length - 1){
-        i++;
-        render();
-      } else {
-        finish();
-      }
+    $("nextBtn").addEventListener("click", advance);
+    $("skipBtn").addEventListener("click", advance);
+    $("restartBtn").addEventListener("click", () => {
+      i = 0; score = 0; $("score").textContent = "0"; render();
     });
 
     render();

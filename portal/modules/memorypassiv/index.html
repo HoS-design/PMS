@@ -1,275 +1,59 @@
 <!doctype html>
 <html lang="de">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Memory – Aktiv & Passiv (HoS)</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Memory – Aktiv & Passiv (HoS)</title>
+  <link rel="stylesheet" href="/css/app-layout.css">
   <style>
-    :root{
-      --subject-color:#ef4444;
-      --bg:#f2f4f7;
-      --surface:#ffffff;
-      --ink:#1e293b;
-      --muted:#64748b;
-      --line:#e2e8f0;
-      --accent:#3b82f6;
-      --accent-soft:#eff6ff;
-      --success:#10b981;
-      --danger:#ef4444;
-      --shadow:0 10px 22px rgba(17,24,39,.10);
-      --radius:18px;
-      --radius2:22px;
-      --maxw:1100px;
-      --soft:var(--accent-soft);
-      --card:var(--surface);
-      --good:var(--success);
-      --warn:#f59e0b;
-      --bad:var(--danger);
+    .hos-stage { grid-template-columns: minmax(0, 1fr) 300px; }
+    .board { display: flex; flex-direction: column; }
+    .grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr));
+      grid-template-rows: repeat(var(--rows, 4), minmax(64px, 1fr));
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--ink);
-      background:var(--bg);
+    .cardBtn {
+      position: relative;
+      border-radius: 12px;
+      border: 2px solid var(--hos-line);
+      background: #fff;
+      cursor: pointer;
+      padding: 0;
+      perspective: 800px;
+      user-select: none;
+      color: var(--hos-ink);
     }
-    a{color:inherit}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:18px}
-    .app-intro{
-      display:grid;
-      grid-template-columns: 110px 1fr;
-      gap:16px;
-      align-items:center;
-      padding:16px;
-      border:1px solid var(--line);
-      border-radius:var(--radius2);
-      background:var(--card);
-      box-shadow:var(--shadow);
-      position:sticky; top:0; z-index:10;
-      backdrop-filter:saturate(1.2) blur(6px);
-    }
-    .meme{
-      width:110px;height:110px;object-fit:cover;border-radius:16px;
-      border:1px solid var(--line);
-      background:var(--soft);
-    }
-    .title h1{margin:0;font-size:22px;line-height:1.1}
-    .title p{margin:6px 0 0;color:var(--muted);font-size:14px}
-    .badge{
-      display:inline-flex;align-items:center;gap:8px;
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:var(--soft);
-      color:var(--muted);
-      margin-bottom:8px;
-    }
-    .badge b{color:var(--accent)}
-    .topbar{
-      display:flex;flex-wrap:wrap;gap:10px;
-      align-items:center;justify-content:space-between;
-      margin:0;
-    }
-    .controls{
-      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-    }
-    .btn{
-      border:1px solid var(--line);
-      background:var(--card);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:600;
-      box-shadow:0 6px 14px rgba(17,24,39,.06);
-      transition:transform .05s ease, border-color .2s ease, background .2s ease;
-      user-select:none;
-    }
-    .btn:hover{border-color:#b7c2d1}
-    .btn:active{transform:translateY(1px)}
-    .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-    .btn.good{background:var(--good);border-color:var(--good);color:#fff}
-    .btn.ghost{background:transparent;box-shadow:none}
-    .select{
-      display:flex;align-items:center;gap:8px;
-      padding:8px 10px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    select{
-      border:none;outline:none;background:transparent;font-weight:600;color:var(--ink);
-    }
-    .stats{
-      display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-      color:var(--muted);font-size:13px;
-    }
-    .pill{
-      display:inline-flex;gap:6px;align-items:center;
-      padding:8px 10px;border-radius:999px;
-      border:1px solid var(--line);background:var(--soft);
-    }
-    .pill strong{color:var(--ink)}
-    main{
-      margin-top:16px;
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:16px;
-    }
-    @media (max-width: 980px){
-      .app-intro{position:relative}
-      main{grid-template-columns:1fr}
-    }
-    .panel{
-      border:1px solid var(--line);
-      border-radius:var(--radius2);
-      background:var(--card);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    .panel .hd{
-      padding:14px 16px;
-      border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg,var(--soft),#fff);
-      display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
-    }
-    .panel .hd h2{margin:0;font-size:16px}
-    .panel .hd p{margin:4px 0 0;color:var(--muted);font-size:13px}
-    .memory-panel .hd p:not(.intro){display:none}
-    .panel .bd{padding:14px 16px}
-    .hint{
-      font-size:13px;color:var(--muted);
-      line-height:1.45;
-    }
-    .hint ul{margin:8px 0 0;padding-left:18px}
-    .hint li{margin:6px 0}
-    .grid{
-      display:grid;
-      gap:10px;
-      grid-template-columns: repeat(4, 1fr);
-      padding:14px;
-    }
-    @media (max-width: 540px){
-      .grid{grid-template-columns: repeat(3, 1fr)}
-    }
-    .cardBtn{
-      position:relative;
-      height:98px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg,#ffffff, #f8fafc);
-      box-shadow:0 10px 18px rgba(17,24,39,.06);
-      cursor:pointer;
-      overflow:hidden;
-      user-select:none;
-      transition:transform .06s ease, border-color .2s ease;
-    }
-    .cardBtn:hover{border-color:#b7c2d1}
-    .cardBtn:active{transform:translateY(1px)}
-    .cardBtn[aria-disabled="true"]{cursor:default;opacity:.65}
-    .face{
-      position:absolute;inset:0;
-      display:flex;align-items:center;justify-content:center;
-      padding:12px;
-      text-align:center;
-      font-weight:800;
-      font-size:14px;
-      line-height:1.25;
-      transform:rotateY(180deg);
-      backface-visibility:hidden;
-    }
-    .back{
-      position:absolute;inset:0;
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:6px;
-      backface-visibility:hidden;
-      background:
-        radial-gradient(circle at 20% 15%, rgba(37,99,235,.12), transparent 38%),
-        radial-gradient(circle at 80% 30%, rgba(16,185,129,.10), transparent 40%),
-        linear-gradient(180deg,#fff,#f8fafc);
-    }
-    .back .mark{
-      width:34px;height:34px;border-radius:12px;
-      border:1px solid var(--line);
-      display:grid;place-items:center;
-      background:#fff;
-      font-weight:900;color:var(--accent);
-    }
-    .back .small{font-size:12px;color:var(--muted);font-weight:700}
-    .flip{
-      transform-style:preserve-3d;
-      transition:transform .22s ease;
-    }
-    .cardBtn.isOpen .flip{transform:rotateY(180deg)}
-    .cardBtn.matched{
-      border-color:rgba(16,185,129,.55);
-      box-shadow:0 14px 24px rgba(16,185,129,.12);
-      background:linear-gradient(180deg,#ecfdf5,#ffffff);
-    }
-    .toast{
-      display:none;
-      margin-top:10px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:var(--soft);
-      color:var(--muted);
-      font-size:13px;
-    }
-    .toast.show{display:block}
-    .toast.good{border-color:rgba(16,185,129,.45);background:#ecfdf5;color:#065f46}
-    .toast.bad{border-color:rgba(239,68,68,.35);background:#fef2f2;color:#7f1d1d}
-    .kbd{
-      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      padding:2px 6px;border-radius:8px;
-      border:1px solid var(--line);background:#fff;
-      color:var(--muted);
-    }
-    .footer{
-      margin:16px 0 26px;
-      color:var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
-  
-    .app-header {
-      padding: 12px 24px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04));
-    }
-    .app-header .brand-row { display:flex; align-items:center; gap:12px; }
-    .app-header .logo-img { width:44px; height:44px; object-fit:contain; border-radius:10px; background:var(--bg); border:1px solid var(--line); }
-    .app-header .badge-main {
-      display:inline-flex; align-items:center;
-      background: var(--subject-color);
-      color: white;
-      font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
-      padding:3px 8px; border-radius:99px;
-    }
-
-    .app-intro h1,
-    .app-intro .meme{
-      display:none;
-    }
-
-</style>
+    .cardBtn:hover { border-color: #d6d3d1; }
+    .cardBtn[aria-disabled="true"] { cursor: default; }
+    .flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .22s ease; }
+    .cardBtn.isOpen .flip { transform: rotateY(180deg); }
+    .back, .face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .back { flex-direction: column; gap: 4px; background: #fafaf9; }
+    .back .mark { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 900; color: #fff; background: var(--subject); }
+    .back .mark.p { background: #fff; color: var(--subject); border: 2px solid var(--subject); }
+    .back .small { font-size: .78rem; color: var(--hos-muted); font-weight: 700; }
+    .face { transform: rotateY(180deg); padding: 6px 8px; text-align: center; font-weight: 700; font-size: .86rem; line-height: 1.25; background: #fff; }
+    .cardBtn.matched { border-color: #16a34a; }
+    .cardBtn.matched .face { background: var(--hos-good-soft); color: var(--hos-good); }
+    .tips ul { margin: 0; padding-left: 18px; font-size: .9rem; line-height: 1.45; }
+    .tips li { margin: 0 0 7px; }
+    .tips p { font-size: .9rem; margin: 10px 0 0; }
+  </style>
 </head>
-<body>
+<body class="hos-app subject-deutsch">
 
 <header class="app-header">
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
     <div class="brand-title">
       <div class="badge-main is-deutsch">Deutsch</div>
-      <h1>Aktiv & Passiv Memory</h1>
+      <h1>Aktiv &amp; Passiv Memory</h1>
     </div>
   </div>
   <div class="header-actions">
@@ -277,116 +61,46 @@
   </div>
 </header>
 
-  <div class="wrap">
-    <!--
-    <div class="app-intro">
-      <img src="/chatisthisreal.png" onerror="this.onerror=null;this.src='/chatisthisreal.png';"
-           class="meme" alt="Chat is this real?">
-      <div class="title">
-        <div class="badge">🃏 Memory • Aktiv & Passiv • <b>HoS</b></div>
-        <h1>Aktiv ↔ Passiv Memory</h1>
-        <p>Finde jeweils das passende Paar: <b>Aktivsatz</b> und seine <b>Passiv-Umformung</b>.</p>
-
-        <div class="topbar">
-          <div class="controls">
-            <button class="btn ghost" id="homeBtn" title="Zur zentralen Startseite">← Startseite</button>
-
-            <div class="select" title="Schwierigkeit">
-              <span style="color:var(--muted);font-weight:800;font-size:12px">Level</span>
-              <select id="level">
-                <option value="easy">Einfach (8 Paare)</option>
-                <option value="mid" selected>Mittel (10 Paare)</option>
-                <option value="hard">Schwer (12 Paare)</option>
-              </select>
-            </div>
-
-            <button class="btn primary" id="newBtn">Neu mischen</button>
-            <button class="btn" id="peekBtn" title="Kurz alle Karten ansehen (2 Sekunden)">
-              👀 Peek
-            </button>
-          </div>
-
-          <div class="stats">
-            <span class="pill">⏱️ Zeit: <strong id="time">0:00</strong></span>
-            <span class="pill">🔁 Züge: <strong id="moves">0</strong></span>
-            <span class="pill">✅ Paare: <strong id="pairs">0</strong>/<strong id="pairsTotal">0</strong></span>
-          </div>
-        </div>
-
-        <div class="toast" id="toast"></div>
-      </div>
+<main class="hos-main">
+  <div class="hos-topbar">
+    <span class="hos-label">Paare:</span>
+    <div class="hos-seg" role="group" aria-label="Schwierigkeit" id="levelSeg">
+      <button type="button" data-level="easy">8</button>
+      <button type="button" data-level="mid">10</button>
+      <button type="button" data-level="hard">12</button>
     </div>
-    -->
-
-    <main>
-      <section class="panel memory-panel" aria-label="Memory">
-        <div class="hd">
-          <div>
-            <h2>Aktiv & Passiv Memory</h2>
-            <p class="intro">Finde jeweils das passende Paar: <b>Aktivsatz</b> und seine <b>Passiv-Umformung</b>.</p>
-            <p>Klicke 2 Karten → passt es, bleibt es offen. Sonst drehen sie sich wieder um.</p>
-          </div>
-          <div style="text-align:right;color:var(--muted);font-size:12px;font-weight:700">
-            Tastatur: <span class="kbd">N</span> neu • <span class="kbd">P</span> peek
-          </div>
-        </div>
-        <div class="bd">
-          <div class="topbar">
-            <div class="controls">
-              <button class="btn ghost" id="homeBtn" title="Zur zentralen Startseite">Startseite</button>
-
-              <div class="select" title="Schwierigkeit">
-                <span style="color:var(--muted);font-weight:800;font-size:12px">Level</span>
-                <select id="level">
-                  <option value="easy">Einfach (8 Paare)</option>
-                  <option value="mid" selected>Mittel (10 Paare)</option>
-                  <option value="hard">Schwer (12 Paare)</option>
-                </select>
-              </div>
-
-              <button class="btn primary" id="newBtn">Neu mischen</button>
-              <button class="btn" id="peekBtn" title="Kurz alle Karten ansehen (2 Sekunden)">Peek</button>
-            </div>
-
-            <div class="stats">
-              <span class="pill">Zeit: <strong id="time">0:00</strong></span>
-              <span class="pill">Zuege: <strong id="moves">0</strong></span>
-              <span class="pill">Paare: <strong id="pairs">0</strong>/<strong id="pairsTotal">0</strong></span>
-            </div>
-          </div>
-
-          <div class="toast" id="toast"></div>
-        </div>
-        <div class="grid" id="grid"></div>
-      </section>
-
-      <aside class="panel" aria-label="Hinweise">
-        <div class="hd">
-          <div>
-            <h2>Mini-Merkhilfe (Passiv)</h2>
-            <p>Damit du beim Umformen sicher bleibst.</p>
-          </div>
-        </div>
-        <div class="bd">
-          <div class="hint">
-            <ul>
-              <li><b>Aktiv</b>: Täter/Handelnder ist Subjekt. („Der Hund beißt den Mann.“)</li>
-              <li><b>Vorgangspassiv</b>: <b>werden</b> + Partizip II. („Der Mann <b>wird</b> gebissen.“)</li>
-              <li><b>Täter optional</b>: <b>von</b> + Dativ („… von dem Hund“).</li>
-              <li><b>Zeitformen</b> bleiben erhalten: Präsens → „wird …“; Präteritum → „wurde …“; Perfekt → „ist … worden“.</li>
-              <li>Objekt (Akk.) wird im Passiv oft zum <b>Subjekt</b>.</li>
-            </ul>
-            <hr style="border:none;border-top:1px solid var(--line);margin:14px 0">
-            <p style="margin:0"><b>Ziel:</b> Du erkennst schnell, ob eine Passivform <i>zeitlich</i> und <i>inhaltlich</i> passt.</p>
-          </div>
-        </div>
-      </aside>
-    </main>
-
-    <div class="footer">HoS • Lernportal • Memory Aktiv/Passiv</div>
+    <span class="hos-spacer"></span>
+    <span class="hos-pill">Gefunden: <b id="pairs">0</b>&nbsp;/&nbsp;<b id="pairsTotal">0</b></span>
+    <span class="hos-pill">Züge: <b id="moves">0</b></span>
+    <span class="hos-pill">Zeit: <b id="time">0:00</b></span>
   </div>
 
-  <script>
+  <div class="hos-stage">
+    <section class="hos-panel board" aria-label="Memory">
+      <div class="grid" id="grid"></div>
+    </section>
+    <aside class="hos-panel scroll tips" aria-label="Merkhilfe">
+      <h2 class="hos-panel-title">Merkhilfe Passiv</h2>
+      <ul>
+        <li><b>Aktiv</b>: Der Handelnde ist Subjekt. („Der Hund beißt den Mann.“)</li>
+        <li><b>Vorgangspassiv</b>: <b>werden</b> + Partizip II. („Der Mann <b>wird</b> gebissen.“)</li>
+        <li><b>Handelnder optional</b>: <b>von</b> + Dativ („… von dem Hund“).</li>
+        <li><b>Zeitform bleibt gleich</b>: Präsens → „wird …“, Präteritum → „wurde …“, Perfekt → „ist … worden“.</li>
+        <li>Das Akkusativ-Objekt wird im Passiv zum <b>Subjekt</b>.</li>
+      </ul>
+      <p class="hos-muted"><b>Ziel:</b> Du erkennst schnell, ob eine Passivform zeitlich und inhaltlich passt.</p>
+    </aside>
+  </div>
+
+  <div class="hos-bottombar">
+    <div class="hos-feedback" id="toast" aria-live="polite">Decke zwei Karten auf: einen Aktivsatz (A) und die passende Passivform (P).</div>
+    <span class="hos-muted">Tasten: <span class="hos-kbd">N</span> neu · <span class="hos-kbd">P</span> kurz ansehen</span>
+    <button class="hos-btn soft" id="peekBtn" type="button" title="Alle Karten kurz ansehen (P)">Kurz ansehen</button>
+    <button class="hos-btn primary" id="newBtn" type="button" title="Neu mischen (N)">Neu mischen</button>
+  </div>
+</main>
+
+<script>
     // ====== Daten: Aktiv/Passiv-Paare ======
     // Hinweis: Diese Paare sind bewusst "klassisch" und schulgeeignet.
     const PAIRS = [
@@ -407,227 +121,135 @@
       {a:"Die Ärztin untersucht den Patienten.", p:"Der Patient wird (von der Ärztin) untersucht."},
     ];
 
-    // ====== Spiel-State ======
-    const grid = document.getElementById('grid');
-    const movesEl = document.getElementById('moves');
-    const pairsEl = document.getElementById('pairs');
-    const pairsTotalEl = document.getElementById('pairsTotal');
-    const timeEl = document.getElementById('time');
-    const toast = document.getElementById('toast');
+const LEVELS = { easy: { count: 8, cols: 4 }, mid: { count: 10, cols: 5 }, hard: { count: 12, cols: 6 } };
+const $ = (id) => document.getElementById(id);
+const grid = $("grid");
 
-    const levelSel = document.getElementById('level');
-    const newBtn = document.getElementById('newBtn');
-    const peekBtn = document.getElementById('peekBtn');
-    const homeBtn = document.getElementById('homeBtn');
+let level = localStorage.getItem("hosMemoryPassivLevel") || "mid";
+if (!LEVELS[level]) level = "mid";
+let deck = [], open = [], matched = new Set();
+let moves = 0, pairs = 0, seconds = 0, started = false, lock = false, timer = null;
 
-    let deck = [];
-    let open = [];
-    let matched = new Set();
-    let moves = 0;
-    let pairs = 0;
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+const fmtTime = (s) => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+function escapeHTML(s) {
+  return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function setFeedback(msg, kind) {
+  const el = $("toast");
+  el.className = "hos-feedback" + (kind ? " " + kind : "");
+  el.textContent = msg;
+}
 
-    let timer = null;
-    let seconds = 0;
-    let started = false;
-    let lock = false;
+function startTimer() {
+  if (started) return;
+  started = true;
+  timer = setInterval(() => { seconds++; $("time").textContent = fmtTime(seconds); }, 1000);
+}
+function stopTimer() { clearInterval(timer); timer = null; }
 
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]] = [arr[j],arr[i]];
-      }
-      return arr;
-    }
+function buildDeck() {
+  const cfg = LEVELS[level];
+  document.querySelectorAll("#levelSeg button").forEach(b => b.classList.toggle("active", b.dataset.level === level));
+  const cards = [];
+  shuffle([...PAIRS]).slice(0, cfg.count).forEach((pair, idx) => {
+    cards.push({ id: "pair" + idx, type: "A", text: pair.a });
+    cards.push({ id: "pair" + idx, type: "P", text: pair.p });
+  });
+  deck = shuffle(cards);
+  moves = 0; pairs = 0; seconds = 0; started = false; lock = false;
+  open = []; matched = new Set();
+  stopTimer();
+  $("moves").textContent = "0";
+  $("pairs").textContent = "0";
+  $("pairsTotal").textContent = cfg.count;
+  $("time").textContent = "0:00";
+  grid.style.setProperty("--cols", cfg.cols);
+  grid.style.setProperty("--rows", Math.ceil(deck.length / cfg.cols));
+  render();
+  setFeedback("Decke zwei Karten auf: einen Aktivsatz (A) und die passende Passivform (P).", "");
+}
 
-    function fmtTime(s){
-      const m = Math.floor(s/60);
-      const r = s%60;
-      return `${m}:${String(r).padStart(2,'0')}`;
-    }
+function render() {
+  grid.innerHTML = deck.map((card, i) =>
+    '<button type="button" class="cardBtn" data-idx="' + i + '" aria-label="Karte ' + (i + 1) + ' (' + (card.type === "A" ? "Aktiv" : "Passiv") + ')">' +
+      '<span class="flip">' +
+        '<span class="back"><span class="mark' + (card.type === "P" ? " p" : "") + '">' + card.type + '</span><span class="small">' + (card.type === "A" ? "Aktiv" : "Passiv") + '</span></span>' +
+        '<span class="face">' + escapeHTML(card.text) + '</span>' +
+      '</span></button>'
+  ).join("");
+  grid.querySelectorAll(".cardBtn").forEach(btn => btn.addEventListener("click", () => onPick(parseInt(btn.dataset.idx, 10))));
+}
 
-    function showToast(msg, kind=""){
-      toast.className = "toast show" + (kind ? " " + kind : "");
-      toast.textContent = msg;
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=>toast.className="toast", 1800);
-    }
+function updateOpenClasses() {
+  grid.querySelectorAll(".cardBtn").forEach((btn, i) => {
+    btn.classList.toggle("isOpen", open.includes(i) || matched.has(i));
+    btn.classList.toggle("matched", matched.has(i));
+    btn.setAttribute("aria-disabled", matched.has(i) ? "true" : "false");
+  });
+}
 
-    function startTimer(){
-      if(started) return;
-      started = true;
-      timer = setInterval(()=>{
-        seconds++;
-        timeEl.textContent = fmtTime(seconds);
-      }, 1000);
-    }
+function onPick(idx) {
+  if (lock || matched.has(idx) || open.includes(idx)) return;
+  startTimer();
+  open.push(idx);
+  updateOpenClasses();
+  if (open.length < 2) return;
 
-    function stopTimer(){
-      clearInterval(timer);
-      timer = null;
-    }
-
-    function resetStats(totalPairs){
-      moves = 0; pairs = 0;
-      seconds = 0; started = false; lock = false;
-      open = []; matched = new Set();
-      movesEl.textContent = moves;
-      pairsEl.textContent = pairs;
-      pairsTotalEl.textContent = totalPairs;
-      timeEl.textContent = "0:00";
+  moves++;
+  $("moves").textContent = moves;
+  const [i1, i2] = open;
+  const c1 = deck[i1], c2 = deck[i2];
+  if (c1.id === c2.id && c1.type !== c2.type) {
+    matched.add(i1); matched.add(i2);
+    pairs++;
+    $("pairs").textContent = pairs;
+    open = [];
+    updateOpenClasses();
+    if (pairs === LEVELS[level].count) {
       stopTimer();
-      toast.className = "toast";
+      setFeedback("Fertig! Alle Paare gefunden: " + moves + " Züge in " + fmtTime(seconds) + ". Schaffst du es mit weniger Zügen?", "good");
+    } else {
+      setFeedback("Treffer! Das ist die passende Passivform.", "good");
     }
+  } else {
+    const sameType = c1.type === c2.type;
+    setFeedback(sameType ? "Zwei " + (c1.type === "A" ? "Aktivsätze" : "Passivsätze") + " passen nie zusammen. Suche ein A und ein P." : "Passt nicht. Vergleiche Inhalt und Zeitform.", "bad");
+    lock = true;
+    setTimeout(() => { open = []; lock = false; updateOpenClasses(); }, 1100);
+  }
+}
 
-    function buildDeck(){
-      const level = levelSel.value;
-      let count = 10;
-      if(level === "easy") count = 8;
-      if(level === "hard") count = 12;
+function peek() {
+  if (lock) return;
+  const before = open.slice();
+  open = deck.map((_, i) => i);
+  updateOpenClasses();
+  setFeedback("Kurz ansehen …", "");
+  lock = true;
+  setTimeout(() => { open = before; lock = false; updateOpenClasses(); setFeedback("Und jetzt: Welche Karten gehören zusammen?", ""); }, 1500);
+}
 
-      const selected = shuffle([...PAIRS]).slice(0, count);
+$("newBtn").addEventListener("click", buildDeck);
+$("peekBtn").addEventListener("click", peek);
+document.querySelectorAll("#levelSeg button").forEach(b => b.addEventListener("click", () => {
+  level = b.dataset.level;
+  localStorage.setItem("hosMemoryPassivLevel", level);
+  buildDeck();
+}));
+document.addEventListener("keydown", (e) => {
+  const k = e.key.toLowerCase();
+  if (k === "n") buildDeck();
+  if (k === "p") peek();
+});
 
-      // Jede Paar-ID erzeugt 2 Karten: Aktiv & Passiv
-      const cards = [];
-      selected.forEach((pair, idx)=>{
-        const id = "pair" + idx;
-        cards.push({id, type:"A", text: pair.a});
-        cards.push({id, type:"P", text: pair.p});
-      });
-
-      deck = shuffle(cards);
-      resetStats(count);
-      render();
-      adaptGrid(count);
-      showToast("Neu gestartet. Finde die Paare!", "");
-    }
-
-    function adaptGrid(pairCount){
-      // 8 Paare = 16 Karten -> 4 Spalten ok
-      // 10 Paare = 20 Karten -> 4 Spalten ok
-      // 12 Paare = 24 Karten -> 4 Spalten ok (mobil 3)
-      // (könnte man dynamisch feiner machen, aber das ist stabil)
-    }
-
-    function cardHTML(card, index){
-      const isOpen = open.includes(index);
-      const isMatched = matched.has(index);
-      const ariaDisabled = isMatched ? "true" : "false";
-
-      return `
-        <button class="cardBtn ${isOpen ? "isOpen":""} ${isMatched ? "matched":""}"
-                data-idx="${index}" aria-disabled="${ariaDisabled}" aria-label="Memory Karte">
-          <div class="flip" style="width:100%;height:100%;position:relative;">
-            <div class="back">
-              <div class="mark">${card.type}</div>
-              <div class="small">${card.type === "A" ? "Aktiv" : "Passiv"}</div>
-            </div>
-            <div class="face">
-              <div>${escapeHTML(card.text)}</div>
-            </div>
-          </div>
-        </button>
-      `;
-    }
-
-    function escapeHTML(s){
-      return s.replace(/[&<>"']/g, c => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[c]));
-    }
-
-    function render(){
-      grid.innerHTML = deck.map((c,i)=>cardHTML(c,i)).join("");
-      grid.querySelectorAll(".cardBtn").forEach(btn=>{
-        btn.addEventListener("click", ()=>onPick(parseInt(btn.dataset.idx,10)));
-      });
-    }
-
-    function onPick(idx){
-      if(lock) return;
-      if(matched.has(idx)) return;
-      if(open.includes(idx)) return;
-
-      startTimer();
-      open.push(idx);
-      updateOpenClasses();
-
-      if(open.length === 2){
-        moves++;
-        movesEl.textContent = moves;
-
-        const [i1,i2] = open;
-        const c1 = deck[i1];
-        const c2 = deck[i2];
-
-        const isPair = (c1.id === c2.id) && (c1.type !== c2.type);
-
-        if(isPair){
-          matched.add(i1);
-          matched.add(i2);
-          pairs++;
-          pairsEl.textContent = pairs;
-
-          showToast("✅ Treffer!", "good");
-          open = [];
-          updateOpenClasses();
-
-          if(pairs === parseInt(pairsTotalEl.textContent,10)){
-            stopTimer();
-            showToast(`🎉 Fertig! Zeit: ${fmtTime(seconds)} • Züge: ${moves}`, "good");
-          }
-        } else {
-          showToast("❌ Passt nicht – nochmal!", "bad");
-          lock = true;
-          setTimeout(()=>{
-            open = [];
-            lock = false;
-            updateOpenClasses();
-          }, 700);
-        }
-      }
-    }
-
-    function updateOpenClasses(){
-      grid.querySelectorAll(".cardBtn").forEach((btn, i)=>{
-        btn.classList.toggle("isOpen", open.includes(i) || matched.has(i));
-        btn.classList.toggle("matched", matched.has(i));
-        btn.setAttribute("aria-disabled", matched.has(i) ? "true" : "false");
-      });
-    }
-
-    function peek(){
-      if(lock) return;
-      const all = deck.map((_,i)=>i);
-      open = [...new Set([...open, ...all])];
-      updateOpenClasses();
-      showToast("👀 Kurz ansehen…", "");
-      lock = true;
-      setTimeout(()=>{
-        open = [];
-        lock = false;
-        updateOpenClasses();
-      }, 1500);
-    }
-
-    // ====== Events ======
-    newBtn.addEventListener("click", buildDeck);
-    peekBtn.addEventListener("click", peek);
-    levelSel.addEventListener("change", buildDeck);
-
-    homeBtn.addEventListener("click", ()=>{
-      // Eine Ebene hoch zur zentralen Startseite (typisch im Repo-Setup).
-      // Wenn deine zentrale Startseite woanders liegt, passe den Pfad an.
-      window.location.href = "../index.html";
-    });
-
-    document.addEventListener("keydown", (e)=>{
-      const k = e.key.toLowerCase();
-      if(k === "n") buildDeck();
-      if(k === "p") peek();
-    });
-
-    // ====== Start ======
-    buildDeck();
-  </script>
+buildDeck();
+</script>
 </body>
 </html>

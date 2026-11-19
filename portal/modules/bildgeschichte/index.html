@@ -6,17 +6,18 @@
   <title>Bildgeschichte</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
   <style>
-    :root {
-      --subject-color: #c62828;
-      --bg: #f6f3f3;
-      --card: #ffffff;
-      --line: #e5dede;
-      --text: #1f2937;
-      --muted: #667085;
-      --accent: #c62828;
-      --accent-soft: #fdecec;
-      --accent-strong: #9f1d1d;
+    /* Werte kommen aus dem gemeinsamen Layout (css/app-layout.css) */
+    .hos-app {
+      --bg: var(--hos-bg);
+      --card: var(--hos-card);
+      --line: var(--hos-line);
+      --text: var(--hos-ink);
+      --muted: var(--hos-muted);
+      --accent: var(--subject);
+      --accent-soft: var(--subject-soft);
+      --accent-strong: var(--subject-strong);
       --good: #166534;
       --good-soft: #dcfce7;
       --warn: #92400e;
@@ -28,7 +29,7 @@
     html, body { margin: 0; padding: 0; height: 100%; }
 
     body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
       display: flex;
@@ -248,7 +249,7 @@
     .scene-row .q-text { font-size: .84rem; }
 
     .editor { display: flex; flex-direction: column; gap: 6px; min-height: 0; }
-    .title-input { font-weight: 800; font-size: 1.05rem; width: 100%; }
+    .hos-app .title-input { font-weight: 800; font-size: 1.05rem; width: 100%; }
     textarea#storyText {
       flex: 1;
       min-height: 120px;
@@ -362,7 +363,7 @@
     }
   </style>
 </head>
-<body>
+<body class="hos-app subject-deutsch">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
