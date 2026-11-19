@@ -190,8 +190,10 @@
   T.write = (def, spec, rng) => {
     const x = pick(def, Object.assign({}, spec, { n: 1 }), rng)[0];
     const check = spec.check ? '<div class="checklist"><b>Checkliste:</b> ' + spec.check.map(c => '☐ ' + esc(c)).join('&nbsp;&nbsp; ') + '</div>' : '';
+    const plan = spec.plan ? table(['Teil', 'Stichwörter'], spec.plan.map(r => ['<b>' + esc(r[0]) + '</b><br><span class="hint">' + esc(r[1]) + '</span>', '']), 'plan') : '';
+    const note = spec.note ? '<div class="item"><b>' + esc(spec.note) + '</b></div>' : '';
     return {
-      body: '<div class="prompt">' + mark(x.q) + '</div>' + check + lines(spec.lines || 10),
+      body: '<div class="prompt">' + mark(x.q) + '</div>' + check + plan + note + (spec.lines === 0 ? '' : lines(spec.lines || 10)),
       sol: '<div class="prompt">' + mark(x.q) + '</div>' +
         '<div class="item"><b>Darauf kommt es an:</b></div><ul class="solist">' +
         x.a.concat(spec.check || []).map(c => '<li>' + sol(esc(c)) + '</li>').join('') + '</ul>'

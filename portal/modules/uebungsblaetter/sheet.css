@@ -83,3 +83,9 @@
 .solist { margin: 1mm 0 0 5mm; padding: 0; }
 .solist li { margin: 0.6mm 0; }
 .sol.comma { font-style: normal; font-weight: 900; font-size: 1.25em; }
+.ubt.plan td { height: 17mm; vertical-align: top; }
+.ubt.plan td:first-child { width: 42mm; }
+.story { font-size: 10pt; line-height: 1.45; border: 0.3mm solid #bbb; border-radius: 2mm; padding: 2mm 3.5mm; margin: 1mm 0 2mm; text-align: justify; }
+.story h4 { margin: 0 0 1mm; font-size: 11pt; }
+.ubt.plan.sm td { height: 10mm; }
+.ubt.plan.sm td:first-child { width: 12mm; }
