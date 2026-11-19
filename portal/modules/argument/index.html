@@ -128,30 +128,7 @@
     .tile.locked{opacity:.85;cursor:default}
 
     .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--accent);
-      font-weight:900;
-      cursor:pointer;
-      background:var(--accent);
-      color:white;
-    }
-    button.secondary{
-      background:var(--surface);
-      color:var(--ink);
-      border:1px solid var(--line);
-    }
-    button:active{transform:translateY(1px)}
 
-    .msg{
-      margin-top:12px;padding:10px 12px;border-radius:14px;
-      font-size:13px;line-height:1.4;border:1px solid var(--line);
-      display:none;
-    }
-    .msg.ok{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35);display:block}
-    .msg.bad{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);display:block}
-    .msg.warn{background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.35);display:block}
 
     .hint{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.45}
     /* HoS Hero-Header (wie Speedrunde) */
@@ -218,10 +195,19 @@
       display:none;
     }
 
-</style>
+
+    /* Gemeinsames Layout */
+    .hos-stage { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
+    .hos-panel h2 { font-size: 1.15rem; }
+    .dropzone { margin-top: 8px; min-height: 56px; padding: 10px 12px; }
+    .bank { margin-top: 10px; }
+    .tile { box-shadow: none; }
+    .dropzone .tile { width: 100%; }
+
+  </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-deutsch">
+<body class="hos-app subject-deutsch">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -234,68 +220,47 @@
       <a href="/index.html" class="header-link">Startseite</a>
     </div>
   </header>
-  <div class="wrap">
-    <div class="hero app-intro">
-      <div class="hero-left">
-        <div class="minirow">
-          <img src="/chatisthisreal.png" alt="HoS" class="mini-logo" onerror="this.style.display='none'"> 
-          <span class="badge badge-red">DEUTSCH</span>
+    <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Aufgabe <b id="idx">1</b> von <b id="total">1</b></span>
+      <span class="hos-pill">Regel: <b>1 Störbaustein bleibt übrig</b></span>
+      <span class="hos-spacer"></span>
+      <span class="hos-muted">Behauptung → Begründung → Beispiel · Tasten: <span class="hos-kbd">C</span> prüfen · <span class="hos-kbd">R</span> neu · <span class="hos-kbd">N</span> nächste</span>
+    </div>
+
+    <div class="hos-stage">
+      <section class="hos-panel scroll">
+        <h2 id="title" style="margin:0 0 4px 0;">–</h2>
+        <p class="sub" id="prompt">–</p>
+        <div class="dropzone" data-slot="0">
+          <div class="slotlabel">Behauptung</div>
+          <div class="slotcontent" id="s0"></div>
         </div>
-        <h1 class="hero-title">Argumente zusammensetzen <span class="muted">(Drag &amp; Drop)</span></h1>
-        <p class="hero-sub">Behauptung → Begründung → Beispiel/Erklärung • <b>Immer 1 Störbaustein</b> bleibt übrig.</p>
-      </div>
-      <img src="/chatisthisreal.png" alt="" class="hero-sticker" onerror="this.style.display='none'"> 
+        <div class="dropzone" data-slot="1">
+          <div class="slotlabel">Begründung</div>
+          <div class="slotcontent" id="s1"></div>
+        </div>
+        <div class="dropzone" data-slot="2">
+          <div class="slotlabel">Beispiel / Erklärung</div>
+          <div class="slotcontent" id="s2"></div>
+        </div>
+        <div class="hint">Tipp: Du kannst einen Baustein auch wieder zurück in die Bank ziehen.</div>
+      </section>
+
+      <section class="hos-panel scroll">
+        <h2 style="margin:0 0 4px 0;">Bausteine</h2>
+        <p class="sub">Ziehe 3 passende Bausteine in die Felder. Der Störbaustein bleibt in der Bank.</p>
+        <div class="bank" id="bank"></div>
+      </section>
     </div>
 
-    <div class="app">
-      <div class="grid">
-
-  <section class="card">
-    <h2 id="title" style="margin:0 0 6px 0;">–</h2>
-    <p class="sub" id="prompt">–</p>
-
-    <div class="metaRow">
-      <span class="pill">Aufgabe: <b id="idx">1</b>/<b id="total">1</b></span>
-      <span class="pill">Tastatur: <span class="kbd">C</span> prüfen • <span class="kbd">R</span> reset • <span class="kbd">N</span> nächste</span>
-      <span class="pill">Regel: <b>1 Störbaustein bleibt übrig</b></span>
+    <div class="hos-bottombar">
+      <button id="reset" class="hos-btn soft" type="button">↺ Neu</button>
+      <div id="msg" class="msg warn"></div>
+      <button id="check" class="hos-btn primary" type="button">Prüfen</button>
+      <button id="next" class="hos-btn" type="button">Nächste Aufgabe →</button>
     </div>
-
-    <div class="dropzone" data-slot="0">
-      <div class="slotlabel">Behauptung</div>
-      <div class="slotcontent" id="s0"></div>
-    </div>
-    <div class="dropzone" data-slot="1">
-      <div class="slotlabel">Begründung</div>
-      <div class="slotcontent" id="s1"></div>
-    </div>
-    <div class="dropzone" data-slot="2">
-      <div class="slotlabel">Beispiel / Erklärung</div>
-      <div class="slotcontent" id="s2"></div>
-    </div>
-
-    <div class="controls">
-      <button id="check">Prüfen</button>
-      <button id="reset" class="secondary">Reset</button>
-      <button id="next" class="secondary">Nächste Aufgabe</button>
-    </div>
-
-    <div id="msg" class="msg warn"></div>
-
-    <div class="hint">
-      Tipp: Du kannst einen Baustein auch wieder zurück in die Bank ziehen.
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 style="margin:0 0 6px 0;">Bausteine</h2>
-    <p class="sub">Ziehe 3 passende Bausteine in die Felder. Der Störbaustein bleibt in der Bank.</p>
-    <div class="bank" id="bank"></div>
-  </section>
-
-
-      </div>
-    </div>
-  </div>
+  </main>
 
 <script>
   // 12 Aufgaben (im gewünschten Bereich 10–15), jede mit 3 korrekten Bausteinen + 1 Störbaustein

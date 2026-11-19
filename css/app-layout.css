@@ -65,7 +65,7 @@ body.hos-app {
 }
 .hos-app *, .hos-app *::before, .hos-app *::after { box-sizing: border-box; }
 .hos-app [hidden] { display: none !important; }
-.hos-app:not(.hos-legacy) button, .hos-app:not(.hos-legacy) select, .hos-app:not(.hos-legacy) input, .hos-app:not(.hos-legacy) textarea { font: inherit; }
+:where(.hos-app:not(.hos-legacy)) :where(button, select, input, textarea) { font: inherit; }
 
 /* Kopf: kompakt, Fachfarbe im Badge */
 .hos-app .app-header { position: static; padding: 6px 16px; gap: 10px; box-shadow: none; }
@@ -181,6 +181,24 @@ body.hos-app {
   font-size: .93rem;
 }
 
+/* Meldungsfelder älterer Apps (.msg / .feedback-Text), wenn sie in der Fußleiste stehen */
+.hos-bottombar .msg {
+  display: block !important;
+  flex: 1 1 260px;
+  min-height: 2.3em;
+  margin: 0;
+  border-radius: 12px;
+  padding: 7px 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  background: #fafaf9;
+  border: 1px solid var(--hos-line);
+  color: var(--hos-ink);
+}
+.hos-bottombar .msg.ok, .hos-bottombar .msg.good { background: var(--hos-good-soft); border-color: var(--hos-good-line); color: var(--hos-good); }
+.hos-bottombar .msg.warn { background: var(--hos-warn-soft); border-color: var(--hos-warn-line); color: var(--hos-warn); }
+.hos-bottombar .msg.bad, .hos-bottombar .msg.error { background: var(--hos-bad-soft); border-color: var(--hos-bad-line); color: var(--hos-bad); }
+
 /* ---------- Kleine Bausteine ---------- */
 .hos-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; background: #fafaf9; border: 1px solid var(--hos-line); font-size: .88rem; font-weight: 700; color: var(--hos-muted); }
 .hos-pill b { color: var(--hos-ink); }
@@ -195,14 +213,14 @@ body.hos-app {
 
 .hos-kbd { font-family: ui-monospace, monospace; font-size: .75rem; padding: 1px 5px; border-radius: 5px; background: #f1f0ef; border: 1px solid var(--hos-line); color: var(--hos-muted); }
 
-.hos-app:not(.hos-legacy) input[type="text"], .hos-app:not(.hos-legacy) select, .hos-app:not(.hos-legacy) textarea {
+:where(.hos-app:not(.hos-legacy)) :where(input[type="text"], select, textarea) {
   border-radius: 10px;
   border: 1px solid var(--hos-line);
   padding: 7px 10px;
   background: #fff;
   color: var(--hos-ink);
 }
-.hos-app:not(.hos-legacy) input:focus, .hos-app:not(.hos-legacy) select:focus, .hos-app:not(.hos-legacy) textarea:focus { outline: 3px solid var(--subject-line); border-color: var(--subject); }
+:where(.hos-app:not(.hos-legacy)) :where(input, select, textarea):focus { outline: 3px solid var(--subject-line); border-color: var(--subject); }
 
 /* ---------- Übergang für ältere Apps ----------
    <body class="hos-app hos-legacy subject-…">
