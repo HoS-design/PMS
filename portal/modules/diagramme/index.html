@@ -47,7 +47,7 @@
     }
 
     /* --- Header --- */
-    header {
+    .wrap > header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -274,12 +274,25 @@
     .c-3 { fill: #f59e0b; stroke: #f59e0b; }
     .c-4 { fill: #ec4899; stroke: #ec4899; }
     
+  
+    /* Gemeinsames Layout: alles auf einem Bildschirm */
+    .wrap.hos-fill { min-height: 0; gap: 8px; overflow: hidden; }
+    .wrap > header { padding: 6px 10px; margin: 0; border: 1px solid var(--hos-line); border-radius: var(--hos-radius); background: #fff; align-items: center; }
+    .wrap > header .brand h1 { font-size: 1.05rem; margin: 0; }
+    .wrap > header .brand p { margin: 0; font-size: .85rem; }
+    .grid { flex: 1; min-height: 0; }
+    .card { min-height: 0; box-shadow: none; }
+    .card-head { padding: 10px 14px; }
+    .card-body { padding: 12px 14px; gap: 10px; min-height: 0; overflow: auto; }
+    .viz-container { height: auto; flex: 1; min-height: 200px; }
+    @media (max-width: 1000px) { .wrap.hos-fill { overflow: visible; } .viz-container { height: 360px; flex: none; } }
+
   </style>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
   <header class="app-header">
     <div class="brand-row">
       <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
@@ -293,7 +306,7 @@
     </div>
   </header>
 
-<div class="wrap">
+<div class="wrap hos-fill">
   <header>
     <div class="brand">
       <h1>📊 Diagramme Interpretieren</h1>

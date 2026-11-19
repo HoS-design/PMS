@@ -181,6 +181,18 @@ body.hos-app {
   font-size: .93rem;
 }
 
+/* Hauptbereich älterer Apps auf die Bildschirmhöhe begrenzen:
+   <main class="… hos-fill"> füllt den Platz unter dem Kopf, scrollt bei Bedarf innen. */
+.hos-app .hos-fill {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  width: min(1440px, 100%);
+  max-width: none;
+  margin: 0 auto;
+  padding: 8px 14px 10px;
+}
+
 /* Meldungsfelder älterer Apps (.msg / .feedback-Text), wenn sie in der Fußleiste stehen */
 .hos-bottombar .msg {
   display: block !important;
@@ -231,7 +243,9 @@ body.hos-app.hos-legacy {
   height: auto;
   min-height: 100vh;
   overflow: auto;
-  /* Akzentfarben der alten Apps auf die Fachfarbe umlenken */
+}
+/* Akzentfarben der alten Apps auf die Fachfarbe umlenken (gilt auch nach dem Umstellen) */
+body.hos-app {
   --accent: var(--subject);
   --accent-soft: var(--subject-soft);
   --accent-light: var(--subject-soft);
