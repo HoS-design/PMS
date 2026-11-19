@@ -129,3 +129,7 @@ svg.mfig { display: block; }
 .kfeld.sol-box { border-style: solid; border-color: #c9c9c9; }
 .kfeld.sol-box svg { display: block; position: absolute; top: 0; left: 0; }
 svg.mfig.koord, .mi svg.mfig { max-width: 100%; }
+.kfeld > svg { display: block; }
+.mviews { display: flex; gap: 4mm; margin: 1mm 0; }
+.mview { display: inline-flex; flex-direction: column; align-items: center; }
+.mview small { font-size: 8pt; color: #555; }

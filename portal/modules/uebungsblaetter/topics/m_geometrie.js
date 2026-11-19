@@ -56,6 +56,9 @@
   const solBox = (h, svgInner, W) => '<div class="kfeld sol-box" style="height:' + h + 'mm">' + svgMM(W || 180, h, svgInner) + '</div>';
   const W0 = 180;
 
+  // Zeichenwerkzeuge für andere Geometrie-Themen
+  UB.G = { sub, add, mul, dot, len, unit, dist, angAt, footOn, circum, n2, svgMM, T, L, C, PL, sdir, spt, ARC, rightMark, angleMark, vlabel, slabel, frame, kfeld, solBox, DEG, F1 };
+
   // ================================================================ Dreiecke
   function rawTriangle(kind, rng) {
     const A = [0, 0];

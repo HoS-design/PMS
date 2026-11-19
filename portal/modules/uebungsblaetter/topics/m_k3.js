@@ -37,7 +37,7 @@
     }
   });
   UB.simple({
-    id: 'm-negative', fach: 'mathe', title: 'Ganze Zahlen', area: 'zahlen', klassen: [3], img: 'MiniHoS_Gesicht_Ueberrascht',
+    id: 'm-negative', fach: 'mathe', title: 'Ganze Zahlen', area: 'zahlen', klassen: [2, 3], img: 'MiniHoS_Gesicht_Ueberrascht',
     merk: '<b>Ganze Zahlen</b>: …, −3, −2, −1, 0, 1, 2, 3, … Auf der Zahlengeraden ist die Zahl weiter rechts größer: −2 > −5. <b>Betrag</b>: Abstand von 0, |−5| = 5. <b>Addieren</b>: Plus einer negativen Zahl ist wie Minus: 7 + (−3) = 4. <b>Subtrahieren</b>: Minus einer negativen Zahl ist wie Plus: 7 − (−3) = 10. <b>Multiplizieren/Dividieren</b>: gleiche Vorzeichen → +, verschiedene Vorzeichen → −.',
     pools: {},
     levels: {
@@ -268,23 +268,26 @@
       if (k === 'prisma') { const a = R(rng, 3, 12), b = R(rng, 3, 12), h = R(rng, 4, 20); return { q: 'Prisma mit rechtwinkelig-dreieckiger Grundfläche (Katheten ' + a + ' cm und ' + b + ' cm), Höhe ' + h + ' cm: V = {?}', a: F(a * b / 2 * h) + ' cm³' }; }
       if (k === 'zylinder') { const r = R(rng, 2, 12), h = R(rng, 3, 25); return { q: 'Zylinder r = ' + r + ' cm, h = ' + h + ' cm: V ≈ {?}, O ≈ {?}', a: [F2(r * r * PI * h) + ' cm³', F2(2 * r * r * PI + 2 * r * PI * h) + ' cm²'] }; }
       if (k === 'pyramide') { const a = R(rng, 3, 15), h = R(rng, 3, 20); return { q: 'Quadratische Pyramide a = ' + a + ' cm, h = ' + h + ' cm: V ≈ {?}', a: F2(a * a * h / 3) + ' cm³' }; }
+      if (k === 'kugel') { const r = R(rng, 1, 12); return { q: 'Kugel r = ' + r + ' cm: V ≈ {?}, O ≈ {?}', a: [F2(4 / 3 * r * r * r * PI) + ' cm³', F2(4 * r * r * PI) + ' cm²'] }; }
+      if (k === 'kegelO') { const r = R(rng, 2, 10), h = R(rng, 3, 20), s = Math.sqrt(r * r + h * h); return { q: 'Kegel r = ' + r + ' cm, h = ' + h + ' cm: Mantellinie s ≈ {?}, O ≈ {?}', a: [F2(s) + ' cm', F2(r * r * PI + r * PI * round(s, 2)) + ' cm²'] }; }
       const r = R(rng, 2, 10), h = R(rng, 3, 20); return { q: 'Kegel r = ' + r + ' cm, h = ' + h + ' cm: V ≈ {?}', a: F2(r * r * PI * h / 3) + ' cm³' };
     }
   });
   const TX_KO = [
     (r) => { const d = R(r, 6, 12), h = R(r, 10, 20); const V = (d / 2) ** 2 * PI * h; return { q: 'Eine zylinderförmige Dose hat einen Durchmesser von ' + d + ' cm und ist ' + h + ' cm hoch. Wie viel Liter passen hinein?', a: 'V = ' + F(d / 2) + '² · 3,14 · ' + h + ' ≈ ' + F2(V) + ' cm³ ≈ ' + F2(V / 1000) + ' l' }; },
-    (r) => { const a = R(r, 20, 60), h = R(r, 15, 40); return { q: 'Ein Zelt hat die Form einer quadratischen Pyramide (Grundkante ' + a + ' dm, Höhe ' + h + ' dm). Wie groß ist das Volumen in m³?', a: 'V = ' + a + '² · ' + h + ' : 3 = ' + F2(a * a * h / 3) + ' dm³ ≈ ' + F2(a * a * h / 3000) + ' m³' }; },
+    (r) => { const d = R(r, 2, 6), h = R(r, 5, 15) / 10; return { q: 'Ein kegelförmiger Sandhaufen hat einen Durchmesser von ' + d + ' m und ist ' + F(h) + ' m hoch. Wie viel m³ Sand sind es?', a: 'V = ' + F(d / 2) + '² · 3,14 · ' + F(h) + ' : 3 ≈ ' + F2((d / 2) ** 2 * PI * h / 3) + ' m³' }; },
+    (r) => { const d = r.pick([22, 24, 6, 4]); const rr = d / 2; return { q: 'Ein kugelförmiger Ball hat einen Durchmesser von ' + d + ' cm. Wie viel Luft (in Liter) ist darin, wie groß ist seine Oberfläche?', a: 'V = 4/3 · ' + F(rr) + '³ · 3,14 ≈ ' + F2(4 / 3 * rr * rr * rr * PI) + ' cm³ ≈ ' + F2(4 / 3 * rr * rr * rr * PI / 1000) + ' l; O = 4 · ' + F(rr) + '² · 3,14 ≈ ' + F2(4 * rr * rr * PI) + ' cm²' }; },
     (r) => { const rr = R(r, 2, 5), h = R(r, 8, 15); return { q: 'Eine Eistüte ist kegelförmig (r = ' + rr + ' cm, h = ' + h + ' cm). Wie viel cm³ Eis passen hinein (ohne Haube)?', a: 'V = ' + rr + '² · 3,14 · ' + h + ' : 3 ≈ ' + F2(rr * rr * PI * h / 3) + ' cm³' }; }
   ];
   const textKo = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Formel, die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_KO)(rng) });
   UB.simple({
-    id: 'm-koerper2', fach: 'mathe', title: 'Prisma, Zylinder, Pyramide, Kegel', area: 'geometrie', klassen: [4], img: 'MiniHoS_Forschen_Lupe',
-    merk: '<b>Prisma</b> und <b>Zylinder</b>: V = G · h (Grundfläche mal Höhe). Zylinder: V = r<sup>2</sup> · π · h, O = 2 · r<sup>2</sup> · π + 2 · r · π · h. <b>Pyramide</b> und <b>Kegel</b>: V = G · h : 3. Kegel: V = r<sup>2</sup> · π · h : 3. 1 dm³ = 1 l.',
+    id: 'm-koerper2', fach: 'mathe', title: 'Zylinder, Kegel und Kugel', area: 'geometrie', klassen: [4], img: 'MiniHoS_Forschen_Lupe',
+    merk: '<b>Drehzylinder</b>: V = r<sup>2</sup> · π · h, O = 2 · r<sup>2</sup> · π + 2 · r · π · h. <b>Drehkegel</b>: V = r<sup>2</sup> · π · h : 3; Mantellinie s = √(r<sup>2</sup> + h<sup>2</sup>); O = r<sup>2</sup> · π + r · π · s. <b>Kugel</b>: V = 4/3 · r<sup>3</sup> · π, O = 4 · r<sup>2</sup> · π. Zylinder und Kegel mit gleicher Grundfläche und Höhe: Der Kegel hat ein Drittel des Volumens. 1 dm³ = 1 l.',
     pools: {},
     levels: {
-      1: { ichkann: ['Du kannst das Volumen von Prisma und Zylinder berechnen.'], tasks: [koerper(6, ['prisma', 'zylinder'])] },
-      2: { ichkann: ['Du kannst Volumen von Pyramide und Kegel berechnen.', 'Du kannst die Oberfläche eines Zylinders berechnen.'], tasks: [koerper(6, ['pyramide', 'kegel', 'zylinder'])] },
-      3: { ichkann: ['Du kannst Sachaufgaben zu Körpern lösen.'], tasks: [textKo(3), koerper(3, ['zylinder', 'kegel', 'pyramide'])] }
+      1: { ichkann: ['Du berechnest Volumen und Oberfläche von Zylindern.'], tasks: [koerper(6, ['zylinder'])] },
+      2: { ichkann: ['Du berechnest Volumen und Oberfläche von Kegel und Kugel.'], tasks: [koerper(6, ['kegel', 'kugel', 'kegelO'])] },
+      3: { ichkann: ['Du löst Sachaufgaben zu Zylinder, Kegel und Kugel.'], tasks: [textKo(3), koerper(3, ['zylinder', 'kugel', 'kegelO'])] }
     }
   });
 })();
