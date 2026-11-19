@@ -192,7 +192,7 @@
       border:1px solid var(--line);
       background:rgba(255,255,255,.03);
     }
-    .kpi .big{font-size:1.2rem;font-weight:900;color:#eaf2ff}
+    .kpi .big{font-size:1.3rem;font-weight:900;color:var(--subject)}
     .kpi .lab{font-size:.85rem;color:var(--muted)}
 
     .tag{
@@ -227,10 +227,23 @@
       padding:3px 8px; border-radius:99px;
     }
 
-</style>
+
+    /* Gemeinsames Layout */
+    .hos-stage { grid-template-columns: 250px minmax(0, 1fr) 250px; }
+    .hos-panel h2 { margin: 0 0 8px; font-size: 1rem; display: flex; gap: 8px; align-items: center; }
+    .canvas-panel { display: flex; flex-direction: column; gap: 8px; }
+    .canvas-panel canvas, .canvas-panel canvas[id] { flex: 1; min-height: 0; height: 100% !important; width: 100%; }
+    .tile { padding: 8px 10px; margin-bottom: 6px; }
+    .hint { font-size: .84rem; }
+    .hos-bottombar .status { flex: 1 1 260px; min-width: 0; margin: 0; font-weight: 700; color: var(--hos-ink); background: #fafaf9; padding: 7px 12px; }
+
+  
+    .kpi { gap: 6px; } .kpi .box { padding: 6px 8px; min-width: 0; } .kpi .lab { font-size: .78rem; }
+
+  </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
 
 <header class="app-header">
   <div class="brand-row">
@@ -245,126 +258,77 @@
   </div>
 </header>
 
-<div class="wrap">
-  <div class="app-intro">
-    <img src="/chatisthisreal.png" onerror="this.onerror=null;this.src='/chatisthisreal.png';" alt="Chat is this real?" class="meme">
-    <div>
-      <h1>Körpernetze bauen <span style="color:var(--b)">HoS</span></h1>
-      <div class="sub">Variante B: Netz bauen (mit Andocken) · Aufgabenmodus: Zylinder & Kegel</div>
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Netz bauen</span>
+      <span class="pill" id="taskPill">Aufgabe</span>
+      <span class="hos-spacer"></span>
+      <span class="tag"><span class="dot"></span> Zylinder: 2× Kreis + 1× Rechteck</span>
+      <span class="tag"><span class="dot y"></span> Kegel: 1× Kreis (klein) + 1× Kreissektor</span>
     </div>
-    <a class="toplink" href="/index.html">⬅︎ Startseite</a>
-    <div class="badge">🧲 Snap · Platzieren + Drag</div>
-  </div>
 
-  <div class="grid">
-    <!-- Palette -->
-    <section class="card">
-      <h2>Bausteine <span class="pill">klick → klick</span></h2>
-      <div class="body">
+    <div class="hos-stage">
+      <section class="hos-panel scroll">
+        <h2>Bausteine <span class="pill">klick → klick</span></h2>
         <div class="tile" data-spawn="circle">
-          <div>
-            <div class="name">Kreis</div>
-            <div class="meta">Grund/Deckfläche (Zylinder)</div>
-          </div>
+          <div><div class="name">Kreis</div><div class="meta">Grund-/Deckfläche (Zylinder)</div></div>
           <span class="kbd">klick</span>
         </div>
-
-        <div class="row" style="margin-top:10px"></div>
-
         <div class="tile" data-spawn="rect">
-          <div>
-            <div class="name">Rechteck</div>
-            <div class="meta">Mantelfläche (Zylinder)</div>
-          </div>
+          <div><div class="name">Rechteck</div><div class="meta">Mantelfläche (Zylinder)</div></div>
           <span class="kbd">klick</span>
         </div>
-
-        <div class="sep"></div>
-
         <div class="tile" data-spawn="sector">
-          <div>
-            <div class="name">Kreissektor</div>
-            <div class="meta">Mantelfläche (Kegel)</div>
-          </div>
+          <div><div class="name">Kreissektor</div><div class="meta">Mantelfläche (Kegel)</div></div>
           <span class="kbd">klick</span>
         </div>
-
         <div class="tile" data-spawn="circle_small">
-          <div>
-            <div class="name">Kreis (klein)</div>
-            <div class="meta">Grundfläche (Kegel)</div>
-          </div>
+          <div><div class="name">Kreis (klein)</div><div class="meta">Grundfläche (Kegel)</div></div>
           <span class="kbd">klick</span>
         </div>
-
         <div class="sep"></div>
-
         <div class="hint">
           <b>Steuerung</b><br>
-          • Baustein anklicken = auswählen zum Platzieren<br>
-          • Dann ins Arbeitsfeld klicken = Teil erscheint dort<br>
-          • <b>Danach endet der Platziermodus automatisch</b><br>
+          • Baustein anklicken, dann ins Arbeitsfeld klicken<br>
           • Teil anklicken = auswählen/ziehen<br>
           • <span class="kbd">Q</span>/<span class="kbd">E</span> drehen (15°)<br>
-          • <span class="kbd">Entf</span> löschen (oder 🗑️)<br>
-          • <b>Doppelklick / Doppeltap</b> auf Teil = löschen
+          • <span class="kbd">Entf</span> oder Doppelklick = löschen
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Board -->
-    <section class="card">
-      <h2>Arbeitsfeld <span class="pill" id="taskPill">Aufgabe</span></h2>
-      <div class="body">
+      <section class="hos-panel canvas-panel">
         <canvas id="cv" width="1200" height="720" aria-label="Baufeld"></canvas>
+      </section>
 
-        <div class="row" style="margin-top:12px">
-          <span class="tag"><span class="dot"></span> Zylinder: 2× Kreis + 1× Rechteck</span>
-          <span class="tag"><span class="dot y"></span> Kegel: 1× Kreis(klein) + 1× Kreissektor</span>
-          <span class="tag"><span class="dot bad"></span> Kein Live-Check</span>
-        </div>
-
-        <div class="sep"></div>
-
-        <div class="row">
-          <button class="btn good" id="checkBtn">Prüfen</button>
-          <button class="btn tiny" id="nextBtn">Nächste Aufgabe</button>
-          <button class="btn tiny" id="resetBtn">Alles löschen</button>
-          <div class="status" id="status" style="flex:1;min-width:240px">
-            Wähle links einen Baustein und klicke dann ins Arbeitsfeld, um ihn zu platzieren.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Side panel -->
-    <aside class="card">
-      <h2>Lehrer/Info <span class="pill">Optional</span></h2>
-      <div class="body">
+      <aside class="hos-panel scroll">
+        <h2>Stand</h2>
         <div class="kpi">
           <div class="box"><div class="big" id="score">0</div><div class="lab">Punkte</div></div>
           <div class="box"><div class="big" id="streak">0</div><div class="lab">Streak</div></div>
           <div class="box"><div class="big" id="done">0</div><div class="lab">Aufgaben</div></div>
         </div>
-
         <div class="sep"></div>
-
         <div class="row">
           <button class="btn tiny" id="trashBtn">🗑️ Löschen</button>
           <button class="btn tiny" id="toggleSnapBtn">Snap: an</button>
         </div>
-
         <div class="sep"></div>
-
         <div class="hint">
           <b>Prüflogik:</b><br>
           <b>Zylinder:</b> Rechteck muss an beide Kreise andocken.<br>
-          <b>Kegel:</b> Kreissektor muss am kleinen Kreis andocken.
+          <b>Kegel:</b> Kreissektor muss am kleinen Kreis andocken.<br>
+          Es gibt keinen Live-Check.
         </div>
-      </div>
-    </aside>
-  </div>
-</div>
+      </aside>
+    </div>
+
+    <div class="hos-bottombar">
+      <button class="btn tiny" id="resetBtn">Alles löschen</button>
+      <div class="status" id="status">Wähle links einen Baustein und klicke dann ins Arbeitsfeld, um ihn zu platzieren.</div>
+      <button class="btn good" id="checkBtn">Prüfen</button>
+      <button class="btn tiny" id="nextBtn">Nächste Aufgabe →</button>
+    </div>
+  </main>
 
 <script>
 (() => {

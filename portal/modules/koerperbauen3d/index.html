@@ -102,11 +102,20 @@
       padding:3px 8px; border-radius:99px;
     }
 
-</style>
+
+    /* Gemeinsames Layout: alles auf einen Bildschirm, linke Spalte scrollt innen */
+    .app-intro { display: none; }
+    main.wrap.hos-fill { display: grid; grid-template-columns: 380px 1fr; gap: 10px; overflow: hidden; }
+    main.wrap.hos-fill > .panel { min-height: 0; box-shadow: none; }
+    main.wrap.hos-fill > .panel:first-child { overflow: auto; }
+    .canvasWrap { min-height: 0; height: auto; }
+    @media (max-width: 1000px) { main.wrap.hos-fill { grid-template-columns: 1fr; overflow: visible; } .canvasWrap { height: 62vh; } }
+
+  </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
 
-<body class="hos-app hos-legacy subject-mathe">
+<body class="hos-app subject-mathe">
 
 <header class="app-header">
   <div class="brand-row">
@@ -137,7 +146,7 @@
   <a class="linkbtn" href="/index.html">🏠 Startseite</a>
 </div>
 
-<main class="wrap">
+<main class="wrap hos-fill">
   <section class="panel">
     <div class="hd"><h2>Steuerung <span style="color:var(--muted);font-weight:800">SuS</span></h2></div>
     <div class="bd">
