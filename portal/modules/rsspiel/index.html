@@ -155,7 +155,16 @@
             pointer-events: none;
             display: flex; align-items: center; gap: 8px;
         }
-    </style>
+    
+        /* Gemeinsamer Rahmen: Kopf liegt über dem Spiel, kein Scrollen */
+        body.hos-app.hos-legacy { overflow: hidden; height: 100vh; }
+        body.hos-app.hos-legacy > .app-header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; }
+        body > canvas { position: fixed; inset: 0; z-index: 0; }
+        #blocker { inset: 0; }
+        #ui-layer { top: 70px !important; }
+        #playButton, #instructions button { background: var(--subject) !important; box-shadow: none !important; }
+
+  </style>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="/css/app-layout.css">

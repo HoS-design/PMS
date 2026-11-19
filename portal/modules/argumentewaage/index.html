@@ -27,28 +27,8 @@
             --accent-weak: var(--danger);
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden; 
-        }
 
         /* --- Header Bereich (Logo & Text Links) --- */
-        .app-intro {
-            width: 100%;
-            max-width: 600px; /* Gleiche Breite wie Spielfeld */
-            box-sizing: border-box;
-            padding: 20px;
-            margin-top: 30px; /* Platz für den Zurück-Link */
-            text-align: left; /* Alles linksbündig */
-            z-index: 10;
-        }
 
         .logo {
             display: block;
@@ -151,41 +131,11 @@
         }
 
         /* Feedback Bereich */
-        #feedback-area {
-            margin-top: 10px;
-            height: 80px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            font-size: 1rem;
-            padding: 10px;
-            border-radius: 8px;
-        }
         
         .feedback-correct { color: var(--accent-strong); background: #e8f5e9; border: 1px solid #c8e6c9; }
         .feedback-wrong { color: var(--accent-weak); background: #ffebee; border: 1px solid #ffcdd2; }
 
-        .btn-restart {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background: var(--accent);
-            color: white;
-            border: 1px solid var(--accent);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: none;
-        }
 
-        .back-link {
-            position: absolute;
-            top: 15px;
-            left: 20px; /* Bündig mit dem Padding */
-            text-decoration: none;
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
         .back-link:hover { color: var(--ink); }
 
     
@@ -217,10 +167,24 @@
         display: none;
     }
 
-</style>
+
+    /* Gemeinsames Layout */
+    .stage-center { display: flex; align-items: center; justify-content: center; }
+    .game-area { height: 100%; max-height: 520px; max-width: 900px; margin: 0; }
+    .card-stack { width: 320px; height: 210px; }
+    .card { font-size: 1.15rem; border-color: var(--hos-line); }
+    .zone span { font-size: 1.4rem; }
+    #feedback-area {
+      flex: 1 1 300px; min-height: 2.3em; border-radius: 12px; padding: 7px 12px;
+      font-weight: 700; line-height: 1.35; background: #fafaf9; border: 1px solid var(--hos-line);
+    }
+    #feedback-area.feedback-correct { background: var(--hos-good-soft); border-color: var(--hos-good-line); color: var(--hos-good); }
+    #feedback-area.feedback-wrong { background: var(--hos-bad-soft); border-color: var(--hos-bad-line); color: var(--hos-bad); }
+
+  </style>
   <link rel="stylesheet" href="/css/app-layout.css">
 </head>
-<body class="hos-app hos-legacy subject-deutsch">
+<body class="hos-app subject-deutsch">
 
 <header class="app-header">
   <div class="brand-row">
@@ -236,33 +200,39 @@
 </header>
 
 
-    <a href="/index.html" class="back-link">← Zurück zur Übersicht</a>
-
-    <div class="app-intro">
-        <img src="/chatisthisreal.png" alt="Logo" class="logo">
-        <h1>Argumente-Waage</h1>
-        <p class="subtitle">Ziehe die Karte auf die richtige Seite!</p>
+      <main class="hos-main">
+    <div class="hos-topbar">
+      <span class="hos-label">Ziehe die Karte auf die richtige Seite.</span>
+      <span class="hos-spacer"></span>
+      <span class="hos-pill good">Stark: sachlich, begründet, belegt</span>
+      <span class="hos-pill warn">Schwach: Behauptung, Parole, Angriff</span>
     </div>
 
-    <div class="game-area">
-        <div class="zones-container">
+    <div class="hos-stage">
+      <section class="hos-panel stage-center">
+        <div class="game-area">
+          <div class="zones-container">
             <div class="zone strong">
-                <span>Stark</span>
-                <small>Sachlich, begründet,<br>logisch, belegt</small>
+              <span>Stark</span>
+              <small>Sachlich, begründet,<br>logisch, belegt</small>
             </div>
             <div class="zone weak">
-                <span>Schwach</span>
-                <small>Behauptung, subjektiv,<br>Parole, Angriff</small>
+              <span>Schwach</span>
+              <small>Behauptung, subjektiv,<br>Parole, Angriff</small>
             </div>
-        </div>
-
-        <div class="card-stack" id="card-stack">
+          </div>
+          <div class="card-stack" id="card-stack">
             <div class="card" id="current-card">Lade...</div>
+          </div>
         </div>
+      </section>
     </div>
 
-    <div id="feedback-area"></div>
-    <button class="btn-restart" onclick="location.reload()">Neustart</button>
+    <div class="hos-bottombar">
+      <div id="feedback-area"></div>
+      <button class="hos-btn primary btn-restart" type="button" onclick="location.reload()">↺ Neustart</button>
+    </div>
+  </main>
 
 <script>
     // --- DATEN ---
