@@ -75,19 +75,20 @@
     if (spec.filter) its = its.filter(spec.filter);
     return its;
   }
+  const keyOf = (x) => (x.q || x.raw).replace(/\*\*/g, '');
   function pick(def, spec, rng) {
     const its = itemsFor(def, spec);
     const n = spec.n || 6;
     if (spec.cover && spec.keys) {
       const first = [];
       spec.keys.forEach(k => {
-        const c = its.filter(x => x.k === k && !rng.used.has(x.raw) && !first.includes(x));
-        if (c.length && first.length < n) { const x = rng.pick(c); first.push(x); rng.used.add(x.raw); }
+        const c = its.filter(x => x.k === k && !rng.used.has(keyOf(x)) && !first.includes(x));
+        if (c.length && first.length < n) { const x = rng.pick(c); first.push(x); rng.used.add(keyOf(x)); }
       });
-      const rest = rng.fresh(its.filter(x => !first.includes(x)), n - first.length, x => x.raw);
+      const rest = rng.fresh(its.filter(x => !first.includes(x) && !first.some(f => keyOf(f) === keyOf(x))), n - first.length, keyOf);
       return rng.shuffle(first.concat(rest));
     }
-    return rng.fresh(its, n, x => x.raw);
+    return rng.fresh(its, n, keyOf);
   }
   const optLabel = (spec, k) => { const o = (spec.opts || []).find(o => o[0] === k); return o ? o[1] : k; };
 
@@ -196,7 +197,7 @@
       body: '<div class="prompt">' + mark(x.q) + '</div>' + check + plan + note + (spec.lines === 0 ? '' : lines(spec.lines || 10)),
       sol: '<div class="prompt">' + mark(x.q) + '</div>' +
         '<div class="item"><b>Darauf kommt es an:</b></div><ul class="solist">' +
-        x.a.concat(spec.check || []).map(c => '<li>' + sol(esc(c)) + '</li>').join('') + '</ul>'
+        Array.from(new Set(x.a.concat(spec.check || []))).map(c => '<li>' + sol(esc(c)) + '</li>').join('') + '</ul>'
     };
   };
 

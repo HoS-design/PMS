@@ -49,7 +49,10 @@
     rng.fresh = (arr, n, key) => {
       const k = key || ((x) => typeof x === 'string' ? x : JSON.stringify(x));
       const free = arr.filter(x => !rng.used.has(k(x)));
-      const out = rng.sample(free.length >= n ? free : arr, n);
+      const out = [];
+      // gleiche Schlüssel (z. B. derselbe Satz mit anderer Markierung) nur einmal nehmen
+      rng.shuffle(free).forEach(x => { if (out.length < n && !out.some(y => k(y) === k(x))) out.push(x); });
+      if (out.length < n) rng.shuffle(arr).forEach(x => { if (out.length < n && !out.includes(x)) out.push(x); });
       out.forEach(x => rng.used.add(k(x)));
       return out;
     };

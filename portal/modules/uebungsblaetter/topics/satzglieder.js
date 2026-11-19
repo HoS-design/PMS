@@ -89,7 +89,9 @@
       instr: 'Beginne mit dem unterstrichenen Satzglied. Das Prädikat bleibt an zweiter Stelle.',
       body: its.map(x => '<div class="item">' + x.p.map(q => q === x.start ? '<u><b>' + esc(q.text) + '</b></u>' : esc(q.text)).join(' ') + '.</div>' + lines(1)).join(''),
       sol: its.map(x => {
-        const parts = [x.start, x.p.find(q => q.role === 'P')].concat(x.p.filter(q => q !== x.start && q.role !== 'P'));
+        const subj = x.p.find(q => q.role === 'S');
+        // Nach dem Prädikat folgt zuerst das Subjekt, dann die übrigen Satzglieder in alter Reihenfolge
+        const parts = [x.start, x.p.find(q => q.role === 'P')].concat(subj && subj !== x.start ? [subj] : [], x.p.filter(q => q !== x.start && q.role !== 'P' && q !== subj));
         const txt = parts.map((q, i) => i === 0 ? capFirst(q.text) : (q === x.p[0] && isLowerable(q.text) ? lower(q.text) : q.text)).join(' ') + '.';
         return '<div class="item">' + sol(esc(txt)) + '</div>';
       }).join('')

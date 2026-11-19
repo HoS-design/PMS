@@ -24,7 +24,7 @@ sie arbeitet => sie arbeite`,
     umformen: `Lena sagt: „Ich bin müde.“ => Lena sagt, sie sei müde.
 Max erklärt: „Der Bus kommt zu spät.“ => Max erklärt, der Bus komme zu spät.
 Paul sagt: „Ich habe meinen Schlüssel verloren.“ => Paul sagt, er habe seinen Schlüssel verloren.
-Die Ärztin meint: „Du musst im Bett bleiben.“ => Die Ärztin meint, ich müsse im Bett bleiben.
+Die Ärztin sagt zu Paul: „Du musst im Bett bleiben.“ => Die Ärztin sagt zu Paul, er müsse im Bett bleiben.
 Der Bürgermeister betont: „Die Straße wird bald repariert.“ => Der Bürgermeister betont, die Straße werde bald repariert.
 Anna erzählt: „Mein Bruder fährt nach Wien.“ => Anna erzählt, ihr Bruder fahre nach Wien.
 Der Trainer sagt: „Das Spiel beginnt um drei Uhr.“ => Der Trainer sagt, das Spiel beginne um drei Uhr.
@@ -42,7 +42,7 @@ Er behauptet, er **könne** fliegen.|K1
 Wenn ich Zeit **hätte**, käme ich mit.|K2
 Ich **wäre** gern am Meer.|K2
 **Könntest** du mir bitte helfen?|K2
-Wenn es nicht regnen **würde**, gingen wir hinaus.|K2
+Wenn es nicht **regnete**, gingen wir hinaus.|K2
 Er **ist** heute krank.|I
 Sie **hat** keine Zeit.|I
 Wir **kommen** morgen.|I
