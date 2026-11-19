@@ -1,0 +1,259 @@
+/* =====================================================================
+   Übungsblatt-Baukasten
+   Themen werden mit UB.simple({...}) beschrieben: Satzpools + Aufgaben je
+   Stufe. Die Aufgabentypen bauen Blatt, Lösung und Lehrer-Ansicht selbst.
+
+   Schreibweisen in allen Texten:
+     **Wort**        unterstrichen und fett (markiertes Satzglied usw.)
+     [Lösung]        Lücke, Lösung erscheint auf dem Lösungsblatt
+     [Lösung:Hilfe]  Lücke mit Hilfe in Klammern dahinter, z. B. [ging:gehen]
+     {richtig|falsch|falsch}  zum Einkreisen (die erste Möglichkeit ist richtig,
+                              angezeigt wird alphabetisch)
+
+   Pool-Zeilen (eine Zeile = ein Baustein, # = Kommentar):
+     choice / sort:  Text|KEY
+     pair:           Aufgabe :: Hilfe => Lösung      (Hilfe ist optional)
+     ab:             Satz A || Satz B || a oder b || Begründung
+     order:          Teil 1 >> Teil 2 >> Teil 3       (richtige Reihenfolge)
+     write:          Schreibauftrag => Hinweis 1 ; Hinweis 2
+     gap:            Satz mit [Lücken] oder {Auswahl|...}
+   ===================================================================== */
+(function () {
+  'use strict';
+  const { esc, lines, sol, blank, table, box } = UB;
+
+  // ---------------------------------------------------------------- Markup
+  function mark(s, solution) {
+    let h = esc(s);
+    h = h.replace(/\*\*(.+?)\*\*/g, '<b class="mk">$1</b>');
+    h = h.replace(/\{([^{}]+)\}/g, (m, inner) => {
+      const parts = inner.split('|');
+      const right = parts[0];
+      const shown = parts.slice().sort((a, b) => a.localeCompare(b, 'de'));
+      return '<span class="ch">' + shown.map(p => {
+        if (!solution) return p;
+        return p === right ? '<span class="sol">' + p + '</span>' : '<span class="ch-off">' + p + '</span>';
+      }).join(' / ') + '</span>';
+    });
+    h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => {
+      const i = inner.indexOf(':');
+      const ans = i < 0 ? inner : inner.slice(0, i);
+      const hint = i < 0 ? '' : inner.slice(i + 1);
+      const w = Math.max(3, Math.round(ans.length * 0.62) + 2);
+      return (solution ? sol(ans) : blank(w)) + (hint ? ' <span class="hint">(' + hint + ')</span>' : '');
+    });
+    return h;
+  }
+  const answersOf = (s) => (s.match(/\[([^\[\]]+)\]/g) || []).map(x => x.slice(1, -1).split(':')[0]);
+
+  // ---------------------------------------------------------------- Pools
+  function parseLines(src) {
+    if (Array.isArray(src)) return src;
+    return src.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  }
+  const PARSE = {
+    choice: (l) => { const i = l.lastIndexOf('|'); return { raw: l, q: l.slice(0, i).trim(), k: l.slice(i + 1).trim() }; },
+    pair: (l) => {
+      const [left, a] = l.split(' => ');
+      const [q, hint] = left.split(' :: ');
+      return { raw: l, q: q.trim(), hint: hint ? hint.trim() : '', a: (a || '').trim() };
+    },
+    ab: (l) => { const p = l.split(' || ').map(x => x.trim()); return { raw: l, a: p[0], b: p[1], k: p[2], why: p[3] || '' }; },
+    order: (l) => ({ raw: l, parts: l.split(' >> ').map(x => x.trim()) }),
+    write: (l) => { const [q, a] = l.split(' => '); return { raw: l, q: q.trim(), a: a ? a.split(' ; ').map(x => x.trim()) : [] }; },
+    gap: (l) => ({ raw: l, q: l })
+  };
+  PARSE.sort = PARSE.choice;
+  PARSE.error = PARSE.pair;
+
+  function itemsFor(def, spec) {
+    const kind = spec.type;
+    const src = def.pools[spec.pool];
+    if (!src) throw new Error('Pool fehlt: ' + spec.pool);
+    let its = parseLines(src).map(PARSE[kind] || PARSE.gap);
+    if (spec.keys) its = its.filter(x => spec.keys.includes(x.k));
+    if (spec.filter) its = its.filter(spec.filter);
+    return its;
+  }
+  function pick(def, spec, rng) {
+    const its = itemsFor(def, spec);
+    const n = spec.n || 6;
+    if (spec.cover && spec.keys) {
+      const first = [];
+      spec.keys.forEach(k => {
+        const c = its.filter(x => x.k === k && !rng.used.has(x.raw) && !first.includes(x));
+        if (c.length && first.length < n) { const x = rng.pick(c); first.push(x); rng.used.add(x.raw); }
+      });
+      const rest = rng.fresh(its.filter(x => !first.includes(x)), n - first.length, x => x.raw);
+      return rng.shuffle(first.concat(rest));
+    }
+    return rng.fresh(its, n, x => x.raw);
+  }
+  const optLabel = (spec, k) => { const o = (spec.opts || []).find(o => o[0] === k); return o ? o[1] : k; };
+
+  // ---------------------------------------------------------------- Aufgabentypen
+  const T = {};
+
+  T.choice = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const head = spec.head || 'Satz';
+    if (spec.asText) {
+      const col = spec.col || 'Lösung';
+      return {
+        body: table([head, col], its.map(x => [mark(x.q), blank(spec.w || 9)])),
+        sol: table([head, col], its.map(x => [mark(x.q), sol(esc(optLabel(spec, x.k)))]))
+      };
+    }
+    const opts = spec.opts;
+    const h = [head].concat(opts.map(o => esc(o[1])));
+    return {
+      body: table(h, its.map(x => [mark(x.q)].concat(opts.map(() => box))), 'center-cols'),
+      sol: table(h, its.map(x => [mark(x.q)].concat(opts.map(o => o[0] === x.k ? sol('✗') : ''))), 'center-cols')
+    };
+  };
+
+  T.gap = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const cls = 'gapwrap' + (spec.cols2 ? ' cols2' : '');
+    let wb = '';
+    if (spec.wordbox) {
+      const words = [];
+      its.forEach(x => answersOf(x.q).forEach(a => words.push(a)));
+      wb = '<div class="wordbox">' + rng.shuffle(words).map(esc).join(' · ') + '</div>';
+    }
+    return {
+      body: wb + '<div class="' + cls + '">' + its.map(x => '<div class="item">' + mark(x.q) + '</div>').join('') + '</div>',
+      sol: wb + '<div class="' + cls + '">' + its.map(x => '<div class="item">' + mark(x.q, true) + '</div>').join('') + '</div>'
+    };
+  };
+
+  function diffCount(a, b) {
+    const x = a.split(/\s+/), y = b.split(/\s+/);
+    if (x.length !== y.length) return 0;
+    return x.filter((w, i) => w !== y[i]).length;
+  }
+  T.pair = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const hintOf = (x) => {
+      let h = x.hint;
+      if (spec.type === 'error' && spec.count !== false) { const n = diffCount(x.q, x.a); if (n) h = (h ? h + ', ' : '') + n + (n === 1 ? ' Fehler' : ' Fehler'); }
+      return h ? ' <span class="hint">→ ' + esc(h) + '</span>' : '';
+    };
+    if (spec.inline) {
+      const head = [spec.head || 'Aufgabe', spec.col || 'Lösung'];
+      return {
+        body: table(head, its.map(x => [mark(x.q) + hintOf(x), ''])),
+        sol: table(head, its.map(x => [mark(x.q) + hintOf(x), sol(esc(x.a))]))
+      };
+    }
+    const nl = spec.lines || 1;
+    return {
+      body: its.map(x => '<div class="item">' + mark(x.q) + hintOf(x) + '</div>' + lines(nl)).join(''),
+      sol: its.map(x => '<div class="item">' + mark(x.q) + hintOf(x) + '<br>' + sol(esc(x.a)) + '</div>').join('')
+    };
+  };
+  T.error = T.pair;
+
+  T.sort = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const cats = spec.opts;
+    const by = cats.map(c => its.filter(x => x.k === c[0]));
+    const rows = Math.max(1, ...by.map(a => a.length));
+    const head = cats.map(c => esc(c[1]));
+    const emptyRows = Array.from({ length: rows }, () => cats.map(() => ''));
+    const solRows = Array.from({ length: rows }, (_, r) => by.map(a => a[r] ? sol(esc(a[r].q)) : ''));
+    const wb = '<div class="wordbox">' + rng.shuffle(its).map(x => esc(x.q)).join(' · ') + '</div>';
+    return { body: wb + table(head, emptyRows, 'even'), sol: wb + table(head, solRows, 'even') };
+  };
+
+  T.ab = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const one = (x, solution) => '<div class="ab">' +
+      ['a', 'b'].map(k => '<div class="ab-opt">' + (solution ? (x.k === k ? sol('✗') : '<span class="cbox"></span>') : box) +
+        ' <b>' + k.toUpperCase() + '</b> ' + mark(x[k]) + '</div>').join('') +
+      (solution && x.why ? '<div class="hint">' + esc(x.why) + '</div>' : '') + '</div>';
+    return { body: its.map(x => one(x, false)).join(''), sol: its.map(x => one(x, true)).join('') };
+  };
+
+  T.order = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const blocks = its.map(x => {
+      let idx = x.parts.map((p, i) => i);
+      for (let t = 0; t < 5; t++) { idx = rng.shuffle(idx); if (idx.some((v, i) => v !== i)) break; }
+      return idx.map(i => ({ p: x.parts[i], n: i + 1 }));
+    });
+    const render = (solution) => blocks.map(b => '<div class="orderbox">' + b.map(o =>
+      '<div class="item ord">' + (solution ? '<span class="numbox sol-num">' + sol(o.n) + '</span>' : '<span class="numbox"></span>') + ' ' + mark(o.p) + '</div>').join('') + '</div>').join('');
+    return { body: render(false), sol: render(true) };
+  };
+
+  T.write = (def, spec, rng) => {
+    const x = pick(def, Object.assign({}, spec, { n: 1 }), rng)[0];
+    const check = spec.check ? '<div class="checklist"><b>Checkliste:</b> ' + spec.check.map(c => '☐ ' + esc(c)).join('&nbsp;&nbsp; ') + '</div>' : '';
+    return {
+      body: '<div class="prompt">' + mark(x.q) + '</div>' + check + lines(spec.lines || 10),
+      sol: '<div class="prompt">' + mark(x.q) + '</div>' +
+        '<div class="item"><b>Darauf kommt es an:</b></div><ul class="solist">' +
+        x.a.concat(spec.check || []).map(c => '<li>' + sol(esc(c)) + '</li>').join('') + '</ul>'
+    };
+  };
+
+  // Beistriche setzen: Pool-Sätze stehen MIT Beistrichen, auf dem Blatt fehlen sie
+  T.commas = (def, spec, rng) => {
+    const its = pick(def, spec, rng);
+    const strip = (q) => mark(q.replace(/,/g, ''));
+    const solv = (q) => mark(q).replace(/,/g, '<span class="sol comma">,</span>');
+    return {
+      body: its.map(x => '<div class="item roomy">' + strip(x.q) + '</div>').join(''),
+      sol: its.map(x => '<div class="item roomy">' + solv(x.q) + '</div>').join('')
+    };
+  };
+  T.fn = (def, spec, rng, level) => spec.fn(rng, level);
+  T.merk = (def, spec) => ({ body: '<div class="merk">' + spec.html + '</div>', sol: '<div class="merk">' + spec.html + '</div>' });
+  T.text = (def, spec) => ({ body: spec.html, sol: spec.solHtml || spec.html });
+
+  // ---------------------------------------------------------------- Lehrer-Ansicht
+  function poolView(def) {
+    const specs = [];
+    Object.values(def.levels).forEach(l => (l.tasks || []).forEach(s => (s.oneOf || [s]).forEach(x => { if (x && x.pool) specs.push(x); })));
+    let html = '';
+    Object.keys(def.pools).forEach(name => {
+      const users = specs.filter(s => s.pool === name);
+      if (!users.length) return;
+      const kind = users[0].type;
+      const its = parseLines(def.pools[name]).map(PARSE[kind] || PARSE.gap);
+      html += '<h4 class="pool-h">' + esc(name) + ' (' + its.length + ')</h4>';
+      if (kind === 'choice' || kind === 'sort') {
+        const label = (k) => Array.from(new Set(users.map(s => optLabel(s, k)))).join(' / ');
+        html += table(['Baustein', 'Lösung'], its.map(x => [mark(x.q), esc(label(x.k))]));
+      } else if (kind === 'pair' || kind === 'error') {
+        html += table(['Aufgabe', 'Lösung'], its.map(x => [mark(x.q) + (x.hint ? ' <span class="hint">→ ' + esc(x.hint) + '</span>' : ''), esc(x.a)]));
+      } else if (kind === 'ab') {
+        html += table(['A', 'B', 'Besser', 'Warum'], its.map(x => [mark(x.a), mark(x.b), x.k.toUpperCase(), esc(x.why)]));
+      } else if (kind === 'order') {
+        html += its.map(x => '<ol class="pool-ol">' + x.parts.map(p => '<li>' + mark(p) + '</li>').join('') + '</ol>').join('');
+      } else if (kind === 'write') {
+        html += table(['Schreibauftrag', 'Hinweise'], its.map(x => [mark(x.q), esc(x.a.join(' · '))]));
+      } else if (kind === 'commas') {
+        html += its.map(x => '<div class="item">' + mark(x.q).replace(/,/g, '<span class="sol comma">,</span>') + '</div>').join('');
+      } else {
+        html += its.map(x => '<div class="item">' + mark(x.q, true) + '</div>').join('');
+      }
+    });
+    return html;
+  }
+
+  // ---------------------------------------------------------------- Registrieren
+  UB.mark = mark;
+  UB.simple = function (def) {
+    def.build = function (level, rng) {
+      return (def.levels[level].tasks || []).map(spec0 => {
+        const spec = spec0.oneOf ? rng.pick(spec0.oneOf) : spec0;
+        const t = T[spec.type](def, spec, rng, level);
+        return { title: t.title || spec.title, instr: t.instr || spec.instr || '', body: t.body, sol: t.sol };
+      });
+    };
+    def.pool = def.pool || (() => poolView(def));
+    UB.register(def);
+  };
+})();

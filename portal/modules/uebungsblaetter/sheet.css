@@ -47,7 +47,7 @@
 .ubt th, .ubt td { border: 0.3mm solid #aaa; padding: 1mm 2mm; text-align: left; vertical-align: middle; }
 .ubt th { background: #f1f1f1; font-weight: 700; }
 .ubt td { height: 7mm; }
-.ubt.center-cols td:not(:first-child), .ubt.center-cols th:not(:first-child) { text-align: center; width: 24mm; }
+.ubt.center-cols td:not(:first-child), .ubt.center-cols th:not(:first-child) { text-align: center; width: 1%; min-width: 20mm; white-space: nowrap; padding-left: 3mm; padding-right: 3mm; }
 
 .sg-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 2mm 2.5mm; margin: 2mm 0 2.5mm; font-size: 12pt; }
 .sg { display: inline-flex; flex-direction: column; align-items: center; min-width: 14mm; }
@@ -63,3 +63,23 @@
 .sh-ichkann td.self { white-space: nowrap; text-align: right; color: #444; font-size: 9pt; padding-left: 3mm; }
 .sh-foot { margin-top: 3mm; display: flex; justify-content: space-between; font-size: 8.5pt; color: #666; }
 .sheet.solution .sh-head h1::after { content: " – Lösung"; }
+
+/* --- Baukasten (kit.js) --- */
+.mk { font-weight: 700; text-decoration: underline; text-underline-offset: 0.6mm; }
+.ch { display: inline-block; border: 0.3mm solid #999; border-radius: 1.5mm; padding: 0 1.5mm; margin: 0 0.5mm; font-size: 0.95em; white-space: nowrap; }
+.ch-off { color: #999; }
+.gapwrap .item { margin: 1.6mm 0; }
+.cols2 { columns: 2; column-gap: 8mm; }
+.cols2 .item { break-inside: avoid; }
+.ubt.even th, .ubt.even td { width: auto; }
+.ubt.even { table-layout: fixed; }
+.ab { margin: 1.2mm 0 2mm; padding-bottom: 1mm; border-bottom: 0.2mm dotted #bbb; }
+.ab-opt { margin: 0.6mm 0; }
+.orderbox { border: 0.3mm solid #ccc; border-radius: 2mm; padding: 1mm 3mm; margin: 1.5mm 0 2.5mm; }
+.item.ord { display: flex; gap: 2mm; align-items: center; margin: 1mm 0; }
+.item.ord .numbox { margin-left: 0; flex: none; height: 6mm; display: inline-grid; place-items: center; }
+.prompt { border: 0.4mm solid #333; border-radius: 2mm; padding: 2mm 3mm; margin: 1mm 0 2mm; }
+.checklist { font-size: 9.5pt; color: #333; margin: 0 0 1mm; }
+.solist { margin: 1mm 0 0 5mm; padding: 0; }
+.solist li { margin: 0.6mm 0; }
+.sol.comma { font-style: normal; font-weight: 900; font-size: 1.25em; }

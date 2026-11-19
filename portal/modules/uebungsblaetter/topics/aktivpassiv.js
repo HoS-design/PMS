@@ -69,7 +69,7 @@
     id: 'aktiv-passiv',
     title: 'Aktiv und Passiv',
     area: 'sprache',
-    klassen: [3],
+    klassen: [3, 4],
     img: 'MiniHoS_Erklaeren_Tafel-Idee',
     levels: {
       1: { ichkann: ['Du kannst Aktiv- und Passivsätze unterscheiden.', 'Du weißt, wie man das Passiv bildet.'] },
