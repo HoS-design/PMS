@@ -1,0 +1,214 @@
+/* =====================================================================
+   HoS App-Layout – gemeinsamer Rahmen für alle Lern-Apps
+   ---------------------------------------------------------------------
+   Einbinden (nach style.css und app.css):
+     <link rel="stylesheet" href="/css/app-layout.css">
+   Fach über die Body-Klasse wählen:
+     <body class="hos-app subject-deutsch">   (deutsch | mathe | englisch | andere)
+
+   Grundgerüst:
+     <header class="app-header"> … </header>          (Portal-Standard)
+     <main class="hos-main">
+       <div class="hos-topbar"> … </div>                (Auswahl, Schritte, Fortschritt)
+       <div class="hos-stage"> … </div>                 (Arbeitsbereich, füllt den Rest)
+       <div class="hos-bottombar"> … </div>             (Rückmeldung + Aktionen)
+     </main>
+
+   Ziel: passt ohne Seiten-Scrollen auf 14"/1080p (1280 × 610 sichtbare
+   Fläche bei 150 % Skalierung). Auf kleinen Bildschirmen wird normal gescrollt.
+   ===================================================================== */
+
+.hos-app {
+  --hos-bg: #f5f5f4;
+  --hos-card: #ffffff;
+  --hos-ink: #1f2937;
+  --hos-muted: #667085;
+  --hos-line: #e7e5e4;
+  --hos-radius: 16px;
+  --hos-radius-sm: 10px;
+
+  --hos-good: #166534;
+  --hos-good-soft: #dcfce7;
+  --hos-good-line: #bbf7d0;
+  --hos-warn: #92400e;
+  --hos-warn-soft: #fef3c7;
+  --hos-warn-line: #fde68a;
+  --hos-bad: #991b1b;
+  --hos-bad-soft: #fee2e2;
+  --hos-bad-line: #fecaca;
+
+  /* Fachfarbe (Standard: Deutsch) */
+  --subject: #c62828;
+  --subject-strong: #9f1d1d;
+  --subject-soft: #fdecec;
+  --subject-line: #f5c2c2;
+}
+.hos-app.subject-deutsch  { --subject: #c62828; --subject-strong: #9f1d1d; --subject-soft: #fdecec; --subject-line: #f5c2c2; }
+.hos-app.subject-mathe    { --subject: #2563eb; --subject-strong: #1e40af; --subject-soft: #eaf1ff; --subject-line: #bfd3fb; }
+.hos-app.subject-englisch { --subject: #16a34a; --subject-strong: #166534; --subject-soft: #e8f8ee; --subject-line: #b7e7c7; }
+.hos-app.subject-andere   { --subject: #ca8a04; --subject-strong: #854d0e; --subject-soft: #fdf6e3; --subject-line: #f1dca0; }
+
+/* ---------- Seite ---------- */
+html:has(> body.hos-app), body.hos-app { height: 100%; }
+body.hos-app {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--hos-bg);
+  color: var(--hos-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.hos-app *, .hos-app *::before, .hos-app *::after { box-sizing: border-box; }
+.hos-app button, .hos-app select, .hos-app input, .hos-app textarea { font: inherit; }
+
+/* Kopf: kompakt, Fachfarbe im Badge */
+.hos-app .app-header { position: static; padding: 6px 16px; gap: 10px; box-shadow: none; }
+.hos-app .app-header .logo-img { width: 34px; height: 34px; }
+.hos-app .app-header .brand-title h1 { font-size: 17px; }
+.hos-app .app-header .badge-main { background: var(--subject); }
+
+/* ---------- Rahmen ---------- */
+.hos-main {
+  flex: 1;
+  min-height: 0;
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 8px 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hos-topbar, .hos-bottombar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--hos-card);
+  border: 1px solid var(--hos-line);
+  border-radius: var(--hos-radius);
+  padding: 6px 10px;
+}
+.hos-bottombar { padding: 8px 10px; }
+.hos-spacer { flex: 1; }
+.hos-stage { flex: 1; min-height: 0; display: grid; gap: 10px; }
+.hos-stage > * { min-height: 0; }
+
+.hos-panel {
+  background: var(--hos-card);
+  border: 1px solid var(--hos-line);
+  border-radius: var(--hos-radius);
+  padding: 12px;
+  min-height: 0;
+}
+.hos-panel.scroll { overflow: auto; }
+.hos-panel-title { margin: 0 0 8px; font-size: 1rem; font-weight: 800; }
+.hos-label { font-weight: 800; }
+.hos-muted { color: var(--hos-muted); }
+
+/* ---------- Buttons ---------- */
+.hos-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--hos-line);
+  background: #fff;
+  color: var(--hos-ink);
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+.hos-btn:hover:not(:disabled) { transform: translateY(-1px); border-color: #d6d3d1; }
+.hos-btn:active:not(:disabled) { transform: translateY(0); }
+.hos-btn:disabled { opacity: .45; cursor: not-allowed; }
+.hos-btn:focus-visible { outline: 3px solid var(--subject-line); outline-offset: 2px; }
+.hos-btn.primary { background: var(--subject); border-color: var(--subject); color: #fff; }
+.hos-btn.primary:hover:not(:disabled) { background: var(--subject-strong); border-color: var(--subject-strong); }
+.hos-btn.soft { background: #fafaf9; }
+.hos-btn.warn { background: var(--hos-warn-soft); border-color: var(--hos-warn-line); color: var(--hos-warn); }
+.hos-btn.small { padding: 5px 10px; font-size: .88rem; border-radius: 10px; }
+
+/* Umschalter (z. B. Basis / Profi) */
+.hos-seg { display: inline-flex; border: 1px solid var(--hos-line); border-radius: 12px; padding: 3px; background: #fafaf9; gap: 2px; }
+.hos-seg button { border: 0; background: transparent; border-radius: 9px; padding: 5px 12px; font-weight: 800; color: var(--hos-muted); cursor: pointer; }
+.hos-seg button.active { background: var(--subject); color: #fff; }
+
+/* Schritt-Reiter */
+.hos-steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.hos-step {
+  border: 1px solid var(--hos-line);
+  background: #fff;
+  color: var(--hos-muted);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-weight: 800;
+  font-size: .92rem;
+  cursor: pointer;
+}
+.hos-step.current { background: var(--subject); border-color: var(--subject); color: #fff; }
+.hos-step.done:not(.current) { background: var(--hos-good-soft); border-color: var(--hos-good-line); color: var(--hos-good); }
+.hos-step:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ---------- Rückmeldung ---------- */
+.hos-feedback {
+  flex: 1 1 260px;
+  border-radius: 12px;
+  padding: 7px 12px;
+  font-weight: 700;
+  background: #fafaf9;
+  border: 1px solid var(--hos-line);
+  line-height: 1.35;
+}
+.hos-feedback.good { background: var(--hos-good-soft); border-color: var(--hos-good-line); color: var(--hos-good); }
+.hos-feedback.warn { background: var(--hos-warn-soft); border-color: var(--hos-warn-line); color: var(--hos-warn); }
+.hos-feedback.bad  { background: var(--hos-bad-soft);  border-color: var(--hos-bad-line);  color: var(--hos-bad); }
+
+.hos-merke {
+  border-left: 5px solid var(--subject);
+  background: var(--subject-soft);
+  padding: 7px 12px;
+  border-radius: 10px;
+  line-height: 1.35;
+  font-size: .93rem;
+}
+
+/* ---------- Kleine Bausteine ---------- */
+.hos-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; background: #fafaf9; border: 1px solid var(--hos-line); font-size: .88rem; font-weight: 700; color: var(--hos-muted); }
+.hos-pill b { color: var(--hos-ink); }
+.hos-pill.good { background: var(--hos-good-soft); border-color: var(--hos-good-line); color: var(--hos-good); }
+.hos-pill.warn { background: var(--hos-warn-soft); border-color: var(--hos-warn-line); color: var(--hos-warn); }
+
+.hos-chip { border-radius: 999px; border: 1px solid var(--hos-line); background: #fafaf9; color: var(--hos-ink); padding: 4px 10px; font-size: .86rem; font-weight: 700; cursor: pointer; }
+.hos-chip.accent { background: var(--subject-soft); border-color: var(--subject-line); color: var(--subject-strong); }
+
+.hos-progress { position: relative; height: 8px; border-radius: 99px; background: #eceae8; overflow: hidden; min-width: 120px; }
+.hos-progress > span { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--subject); border-radius: 99px; transition: width 200ms; }
+
+.hos-kbd { font-family: ui-monospace, monospace; font-size: .75rem; padding: 1px 5px; border-radius: 5px; background: #f1f0ef; border: 1px solid var(--hos-line); color: var(--hos-muted); }
+
+.hos-app input[type="text"], .hos-app select, .hos-app textarea {
+  border-radius: 10px;
+  border: 1px solid var(--hos-line);
+  padding: 7px 10px;
+  background: #fff;
+  color: var(--hos-ink);
+}
+.hos-app input:focus, .hos-app select:focus, .hos-app textarea:focus { outline: 3px solid var(--subject-line); border-color: var(--subject); }
+
+/* ---------- Kleine Bildschirme: normal scrollen ---------- */
+@media (max-width: 1000px), (max-height: 520px) {
+  body.hos-app { height: auto; overflow: auto; }
+  .hos-stage { grid-template-columns: 1fr !important; }
+}
+
+@media print {
+  body.hos-app { display: block; height: auto; overflow: visible; background: #fff; }
+}
