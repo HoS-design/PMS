@@ -104,6 +104,7 @@
 
   UB.register({
     id: 'direkte-rede',
+    merk: '<b>Begleitsatz vorne</b>: Lena ruft: „Hilfe!“ – Doppelpunkt, Anführungszeichen unten, Satzzeichen vor dem Schlusszeichen. <b>Begleitsatz hinten</b>: „Hilfe!“, ruft Lena. / „Ich komme“, sagt Lena. – Nach dem Redesatz ein Beistrich; ein Punkt am Ende des Redesatzes fällt weg. <b>Begleitsatz in der Mitte</b>: „Ich komme“, sagt Lena, „aber erst später.“ Statt „sagte“: flüsterte, rief, fragte, antwortete, jammerte …',
     title: 'Direkte Rede',
     area: 'rechtschreibung',
     klassen: [1, 2],

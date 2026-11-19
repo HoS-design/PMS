@@ -102,6 +102,7 @@
 
   UB.register({
     id: 'das-dass',
+    merk: '<b>das</b> kann man ersetzen: Artikel → „ein/dieses“ (das Buch), hinweisendes Fürwort → „dieses“ (Das glaube ich nicht.), bezügliches Fürwort → „welches“ (das Buch, das ich lese). <b>dass</b> ist ein Bindewort (Konjunktion) und lässt sich nicht ersetzen: Ich hoffe, dass du kommst. Vor „dass“ steht ein Beistrich.',
     title: 'das oder dass',
     area: 'rechtschreibung',
     klassen: [2],

@@ -89,3 +89,11 @@
 .story h4 { margin: 0 0 1mm; font-size: 11pt; }
 .ubt.plan.sm td { height: 10mm; }
 .ubt.plan.sm td:first-child { width: 12mm; }
+
+/* --- Merkheft --- */
+.mh-area { font-size: 9.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--red); margin: 3mm 0 1.5mm; border-bottom: 0.3mm solid #e5b4b4; padding-bottom: 0.6mm; }
+.mh-box { border: 0.3mm solid #cfcfcf; border-left: 1.2mm solid var(--red); border-radius: 1.5mm; padding: 1.8mm 3mm 2mm; margin: 0 0 2.2mm; font-size: 9.8pt; line-height: 1.38; break-inside: avoid; }
+.mh-box h3 { display: flex; align-items: center; gap: 2mm; margin: 0 0 1mm; font-size: 11pt; }
+.mh-box h3 img { width: 8mm; height: 8mm; object-fit: contain; }
+.mh-box .mh-ok { margin-left: auto; font-size: 8.5pt; font-weight: 500; color: #555; }
+.sheet.merkheft .mh-body { margin-top: 2mm; }

@@ -113,6 +113,7 @@
 
   UB.register({
     id: 'satzglieder',
+    merk: '<b>Satzglieder</b> findest du mit der Verschiebeprobe: Was beim Umstellen zusammenbleibt, ist ein Satzglied. <b>Subjekt</b>: Wer oder was? <b>Prädikat</b>: Was tut …? (steht im Aussagesatz an 2. Stelle). <b>Objekt im 3. Fall</b> (Dativobjekt): Wem? <b>Objekt im 4. Fall</b> (Akkusativobjekt): Wen oder was? <b>Zeitergänzung</b>: Wann? Wie lange? <b>Ortsergänzung</b>: Wo? Wohin? Woher? <b>Art-und-Weise-Ergänzung</b>: Wie? <b>Begründungsergänzung</b>: Warum?',
     title: 'Satzglieder',
     area: 'sprache',
     klassen: [1, 2],

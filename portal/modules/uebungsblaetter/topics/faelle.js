@@ -139,6 +139,7 @@
 
   UB.register({
     id: 'faelle',
+    merk: '<b>1. Fall</b> (Nominativ): Wer oder was? – der Hund. <b>2. Fall</b> (Genitiv): Wessen? – des Hundes. <b>3. Fall</b> (Dativ): Wem? – dem Hund. <b>4. Fall</b> (Akkusativ): Wen oder was? – den Hund. Frage immer mit dem ganzen Satz: <i>Wem</i> hilft Max? – seinem Freund (3. Fall).',
     title: 'Die vier Fälle',
     area: 'sprache',
     klassen: [1, 2],

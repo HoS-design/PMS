@@ -67,6 +67,7 @@
 
   UB.register({
     id: 'aktiv-passiv',
+    merk: '<b>Aktiv</b>: Wer handelt, steht im Mittelpunkt – Der Koch bereitet die Suppe zu. <b>Passiv</b>: Die Handlung steht im Mittelpunkt – Die Suppe wird (vom Koch) zubereitet. Bildung (Vorgangspassiv): werden + 2. Mittelwort (Partizip II). Präsens: wird gerettet – Präteritum: wurde gerettet – Perfekt: ist gerettet worden. Das Objekt im 4. Fall des Aktivsatzes wird zum Subjekt des Passivsatzes.',
     title: 'Aktiv und Passiv',
     area: 'sprache',
     klassen: [3, 4],

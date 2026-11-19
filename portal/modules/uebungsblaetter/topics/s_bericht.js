@@ -8,7 +8,7 @@ Der Unfall passierte **an der Kreuzung Hauptstraße – Schulgasse**.|Wo
 **Ein zwölfjähriger Radfahrer** wurde dabei verletzt.|Wer
 Der Radfahrer **stieß mit einem Lieferwagen zusammen**.|Was
 Er fuhr über die Kreuzung, **weil er die rote Ampel übersah**.|Warum
-Er stürzte **seitlich auf die Fahrbahn**.|Wie
+Der Radfahrer fuhr **mit hoher Geschwindigkeit** den Berg hinunter.|Wie
 Er wurde **mit leichten Verletzungen ins Krankenhaus gebracht**.|Folgen
 **Beim Sportfest am 14. Juni** gewann die 2b den Staffellauf.|Wann
 Das Sportfest fand **auf dem Sportplatz der Schule** statt.|Wo

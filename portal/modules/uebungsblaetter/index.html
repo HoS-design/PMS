@@ -10,18 +10,21 @@
   <link rel="stylesheet" href="sheet.css">
   <style>
     .hos-stage { grid-template-columns: 270px minmax(0, 1fr); }
-    .catalog { display: flex; flex-direction: column; gap: 10px; }
+    .catalog { display: flex; flex-direction: column; gap: 6px; }
+    .cat-search { width: 100%; border: 2px solid var(--hos-line); border-radius: 10px; padding: 7px 10px; font: inherit; font-size: .9rem; }
+    .cat-search:focus { outline: none; border-color: var(--subject); }
     .cat-area { font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--hos-muted); margin: 4px 0 0; }
     .cat-item {
-      display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 8px; align-items: center;
-      text-align: left; border: 2px solid var(--hos-line); border-radius: 12px; background: #fff; padding: 6px 8px; cursor: pointer; width: 100%;
+      display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px; align-items: center;
+      text-align: left; border: 2px solid var(--hos-line); border-radius: 10px; background: #fff; padding: 4px 8px; cursor: pointer; width: 100%;
     }
     .cat-item:hover { border-color: #d6d3d1; }
     .cat-item.current { border-color: var(--subject); background: var(--subject-soft); }
-    .cat-item img { width: 40px; height: 40px; object-fit: contain; }
-    .cat-item b { display: block; font-size: .95rem; }
-    .cat-item small { color: var(--hos-muted); font-size: .78rem; }
+    .cat-item img { width: 30px; height: 30px; object-fit: contain; }
+    .cat-item b { display: block; font-size: .9rem; line-height: 1.2; }
+    .cat-item small { color: var(--hos-muted); font-size: .72rem; }
     .cat-item .draft { color: #92400e; font-weight: 800; }
+    .cat-item.merkheft { border-style: dashed; }
     .cat-empty { color: var(--hos-muted); font-size: .9rem; }
 
     .preview-panel { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
@@ -29,6 +32,7 @@
     .preview-scroll { flex: 1; min-height: 0; overflow: auto; background: #e7e5e4; border-radius: 12px; padding: 12px; }
     .preview-scale { transform-origin: top left; }
     .preview-scale .sheet { box-shadow: 0 6px 20px rgba(0,0,0,.12); margin: 0 auto; }
+    .preview-scale .sheet + .sheet { margin-top: 16px; }
 
     .blatt-btns { display: inline-flex; gap: 4px; }
     .blatt-btns button { width: 34px; height: 32px; border-radius: 9px; border: 1px solid var(--hos-line); background: #fff; font-weight: 800; cursor: pointer; color: var(--hos-muted); }

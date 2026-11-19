@@ -8,12 +8,15 @@
   const params = new URLSearchParams(location.search);
   const showDrafts = params.has('entwurf') || params.has('lehrer');
 
-  const state = { klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt' };
+  const state = { klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false };
 
   // ------------------------------------------------------------------
   // Adresse: #thema-stufe-blatt  bzw. #thema-stufe-v123456 ; ?klasse=2
   // ------------------------------------------------------------------
   function readHash() {
+    const mh = location.hash.match(/^#merkheft(?:-(\d))?$/);
+    if (mh) { state.merkheft = true; if (mh[1] && +mh[1] >= 1 && +mh[1] <= 4) state.klasse = +mh[1]; return; }
+    state.merkheft = false;
     const m = location.hash.replace('#', '').match(/^([a-z0-9-]+?)(?:-(\d))?(?:-(\d+|v\d+))?$/);
     if (!m) return;
     const t = UB.topics.find(x => x.id === m[1]);
@@ -28,6 +31,7 @@
     state.klasse = t.klassen.includes(k) ? k : t.klassen[0];
   }
   function writeHash() {
+    if (state.merkheft) { history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#merkheft-' + state.klasse); return; }
     if (!state.topic) return;
     const h = '#' + state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt);
     history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + h);
@@ -42,7 +46,7 @@
   }
   function renderCatalog() {
     const list = visibleTopics();
-    let html = '';
+    let html = list.some(t => t.merk) ? '<button type="button" class="cat-item merkheft' + (state.merkheft ? ' current' : '') + '" data-merkheft="1"><img src="' + IMG('MiniHoS_Original_Notizbuch') + '" alt=""><span><b>Merkheft</b><small>alle Regeln der ' + state.klasse + '. Klasse auf einen Blick</small></span></button>' : '';
     Object.keys(UB.AREAS).forEach(area => {
       const ts = list.filter(t => t.area === area);
       if (!ts.length) return;
@@ -52,10 +56,29 @@
         (t.review ? ' · <span class="draft">Entwurf</span>' : '') + '</small></span></button>').join('');
     });
     if (!list.length) html = '<p class="cat-empty">Für die ' + state.klasse + '. Klasse kommen bald Themen dazu.</p>';
-    $('catalog').innerHTML = html;
+    const q = ($('catSearch') && $('catSearch').value) || '';
+    $('catalog').innerHTML = '<input type="search" class="cat-search" id="catSearch" placeholder="Thema suchen …" aria-label="Thema suchen">' + html;
+    const inp = $('catSearch');
+    inp.value = q;
+    const filter = () => {
+      const v = inp.value.trim().toLowerCase();
+      $('catalog').querySelectorAll('[data-topic]').forEach(btn => {
+        const t = UB.topics.find(x => x.id === btn.dataset.topic);
+        btn.hidden = !!v && !(t.title + ' ' + t.id + ' ' + (t.merk || '')).toLowerCase().includes(v);
+      });
+      $('catalog').querySelectorAll('.cat-area').forEach(h => {
+        let n = h.nextElementSibling, any = false;
+        while (n && !n.classList.contains('cat-area')) { if (n.dataset.topic && !n.hidden) any = true; n = n.nextElementSibling; }
+        h.hidden = !any;
+      });
+    };
+    inp.addEventListener('input', filter);
+    if (q) filter();
     $('catalog').querySelectorAll('[data-topic]').forEach(b => b.addEventListener('click', () => {
-      state.topic = b.dataset.topic; state.blatt = 1; state.variant = null; render();
+      state.topic = b.dataset.topic; state.blatt = 1; state.variant = null; state.merkheft = false; render();
     }));
+    const mb = $('catalog').querySelector('[data-merkheft]');
+    if (mb) mb.addEventListener('click', () => { state.merkheft = true; render(); });
   }
 
   // ------------------------------------------------------------------
@@ -89,6 +112,36 @@
   }
 
   // ------------------------------------------------------------------
+  // Merkheft: alle Merkkästen der Klasse, automatisch auf A4-Seiten verteilt
+  // ------------------------------------------------------------------
+  function merkPage(nr, body) {
+    return '<article class="sheet merkheft"><header class="sh-head"><div><div class="sh-kicker">Deutsch · ' + state.klasse + '. Klasse</div>' +
+      '<h1>Merkheft</h1><div class="sh-meta">Seite ' + nr + ' von %TOTAL%</div></div><img class="sh-img" src="' + IMG(nr === 1 ? 'MiniHoS_Original_Notizbuch' : 'MiniHoS_Erklaeren_Tafel-Idee') + '" alt=""></header>' +
+      '<div class="mh-body">' + body + '</div><div class="sh-spacer"></div><footer class="sh-foot"><span>chatisthisreal.at/uebungsblaetter</span><span>Merkheft ' + state.klasse + '. Klasse</span></footer></article>';
+  }
+  function buildMerkheft() {
+    const list = visibleTopics().filter(t => t.merk);
+    const blocks = [];
+    Object.keys(UB.AREAS).forEach(area => {
+      const ts = list.filter(t => t.area === area);
+      if (!ts.length) return;
+      ts.forEach((t, i) => blocks.push((i === 0 ? '<div class="mh-area">' + esc(UB.AREAS[area]) + '</div>' : '') +
+        '<section class="mh-box"><h3><img src="' + IMG(t.img) + '" alt="">' + esc(t.title) + '<span class="mh-ok">☐ verstanden</span></h3><div>' + t.merk + '</div></section>'));
+    });
+    const meas = document.createElement('div');
+    meas.style.cssText = 'position:absolute;left:-10000px;top:0;visibility:hidden';
+    document.body.appendChild(meas);
+    const pages = []; let cur = [];
+    blocks.forEach(b => {
+      meas.innerHTML = merkPage(1, cur.concat([b]).join(''));
+      if (cur.length && meas.firstChild.offsetHeight > 1123) { pages.push(cur); cur = [b]; } else cur.push(b);
+    });
+    if (cur.length) pages.push(cur);
+    meas.remove();
+    return pages.map((p, i) => merkPage(i + 1, p.join(''))).join('').replace(/%TOTAL%/g, pages.length);
+  }
+
+  // ------------------------------------------------------------------
   // Darstellung
   // ------------------------------------------------------------------
   function render() {
@@ -96,9 +149,20 @@
     document.querySelectorAll('#levelSeg button').forEach(b => b.classList.toggle('active', +b.dataset.level === state.level));
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
     $('blattBtns').innerHTML = Array.from({ length: BLATT_COUNT }, (_, i) => '<button type="button" data-blatt="' + (i + 1) + '" class="' + (!state.variant && state.blatt === i + 1 ? 'active' : '') + '">' + (i + 1) + '</button>').join('');
-    $('blattBtns').querySelectorAll('[data-blatt]').forEach(b => b.addEventListener('click', () => { state.blatt = +b.dataset.blatt; state.variant = null; render(); }));
+    $('blattBtns').querySelectorAll('[data-blatt]').forEach(b => b.addEventListener('click', () => { state.blatt = +b.dataset.blatt; state.variant = null; state.merkheft = false; render(); }));
     renderCatalog();
 
+    if (state.merkheft) {
+      ['printSolBtn', 'poolBtn', 'variantBtn'].forEach(id => { $(id).disabled = true; });
+      ['printBtn', 'linkBtn'].forEach(id => { $(id).disabled = false; });
+      $('previewScale').innerHTML = buildMerkheft();
+      const n = $('previewScale').querySelectorAll('.sheet').length;
+      $('sheetInfo').textContent = 'Merkheft · ' + state.klasse + '. Klasse · ' + n + (n === 1 ? ' Seite' : ' Seiten');
+      setMsg('Alle Regeln der ' + state.klasse + '. Klasse. Drucke das Merkheft aus und hake ab, was du verstanden hast.', '');
+      writeHash();
+      fitPreview();
+      return;
+    }
     const t = UB.topics.find(x => x.id === state.topic);
     const hasTopic = !!t && t.klassen.includes(state.klasse);
     ['printBtn', 'printSolBtn', 'linkBtn', 'poolBtn', 'variantBtn'].forEach(id => { $(id).disabled = !hasTopic; });
@@ -122,7 +186,8 @@
     const sheet = scale.querySelector('.sheet');
     if (!sheet) return;
     scale.style.transform = 'none';
-    const w = sheet.offsetWidth, h = sheet.offsetHeight;
+    scale.style.height = 'auto';
+    const w = sheet.offsetWidth, h = scale.scrollHeight;
     const f = Math.min(1, (scroll.clientWidth - 26) / w);
     scale.style.transform = 'scale(' + f + ')';
     scale.style.width = w + 'px';
@@ -136,8 +201,9 @@
   // ------------------------------------------------------------------
   function doPrint(solution) {
     const t = UB.topics.find(x => x.id === state.topic);
-    if (!t) return;
-    $('printArea').innerHTML = buildSheet(t, solution);
+    if (state.merkheft) $('printArea').innerHTML = buildMerkheft();
+    else if (!t) return;
+    else $('printArea').innerHTML = buildSheet(t, solution);
     const imgs = Array.from($('printArea').querySelectorAll('img'));
     Promise.all(imgs.map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))).then(() => window.print());
   }
@@ -166,10 +232,10 @@
   document.querySelectorAll('#klasseSeg button').forEach(b => b.addEventListener('click', () => {
     state.klasse = +b.dataset.klasse;
     const t = UB.topics.find(x => x.id === state.topic);
-    if (!t || !t.klassen.includes(state.klasse)) { state.topic = null; history.replaceState(null, '', location.pathname + location.search); }
+    if (!state.merkheft && (!t || !t.klassen.includes(state.klasse))) { state.topic = null; history.replaceState(null, '', location.pathname + location.search); }
     render();
   }));
-  document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; render(); }));
+  document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; state.merkheft = false; render(); }));
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { state.view = b.dataset.view; render(); }));
   $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 900000)); state.blatt = null; state.view = 'blatt'; render(); });
   window.addEventListener('hashchange', () => { readHash(); render(); });
