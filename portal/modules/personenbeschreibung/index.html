@@ -7,24 +7,72 @@
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/app.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
+  <style>
+    /* Rahmen an das gemeinsame Layout anpassen (Arbeitsblätter selbst bleiben unverändert) */
+    body.hos-app { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 15px; line-height: 1.45; }
+    .hos-app main.hos-main { max-width: none; width: min(1440px, 100%); margin: 0 auto; padding: 8px 14px 10px; }
+    .hos-app .hos-topbar label { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; }
+    .hos-app .hos-topbar select, .hos-app .hos-bottombar select { padding: 6px 10px; border-radius: 10px; border: 1px solid var(--hos-line); background: #fff; color: var(--hos-ink); }
+    .hos-app input[type=checkbox] { accent-color: var(--subject); width: 17px; height: 17px; }
+
+    /* Stationen als Schritt-Reiter */
+    #navigation { display: flex; gap: 6px; flex-wrap: wrap; margin: 0; }
+    #navigation button {
+      border: 1px solid var(--hos-line); background: #fff; color: var(--hos-muted);
+      border-radius: 999px; padding: 6px 12px; font-weight: 800; font-size: .9rem;
+    }
+    #navigation button:hover { background: #fafaf9; color: var(--hos-ink); }
+    #navigation button[aria-current="step"] { background: var(--subject); border-color: var(--subject); color: #fff; }
+
+    /* Arbeitsblatt-Bereich: scrollt innen, Seite bleibt fest */
+    .sheet-area { padding: 0 14px; background: #eeedeb; }
+    .sheet-area .sheet { margin: 14px auto; max-width: 1000px; }
+    .sheet-area .source { margin: 4px auto 14px; max-width: 1000px; }
+
+    /* Knöpfe in den Arbeitsblättern an die Fachfarbe angleichen */
+    .hos-app .sheet button { border-color: var(--hos-line); border-radius: 10px; }
+    .hos-app .sheet button:hover { background: var(--subject-soft); }
+    .hos-app .sheet button.primary { background: var(--subject); border-color: var(--subject); color: #fff; }
+    .hos-app #person-status { margin: 10px auto -4px; max-width: 1000px; font-size: .82rem; color: var(--hos-muted); }
+
+    @media print {
+      body.hos-app > header, body.hos-app > main { display: none !important; }
+      body.hos-app { font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.4; color: #000; }
+    }
+  </style>
   <script src="app.js" defer></script>
 </head>
-<body>
+<body class="hos-app subject-deutsch">
   <header class="app-header">
-    <div class="brand-row"><img src="/chatisthisreal.png" alt="Logo" class="logo-img"><div class="brand-title"><div class="badge-main is-deutsch">Deutsch</div><h1>Personenbeschreibung</h1></div></div>
+    <div class="brand-row"><img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'"><div class="brand-title"><div class="badge-main is-deutsch">Deutsch</div><h1>Personenbeschreibung</h1></div></div>
     <div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div>
   </header>
-  <main>
-    <section class="intro"><span class="eyebrow">5. Schulstufe · Schreibwerkstatt für Fortgeschrittene</span><h2>Genau hinsehen. Treffend beschreiben.</h2><p>Übe gemeinsam am Beamer oder auf Papier. Dein Ziel: eine geordnete Personenbeschreibung mit etwa <strong>140 bis 180 Wörtern</strong>.</p></section>
-    <section class="controls" aria-label="Vorlage und Druck einstellen">
-      <div class="toolbar"><button id="generate" class="primary">↻ Neue Person</button><label>Wortschatzhilfe <select id="level"><option value="independent">Ohne Hilfe</option><option value="help">Mit Wortschatzimpulsen</option></select></label><label><input type="checkbox" id="mono"> Schwarz-Weiß</label></div>
-      <p id="person-status" role="status"></p>
-      <div class="toolbar"><label>Drucken <select id="print-scope"><option value="all">Arbeitsheft + Schreibblatt (7 Seiten)</option><option value="exercises">Arbeitsheft (5 Seiten)</option><option value="writing">Schreibblatt (2 Seiten)</option><option value="current">Aktuelle Station</option><option value="solutions">Lösungen (2 Seiten)</option></select></label><button id="print">Drucken / als PDF speichern</button><button id="variants">3 verschiedene Schreibblätter drucken</button></div>
-      <p class="small">A4 · Für ein beidseitiges Schreibblatt: an der langen Kante wenden. Im Druckdialog Kopf- und Fußzeilen ausschalten. Lösungen werden separat gedruckt.</p>
-    </section>
-    <nav id="navigation" aria-label="Übungsstationen"></nav>
-    <div id="screen-content"></div>
-    <p class="source">Inhaltlich orientiert an „Deutschstunde 1 Sprachbuch“, S. 26–29 und 208. Eigene Aufgaben und Illustrationen. Satzanfänge und Präsensübungen ergänzen das Training.</p>
+
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <nav id="navigation" aria-label="Übungsstationen"></nav>
+      <span class="hos-spacer"></span>
+      <span class="hos-pill" title="Schreibziel">Ziel: <b>140–180 Wörter</b></span>
+    </div>
+
+    <div class="hos-stage">
+      <section class="hos-panel scroll sheet-area" aria-label="Arbeitsblatt">
+        <p id="person-status" role="status"></p>
+        <div id="screen-content"></div>
+        <p class="source">Inhaltlich orientiert an „Deutschstunde 1 Sprachbuch“, S. 26–29 und 208. Eigene Aufgaben und Illustrationen. Satzanfänge und Präsensübungen ergänzen das Training.</p>
+      </section>
+    </div>
+
+    <div class="hos-bottombar">
+      <button id="generate" class="hos-btn primary" type="button">↻ Neue Person</button>
+      <label>Wortschatzhilfe <select id="level"><option value="independent">Ohne Hilfe</option><option value="help">Mit Wortimpulsen</option></select></label>
+      <label><input type="checkbox" id="mono"> Schwarz-Weiß</label>
+      <span class="hos-spacer"></span>
+      <label>Drucken <select id="print-scope" title="A4 · Schreibblatt beidseitig an der langen Kante wenden · Kopf- und Fußzeilen im Druckdialog ausschalten"><option value="all">Heft + Schreibblatt (7 S.)</option><option value="exercises">Arbeitsheft (5 S.)</option><option value="writing">Schreibblatt (2 S.)</option><option value="current">Aktuelle Station</option><option value="solutions">Lösungen (2 S.)</option></select></label>
+      <button id="print" class="hos-btn" type="button">Drucken / PDF</button>
+      <button id="variants" class="hos-btn soft" type="button" title="3 verschiedene Schreibblätter drucken">3 Schreibblätter</button>
+    </div>
   </main>
   <div id="print-root" aria-hidden="true"></div>
   <noscript>Bitte JavaScript aktivieren, damit die Personen und Druckvorlagen erzeugt werden können.</noscript>

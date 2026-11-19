@@ -64,6 +64,7 @@ body.hos-app {
   line-height: 1.45;
 }
 .hos-app *, .hos-app *::before, .hos-app *::after { box-sizing: border-box; }
+.hos-app [hidden] { display: none !important; }
 .hos-app button, .hos-app select, .hos-app input, .hos-app textarea { font: inherit; }
 
 /* Kopf: kompakt, Fachfarbe im Badge */
