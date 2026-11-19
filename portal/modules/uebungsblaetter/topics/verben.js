@@ -67,7 +67,17 @@ Ihr öffnet die Fenster. => Öffnet die Fenster!
 Du bist vorsichtig. => Sei vorsichtig!
 Du wartest hier. => Warte hier!
 Ihr schreibt das Datum auf. => Schreibt das Datum auf!
-Du siehst genau hin. => Sieh genau hin!`,
+Du siehst genau hin. => Sieh genau hin!
+Du hörst gut zu. => Hör gut zu!
+Ihr wascht euch die Hände. => Wascht euch die Hände!
+Du nimmst Platz. => Nimm Platz!
+Du triffst den Ball. => Triff den Ball!
+Du vergisst das Heft nicht. => Vergiss das Heft nicht!
+Du wirfst den Ball. => Wirf den Ball!
+Du läufst schneller. => Lauf schneller!
+Du fährst vorsichtig. => Fahr vorsichtig!
+Du hilfst deiner Schwester. => Hilf deiner Schwester!
+Ihr bleibt hier. => Bleibt hier!`,
       art: `Wir **gehen** heute ins Kino.|P
 Ich möchte heute **schwimmen**.|N
 Lena **schreibt** einen Brief.|P
@@ -81,7 +91,17 @@ Ich muss noch Vokabeln **lernen**.|N
 **Lies** den Text genau!|B
 Ihr **seid** sehr fleißig.|P
 Darf ich draußen **spielen**?|N
-**Sei** bitte vorsichtig!|B`
+**Sei** bitte vorsichtig!|B
+Ich will heute **lesen**.|N
+Sie **schwimmt** jeden Tag.|P
+**Bleib** hier!|B
+Wir können morgen **kommen**.|N
+Du **spielst** sehr gut.|P
+**Gebt** mir eure Hefte!|B
+Ich möchte ein Eis **essen**.|N
+Er **liest** ein Buch.|P
+**Hilf** mir bitte!|B
+Wir **fahren** nach Wien.|P`
     },
     levels: {
       1: {
@@ -105,7 +125,7 @@ Darf ich draußen **spielen**?|N
         tasks: [
           { type: 'fn', fn: paradigm, title: '' },
           { type: 'choice', pool: 'art', cover: true, keys: ['N', 'P', 'B'], n: 5, title: 'Bestimme die Verbform.', instr: 'Kreuze an.', opts: [['N', 'Infinitiv'], ['P', 'finite Verbform'], ['B', 'Imperativ']] },
-          { type: 'pair', pool: 'befehl', n: 3, filter: x => /^Du (gibst|hilfst|nimmst|isst|sprichst|siehst|liest)/.test(x.q), title: 'Imperativ', instr: 'Achtung: Bei diesen Verben ändert sich der Selbstlaut auch im Imperativ.' }
+          { type: 'pair', pool: 'befehl', n: 3, filter: x => /^Du (gibst|hilfst|nimmst|isst|sprichst|siehst|liest|triffst|vergisst|wirfst)/.test(x.q), title: 'Imperativ', instr: 'Achtung: Bei diesen Verben ändert sich der Selbstlaut auch im Imperativ.' }
         ]
       }
     }

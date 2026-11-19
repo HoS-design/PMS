@@ -22,14 +22,29 @@ Die Ärztin hat mich {krankgeschrieben|krank geschrieben}.
 Er ist mit dem Bus {schwarzgefahren|schwarz gefahren}.
 Morgen müssen alle pünktlich {da sein|dasein}.
 Wir wollen {zusammen sein|zusammensein}.
-Er ist schnell {heimgegangen|heim gegangen}.`
+Er ist schnell {heimgegangen|heim gegangen}.
+Am Nachmittag gehen wir {Fußball spielen|fußballspielen}.
+Ich möchte {Gitarre spielen|gitarrespielen} lernen.
+Wir treffen uns {morgen Abend|morgenabend}.
+{Irgendjemand|Irgend jemand} hat die Tür offen gelassen.
+Kommst du {irgendwann|irgend wann} vorbei?
+Wir gehen jetzt {einkaufen|ein kaufen}.
+Ich habe keine Lust, {mitzuspielen|mit zu spielen}.
+Lena hat versprochen, {pünktlich zu sein|pünktlichzusein}.
+Der Unterricht hat schon {angefangen|an gefangen}.
+Wir wollen {Ski fahren|skifahren} lernen.
+Er will {Auto fahren|autofahren} lernen.
+Die Klasse will beim Theaterstück {mitmachen|mit machen}.
+Die Kinder sollen im Garten {spielen gehen|spielengehen}.
+Nach dem Turnen sind alle {müde geworden|müdegeworden}.
+Wir haben uns {gestern Abend|gesternabend} getroffen.`
   },
   levels: {
     1: {
       ichkann: ['Du schreibst Nomen + Verb und Verb + Verb getrennt.', 'Du schreibst Wörter mit irgend- zusammen.'],
       tasks: [
         { type: 'merk', title: 'Die wichtigsten Regeln', html: 'Getrennt: Nomen + Verb (Rad fahren), Verb + Verb (spazieren gehen), Zeitangaben (heute Abend). Zusammen: irgend- (irgendwann), teilnehmen, stattfinden, eislaufen, zu-Infinitive (aufzuräumen).' },
-        { type: 'gap', pool: 'wahl', n: 8, filter: x => /Rad|Klavier|spazieren|schwimmen|Irgend|irgend|heute Abend|morgen früh/.test(x.q), title: 'Getrennt oder zusammen?', instr: 'Kreise die richtige Schreibung ein.' }
+        { type: 'gap', pool: 'wahl', n: 8, filter: x => /Rad|Klavier|spazieren|schwimmen|Irgend|irgend|heute Abend|morgen früh|Fußball|Gitarre|Auto|morgen Abend|gestern Abend|spielen gehen/.test(x.q), title: 'Getrennt oder zusammen?', instr: 'Kreise die richtige Schreibung ein.' }
       ]
     },
     2: {

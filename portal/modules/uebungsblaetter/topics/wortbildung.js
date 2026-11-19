@@ -40,7 +40,15 @@ Mann :: -schaft => die Mannschaft
 leiten :: -ung => die Leitung
 sauber :: -keit => die Sauberkeit
 schön :: -heit => die Schönheit
-erlauben :: -nis => die Erlaubnis`,
+erlauben :: -nis => die Erlaubnis
+zeichnen :: -ung => die Zeichnung
+faul :: -heit => die Faulheit
+traurig :: -keit => die Traurigkeit
+geheim :: -nis => das Geheimnis
+Land :: -schaft => die Landschaft
+meinen :: -ung => die Meinung
+gesund :: -heit => die Gesundheit
+pünktlich :: -keit => die Pünktlichkeit`,
     familie: `Fahrer|F
 Fahrt|F
 Abfahrt|F
@@ -69,7 +77,16 @@ das Hochhaus => hoch + Haus (Adjektiv + Nomen)
 der Spielplatz => spielen + Platz (Verb + Nomen)
 eiskalt => Eis + kalt (Nomen + Adjektiv)
 der Kühlschrank => kühlen + Schrank (Verb + Nomen)
-hellblau => hell + blau (Adjektiv + Adjektiv)`
+hellblau => hell + blau (Adjektiv + Adjektiv)
+die Turnhalle => turnen + Halle (Verb + Nomen)
+der Blumentopf => Blume + Topf (Nomen + Nomen)
+die Kleinstadt => klein + Stadt (Adjektiv + Nomen)
+der Waschlappen => waschen + Lappen (Verb + Nomen)
+das Fahrrad => fahren + Rad (Verb + Nomen)
+der Schneeball => Schnee + Ball (Nomen + Nomen)
+das Rotkraut => rot + Kraut (Adjektiv + Nomen)
+zuckersüß => Zucker + süß (Nomen + Adjektiv)
+dunkelgrün => dunkel + grün (Adjektiv + Adjektiv)`
   },
   levels: {
     1: {

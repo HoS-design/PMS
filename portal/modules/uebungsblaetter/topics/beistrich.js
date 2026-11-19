@@ -18,7 +18,21 @@ Oh, wie schön ist dieser Ausblick!
 Mama, darf ich noch draußen spielen?
 Wir fahren nicht ans Meer, sondern in die Berge.
 Ich mag Hunde, Katzen und Pferde.
-Hallo, wie geht es dir?`,
+Hallo, wie geht es dir?
+Wir brauchen Mehl, Zucker, Eier und Milch.
+Papa, hilfst du mir bitte?
+Juhu, wir haben gewonnen!
+Das Kleid ist schön, aber teuer.
+Er trinkt keinen Kaffee, sondern Tee.
+Lena, Tom und Max spielen Fußball.
+Nein, das stimmt nicht.
+Der Hund schnüffelt, bellt und wedelt mit dem Schwanz.
+Pass auf, Paul!
+Wir fahren nicht mit dem Zug, sondern mit dem Bus.
+Im Garten wachsen Tomaten, Gurken und Salat.
+Oh, wie lustig!
+Kinder, kommt zum Essen!
+Der Test war schwer, aber fair.`,
     satz: `Ich weiß, dass du recht hast.
 Wenn es regnet, bleiben wir drinnen.
 Wir bleiben drinnen, weil es regnet.
@@ -32,7 +46,21 @@ Weißt du, wann der Bus kommt?
 Lena fragt, ob wir mitkommen.
 Ich bin froh, dass die Ferien beginnen.
 Die Jacke, die du trägst, ist sehr schön.
-Bevor du gehst, mach bitte das Licht aus.`,
+Bevor du gehst, mach bitte das Licht aus.
+Weil es regnet, nehmen wir den Bus.
+Ich weiß nicht, ob er kommt.
+Er spielte weiter, obwohl er müde war.
+Wir warten, bis du fertig bist.
+Die Frau, die dort steht, ist meine Tante.
+Wenn du willst, kannst du mitkommen.
+Er sagt, dass er keine Zeit hat.
+Nachdem wir gegessen hatten, spielten wir Karten.
+Der Ball, den ich suche, ist weg.
+Ich lese ein Buch, während du schläfst.
+Sie lernt viel, damit sie gute Noten bekommt.
+Als ich klein war, hatte ich einen Hasen.
+Weißt du, wo mein Schlüssel ist?
+Das Kind, dem ich geholfen habe, lächelt.`,
     schwer: `Herr Maier, unser Hausmeister, repariert das Fenster.
 Ich lerne viel, um gute Noten zu bekommen.
 Er ging, ohne sich zu verabschieden.
@@ -46,7 +74,21 @@ Tom sagte: „Ich komme morgen, wenn ich Zeit habe.“
 Wir hatten nichts zu tun, außer zu warten.
 Lena, meine beste Freundin, wohnt neben mir.
 „Wir gewinnen“, rief der Trainer, „wenn wir zusammenhalten!“
-Er rannte los, um den Bus noch zu erreichen.`,
+Er rannte los, um den Bus noch zu erreichen.
+Frau Berger, unsere Lehrerin, hat Geburtstag.
+Er ging nach Hause, ohne ein Wort zu sagen.
+„Ich bin müde“, sagte Lena.
+Anstatt zu helfen, schaute er zu.
+Wien, die Hauptstadt Österreichs, liegt an der Donau.
+Sie spart, um sich ein Fahrrad zu kaufen.
+„Wo warst du?“, fragte Mama.
+Max, mein kleiner Bruder, geht noch in den Kindergarten.
+Er kam, ohne anzuklopfen, ins Zimmer.
+„Komm mit“, sagte Paul, „es wird lustig.“
+Unser Nachbar, ein netter alter Herr, gießt unsere Blumen.
+Statt fernzusehen, las sie ein Buch.
+Wir übten lange, um das Spiel zu gewinnen.
+„Hilfe!“, rief das Kind.`,
     regel: `Ich kaufe Brot, Butter und Käse.|A
 Max, hilf mir bitte!|R
 Er ist alt, aber noch fit.|G
@@ -59,7 +101,18 @@ Ach, wie dumm von mir!|R
 Er kam nicht mit dem Bus, sondern zu Fuß.|G
 Wenn du willst, helfe ich dir.|N
 Unser Lehrer, Herr Gruber, ist krank.|E
-Sie ging, ohne zu grüßen.|I`
+Sie ging, ohne zu grüßen.|I
+Wir kaufen Äpfel, Birnen und Trauben.|A
+Mama, wo ist meine Jacke?|R
+Oh, das tut mir leid!|R
+Sie ist klein, aber flink.|G
+Wir fahren nicht heute, sondern morgen.|G
+Ich glaube, dass es regnet.|N
+Als es dunkel wurde, gingen wir heim.|N
+Herr Huber, unser Nachbar, ist nett.|E
+Er lernt, um den Test zu bestehen.|I
+Sie ging, ohne sich umzudrehen.|I
+Der Hund, der bellt, heißt Rex.|N`
   },
   levels: {
     1: {

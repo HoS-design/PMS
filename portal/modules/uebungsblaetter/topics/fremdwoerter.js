@@ -17,7 +17,18 @@ Der {Rhythmus|Rythmus|Rhytmus} ist schnell.
 Das ist ein lustiger {Typ|Tüp|Tyb}.
 Meine Schwester studiert {Biologie|Biologi|Bjologie}.
 In der {Bibliothek|Bibliotek|Biblyothek} ist es leise.
-Wir lernen das {Alphabet|Alfabet|Alphabeth}.`,
+Wir lernen das {Alphabet|Alfabet|Alphabeth}.
+Die {Apotheke|Apoteke|Apotheeke} hat bis 18 Uhr offen.
+Der {Computer|Kompjuter|Computa} ist neu.
+Wir gehen ins {Museum|Musehum|Museumm}.
+Das {Thermometer|Termometer|Thermomether} zeigt 20 Grad.
+In {Geografie|Geogravie|Geograpfie} lernen wir Landkarten lesen.
+Der {Pilot|Pilott|Piloth} landet das Flugzeug.
+Die {Polizei|Polizai|Pollizei} kommt.
+Wir {diskutieren|diskutiren|diskuttieren} über das Thema.
+Das {Hobby|Hobi|Hoby} meines Vaters ist Angeln.
+Wir sehen ein {Video|Wideo|Vidio} an.
+Der {Rhythmus|Rythmus|Rhythmuss} ist schwierig.`,
     bedeutung: `die Biografie => die Lebensbeschreibung
 das Thermometer => der Wärmemesser
 der Autor => der Verfasser
@@ -45,7 +56,14 @@ Fantas- => die Fantasie
 Tour- => der Tourismus
 Techn- => die Technik
 Situat- => die Situation
-diskut- => diskutieren`
+diskut- => diskutieren
+interess- => sich interessieren
+Elektr- => die Elektrik
+Präsentat- => die Präsentation
+Universit- => die Universität
+Biolog- => die Biologie
+trainier- => trainieren
+Grafi- => die Grafik`
   },
   levels: {
     1: {

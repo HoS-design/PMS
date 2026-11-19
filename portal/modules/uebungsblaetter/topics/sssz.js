@@ -58,7 +58,13 @@ die Mau? => die Maus – die Mäuse
 der Gru? => der Gruß – die Grüße
 na? => nass – nässer
 der Prei? => der Preis – die Preise
-der Ri? => der Riss – die Risse`
+der Ri? => der Riss – die Risse
+das Lo? => das Los – die Lose
+der Schlu? => der Schluss – die Schlüsse
+hei? => heiß – heißer
+das Gebi? => das Gebiss – die Gebisse
+das Mo? => das Moos – die Moose
+der Gu? => der Guss – die Güsse`
   },
   levels: {
     1: {

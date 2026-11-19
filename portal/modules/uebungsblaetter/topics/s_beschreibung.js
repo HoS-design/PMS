@@ -12,7 +12,12 @@ An der Seite sind so Dinger. || An beiden Seiten befinden sich Netztaschen für 
 Die Katze ist irgendwie gefleckt. || Das Fell der Katze ist weiß mit rotbraunen Flecken. || b || genaue Farben und Muster
 Das Ding ist ungefähr so groß wie ein anderes Ding. || Die Federschachtel ist etwa 20 Zentimeter lang und 8 Zentimeter breit. || b || genaue Maße
 Der Hund hat ein Fell. Der Hund hat Ohren. Der Hund hat einen Schwanz. || Der Hund hat ein kurzes, braunes Fell, Schlappohren und einen buschigen Schwanz. || b || abwechslungsreiche Sätze
-Die Kappe ist schön. || Die rote Kappe hat einen breiten Schirm und ein weißes Logo. || b || „schön“ sagt nichts aus`,
+Die Kappe ist schön. || Die rote Kappe hat einen breiten Schirm und ein weißes Logo. || b || „schön“ sagt nichts aus
+Die Flasche ist halt so lila. || Die Trinkflasche ist hellviolett und hat einen silbernen Deckel. || b || genaue Farbe und Einzelheiten
+Der Hase hat lange Ohren gehabt. || Der Hase hat lange, aufgestellte Ohren. || b || Präsens
+Oben ist ein Ding zum Tragen. || Oben befindet sich ein gepolsterter Tragegriff. || b || genaue Bezeichnung
+Die Tasche ist super praktisch und echt toll. || Die Tasche hat vier Fächer und einen verstellbaren Schultergurt. || b || sachlich statt Bewertung
+Die Schachtel ist eckig. || Die Schachtel ist rechteckig, etwa 30 Zentimeter lang und aus Karton. || b || Maße und Material`,
       adj: `rechteckig|Fo
 oval|Fo
 kugelrund|Fo
@@ -44,7 +49,11 @@ Du hast deine **Federschachtel** verloren. Schreibe eine Verlustanzeige für das
 Schreibe einen **Tiersteckbrief**: Beschreibe ein Haustier oder ein Tier, das du gut kennst. => Größe und Körperbau ; Fell, Farbe, Kopf, Beine, Schwanz ; besondere Merkmale und Verhalten
 Ein Hund ist entlaufen. Schreibe eine **Suchanzeige**, damit ihn alle erkennen. => Rasse, Größe, Fell ; Halsband, besondere Merkmale ; Wo zuletzt gesehen?
 Beschreibe dein **Lieblingsspielzeug** oder deinen Lieblingsgegenstand. => Gesamteindruck ; Einzelheiten von oben nach unten ; Verwendung
-Beschreibe dein **Fahrrad** für die Fahrradbörse. => Art, Größe, Farbe ; Rahmen, Lenker, Sattel, Reifen ; Zubehör und Zustand`
+Beschreibe dein **Fahrrad** für die Fahrradbörse. => Art, Größe, Farbe ; Rahmen, Lenker, Sattel, Reifen ; Zubehör und Zustand
+Beschreibe deine **Schultasche** für die Fundkiste. => Gesamteindruck ; Fächer und Verschlüsse ; Besonderheiten
+Beschreibe deinen **Lieblingsbecher** oder deine Trinkflasche. => Form, Farbe, Material ; Aufdruck ; Besonderheiten
+Ein Kater ist entlaufen. Schreibe eine **Suchanzeige**. => Größe, Fell, Augen ; Halsband ; besondere Merkmale und Verhalten
+Beschreibe ein **Tier aus dem Zoo** für ein Tierlexikon. => Größe und Körperbau ; Fell oder Haut, Kopf, Beine ; Besonderheiten`
     },
     levels: {
       1: {
@@ -82,7 +91,11 @@ Sie schaut irgendwie nett aus. || Ihre grünen Augen blicken freundlich. || b ||
 Er war groß. || Er ist etwa 1,80 Meter groß. || b || Präsens und genaue Angaben
 Sie hat eine hässliche Nase. || Ihre Nase ist schmal und leicht gebogen. || b || sachlich, ohne Bewertung
 Er hat ein T-Shirt, eine Hose und Schuhe an. || Er trägt ein graues Kapuzenshirt, eine dunkle Jeans und weiße Turnschuhe. || b || genaue Kleidung, treffendes Verb
-Die Frau ist alt. || Die Frau ist etwa 70 Jahre alt. || b || genaue Schätzung`,
+Die Frau ist alt. || Die Frau ist etwa 70 Jahre alt. || b || genaue Schätzung
+Sie hat so komische Schuhe. || Sie trägt knallgelbe Gummistiefel. || b || genau und ohne Bewertung
+Er hat Augen. || Er hat große, hellblaue Augen. || b || genaue Adjektive
+Sie ist voll dünn. || Sie ist schlank. || b || sachliche Sprache
+Sein Gesicht ist normal. || Sein Gesicht ist rund, auf der Nase hat er Sommersprossen. || b || konkret beschreiben`,
       wortfeld: `lockig|H
 glatt|H
 gewellt|H
@@ -100,7 +113,11 @@ untersetzt|S`,
       auftrag: `Ein Mädchen wird vermisst. Schreibe für die Polizei eine **Vermisstenmeldung** mit einer genauen Personenbeschreibung (erfundene Person). => Alter, Größe, Gestalt ; Gesicht und Haare ; Kleidung ; besondere Merkmale
 Beschreibe **eine erfundene Figur** für ein Computerspiel so genau, dass ein Grafiker sie zeichnen kann. => Gesamteindruck ; Kopf ; Kleidung und Ausrüstung ; besondere Merkmale
 Schreibe einen **Steckbrief** für einen erfundenen Bankräuber, der auf der Flucht ist. => Gesamteindruck ; Gesicht ; Kleidung ; besondere Merkmale, Gang
-Beschreibe eine **Figur aus einem Buch oder Film**, ohne den Namen zu nennen. Die anderen sollen raten. => Gesamteindruck ; Gesicht und Haare ; Kleidung ; typische Merkmale`
+Beschreibe eine **Figur aus einem Buch oder Film**, ohne den Namen zu nennen. Die anderen sollen raten. => Gesamteindruck ; Gesicht und Haare ; Kleidung ; typische Merkmale
+Beschreibe einen erfundenen **Superhelden** oder eine Superheldin so genau, dass man ihn oder sie zeichnen kann. => Gesamteindruck ; Kopf ; Kostüm ; besondere Merkmale
+Auf dem Schulfest ist ein kleines Kind verloren gegangen. Schreibe eine **Durchsage** mit Personenbeschreibung (erfundene Person). => Alter, Größe ; Haare, Gesicht ; Kleidung ; Merkmale
+Beschreibe eine **erfundene Lehrerin** für eine Geschichte. => Gesamteindruck ; Gesicht und Haare ; Kleidung ; typische Merkmale
+Beschreibe einen **erfundenen Räuber** für ein Fahndungsplakat. => Größe, Gestalt ; Gesicht ; Kleidung ; auffällige Merkmale`
     },
     levels: {
       1: {
@@ -136,7 +153,11 @@ Beschreibe eine **Figur aus einem Buch oder Film**, ohne den Namen zu nennen. Di
 Zuerst legst du ein Blatt Papier vor dich hin. >> Dann faltest du es einmal der Länge nach in der Mitte. >> Danach knickst du die oberen Ecken zur Mittellinie. >> Anschließend faltest du die Flügel nach unten. >> Zum Schluss lässt du den Papierflieger fliegen.
 Zuerst legst du Watte auf einen flachen Teller. >> Dann befeuchtest du die Watte mit Wasser. >> Anschließend streust du die Kressesamen darauf. >> Danach stellst du den Teller an einen hellen Platz. >> Nach etwa einer Woche kannst du die Kresse ernten.
 Zuerst füllst du Wasser in den Wasserkocher. >> Sobald das Wasser kocht, gießt du es in eine Tasse. >> Danach hängst du einen Teebeutel hinein. >> Nach drei bis fünf Minuten nimmst du den Beutel heraus. >> Zum Schluss süßt du den Tee mit etwas Honig.
-Zuerst schraubst du die Ventilkappe ab. >> Dann setzt du die Pumpe auf das Ventil. >> Anschließend pumpst du, bis der Reifen fest ist. >> Danach nimmst du die Pumpe ab. >> Zum Schluss schraubst du die Ventilkappe wieder auf.`,
+Zuerst schraubst du die Ventilkappe ab. >> Dann setzt du die Pumpe auf das Ventil. >> Anschließend pumpst du, bis der Reifen fest ist. >> Danach nimmst du die Pumpe ab. >> Zum Schluss schraubst du die Ventilkappe wieder auf.
+Zuerst bestreichst du eine Scheibe Brot mit Butter. >> Dann legst du eine Scheibe Käse darauf. >> Anschließend schneidest du eine Tomate in dünne Scheiben. >> Danach legst du die Tomatenscheiben auf den Käse. >> Zum Schluss streust du etwas Salz darüber.
+Zuerst nimmst du ein quadratisches Blatt Papier. >> Dann faltest du es diagonal zu einem Dreieck. >> Anschließend faltest du die beiden Ecken nach oben. >> Danach knickst du die Spitze nach unten. >> Zum Schluss malst du ein Gesicht auf den Papierhund.
+Zuerst legst du die Zahnbürste und die Zahnpasta bereit. >> Dann gibst du eine erbsengroße Menge Zahnpasta auf die Bürste. >> Anschließend putzt du die Kauflächen. >> Danach putzt du die Außen- und Innenseiten. >> Zum Schluss spülst du den Mund mit Wasser aus.
+Zuerst mischt du alle Karten gut durch. >> Dann teilst du an jede Person sieben Karten aus. >> Anschließend legst du eine Karte offen in die Mitte. >> Danach legt reihum jeder eine passende Karte ab. >> Wer zuerst keine Karten mehr hat, gewinnt.`,
       verben: `Du [schälst] die Kartoffeln mit einem Sparschäler.
 Du [rührst] den Teig glatt.
 Du [faltest] das Blatt in der Mitte.
@@ -159,7 +180,11 @@ Erkläre einem jüngeren Kind die Regeln deines **Lieblingsspiels** (zum Beispie
 Schreibe ein Rezept für ein **Butterbrot mit Schnittlauch**. => Zutaten ; Arbeitsschritte ; Tipp zum Schluss
 Beschreibe, wie man einen **Fahrradreifen** aufpumpt. => Werkzeug ; Schritte ; Kontrolle am Schluss
 Beschreibe, wie man **Zähne richtig putzt**. => Material ; Schritte ; Dauer
-Beschreibe, wie man **Kresse** auf Watte zieht. => Material ; Schritte ; Pflege und Ernte`
+Beschreibe, wie man **Kresse** auf Watte zieht. => Material ; Schritte ; Pflege und Ernte
+Schreibe ein Rezept für einen **Obstsalat**. => Zutaten ; Arbeitsschritte ; Tipp
+Beschreibe, wie man eine **Pflanze umtopft**. => Material ; Schritte ; Pflege danach
+Erkläre, wie man ein **Lesezeichen bastelt**. => Material ; Schritte ; Verwendung
+Beschreibe, wie man eine **Schultasche richtig packt**. => Was braucht man? ; Reihenfolge ; Tipp`
     },
     levels: {
       1: {

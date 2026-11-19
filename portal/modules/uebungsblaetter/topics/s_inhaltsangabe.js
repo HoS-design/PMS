@@ -13,7 +13,13 @@
       kern: ['Noah steht als Letzter auf dem Fünfmeterbrett und hat Angst.', 'Er will schon aufgeben, als er seine Schwester sieht.', 'Er überwindet sich und springt.', 'Nur seine Schwester jubelt, und das genügt Noah.'] },
     { t: 'Funkstille', a: 'Eva Brunner', text: 'Als in der ganzen Siedlung der Strom ausfiel, saß Familie Gruber plötzlich im Dunkeln. Kein Fernseher, kein WLAN, die Handys hatten kaum noch Akku. Paula, die sonst nur in ihrem Zimmer chattete, maulte laut. Papa holte Kerzen und ein altes Brettspiel aus dem Keller. Zuerst spielte Paula nur widerwillig mit. Doch bald lachten alle, weil Opa bei jedem Würfeln seltsame Geschichten aus seiner Kindheit erzählte. Als nach drei Stunden das Licht wieder anging, schaute sich Paula überrascht um. „Schon?“, fragte sie. Am nächsten Abend klopfte sie an die Wohnzimmertür – mit dem Brettspiel unter dem Arm.',
       einl: 'In der Kurzgeschichte „Funkstille“ von Eva Brunner geht es um ein Mädchen, das bei einem Stromausfall entdeckt, wie schön gemeinsame Zeit mit der Familie sein kann.',
-      kern: ['In der Siedlung fällt der Strom aus, Paula ist verärgert.', 'Der Vater holt Kerzen und ein Brettspiel.', 'Die Familie hat viel Spaß, Opa erzählt Geschichten.', 'Als der Strom zurück ist, will Paula am nächsten Abend wieder spielen.'] }
+      kern: ['In der Siedlung fällt der Strom aus, Paula ist verärgert.', 'Der Vater holt Kerzen und ein Brettspiel.', 'Die Familie hat viel Spaß, Opa erzählt Geschichten.', 'Als der Strom zurück ist, will Paula am nächsten Abend wieder spielen.'] },
+    { t: 'Der leere Platz', a: 'Martin Steiner', text: 'Seit Wochen saß Amir in der Klasse allein in der letzten Reihe. Er war neu, sprach noch wenig Deutsch und schaute meistens aus dem Fenster. Beim Fußballspielen in der Pause wurde er nie ausgewählt. Eines Tages vergaß Lukas sein Jausenbrot. Sein Magen knurrte so laut, dass alle lachten. Ohne ein Wort zu sagen, brach Amir sein Fladenbrot in zwei Hälften und legte eine davon auf Lukas’ Tisch. Lukas war überrascht und bedankte sich verlegen. In der nächsten Pause rief er: „Amir spielt in meinem Team!“ Am nächsten Morgen war der Platz neben Amir nicht mehr leer.',
+      einl: 'In der Kurzgeschichte „Der leere Platz“ von Martin Steiner geht es um einen neuen Schüler, der durch eine kleine Geste der Hilfsbereitschaft Anschluss in der Klasse findet.',
+      kern: ['Amir ist neu in der Klasse und sitzt allein.', 'Lukas hat seine Jause vergessen und wird ausgelacht.', 'Amir teilt sein Brot mit Lukas.', 'Lukas nimmt Amir ins Team auf und setzt sich neben ihn.'] },
+    { t: 'Das Geheimnis im Keller', a: 'Sabine Kern', text: 'Jeden Abend verschwand Opa für eine Stunde im Keller und schloss die Tür hinter sich ab. Hannah war schrecklich neugierig. Als Opa eines Nachmittags beim Arzt war, fand sie den Schlüssel in der Küchenlade. Mit klopfendem Herzen stieg sie die Treppe hinunter. Im Keller roch es nach Holz und Farbe. Unter einem Tuch stand ein wunderschönes Puppenhaus mit winzigen Möbeln und einem Namensschild: „Für Hannah“. In diesem Moment hörte sie Schritte. Opa stand in der Tür und seufzte: „Eigentlich sollte es eine Überraschung zu deinem Geburtstag sein.“ Hannah wurde rot, umarmte ihn aber fest.',
+      einl: 'In der Kurzgeschichte „Das Geheimnis im Keller“ von Sabine Kern geht es um ein neugieriges Mädchen, das zu früh ein Geschenk ihres Großvaters entdeckt.',
+      kern: ['Opa verbringt jeden Abend heimlich Zeit im Keller.', 'Hannah nimmt den Schlüssel und schleicht in den Keller.', 'Sie entdeckt ein Puppenhaus, das Opa für sie gebaut hat.', 'Opa ertappt sie, Hannah schämt sich und umarmt ihn.'] }
   ];
   const text = (rng) => (rng.text = rng.text || rng.pick(TEXTE));
   const box = (x) => '<div class="story"><h4>' + esc(x.t) + ' <span class="hint">(Kurzgeschichte von ' + esc(x.a) + ')</span></h4>' + esc(x.text) + '</div>';
@@ -52,7 +58,13 @@ Er hatte den Schlüssel vergessen und kehrte um. => Er hat den Schlüssel verges
 Mia gewann das Rennen. => Mia gewinnt das Rennen.
 Nachdem sie gegessen hatten, gingen sie hinaus. => Nachdem sie gegessen haben, gehen sie hinaus.
 Der Hund lief davon. => Der Hund läuft davon.
-Sie wusste nicht, was sie tun sollte. => Sie weiß nicht, was sie tun soll.`,
+Sie wusste nicht, was sie tun sollte. => Sie weiß nicht, was sie tun soll.
+Die Kinder liefen in den Wald. => Die Kinder laufen in den Wald.
+Opa erzählte eine Geschichte. => Opa erzählt eine Geschichte.
+Sie hatte Angst und versteckte sich. => Sie hat Angst und versteckt sich.
+Tim gab das Handy ab. => Tim gibt das Handy ab.
+Nachdem er aufgewacht war, rannte er los. => Nachdem er aufgewacht ist, rennt er los.
+Mia schwieg. => Mia schweigt.`,
       rede: `„Ich komme nicht mit“, sagte Lisa. => Lisa weigert sich mitzukommen. / Lisa sagt, sie komme nicht mit.
 „Gib mir sofort das Handy!“, rief der Vater. => Der Vater fordert das Handy zurück.
 „Kannst du mir helfen?“, fragte Tim. => Tim bittet um Hilfe.
@@ -60,11 +72,19 @@ Sie wusste nicht, was sie tun sollte. => Sie weiß nicht, was sie tun soll.`,
 „Das war ich nicht!“, rief Ben. => Ben streitet die Tat ab.
 „Du bist meine beste Freundin“, sagte Lena. => Lena bezeichnet sie als ihre beste Freundin.
 „Wir müssen sofort los!“, drängte Mama. => Die Mutter drängt zum Aufbruch.
-„Danke für deine Hilfe“, sagte der Mann. => Der Mann bedankt sich für die Hilfe.`,
+„Danke für deine Hilfe“, sagte der Mann. => Der Mann bedankt sich für die Hilfe.
+„Ich habe Angst“, flüsterte Noah. => Noah gibt zu, dass er Angst hat.
+„Komm sofort nach Hause!“, rief Mama. => Die Mutter ruft ihn nach Hause.
+„Das ist mein Platz!“, schrie Tom. => Tom beansprucht den Platz für sich.
+„Willst du mitspielen?“, fragte Lena. => Lena lädt sie zum Mitspielen ein.
+„Gut gemacht!“, sagte der Trainer. => Der Trainer lobt sie.
+„Ich verrate nichts“, versprach Max. => Max verspricht, nichts zu verraten.`,
       einleitung: `Kurzgeschichte – „Der Fahrstuhl“ – Anna Berger – 2019 – ein Mädchen überwindet seine Angst => In der Kurzgeschichte „Der Fahrstuhl“ von Anna Berger aus dem Jahr 2019 geht es um ein Mädchen, das seine Angst überwindet.
 Fabel – „Der Löwe und die Maus“ – Äsop – Hilfsbereitschaft von Schwachen => In der Fabel „Der Löwe und die Maus“ von Äsop geht es darum, dass auch Schwache den Starken helfen können.
 Jugendbuch – „Sommer am See“ – Tom Bauer – 2021 – Freundschaft zwischen zwei sehr verschiedenen Jungen => Im Jugendbuch „Sommer am See“ von Tom Bauer aus dem Jahr 2021 geht es um die Freundschaft zwischen zwei sehr verschiedenen Jungen.
-Zeitungsbericht – „Hund rettet Wanderer“ – 2024 – ein Hund findet einen verletzten Wanderer => Im Zeitungsbericht „Hund rettet Wanderer“ aus dem Jahr 2024 geht es um einen Hund, der einen verletzten Wanderer findet.`
+Zeitungsbericht – „Hund rettet Wanderer“ – 2024 – ein Hund findet einen verletzten Wanderer => Im Zeitungsbericht „Hund rettet Wanderer“ aus dem Jahr 2024 geht es um einen Hund, der einen verletzten Wanderer findet.
+Kurzgeschichte – „Die Mutprobe“ – Lena Huber – 2020 – ein Junge lässt sich nicht zu einer gefährlichen Mutprobe überreden => In der Kurzgeschichte „Die Mutprobe“ von Lena Huber aus dem Jahr 2020 geht es um einen Jungen, der sich nicht zu einer gefährlichen Mutprobe überreden lässt.
+Fabel – „Der Fuchs und der Rabe“ – Äsop – Schmeichelei => In der Fabel „Der Fuchs und der Rabe“ von Äsop geht es darum, dass man Schmeichlern nicht trauen soll.`
     },
     levels: {
       1: {

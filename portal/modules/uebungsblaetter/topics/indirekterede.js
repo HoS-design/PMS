@@ -20,7 +20,13 @@ sie gibt => sie gebe
 es regnet => es regne
 sie sind => sie seien
 er schläft => er schlafe
-sie arbeitet => sie arbeite`,
+sie arbeitet => sie arbeite
+er kann => er könne
+sie weiß => sie wisse
+er nimmt => er nehme
+sie läuft => sie laufe
+er hilft => er helfe
+es gibt => es gebe`,
     umformen: `Lena sagt: „Ich bin müde.“ => Lena sagt, sie sei müde.
 Max erklärt: „Der Bus kommt zu spät.“ => Max erklärt, der Bus komme zu spät.
 Paul sagt: „Ich habe meinen Schlüssel verloren.“ => Paul sagt, er habe seinen Schlüssel verloren.
@@ -34,7 +40,21 @@ Tom berichtet: „Die Kinder spielen im Hof.“ => Tom berichtet, die Kinder wü
 Anna fragt Tom: „Kommst du mit?“ => Anna fragt Tom, ob er mitkomme.
 Der Polizist fragt den Mann: „Wo wohnen Sie?“ => Der Polizist fragt den Mann, wo er wohne.
 Lisa sagt: „Ich weiß die Antwort.“ => Lisa sagt, sie wisse die Antwort.
-Der Reporter meldet: „Der Sturm ist vorbei.“ => Der Reporter meldet, der Sturm sei vorbei.`,
+Der Reporter meldet: „Der Sturm ist vorbei.“ => Der Reporter meldet, der Sturm sei vorbei.
+Tim sagt: „Ich habe keine Zeit.“ => Tim sagt, er habe keine Zeit.
+Oma erzählt: „Früher gab es kein Internet.“ => Oma erzählt, früher habe es kein Internet gegeben.
+Die Lehrerin sagt: „Der Test ist leicht.“ => Die Lehrerin sagt, der Test sei leicht.
+Lena meint: „Mein Rad ist kaputt.“ => Lena meint, ihr Rad sei kaputt.
+Der Wetterbericht meldet: „Morgen schneit es.“ => Der Wetterbericht meldet, morgen schneie es.
+Max behauptet: „Ich kenne den Weg.“ => Max behauptet, er kenne den Weg.
+Der Busfahrer sagt: „Der Bus fährt gleich ab.“ => Der Busfahrer sagt, der Bus fahre gleich ab.
+Mia sagt: „Ich will Tierärztin werden.“ => Mia sagt, sie wolle Tierärztin werden.
+Der Trainer fragt: „Wer spielt heute im Tor?“ => Der Trainer fragt, wer heute im Tor spiele.
+Paul fragt Lena: „Hast du meinen Stift?“ => Paul fragt Lena, ob sie seinen Stift habe.
+Die Kinder rufen: „Wir haben gewonnen!“ => Die Kinder rufen, sie hätten gewonnen.
+Die Eltern sagen: „Wir kommen später.“ => Die Eltern sagen, sie würden später kommen. (auch: kämen)
+Der Arzt sagt zu Lisa: „Du darfst morgen wieder turnen.“ => Der Arzt sagt zu Lisa, sie dürfe morgen wieder turnen.
+Ben erklärt: „Das Spiel ist ganz einfach.“ => Ben erklärt, das Spiel sei ganz einfach.`,
     erkennen: `Er sagt, er **sei** krank.|K1
 Sie meint, sie **habe** keine Zeit.|K1
 Der Wetterbericht meldet, es **werde** kälter.|K1
@@ -46,20 +66,40 @@ Wenn es nicht **regnete**, gingen wir hinaus.|K2
 Er **ist** heute krank.|I
 Sie **hat** keine Zeit.|I
 Wir **kommen** morgen.|I
-Ich **kann** gut schwimmen.|I`,
+Ich **kann** gut schwimmen.|I
+Sie sagt, sie **komme** später.|K1
+Er meint, er **wisse** es nicht.|K1
+Die Zeitung schreibt, die Brücke **sei** gesperrt.|K1
+Lena erzählt, ihr Bruder **habe** Fieber.|K1
+Wenn ich reich **wäre**, würde ich ein Pferd kaufen.|K2
+Ich **hätte** gern ein Eis.|K2
+**Würdest** du mir helfen?|K2
+Wenn er Zeit **hätte**, käme er mit.|K2
+Er **kommt** morgen.|I
+Sie **weiß** die Antwort.|I
+Wir **haben** Hunger.|I
+Es **regnet** seit Stunden.|I`,
     zurueck: `Lena sagt, sie sei müde. => Lena sagt: „Ich bin müde.“
 Max meint, er habe keine Lust. => Max meint: „Ich habe keine Lust.“
 Der Trainer sagt, das Training falle aus. => Der Trainer sagt: „Das Training fällt aus.“
 Mia erzählt, ihr Hund könne Kunststücke. => Mia erzählt: „Mein Hund kann Kunststücke.“
 Der Arzt sagt, Paul müsse viel trinken. => Der Arzt sagt: „Paul muss viel trinken.“
-Oma fragt, ob wir Hunger hätten. => Oma fragt: „Habt ihr Hunger?“`
+Oma fragt, ob wir Hunger hätten. => Oma fragt: „Habt ihr Hunger?“
+Tim sagt, er habe keine Zeit. => Tim sagt: „Ich habe keine Zeit.“
+Lena meint, ihr Rad sei kaputt. => Lena meint: „Mein Rad ist kaputt.“
+Der Busfahrer sagt, der Bus fahre gleich ab. => Der Busfahrer sagt: „Der Bus fährt gleich ab.“
+Mia sagt, sie wolle Tierärztin werden. => Mia sagt: „Ich will Tierärztin werden.“
+Paul fragt Lena, ob sie seinen Stift habe. => Paul fragt Lena: „Hast du meinen Stift?“
+Die Lehrerin sagt, der Test sei leicht. => Die Lehrerin sagt: „Der Test ist leicht.“
+Ben erklärt, das Spiel sei ganz einfach. => Ben erklärt: „Das Spiel ist ganz einfach.“
+Max behauptet, er kenne den Weg. => Max behauptet: „Ich kenne den Weg.“`
   },
   levels: {
     1: {
       ichkann: ['Du kannst Formen im Konjunktiv I bilden.', 'Du kannst einfache Sätze in die indirekte Rede setzen.'],
       tasks: [
         { type: 'pair', pool: 'formen', n: 8, inline: true, head: 'Indikativ', col: 'Konjunktiv I', title: 'Bilde den Konjunktiv I.', instr: 'Schreibe die Form im Konjunktiv I auf.' },
-        { type: 'pair', pool: 'umformen', n: 4, filter: x => !/ob |wo |hätten|spielten|müsse im/.test(x.a), title: 'Setze in die indirekte Rede.', instr: 'Schreibe den Satz ohne Anführungszeichen mit Konjunktiv I. Passe die Pronomen an.' }
+        { type: 'pair', pool: 'umformen', n: 4, filter: x => !/ob |wo |wer |hätten|würden|spielten|müsse im|gegeben/.test(x.a), title: 'Setze in die indirekte Rede.', instr: 'Schreibe den Satz ohne Anführungszeichen mit Konjunktiv I. Passe die Pronomen an.' }
       ]
     },
     2: {
@@ -73,7 +113,7 @@ Oma fragt, ob wir Hunger hätten. => Oma fragt: „Habt ihr Hunger?“`
       ichkann: ['Du kannst Indikativ, Konjunktiv I und Konjunktiv II unterscheiden.', 'Du weißt, wann man in der indirekten Rede den Konjunktiv II als Ersatzform verwendet.'],
       tasks: [
         { type: 'choice', pool: 'erkennen', cover: true, keys: ['I', 'K1', 'K2'], n: 6, title: 'Bestimme den Modus.', instr: 'Kreuze an.', opts: [['I', 'Indikativ'], ['K1', 'Konjunktiv I'], ['K2', 'Konjunktiv II']] },
-        { type: 'pair', pool: 'umformen', n: 5, filter: x => /ob |wo |hätten|spielten|müsse im|könne/.test(x.a), title: 'Setze in die indirekte Rede.', instr: 'Achtung: Fragen, Ersatzformen und Pronomen!' }
+        { type: 'pair', pool: 'umformen', n: 5, filter: x => /ob |wo |wer |hätten|würden|spielten|müsse im|gegeben|könne/.test(x.a), title: 'Setze in die indirekte Rede.', instr: 'Achtung: Fragen, Ersatzformen und Pronomen!' }
       ]
     }
   }

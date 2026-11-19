@@ -37,7 +37,34 @@
     { s: 'Paul glaubt, ___ es morgen schneit.', t: 'K' },
     { s: 'Ich freue mich, ___ die Ferien beginnen.', t: 'K' },
     { s: 'Lena merkt, ___ ihr Heft fehlt.', t: 'K' },
-    { s: 'Es ist wichtig, ___ wir pünktlich sind.', t: 'K' }
+    { s: 'Es ist wichtig, ___ wir pünktlich sind.', t: 'K' },
+    { s: '___ Auto ist schnell.', t: 'A' },
+    { s: 'Ich trinke ___ Glas Milch aus.', t: 'A' },
+    { s: 'Wo ist ___ Buch hingekommen?', t: 'A' },
+    { s: '___ Pferd frisst Heu.', t: 'A' },
+    { s: 'Hast du ___ Licht ausgemacht?', t: 'A' },
+    { s: 'Wir besuchen ___ Museum.', t: 'A' },
+    { s: '___ Zimmer ist aufgeräumt.', t: 'A' },
+    { s: 'Ich höre ___ Radio.', t: 'A' },
+    { s: 'Das Bild, ___ an der Wand hängt, hat Mia gemalt.', t: 'R' },
+    { s: 'Das Kind, ___ im Sand spielt, ist mein Bruder.', t: 'R' },
+    { s: 'Das Auto, ___ vor dem Haus parkt, gehört uns.', t: 'R' },
+    { s: 'Das Lied, ___ du singst, kenne ich.', t: 'R' },
+    { s: 'Das Brot, ___ Papa gebacken hat, ist noch warm.', t: 'R' },
+    { s: 'Das Spiel, ___ morgen stattfindet, wird spannend.', t: 'R' },
+    { s: '___ war eine tolle Idee!', t: 'D' },
+    { s: '___ stimmt nicht.', t: 'D' },
+    { s: 'Wer hat ___ gesagt?', t: 'D' },
+    { s: '___ macht mir Spaß.', t: 'D' },
+    { s: 'Ich weiß, ___ du das kannst.', t: 'K' },
+    { s: 'Er sagt, ___ er krank ist.', t: 'K' },
+    { s: 'Wir hoffen, ___ es nicht regnet.', t: 'K' },
+    { s: 'Sie freut sich, ___ du kommst.', t: 'K' },
+    { s: 'Ich glaube nicht, ___ er recht hat.', t: 'K' },
+    { s: 'Max ist so müde, ___ er sofort einschläft.', t: 'K' },
+    { s: 'Es stimmt, ___ wir morgen frei haben.', t: 'K' },
+    { s: 'Mama sagt, ___ wir leise sein sollen.', t: 'K' },
+    { s: 'Ich habe gehört, ___ du umziehst.', t: 'K' }
   ];
 
   const JOIN = [
@@ -48,7 +75,17 @@
     { a: 'Lena merkt es.', b: 'Ihr Fahrrad ist weg.', s: 'Lena merkt, dass ihr Fahrrad weg ist.' },
     { a: 'Es freut mich.', b: 'Du hilfst mir.', s: 'Es freut mich, dass du mir hilfst.' },
     { a: 'Ben erzählt es.', b: 'Sein Hund kann Kunststücke.', s: 'Ben erzählt, dass sein Hund Kunststücke kann.' },
-    { a: 'Die Lehrerin erklärt es.', b: 'Der Ausflug findet morgen statt.', s: 'Die Lehrerin erklärt, dass der Ausflug morgen stattfindet.' }
+    { a: 'Die Lehrerin erklärt es.', b: 'Der Ausflug findet morgen statt.', s: 'Die Lehrerin erklärt, dass der Ausflug morgen stattfindet.' },
+    { a: 'Ich glaube es.', b: 'Morgen scheint die Sonne.', s: 'Ich glaube, dass morgen die Sonne scheint.' },
+    { a: 'Lena sagt es.', b: 'Sie hat keine Zeit.', s: 'Lena sagt, dass sie keine Zeit hat.' },
+    { a: 'Wir wissen es.', b: 'Der Test ist schwer.', s: 'Wir wissen, dass der Test schwer ist.' },
+    { a: 'Es ist schön.', b: 'Du bist hier.', s: 'Es ist schön, dass du hier bist.' },
+    { a: 'Paul hofft es.', b: 'Seine Mannschaft gewinnt.', s: 'Paul hofft, dass seine Mannschaft gewinnt.' },
+    { a: 'Mama merkt es.', b: 'Der Kuchen ist verbrannt.', s: 'Mama merkt, dass der Kuchen verbrannt ist.' },
+    { a: 'Ich habe es gehört.', b: 'Ihr zieht um.', s: 'Ich habe gehört, dass ihr umzieht.' },
+    { a: 'Tom verspricht es.', b: 'Er kommt pünktlich.', s: 'Tom verspricht, dass er pünktlich kommt.' },
+    { a: 'Es ärgert mich.', b: 'Der Bus ist schon weg.', s: 'Es ärgert mich, dass der Bus schon weg ist.' },
+    { a: 'Die Ärztin meint es.', b: 'Ich soll viel trinken.', s: 'Die Ärztin meint, dass ich viel trinken soll.' }
   ];
 
   const answer = (t) => t === 'K' ? 'dass' : 'das';

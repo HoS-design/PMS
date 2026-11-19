@@ -14,7 +14,25 @@ Das {Fahrrad|fahrrad} ist {kaputt|Kaputt}.
 {Im|im} Winter ist es {kalt|Kalt}.
 Opa erzählt eine {lustige|Lustige} {Geschichte|geschichte}.
 Die {Freude|freude} über das {Geschenk|geschenk} ist groß.
-{Paul|paul} wohnt in {Graz|graz}.`,
+{Paul|paul} wohnt in {Graz|graz}.
+Der {Wind|wind} weht {kalt|Kalt}.
+{Unsere|unsere} {Lehrerin|lehrerin} heißt Frau Berger.
+{Im|im} {Sommer|sommer} fahren wir nach {Kärnten|kärnten}.
+Ich {esse|Esse} gern {Äpfel|äpfel}.
+Die {Kinder|kinder} {spielen|Spielen} im Hof.
+Mein {Hund|hund} heißt {Bello|bello}.
+Das {Wasser|wasser} ist {klar|Klar}.
+{Gestern|gestern} {war|War} ich im Kino.
+Die {Freundschaft|freundschaft} ist {wichtig|Wichtig}.
+Am {Himmel|himmel} sind {viele|Viele} {Sterne|sterne}.
+Der {Zug|zug} fährt nach {Salzburg|salzburg}.
+{Wir|wir} haben große {Freude|freude}.
+Die {Blumen|blumen} sind {bunt|Bunt}.
+Ich {habe|Habe} keine {Angst|angst}.
+{Lena|lena} trinkt einen {Tee|tee}.
+Der {Mut|mut} des Feuerwehrmannes ist {groß|Groß}.
+Wir {laufen|Laufen} durch den {Wald|wald}.
+Die {Sonne|sonne} geht {unter|Unter}.`,
     nominal: `Beim {Schwimmen|schwimmen} bekomme ich Hunger.
 Wir {schwimmen|Schwimmen} im See.
 Das {Laufen|laufen} macht mir Spaß.
@@ -30,7 +48,26 @@ Wir lernen {lesen|Lesen} und {schreiben|Schreiben}.
 Das {Schreiben|schreiben} fällt mir leicht.
 Er hat wenig {Neues|neues} zu berichten.
 Das {Beste|beste} kommt zum Schluss.
-Beim {Spielen|spielen} vergessen wir die Zeit.`,
+Beim {Spielen|spielen} vergessen wir die Zeit.
+Das {Turnen|turnen} macht uns Spaß.
+Ich {turne|Turne} gern.
+Beim {Essen|essen} spricht man nicht.
+Wir {essen|Essen} um zwölf Uhr.
+Zum {Malen|malen} brauche ich Farben.
+Ich {male|Male} ein Bild.
+Ich habe etwas {Lustiges|lustiges} gesehen.
+Das war ein {lustiger|Lustiger} Film.
+Er wünscht dir viel {Glück|glück} und alles {Liebe|liebe}.
+Im {Freien|freien} ist es kalt.
+Sie hat nichts {Neues|neues} erzählt.
+Das {Rechnen|rechnen} fällt mir leicht.
+Ich kann gut {rechnen|Rechnen}.
+Beim {Laufen|laufen} habe ich Seitenstechen bekommen.
+Wir haben viel {Schönes|schönes} erlebt.
+Er mag das {Rote|rote} am liebsten.
+Vom {Schreien|schreien} bin ich heiser.
+Lass das {Lachen|lachen}!
+Sie {lachen|Lachen} laut.`,
     zeit: `Am {Montag|montag} habe ich Turnen.
 Wir haben {montags|Montags} Turnen.
 Wir treffen uns heute {Abend|abend}.
@@ -43,7 +80,21 @@ Könnten {Sie|sie} mir bitte helfen?
 Ich danke {Ihnen|ihnen} für {Ihre|ihre} Hilfe.
 Die Kinder sagen, {sie|Sie} hätten Hunger.
 Das {Rote|rote} Kreuz hilft bei Unfällen.
-Wir fahren an den {Stillen|stillen} Ozean.`,
+Wir fahren an den {Stillen|stillen} Ozean.
+Am {Dienstag|dienstag} haben wir Musik.
+Wir haben {dienstags|Dienstags} Musik.
+Heute {Morgen|morgen} hat es geschneit.
+{Morgens|morgens} trinke ich Tee.
+Ich trinke {morgens|Morgens} Tee.
+Am {Wochenende|wochenende} fahren wir weg.
+Gestern {Nachmittag|nachmittag} war ich beim Training.
+Wir gehen {abends|Abends} spazieren.
+Am {Abend|abend} lese ich.
+Liebe Frau Berger, ich danke {Ihnen|ihnen} herzlich.
+Haben {Sie|sie} gut geschlafen, Herr Maier?
+Die Großeltern sagen, {sie|Sie} kommen bald.
+Wir fahren zum {Wolfgangsee|wolfgangsee}.
+Der {Große|große} Bär ist ein Sternbild.`,
     fehler: `heute gehen wir ins kino. => Heute gehen wir ins Kino.
 mein bruder hat einen neuen ball. => Mein Bruder hat einen neuen Ball.
 im sommer fahren wir ans meer. => Im Sommer fahren wir ans Meer.
@@ -53,14 +104,26 @@ ich wünsche dir alles liebe. => Ich wünsche dir alles Liebe.
 am freitag gehen wir wandern. => Am Freitag gehen wir wandern.
 die katze schläft auf dem warmen ofen. => Die Katze schläft auf dem warmen Ofen.
 zum laufen brauche ich gute schuhe. => Zum Laufen brauche ich gute Schuhe.
-wir haben viel neues gelernt. => Wir haben viel Neues gelernt.`
+wir haben viel neues gelernt. => Wir haben viel Neues gelernt.
+die sonne scheint hell. => Die Sonne scheint hell.
+unser lehrer heißt herr gruber. => Unser Lehrer heißt Herr Gruber.
+am montag haben wir turnen. => Am Montag haben wir Turnen.
+das lesen macht mir spaß. => Das Lesen macht mir Spaß.
+beim essen läuft kein fernseher. => Beim Essen läuft kein Fernseher.
+ich habe etwas schönes gefunden. => Ich habe etwas Schönes gefunden.
+wir fahren im winter nach tirol. => Wir fahren im Winter nach Tirol.
+meine katze schläft gern im warmen. => Meine Katze schläft gern im Warmen.
+zum basteln brauchen wir kleber. => Zum Basteln brauchen wir Kleber.
+lena hat viel neues erlebt. => Lena hat viel Neues erlebt.
+der hund bellt laut. => Der Hund bellt laut.
+mein opa wohnt in linz. => Mein Opa wohnt in Linz.`
   },
   levels: {
     1: {
       ichkann: ['Du schreibst Nomen und Namen groß.', 'Du schreibst das erste Wort im Satz groß.'],
       tasks: [
         { type: 'gap', pool: 'satz', n: 8, title: 'Groß oder klein?', instr: 'Kreise die richtige Schreibung ein.' },
-        { type: 'error', pool: 'fehler', n: 3, filter: x => !/schwimmen|spielen|liebe|laufen|neues/.test(x.q), title: 'Schreibe richtig ab.', instr: 'Hier stimmt die Groß- und Kleinschreibung nicht. Schreibe die Sätze richtig auf.' }
+        { type: 'error', pool: 'fehler', n: 3, filter: x => !/schwimmen|spielen|liebe|laufen|neues|lesen|essen|schönes|warmen|basteln/.test(x.q), title: 'Schreibe richtig ab.', instr: 'Hier stimmt die Groß- und Kleinschreibung nicht. Schreibe die Sätze richtig auf.' }
       ]
     },
     2: {

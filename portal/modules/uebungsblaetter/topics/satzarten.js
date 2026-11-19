@@ -16,7 +16,23 @@ Was für ein toller Tag{!|.|?}
 Kommst du heute mit{?|.|!}
 Die Schule beginnt um acht Uhr{.|?|!}
 Pass auf, das Glas fällt{!|.|?}
-Warum weinst du{?|.|!}`,
+Warum weinst du{?|.|!}
+Wie spät ist es{?|.|!}
+Wir fahren im Sommer ans Meer{.|?|!}
+Komm sofort zurück{!|.|?}
+Was für ein schönes Bild{!|.|?}
+Hast du Geschwister{?|.|!}
+Meine Oma wohnt in Klagenfurt{.|?|!}
+Gib mir bitte das Buch{!|.|?}
+Wo hast du die Schere hingelegt{?|.|!}
+Hurra, wir haben Ferien{!|.|?}
+Der Unterricht endet um 13 Uhr{.|?|!}
+Warum lachst du{?|.|!}
+Sei bitte leise{!|.|?}
+Ich habe heute keine Hausübung{.|?|!}
+Kannst du mir helfen{?|.|!}
+Au, mein Knie{!|.|?}
+Wer hat den Ball{?|.|!}`,
     art: `Wir besuchen heute die Oma.|AU
 Der Zug hat Verspätung.|AU
 Meine Katze heißt Mimi.|AU
@@ -32,7 +48,23 @@ Räum dein Zimmer auf!|AF
 Juhu, wir haben gewonnen!|AR
 Oh, ist das schön!|AR
 Au, das tut weh!|AR
-So ein Pech!|AR`,
+So ein Pech!|AR
+Ich habe zwei Brüder.|AU
+Der Film dauert zwei Stunden.|AU
+Im Herbst fallen die Blätter.|AU
+Mein Lieblingsessen ist Pizza.|AU
+Warum bist du so traurig?|F
+Kommt Oma heute?|F
+Wie heißt deine Lehrerin?|F
+Magst du Schokolade?|F
+Schließ bitte das Fenster!|AF
+Hört genau zu!|AF
+Bring mir bitte ein Glas Wasser!|AF
+Pass gut auf!|AF
+Hurra, endlich Ferien!|AR
+Oje, ich habe mein Heft vergessen!|AR
+Wie schön das Meer glitzert!|AR
+Pfui, ist das eklig!|AR`,
     umformen: `Du kommst morgen mit. :: Entscheidungsfrage => Kommst du morgen mit?
 Lena spielt Klavier. :: Entscheidungsfrage => Spielt Lena Klavier?
 Der Bus fährt um sieben Uhr ab. :: W-Frage nach der Zeit => Wann fährt der Bus ab?
@@ -44,7 +76,19 @@ Wir haben heute frei. :: Entscheidungsfrage => Haben wir heute frei?
 Paul ist krank, weil er nass geworden ist. :: W-Frage nach dem Grund => Warum ist Paul krank?
 Du hilfst mir beim Tragen. :: Aufforderungssatz => Hilf mir beim Tragen!
 Mia kauft Brot. :: W-Frage nach der Sache => Was kauft Mia?
-Das Fest beginnt am Samstag. :: W-Frage nach der Zeit => Wann beginnt das Fest?`,
+Das Fest beginnt am Samstag. :: W-Frage nach der Zeit => Wann beginnt das Fest?
+Lena wohnt in Wien. :: Entscheidungsfrage => Wohnt Lena in Wien?
+Du hast deine Hausübung gemacht. :: Entscheidungsfrage => Hast du deine Hausübung gemacht?
+Der Film beginnt um acht Uhr. :: W-Frage nach der Zeit => Wann beginnt der Film?
+Die Katze schläft unter dem Bett. :: W-Frage nach dem Ort => Wo schläft die Katze?
+Du schließt die Tür. :: Aufforderungssatz => Schließ die Tür!
+Ihr hört gut zu. :: Aufforderungssatz => Hört gut zu!
+Paul hat das Fenster geöffnet. :: W-Frage nach der Person => Wer hat das Fenster geöffnet?
+Tom isst einen Apfel. :: W-Frage nach der Sache => Was isst Tom?
+Mia weint, weil sie hingefallen ist. :: W-Frage nach dem Grund => Warum weint Mia?
+Du bist pünktlich. :: Aufforderungssatz => Sei pünktlich!
+Die Oma kommt morgen. :: Entscheidungsfrage => Kommt die Oma morgen?
+Die Klasse fährt nach Graz. :: W-Frage nach dem Ziel => Wohin fährt die Klasse?`,
     frage: `Wohin fährst du in den Ferien?|E
 Kommst du mit ins Kino?|J
 Wer hat das Fenster geöffnet?|E
@@ -54,7 +98,17 @@ Hast du Geschwister?|J
 Wie alt ist deine Schwester?|E
 Kannst du schwimmen?|J
 Was isst du am liebsten?|E
-Gehört der Ball dir?|J`
+Gehört der Ball dir?|J
+Wann beginnt die Schule?|E
+Hast du Hunger?|J
+Wo wohnt deine Oma?|E
+Spielst du ein Instrument?|J
+Warum weinst du?|E
+Kommst du morgen?|J
+Wie heißt dein Hund?|E
+Ist das dein Fahrrad?|J
+Wer hat angerufen?|E
+Darf ich mitspielen?|J`
   },
   levels: {
     1: {

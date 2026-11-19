@@ -35,7 +35,19 @@ Das ist der **beste** Kuchen.|H
 Der Weg ist **lang**.|G
 Der Rhein ist **länger** als die Mur.|V
 Der Großglockner ist der **höchste** Berg Österreichs.|H
-Unser Hund ist sehr **brav**.|G`,
+Unser Hund ist sehr **brav**.|G
+Die Giraffe ist **größer** als das Pferd.|V
+Der Gepard ist das **schnellste** Landtier.|H
+Das Buch ist **spannend**.|G
+Im Juli ist es **am heißesten**.|H
+Mein Zimmer ist **kleiner** als deines.|V
+Der Tee ist **stark**.|G
+Lena singt **am schönsten**.|H
+Heute bin ich **müder** als gestern.|V
+Die Straße ist **breit**.|G
+Das ist die **längste** Brücke der Stadt.|H
+Max ist **jünger** als Paul.|V
+Der Apfel ist **süß**.|G`,
     vergleich: `Tom ist größer {als|wie} Max.
 Lisa ist so groß {wie|als} Anna.
 Der Tee ist heißer {als|wie} der Kakao.
@@ -45,7 +57,17 @@ Der Test war nicht so schwer {wie|als} gedacht.
 Ein Elefant ist schwerer {als|wie} eine Maus.
 Ich bin genauso alt {wie|als} du.
 Mathe gefällt mir besser {als|wie} Turnen.
-Das Wasser ist so kalt {wie|als} Eis.`,
+Das Wasser ist so kalt {wie|als} Eis.
+Der Zug ist schneller {als|wie} das Auto.
+Mein Bruder ist so alt {wie|als} dein Bruder.
+Heute ist es nicht so heiß {wie|als} gestern.
+Die Katze ist kleiner {als|wie} der Hund.
+Das Buch ist genauso spannend {wie|als} der Film.
+Ein Hase ist schneller {als|wie} eine Schnecke.
+Paul ist doppelt so groß {wie|als} sein Bruder.
+Mathe ist schwerer {als|wie} Zeichnen.
+Das Wasser ist so klar {wie|als} Glas.
+Lena liest lieber {als|wie} sie fernsieht.`,
     bilden: `die Sonne :: -ig => sonnig
 der Wind :: -ig => windig
 der Durst :: -ig => durstig

@@ -80,7 +80,15 @@ die Sonne + die Brille => die Sonnenbrille
 das Wasser + die Flasche => die Wasserflasche
 der Zahn + die Bürste => die Zahnbürste
 die Tomate + die Suppe => die Tomatensuppe
-das Rad + der Weg => der Radweg`,
+das Rad + der Weg => der Radweg
+der Käse + das Brot => das Käsebrot
+der Garten + die Tür => die Gartentür
+die Hand + die Tasche => die Handtasche
+der Baum + das Haus => das Baumhaus
+die Suppe + der Teller => der Suppenteller
+der Schuh + der Karton => der Schuhkarton
+das Glas + die Flasche => die Glasflasche
+der Winter + die Jacke => die Winterjacke`,
     zerlegen: `die Haustür :: Bestimmungswort + Grundwort => Haus + Tür
 der Schneemann :: Bestimmungswort + Grundwort => Schnee + Mann
 der Handschuh :: Bestimmungswort + Grundwort => Hand + Schuh
@@ -90,7 +98,15 @@ der Apfelbaum :: Bestimmungswort + Grundwort => Apfel + Baum
 das Kinderzimmer :: Bestimmungswort + Grundwort => Kinder + Zimmer
 die Sonnenbrille :: Bestimmungswort + Grundwort => Sonne + Brille
 der Fußball :: Bestimmungswort + Grundwort => Fuß + Ball
-das Vogelnest :: Bestimmungswort + Grundwort => Vogel + Nest`,
+das Vogelnest :: Bestimmungswort + Grundwort => Vogel + Nest
+das Baumhaus :: Bestimmungswort + Grundwort => Baum + Haus
+der Schulweg :: Bestimmungswort + Grundwort => Schule + Weg
+die Wasserflasche :: Bestimmungswort + Grundwort => Wasser + Flasche
+der Regenschirm :: Bestimmungswort + Grundwort => Regen + Schirm
+die Gartentür :: Bestimmungswort + Grundwort => Garten + Tür
+die Winterjacke :: Bestimmungswort + Grundwort => Winter + Jacke
+das Käsebrot :: Bestimmungswort + Grundwort => Käse + Brot
+der Suppenteller :: Bestimmungswort + Grundwort => Suppe + Teller`,
     genus: `Mond|m
 Sonne|f
 Mädchen|n

@@ -44,7 +44,39 @@
     'Am Wochenende|ZE / besuchten|P / wir|S / unsere Großmutter|O4',
     'Der Trainer|S / lobt|P / die Spielerinnen|O4',
     'Im Zoo|OE / füttert|P / der Tierpfleger|S / die Affen|O4',
-    'Aufmerksam|AE / hört|P / die Klasse|S / dem Vortrag|O3 / zu|P'
+    'Aufmerksam|AE / hört|P / die Klasse|S / dem Vortrag|O3 / zu|P',
+    'Die Ärztin|S / untersucht|P / das Kind|O4',
+    'Papa|S / kocht|P / eine Suppe|O4',
+    'Der Kellner|S / bringt|P / den Gästen|O3 / die Speisekarte|O4',
+    'Meine Schwester|S / leiht|P / mir|O3 / ihr Fahrrad|O4',
+    'Die Kinder|S / bauen|P / einen Schneemann|O4',
+    'Der Lehrer|S / zeigt|P / der Klasse|O3 / einen Film|O4',
+    'Tom|S / schreibt|P / seiner Tante|O3 / einen Brief|O4',
+    'Die Feuerwehr|S / rettet|P / die Katze|O4',
+    'Oma|S / backt|P / einen Apfelstrudel|O4',
+    'Der Schiedsrichter|S / zeigt|P / dem Spieler|O3 / die gelbe Karte|O4',
+    'Das Baby|S / schläft|P',
+    'Mia|S / dankt|P / ihrer Freundin|O3',
+    'Der Hund|S / gehorcht|P / seinem Herrchen|O3',
+    'Die Schüler|S / lesen|P / ein spannendes Buch|O4',
+    'Mama|S / kauft|P / uns|O3 / ein Eis|O4',
+    'Der Gärtner|S / gießt|P / die Blumen|O4',
+    'Ben|S / schenkt|P / seiner Mutter|O3 / eine Kerze|O4',
+    'Die Polizistin|S / hilft|P / dem alten Mann|O3',
+    'Die Klasse|S / singt|P / ein Lied|O4',
+    'Der Fahrer|S / öffnet|P / den Fahrgästen|O3 / die Tür|O4',
+    'Am Nachmittag|ZE / spielt|P / Lena|S / Klavier|O4',
+    'Vor dem Haus|OE / parkt|P / ein rotes Auto|S',
+    'Schnell|AE / lief|P / der Hase|S / über die Wiese|OE',
+    'Wegen der Hitze|BE / schließen|P / wir|S / die Fenster|O4',
+    'Jeden Morgen|ZE / trinkt|P / Opa|S / einen Kaffee|O4',
+    'In der Pause|ZE / essen|P / die Kinder|S / ihre Jause|O4',
+    'Laut|AE / bellte|P / der Hund|S',
+    'Im Klassenzimmer|OE / hängt|P / eine Landkarte|S',
+    'Wegen eines Unfalls|BE / sperrte|P / die Polizei|S / die Straße|O4',
+    'Geduldig|AE / erklärte|P / die Lehrerin|S / den Kindern|O3 / die Regel|O4',
+    'Auf dem Dach|OE / sitzt|P / eine Taube|S',
+    'Am Freitag|ZE / bekommt|P / Max|S / sein Zeugnis|O4'
   ].filter(s => !s.includes('zu|P')) // zweiteilige Prädikate erst später
     .map(s => s.split(' / ').map(p => { const [text, role] = p.split('|'); return { text, role }; }));
 
@@ -98,7 +130,7 @@
     };
   }
   // Satzanfänge wie „Am Montag“, „Leise“, „Gestern“ werden mitten im Satz klein; Nomen/Namen/Artikel+Nomen bleiben
-  const LOWER_START = ['Am', 'Im', 'Nach', 'Wegen', 'Gestern', 'Morgen', 'Leise', 'Sorgfältig', 'Die', 'Der', 'Das', 'Mein', 'Unsere'];
+  const LOWER_START = ['Am', 'Im', 'Nach', 'Wegen', 'Gestern', 'Morgen', 'Leise', 'Sorgfältig', 'Die', 'Der', 'Das', 'Mein', 'Meine', 'Unsere', 'Ein', 'Eine', 'Vor', 'Schnell', 'Jeden', 'In', 'Laut', 'Geduldig', 'Auf', 'Aufmerksam'];
   function isLowerable(t) { return LOWER_START.includes(t.split(' ')[0]); }
   function lower(t) { return t.charAt(0).toLowerCase() + t.slice(1); }
 

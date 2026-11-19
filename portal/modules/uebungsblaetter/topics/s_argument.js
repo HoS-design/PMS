@@ -54,13 +54,19 @@ Handys sind praktisch. [Allerdings] lenken sie oft vom Lernen ab.
 [Erstens] spart man Zeit, zweitens schont man die Umwelt.
 Lesen erweitert den Wortschatz. [Zum Beispiel] lernt man neue Fremdwörter.
 [Zusammenfassend] lässt sich sagen, dass die Vorteile überwiegen.
-Hausübungen sind wichtig, [weil] man das Gelernte wiederholt.`;
+Hausübungen sind wichtig, [weil] man das Gelernte wiederholt.
+Ich bin gegen Schuluniformen, [weil] man seinen Stil nicht zeigen kann.
+[Einerseits] ist ein Handy praktisch, andererseits lenkt es ab.
+Der Ausflug ist teuer. [Trotzdem] möchten alle mitfahren.
+[Schließlich] ist Bewegung wichtig für die Gesundheit.`;
 
   const besser = `Schuluniformen sind blöd. || Schuluniformen sind problematisch, weil man seinen eigenen Stil nicht zeigen kann. || b || Ein Argument braucht eine Begründung.
 Radfahren ist gesund, weil es gesund ist. || Radfahren ist gesund, weil es Herz und Muskeln stärkt. || b || Keine Begründung im Kreis
 Alle wissen doch, dass Hausübungen sinnlos sind. || Hausübungen sind umstritten, weil sie viel Freizeit kosten. || b || Keine Verallgemeinerung („alle“)
 Du hast keine Ahnung, deshalb hast du unrecht. || Ich sehe das anders, weil ein Haustier viel Zeit kostet. || b || Sachlich bleiben, nicht die Person angreifen
-Ich finde Sport toll. || Sport ist wichtig, denn er hilft, Stress abzubauen. Zum Beispiel fühle ich mich nach dem Training entspannter. || b || Behauptung, Begründung und Beispiel`;
+Ich finde Sport toll. || Sport ist wichtig, denn er hilft, Stress abzubauen. Zum Beispiel fühle ich mich nach dem Training entspannter. || b || Behauptung, Begründung und Beispiel
+Das ist halt so. || Das ist sinnvoll, weil Kinder dadurch selbstständiger werden. || b || Begründung statt Behauptung
+Jeder normale Mensch sieht das so. || Viele Eltern sehen das so, wie eine Umfrage an unserer Schule zeigt. || b || keine Verallgemeinerung, Beleg nennen`;
 
   const einl = `Ich schreibe jetzt eine Erörterung über Handys. || Fast jede Schülerin und jeder Schüler besitzt heute ein Smartphone. Doch sollen Handys in der Schule erlaubt sein? || b || Die Einleitung führt zum Thema hin und nennt die Frage.
 In meinem Schluss sage ich jetzt meine Meinung. || Nach Abwägung der Argumente bin ich der Meinung, dass Handys nur in den Pausen erlaubt sein sollten. || b || Der Schluss zieht ein Fazit.
@@ -70,14 +76,22 @@ Erstens ist das so. Zweitens ist das so. || Das wichtigste Argument ist jedoch, 
   const auftragA = `Schreibe einen **Leserbrief** an die Schülerzeitung: „Sollen Handys in der Pause erlaubt sein?“ => Anrede und Bezug zum Thema ; zwei bis drei Argumente mit Begründung und Beispiel ; Schluss mit Forderung
 Die Direktion überlegt, die **Hausübungen** abzuschaffen. Schreibe eine **Stellungnahme** für das Schulforum. => klare Meinung ; drei Argumente ; Gegenargument entkräften
 Deine Gemeinde will den **Spielplatz** in einen Parkplatz umbauen. Schreibe einen Leserbrief an die Gemeindezeitung. => Bezug auf den Plan ; Argumente ; Vorschlag
-Soll eure Schule einen **Schulgarten** anlegen? Schreibe eine Stellungnahme. => Meinung ; Argumente mit Beispielen ; Schluss`;
+Soll eure Schule einen **Schulgarten** anlegen? Schreibe eine Stellungnahme. => Meinung ; Argumente mit Beispielen ; Schluss
+Die Schule überlegt, ein **Handyfach** für alle einzuführen. Schreibe eine Stellungnahme für die Schülerzeitung. => Meinung ; zwei bis drei Argumente ; Schluss mit Vorschlag
+Soll es an eurer Schule einen **Pausenverkauf mit Süßigkeiten** geben? Schreibe einen Leserbrief. => Meinung ; Argumente mit Beispielen ; Forderung
+In deiner Gemeinde soll das **Freibad geschlossen** werden. Schreibe einen Leserbrief an die Gemeindezeitung. => Bezug ; Argumente ; Wunsch
+Sollen **Hausübungen am Wochenende** verboten werden? Schreibe eine Stellungnahme. => Meinung ; Argumente ; Gegenargument entkräften`;
 
   const auftragE = `Erörtere die Frage: **Sollen Handys an Schulen verboten werden?** => Einleitung mit Hinführung ; Pro- und Contra-Argumente ; stärkstes Argument zuletzt ; Schluss mit eigener Meinung
 Erörtere die Frage: **Ist ein Haustier für Kinder sinnvoll?** => Einleitung ; Argumente dafür und dagegen ; Abwägung im Schluss
 Erörtere die Frage: **Sollte die Schule erst um 9 Uhr beginnen?** => Einleitung ; Pro und Contra ; Schluss
 Erörtere die Frage: **Brauchen wir noch gedruckte Bücher?** => Einleitung ; Argumente ; Schluss mit Ausblick
 Erörtere die Frage: **Sollen Jugendliche einen Ferialjob annehmen?** => Einleitung ; Vorteile und Nachteile ; begründete Meinung
-Erörtere die Frage: **Sollte es an Schulen eine Schuluniform geben?** => Einleitung ; Pro und Contra ; Fazit`;
+Erörtere die Frage: **Sollte es an Schulen eine Schuluniform geben?** => Einleitung ; Pro und Contra ; Fazit
+Erörtere die Frage: **Sollen Kinder ein eigenes Smartphone haben?** => Einleitung ; Pro und Contra ; Fazit
+Erörtere die Frage: **Ist Fast Food an Schulen sinnvoll?** => Einleitung ; Argumente ; begründete Meinung
+Erörtere die Frage: **Sollte jede Schule einen Schulgarten haben?** => Einleitung ; Pro und Contra ; Ausblick
+Erörtere die Frage: **Sollen Schulen Noten abschaffen?** => Einleitung ; Argumente beider Seiten ; Fazit`;
 
   UB.simple({
     id: 'argumentieren', title: 'Argumentieren und Leserbrief', area: 'schreiben', klassen: [3], img: 'MiniHoS_Pose_Selbstbewusst',

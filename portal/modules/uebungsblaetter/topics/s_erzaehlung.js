@@ -10,7 +10,11 @@ An einem verschneiten Samstag gingen Lena und ich rodeln. >> Wir zogen unsere Sc
 Am Montag bemerkte ich in der Pause, dass meine Jause fehlte. >> Ich suchte in meiner Schultasche, unter der Bank und im Gang. >> Da sah ich, dass Bello, der Schulhund, an etwas kaute. >> „Das ist doch mein Wurstbrot!“, rief ich und alle lachten. >> Seitdem packe ich meine Jause immer in die Box mit Deckel.
 In den Herbstferien besuchte ich meine Oma am Bauernhof. >> Am Abend sollte ich die Hühner in den Stall bringen. >> Doch das freche Huhn Berta flatterte über den Zaun und lief davon. >> Ich jagte es durch den ganzen Garten, bis es sich im Holzstoß versteckte. >> Mit Federn im Haar trug ich Berta stolz zurück in den Stall.
 Vor dem Fußballturnier war ich so aufgeregt wie noch nie. >> Unsere Mannschaft spielte im Finale gegen die stärkste Schule. >> Kurz vor Schluss stand es noch immer null zu null. >> Da bekam ich den Ball, lief los und schoss mit voller Kraft. >> Als der Ball im Netz zappelte, jubelte die ganze Klasse.
-Eines Nachts wachte ich von einem seltsamen Geräusch auf. >> Es kratzte und raschelte direkt unter meinem Fenster. >> Mit zitternden Händen knipste ich die Taschenlampe an. >> Im Lichtkegel saß ein kleiner Igel und schaute mich an. >> Erleichtert kroch ich zurück ins Bett und schlief bald wieder ein.`,
+Eines Nachts wachte ich von einem seltsamen Geräusch auf. >> Es kratzte und raschelte direkt unter meinem Fenster. >> Mit zitternden Händen knipste ich die Taschenlampe an. >> Im Lichtkegel saß ein kleiner Igel und schaute mich an. >> Erleichtert kroch ich zurück ins Bett und schlief bald wieder ein.
+Am letzten Schultag vor den Ferien hatte unsere Klasse einen Ausflug in den Kletterpark. >> Ich wollte unbedingt den schwierigsten Parcours schaffen. >> Ganz oben auf der wackeligen Hängebrücke zitterten meine Knie. >> Ich atmete tief durch, hielt mich am Seil fest und setzte einen Fuß vor den anderen. >> Als ich das Ziel erreichte, klatschte die ganze Klasse.
+An einem Sonntag backte ich mit meiner Oma einen Kuchen. >> Wir rührten den Teig und schoben ihn in den Ofen. >> Dann spielten wir Karten und vergaßen die Zeit. >> Plötzlich roch es verbrannt und schwarzer Rauch quoll aus dem Ofen. >> Lachend aßen wir am Ende Eis statt Kuchen.
+In den Sommerferien zelteten wir am Ufer der Mur. >> In der Nacht hörten wir draußen ein lautes Schnaufen. >> Papa nahm die Taschenlampe und öffnete vorsichtig das Zelt. >> Vor uns stand eine Kuh und fraß unser Brot. >> Am nächsten Morgen erzählten wir allen von unserem nächtlichen Besuch.
+Am Freitag sollte ich vor der Klasse mein Referat halten. >> Die ganze Nacht konnte ich vor Aufregung kaum schlafen. >> Als ich vorne stand, war mein Kopf plötzlich leer. >> Da sah ich meine Freundin, die mir aufmunternd zunickte, und begann zu sprechen. >> Am Ende bekam ich sogar Applaus.`,
       besser: `Dann ging ich nach Hause. Dann aß ich. Dann schlief ich. || Danach ging ich nach Hause. Nach dem Essen fiel ich todmüde ins Bett. || b || abwechslungsreiche Satzanfänge
 Ich gehe in den Wald und sehe ein Reh. || Ich ging in den Wald und sah ein Reh. || b || Erzählzeit ist die Mitvergangenheit
 Ich hatte große Angst. || Mein Herz klopfte wie wild und meine Knie zitterten. || b || Gefühle zeigen statt nur nennen
@@ -20,7 +24,11 @@ Mein Ausflug || Gefangen im Gewitter || b || Die Überschrift macht neugierig.
 Es war Montag, das Wetter war schön, ich trug eine blaue Jacke und hatte Turnschuhe an. || An einem sonnigen Montag machte sich unsere Klasse auf den Weg zur Burg. || b || Die Einleitung ist kurz und nennt nur das Wichtige.
 Plötzlich hörte ich ein lautes Krachen. || Dann war da ein Geräusch. || a || „Plötzlich“ und ein genaues Wort erzeugen Spannung.
 Wir gewannen. Es war super. || Als der Schiedsrichter abpfiff, rissen wir jubelnd die Arme hoch. || b || Der Höhepunkt wird ausführlich erzählt.
-Am Ende ging alles gut aus. Das war mein Erlebnis. Ende. || Noch heute muss ich lachen, wenn ich an diesen Tag denke. || b || Ein guter Schluss rundet ab.`,
+Am Ende ging alles gut aus. Das war mein Erlebnis. Ende. || Noch heute muss ich lachen, wenn ich an diesen Tag denke. || b || Ein guter Schluss rundet ab.
+Wir gingen in den Wald. Wir gingen zum Bach. Wir gingen nach Hause. || Zuerst wanderten wir durch den Wald, später spielten wir am Bach. Erst am Abend kehrten wir heim. || b || abwechslungsreiche Verben und Satzanfänge
+Ich habe mich gefreut. || Vor Freude machte ich einen Luftsprung. || b || Gefühle zeigen statt nennen
+Da kam ein Mann. || Da tauchte ein großer Mann mit einem schwarzen Hut auf. || b || anschaulich beschreiben
+Lena hat gerufen, dass ich kommen soll. || „Komm schnell!“, rief Lena. || b || wörtliche Rede`,
       verben: `Der Dieb [schlich] leise durch den dunklen Flur.
 Mit dem verletzten Fuß [humpelte] Max zum Arzt.
 Gemütlich [schlenderten] wir durch die Altstadt.
@@ -52,11 +60,21 @@ Schreibe eine Erlebniserzählung zum Thema: **Ein Tag, den ich nie vergesse** =>
 Schreibe eine Geschichte mit den Reizwörtern: **Gewitter – Taschenlampe – Katze** => Alle drei Reizwörter kommen vor ; Reizwörter sind wichtig für die Handlung
 Schreibe eine Geschichte mit den Reizwörtern: **Schlüssel – Keller – Geburtstag** => Alle drei Reizwörter kommen vor ; Spannung bis zum Höhepunkt steigern
 Schreibe eine Geschichte mit den Reizwörtern: **Zug – Rucksack – fremder Mann** => Alle drei Reizwörter kommen vor ; Ein überraschendes Ende ist erlaubt
-Schreibe eine Geschichte mit den Reizwörtern: **Nebel – Pfiff – Hund** => Alle drei Reizwörter kommen vor ; Stimmung mit Adjektiven erzeugen`,
+Schreibe eine Geschichte mit den Reizwörtern: **Nebel – Pfiff – Hund** => Alle drei Reizwörter kommen vor ; Stimmung mit Adjektiven erzeugen
+Schreibe eine Erlebniserzählung zum Thema: **Plötzlich war es still** => Spannung aufbauen ; Was passiert nach der Stille? ; Gefühle zeigen
+Schreibe eine Erlebniserzählung zum Thema: **Mein erster Tag in der neuen Schule** => Erwartungen und Gefühle ; ein besonderer Moment als Höhepunkt
+Schreibe eine Erlebniserzählung zum Thema: **Verlaufen!** => Wo und wie hast du dich verlaufen? ; Angst und Erleichterung zeigen
+Schreibe eine Geschichte mit den Reizwörtern: **Baumhaus – Sturm – Taschenmesser** => Alle drei Reizwörter kommen vor ; Höhepunkt ausführlich erzählen
+Schreibe eine Geschichte mit den Reizwörtern: **Fundbüro – Brief – Überraschung** => Alle drei Reizwörter kommen vor ; überraschendes Ende
+Schreibe eine Geschichte mit den Reizwörtern: **Schulausflug – Höhle – Fledermaus** => Alle drei Reizwörter kommen vor ; Spannung mit Geräuschen erzeugen`,
       einleitung: `Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Das verschwundene Handy“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
 Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Gefangen im Lift“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
 Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Der Ausflug, der ins Wasser fiel“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
-Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Eine Nacht im Zelt“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum`
+Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Eine Nacht im Zelt“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
+Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Der geheimnisvolle Brief“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
+Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Allein im Wald“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
+Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Das Tor in letzter Sekunde“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum
+Schreibe nur die **Einleitung** zu einer Erzählung mit dem Titel **„Hilfe, der Hund ist weg!“**. => Wer? Wo? Wann? ; zwei bis drei Sätze ; Präteritum`
     },
     levels: {
       1: {

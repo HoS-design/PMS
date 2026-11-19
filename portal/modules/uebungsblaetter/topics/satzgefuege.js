@@ -16,7 +16,27 @@ Lena lernt fleißig, **damit sie den Test schafft**.|N
 Das ist der Hund, **der immer bellt**.|N
 **Obwohl er müde war**, spielte er weiter.|N
 Obwohl er müde war, **spielte er weiter**.|H
-**Ich komme mit**, wenn ich Zeit habe.|H`,
+**Ich komme mit**, wenn ich Zeit habe.|H
+**Ich putze die Zähne**, bevor ich schlafen gehe.|H
+Ich putze die Zähne, **bevor ich schlafen gehe**.|N
+**Weil der Bus Verspätung hatte**, kamen wir zu spät.|N
+Weil der Bus Verspätung hatte, **kamen wir zu spät**.|H
+**Max fragt**, ob du mitkommst.|H
+Max fragt, **ob du mitkommst**.|N
+**Nachdem wir gegessen hatten**, spielten wir Karten.|N
+Nachdem wir gegessen hatten, **spielten wir Karten**.|H
+**Ich freue mich**, dass du da bist.|H
+Ich freue mich, **dass du da bist**.|N
+**Falls es schneit**, bauen wir einen Schneemann.|N
+Falls es schneit, **bauen wir einen Schneemann**.|H
+Das Mädchen, **das neben mir sitzt**, heißt Emma.|N
+**Während Papa kocht**, deckt Lena den Tisch.|N
+Während Papa kocht, **deckt Lena den Tisch**.|H
+**Sie lacht**, obwohl sie traurig ist.|H
+Sie lacht, **obwohl sie traurig ist**.|N
+Der Kuchen, **den Oma gebacken hat**, schmeckt toll.|N
+**Wir warten**, bis der Regen aufhört.|H
+Wir warten, **bis der Regen aufhört**.|N`,
     verbinden: `Es regnet. Wir bleiben drinnen. :: weil => Wir bleiben drinnen, weil es regnet.
 Ich habe Hunger. Ich esse einen Apfel. :: weil => Ich esse einen Apfel, weil ich Hunger habe.
 Das Wetter ist schön. Wir fahren ins Freibad. :: wenn => Wenn das Wetter schön ist, fahren wir ins Freibad.
@@ -28,7 +48,24 @@ Lena übt jeden Tag. Sie wird immer besser. :: und => Lena übt jeden Tag und si
 Ich wollte kommen. Ich war krank. :: aber => Ich wollte kommen, aber ich war krank.
 Wir bleiben drinnen. Es regnet. :: denn => Wir bleiben drinnen, denn es regnet.
 Er trinkt keinen Kaffee. Er trinkt Tee. :: sondern => Er trinkt keinen Kaffee, sondern Tee.
-Das Fest ist vorbei. Wir räumen auf. :: nachdem => Nachdem das Fest vorbei ist, räumen wir auf.`,
+Das Fest ist vorbei. Wir räumen auf. :: nachdem => Nachdem das Fest vorbei ist, räumen wir auf.
+Ich bin müde. Ich gehe ins Bett. :: weil => Ich gehe ins Bett, weil ich müde bin.
+Es schneit. Wir bauen einen Schneemann. :: wenn => Wenn es schneit, bauen wir einen Schneemann.
+Er weiß es. Morgen ist schulfrei. :: dass => Er weiß, dass morgen schulfrei ist.
+Sie ist erkältet. Sie geht spazieren. :: obwohl => Obwohl sie erkältet ist, geht sie spazieren.
+Ich schreibe es auf. Ich vergesse es nicht. :: damit => Ich schreibe es auf, damit ich es nicht vergesse.
+Wir kamen am Bahnhof an. Der Zug war schon weg. :: als => Als wir am Bahnhof ankamen, war der Zug schon weg.
+Mama fragt. Habe ich Hunger? :: ob => Mama fragt, ob ich Hunger habe.
+Ich gehe schlafen. Ich putze die Zähne. :: bevor => Bevor ich schlafen gehe, putze ich die Zähne.
+Die Sonne scheint. Es ist kalt. :: aber => Die Sonne scheint, aber es ist kalt.
+Lena spielt Gitarre. Ihr Bruder spielt Klavier. :: und => Lena spielt Gitarre und ihr Bruder spielt Klavier.
+Wir gehen nicht ins Kino. Wir gehen ins Theater. :: sondern => Wir gehen nicht ins Kino, sondern ins Theater.
+Ich nehme eine Jacke mit. Es könnte kalt werden. :: denn => Ich nehme eine Jacke mit, denn es könnte kalt werden.
+Tom lernt Vokabeln. Er schreibt morgen einen Test. :: weil => Tom lernt Vokabeln, weil er morgen einen Test schreibt.
+Das Wetter ist schlecht. Wir machen einen Ausflug. :: obwohl => Obwohl das Wetter schlecht ist, machen wir einen Ausflug.
+Du hast Zeit. Du kannst mir helfen. :: wenn => Wenn du Zeit hast, kannst du mir helfen.
+Ich glaube es. Er hat recht. :: dass => Ich glaube, dass er recht hat.
+Sie ruft laut. Alle hören sie. :: damit => Sie ruft laut, damit alle sie hören.`,
     art: `Ich lese ein Buch und mein Bruder spielt.|R
 Wir bleiben drinnen, weil es regnet.|G
 Er ist müde, aber er spielt weiter.|R
@@ -40,7 +77,23 @@ Das Buch, das ich lese, ist spannend.|G
 Der Bus kam zu spät, deshalb verpassten wir den Anfang.|R
 Obwohl es kalt war, gingen wir spazieren.|G
 Wir gehen nicht ins Kino, sondern wir spielen Minigolf.|R
-Als der Wecker klingelte, sprang ich aus dem Bett.|G`
+Als der Wecker klingelte, sprang ich aus dem Bett.|G
+Ich lerne, weil morgen ein Test ist.|G
+Es regnet und der Wind weht.|R
+Wir wissen nicht, ob er kommt.|G
+Sie wollte schlafen, doch das Baby schrie.|R
+Nachdem es geläutet hatte, liefen alle hinaus.|G
+Ich mag Äpfel, aber ich mag keine Birnen.|R
+Der Hund, der dort bellt, gehört Max.|G
+Wir fahren ans Meer oder wir bleiben zu Hause.|R
+Damit wir nicht frieren, ziehen wir Mützen an.|G
+Tom hat Hunger, deshalb isst er ein Brot.|R
+Es war schon spät, trotzdem spielten wir weiter.|R
+Während ich lese, hört er Musik.|G
+Er lacht, denn der Witz ist lustig.|R
+Falls du Zeit hast, ruf mich an.|G
+Ich weiß, wo du wohnst.|G
+Die Sonne ging unter und es wurde kalt.|R`
   },
   levels: {
     1: {

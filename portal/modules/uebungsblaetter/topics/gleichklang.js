@@ -32,7 +32,14 @@ der Sie? => der Sieg – die Siege
 lie? => lieb – lieber
 das Lan? => das Land – die Länder
 der Hu? => der Hut – die Hüte
-run? => rund – runder`,
+run? => rund – runder
+der Zwer? => der Zwerg – die Zwerge
+der Stau? => der Staub – staubig
+das Kin? => das Kind – die Kinder
+mil? => mild – milder
+der Ta? => der Tag – die Tage
+blon? => blond – blonder
+hal? => halb – halbe`,
     umlaut: `die H{äu|eu}ser (Haus)
 die L{eu|äu}te
 die M{äu|eu}se
@@ -52,7 +59,20 @@ l{ä|e}nger
 die B{äu|eu}me
 das Kr{eu|äu}z
 die Schl{ä|e}ge
-die Z{ä|e}hne`,
+die Z{ä|e}hne
+die L{äu|eu}fer
+die {Eu|Äu}le
+l{äu|eu}ten
+die B{eu|äu}le
+die Fr{eu|äu}nde
+die R{äu|eu}ber
+d{eu|äu}tlich
+die Kr{äu|eu}ter
+die W{ä|e}nde
+die B{ä|e}nke
+das B{e|ä}tt
+die K{ä|e}lte
+die H{e|ä}fte`,
     endent: `{ent|end}decken
 {end|ent}lich
 {ent|end}täuscht
@@ -64,7 +84,17 @@ die {End|Ent}station
 {ent|end}fernt
 {ent|end}wickeln
 die {End|Ent}runde
-{ent|end}schuldigen`
+{ent|end}schuldigen
+{ent|end}laufen
+{end|ent}los
+{ent|end}schlossen
+der {End|Ent}spurt
+{ent|end}stehen
+das {End|Ent}ergebnis
+{ent|end}führen
+{ent|end}zwei
+die {Ent|End}täuschung
+{End|Ent}lich Ferien!`
   },
   levels: {
     1: {

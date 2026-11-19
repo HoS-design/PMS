@@ -28,7 +28,27 @@ Lena {malt|mahlt} ein Bild.
 Er {isst|ist} eine Banane.
 Sie {ist|isst} heute müde.
 Das {Wiedersehen|Widersehen} war schön.
-Ihr {seid|seit} spät dran.`,
+Ihr {seid|seit} spät dran.
+{Seit|Seid} wann wohnst du hier?
+{Seid|Seit} bitte pünktlich!
+Er kommt {wieder|wider} zu spät.
+Der Wind weht {wider|wieder} die Fahrtrichtung.
+Der Baum ist {tot|tod}.
+Er hatte {Todesangst|Totesangst}.
+Wir fahren in die {Stadt|Statt}.
+{Statt|Stadt} zu lernen, spielt er.
+Im Herbst {fiel|viel} das Laub.
+Es gibt {viel|fiel} zu tun.
+Ist das {wahr|war}?
+Gestern {war|wahr} ein schöner Tag.
+Ruf mich {mal|Mal} an!
+Beim ersten {Mal|mal} war ich nervös.
+Lies bitte die nächste {Seite|Saite}.
+Die Geige hat vier {Saiten|Seiten}.
+Er {isst|ist} gern Nudeln.
+Mein Bruder {ist|isst} zehn Jahre alt.
+Ich {weiß|weis} die Antwort.
+Das Hemd ist {weiß|weis}.`,
     saetze: `seit – seid => Seit Montag bin ich krank. / Ihr seid sehr nett.
 wieder – wider => Ich komme wieder. / Das ist wider die Regeln.
 tot – Tod => Die Pflanze ist tot. / Der Tod gehört zum Leben.
@@ -46,7 +66,19 @@ Wir fahren in die Statt. => Wir fahren in die Stadt.
 Der Vogel ist tod. => Der Vogel ist tot.
 Zum ersten mal war ich am Meer. => Zum ersten Mal war ich am Meer.
 Ich gehe morgen widder in die Schule. => Ich gehe morgen wieder in die Schule.
-Er ist eine Semmel. => Er isst eine Semmel.`
+Er ist eine Semmel. => Er isst eine Semmel.
+Wo seit ihr gewesen? => Wo seid ihr gewesen?
+Er ist sein Brot. => Er isst sein Brot.
+Viel Spaß, und kommt gesund wider! => Viel Spaß, und kommt gesund wieder!
+Wir wohnen in einer großen Statt. => Wir wohnen in einer großen Stadt.
+Das ist nicht war. => Das ist nicht wahr.
+Ich habe fiel gelernt. => Ich habe viel gelernt.
+Seid gestern bin ich krank. => Seit gestern bin ich krank.
+Das war das erste mal. => Das war das erste Mal.
+Die Pflanze ist tod. => Die Pflanze ist tot.
+Die Seite der Gitarre ist gerissen. => Die Saite der Gitarre ist gerissen.
+Ich weis es nicht. => Ich weiß es nicht.
+Sie hat mir wiedersprochen. => Sie hat mir widersprochen.`
   },
   levels: {
     1: {

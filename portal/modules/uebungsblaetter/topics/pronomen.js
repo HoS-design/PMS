@@ -14,7 +14,23 @@ Die Kinder warten. Der Busfahrer begrüßt [sie].
 Das Fenster ist offen. Bitte schließ [es]!
 Anna hat Geburtstag. Wir schenken [ihr] ein Buch.
 Mein Opa ist krank. Wir besuchen [ihn] morgen.
-Die Blumen sind schön. Ich gieße [sie] jeden Tag.`,
+Die Blumen sind schön. Ich gieße [sie] jeden Tag.
+Der Bus kommt. [Er] ist pünktlich.
+Die Sonne scheint. [Sie] wärmt uns.
+Das Auto ist neu. Papa wäscht [es] jeden Samstag.
+Ich rufe Lena an. Ich erzähle [ihr] von der Party.
+Paul hat Geburtstag. Wir gratulieren [ihm].
+Das ist mein Ball. Gib [ihn] mir bitte zurück!
+Die Kinder lachen. Der Clown gefällt [ihnen].
+Meine Eltern arbeiten viel. Ich helfe [ihnen] im Haushalt.
+Wo ist die Katze? Ich sehe [sie] nicht.
+Der Lehrer erklärt die Aufgabe. Wir hören [ihm] zu.
+Das Buch ist spannend. Ich lese [es] schon zum zweiten Mal.
+Lisa und ich spielen. [Wir] bauen eine Burg.
+Du und Max, habt [ihr] morgen Zeit?
+Opa ist da. Wir begrüßen [ihn].
+Der Kuchen riecht gut. Wir essen [ihn] gleich.
+Die Blumen sind verwelkt. Ich werfe [sie] weg.`,
     besitz: `Ich habe [meinen:mein] Schlüssel verloren.
 Hast du [deine:dein] Hausübung gemacht?
 Paul sucht [seinen:sein] Rucksack.
@@ -26,7 +42,21 @@ Ich leihe dir [mein:mein] Lineal.
 Mia ruft [ihren:ihr] Hund.
 Der Lehrer korrigiert [seine:sein] Tests.
 Wir feiern [unseren:unser] Sieg.
-Max gibt [seiner:sein] Schwester ein Geschenk.`,
+Max gibt [seiner:sein] Schwester ein Geschenk.
+Ich suche [meine:mein] Turnschuhe.
+Hast du [deinen:dein] Schlüssel dabei?
+Lena füttert [ihre:ihr] Katze.
+Wir räumen [unser:unser] Klassenzimmer auf.
+Wo habt ihr [eure:euer] Fahrräder abgestellt?
+Max sucht [seine:sein] Brille.
+Die Kinder zeigen [ihren:ihr] Eltern die Zeichnungen.
+Ich gebe [meinem:mein] Bruder ein Stück Schokolade.
+Paul hilft [seiner:sein] Oma beim Einkaufen.
+Wir danken [unserer:unser] Lehrerin.
+Tom erzählt von [seinem:sein] Urlaub.
+Mia telefoniert mit [ihrer:ihr] Freundin.
+Hast du [dein:dein] Heft vergessen?
+Habt ihr [euren:euer] Hund mitgebracht?`,
     art: `**Ich** gehe heute schwimmen.|Pers
 Kommst **du** mit?|Pers
 Ich gebe **ihm** das Heft.|Pers
@@ -44,7 +74,17 @@ Wir beeilen **uns**.|Refl
 Der Ball, **der** im Garten liegt, gehört Max.|Rel
 Das ist die Frau, **die** uns geholfen hat.|Rel
 Das Haus, **das** am See steht, ist alt.|Rel
-Der Film, **den** wir gesehen haben, war spannend.|Rel`,
+Der Film, **den** wir gesehen haben, war spannend.|Rel
+**Sie** spielt gern Tennis.|Pers
+Ich sehe **dich** morgen.|Pers
+**Eure** Katze ist süß.|Poss
+Lena holt **ihr** Fahrrad.|Poss
+Er kämmt **sich**.|Refl
+Ihr müsst **euch** beeilen.|Refl
+**Diese** Jacke ist warm.|Dem
+Mit **diesem** Stift schreibe ich.|Dem
+Die Frau, **die** dort steht, ist meine Tante.|Rel
+Das Auto, **das** vor dem Haus parkt, ist neu.|Rel`,
     reflexiv: `Ich freue [mich] auf die Ferien.
 Du wäschst [dich] jeden Morgen.
 Max ärgert [sich] über den Fehler.
@@ -54,7 +94,17 @@ Die Kinder verstecken [sich] im Garten.
 Ich putze [mir] die Zähne.
 Lena kämmt [sich] die Haare.
 Du hast [dich] verlaufen.
-Wir beeilen [uns].`
+Wir beeilen [uns].
+Wir freuen [uns] auf den Ausflug.
+Er wäscht [sich] die Hände.
+Ihr müsst [euch] beeilen!
+Ich ziehe [mich] warm an.
+Die Katze putzt [sich].
+Du sollst [dich] ausruhen.
+Lena wünscht [sich] ein Fahrrad.
+Wir setzen [uns] in die erste Reihe.
+Ich merke [mir] die Telefonnummer.
+Die Kinder streiten [sich] um den Ball.`
   },
   levels: {
     1: {

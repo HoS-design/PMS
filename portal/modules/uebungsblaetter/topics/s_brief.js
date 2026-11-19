@@ -22,7 +22,11 @@ Ich schreibe Ihnen, weil der Fußballplatz voll kaputt ist. || Ich wende mich an
 Sehr geehrte Damen und Herren, Ich möchte mich beschweren. || Sehr geehrte Damen und Herren, ich möchte mich beschweren. || b || nach dem Beistrich klein weiter
 Können sie mir helfen? || Können Sie mir helfen? || b || Höflichkeitsform groß
 Tschüss, ciao! || Mit freundlichen Grüßen || b || passende Grußformel im formellen Brief
-Betreff: Frage || Betreff: Anfrage zur Klassenfahrt am 12. Mai || b || genauer Betreff`,
+Betreff: Frage || Betreff: Anfrage zur Klassenfahrt am 12. Mai || b || genauer Betreff
+Ich will wissen, was das kostet. || Ich möchte Sie bitten, mir die Preise mitzuteilen. || b || höflich formulieren
+Danke im Voraus und so. || Vielen Dank im Voraus für Ihre Mühe. || b || keine Umgangssprache
+Sehr geehrter Herr Bürgermeister, wie gehts? || Sehr geehrter Herr Bürgermeister, ich wende mich mit einer Bitte an Sie. || b || sachlicher Einstieg
+Bitte schreiben sie mir bald. || Bitte schreiben Sie mir bald. || b || Höflichkeitsform groß`,
     anrede: `Ich danke {Ihnen|ihnen} für {Ihre|ihre} Hilfe.
 Haben {Sie|sie} meinen Brief erhalten?
 Ich freue mich auf {Ihre|ihre} Antwort.
@@ -30,13 +34,25 @@ Die Kinder fragen, ob {sie|Sie} mitkommen dürfen.
 Wir möchten {Sie|sie} herzlich einladen.
 Gefällt {Ihnen|ihnen} unser Vorschlag?
 Meine Eltern lassen {Sie|sie} grüßen.
-Max und Lena sagen, {sie|Sie} hätten keine Zeit.`,
+Max und Lena sagen, {sie|Sie} hätten keine Zeit.
+Wir danken {Ihnen|ihnen} für die Einladung.
+Können {Sie|sie} uns eine Antwort schicken?
+Ich habe {Ihren|ihren} Brief bekommen.
+Die Kinder freuen sich, weil {sie|Sie} einen Preis gewonnen haben.
+Darf ich {Sie|sie} etwas fragen?
+Ich bedanke mich für {Ihre|ihre} schnelle Hilfe.`,
     auftrag: `Schreibe deiner Freundin oder deinem Freund eine **E-Mail aus dem Urlaub**. => Betreff ; Wo bist du? Was hast du erlebt? ; Frage an den Empfänger ; Grußformel
 Bedanke dich in einem **Brief bei deinen Großeltern** für ein Geburtstagsgeschenk. => Ort und Datum ; Anrede ; Dank und warum dir das Geschenk gefällt ; Grußformel
 **Lade deine Klasse** per E-Mail zu deiner Geburtstagsfeier ein. => Wann? Wo? Was ist geplant? ; Bitte um Antwort ; Grußformel
 Dein neues Spiel ist nach zwei Tagen kaputt. Schreibe einen **Beschwerdebrief** an die Firma. => Absender, Empfänger, Betreff ; Was ist passiert? ; Was forderst du? ; Mit freundlichen Grüßen
 Deine Klasse plant eine Projektwoche. Schreibe eine **Anfrage an eine Jugendherberge**. => Betreff ; Zeitraum und Personenanzahl ; Fragen zu Preisen und Programm ; höflicher Schluss
-Schreibe der **Bürgermeisterin** einen Brief: Ihr wünscht euch einen Skaterpark. => Betreff ; Anliegen ; zwei bis drei Begründungen ; Bitte um Antwort`
+Schreibe der **Bürgermeisterin** einen Brief: Ihr wünscht euch einen Skaterpark. => Betreff ; Anliegen ; zwei bis drei Begründungen ; Bitte um Antwort
+Schreibe deiner **Patin oder deinem Paten** eine E-Mail und erzähle vom letzten Wochenende. => Betreff ; Anrede ; Erlebnis ; Frage ; Gruß
+Du warst krank. Schreibe einer **Freundin** eine Nachricht und bitte um die Hausübungen. => Anrede ; Grund ; Bitte ; Dank ; Gruß
+Schreibe einen **Brief an dich selbst** in zehn Jahren. => Ort und Datum ; Wie geht es dir heute? ; Wünsche ; Gruß
+Du möchtest bei einem **Tierheim** helfen. Schreibe eine Anfrage. => Betreff ; Anliegen ; Fragen zu Zeiten ; höflicher Schluss
+Der **Getränkeautomat** der Schule ist seit Wochen kaputt. Schreibe an die Firma. => Betreff ; Problem beschreiben ; Bitte um Reparatur ; Mit freundlichen Grüßen
+Bitte die **Gemeinde** in einem Brief um einen Zebrastreifen vor der Schule. => Betreff ; Begründung ; Vorschlag ; Bitte um Antwort`
   },
   levels: {
     1: {
@@ -44,7 +60,7 @@ Schreibe der **Bürgermeisterin** einen Brief: Ihr wünscht euch einen Skaterpar
       tasks: [
         { type: 'order', pool: 'aufbau', n: 1, filter: x => /^Ort/.test(x.raw), title: 'Wie ist ein Brief aufgebaut?', instr: 'Nummeriere die Teile von 1 bis 7.' },
         { type: 'choice', pool: 'art', cover: true, keys: ['P', 'F'], n: 6, head: 'Anrede oder Gruß', title: 'Persönlich oder formell?', instr: 'Kreuze an.', opts: [['P', 'persönlich'], ['F', 'formell']] },
-        { type: 'write', pool: 'auftrag', lines: 4, filter: x => !/Beschwerde|Anfrage|Bürgermeisterin/.test(x.q), title: 'Schreibe eine kurze Nachricht.', instr: 'Vier bis fünf Sätze genügen.' }
+        { type: 'write', pool: 'auftrag', lines: 4, filter: x => !/Beschwerde|Anfrage|Bürgermeisterin|Getränkeautomat|Gemeinde/.test(x.q), title: 'Schreibe eine kurze Nachricht.', instr: 'Vier bis fünf Sätze genügen.' }
       ]
     },
     2: {
@@ -58,7 +74,7 @@ Schreibe der **Bürgermeisterin** einen Brief: Ihr wünscht euch einen Skaterpar
       ichkann: ['Du kannst einen formellen Brief planen und schreiben (Schularbeitsprobe).'],
       tasks: [
         { type: 'order', pool: 'aufbau', n: 1, filter: x => /^Absender/.test(x.raw), title: 'Aufbau eines formellen Briefs', instr: 'Nummeriere von 1 bis 7.' },
-        { type: 'write', pool: 'auftrag', lines: 0, filter: x => /Beschwerde|Anfrage|Bürgermeisterin/.test(x.q), check: ['Absender, Empfänger, Ort/Datum, Betreff', 'passende Anrede', 'höfliche, sachliche Sprache', 'Sie/Ihnen/Ihr groß', 'klares Anliegen mit Begründung', 'Mit freundlichen Grüßen'], plan: [['Betreff', 'In wenigen Wörtern: Worum geht es?'], ['Einleitung', 'Warum schreibe ich?'], ['Hauptteil', 'Genaue Angaben, Begründungen, Fragen'], ['Schluss', 'Bitte, Dank, Grußformel']], note: 'Schreibe den Brief in dein Heft.', title: 'Schreibauftrag' }
+        { type: 'write', pool: 'auftrag', lines: 0, filter: x => /Beschwerde|Anfrage|Bürgermeisterin|Getränkeautomat|Gemeinde/.test(x.q), check: ['Absender, Empfänger, Ort/Datum, Betreff', 'passende Anrede', 'höfliche, sachliche Sprache', 'Sie/Ihnen/Ihr groß', 'klares Anliegen mit Begründung', 'Mit freundlichen Grüßen'], plan: [['Betreff', 'In wenigen Wörtern: Worum geht es?'], ['Einleitung', 'Warum schreibe ich?'], ['Hauptteil', 'Genaue Angaben, Begründungen, Fragen'], ['Schluss', 'Bitte, Dank, Grußformel']], note: 'Schreibe den Brief in dein Heft.', title: 'Schreibauftrag' }
       ]
     }
   }
