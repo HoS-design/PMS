@@ -133,7 +133,7 @@ Der Vogel sitzt in [dem:den/dem] Käfig.`
     3: {
       ichkann: ['Du kannst Präpositionen nach Dativ, Akkusativ und Genitiv ordnen.', 'Du kannst Wechselpräpositionen richtig verwenden.'],
       tasks: [
-        { type: 'sort', pool: 'sorte', n: 12, cover: true, keys: ['D', 'A', 'G'], title: 'Ordne die Präpositionen.', instr: 'Welchen Fall verlangt die Präposition?', opts: [['D', 'Dativ'], ['A', 'Akkusativ'], ['G', 'Genitiv']] },
+        { type: 'sort', pool: 'sorte', n: 10, cover: true, keys: ['D', 'A', 'G'], title: 'Ordne die Präpositionen.', instr: 'Welchen Fall verlangt die Präposition?', opts: [['D', 'Dativ'], ['A', 'Akkusativ'], ['G', 'Genitiv']] },
         { type: 'choice', pool: 'wechsel', cover: true, keys: ['D', 'A'], n: 5, title: 'Wechselpräpositionen', instr: 'Bestimme den Fall des unterstrichenen Teils.', opts: [['D', 'Dativ (Lage: wo?)'], ['A', 'Akkusativ (Richtung: wohin?)']] },
         { type: 'gap', pool: 'artikel', n: 4, filter: x => /Wegen|Trotz|Während|Statt|Seit/.test(x.q), title: 'Genitiv oder Dativ?', instr: 'Kreise die richtige Form ein.' }
       ]

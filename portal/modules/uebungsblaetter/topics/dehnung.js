@@ -78,8 +78,8 @@ Brief|I`
     3: {
       ichkann: ['Du kennst die Fachbegriffe Dehnung und Schärfung.', 'Du kannst Wörter nach Rechtschreibregeln ordnen.'],
       tasks: [
-        { type: 'sort', pool: 'sort', cover: true, keys: ['K', 'L'], n: 10, title: 'Dehnung oder Schärfung?', instr: 'Ordne nach der Länge des betonten Vokals.', opts: [['K', 'Schärfung (kurzer Vokal)'], ['L', 'Dehnung (langer Vokal)']] },
-        { type: 'sort', pool: 'markierung', cover: true, keys: ['H', 'D', 'I'], n: 11, title: 'Kennzeichen der Dehnung', instr: 'Ordne die Wörter.', opts: [['H', 'Dehnungs-h'], ['D', 'Doppelvokal'], ['I', 'ie']] },
+        { type: 'sort', pool: 'sort', cover: true, keys: ['K', 'L'], n: 8, title: 'Dehnung oder Schärfung?', instr: 'Ordne nach der Länge des betonten Vokals.', opts: [['K', 'Schärfung (kurzer Vokal)'], ['L', 'Dehnung (langer Vokal)']] },
+        { type: 'sort', pool: 'markierung', cover: true, keys: ['H', 'D', 'I'], n: 9, title: 'Kennzeichen der Dehnung', instr: 'Ordne die Wörter.', opts: [['H', 'Dehnungs-h'], ['D', 'Doppelvokal'], ['I', 'ie']] },
         { type: 'gap', pool: 'wahl', n: 4, title: 'Richtig geschrieben?', instr: 'Kreise ein.' }
       ]
     }

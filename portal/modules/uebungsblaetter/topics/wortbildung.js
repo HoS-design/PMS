@@ -99,7 +99,7 @@ dunkelgrün => dunkel + grün (Adjektiv + Adjektiv)`
     2: {
       ichkann: ['Du kannst Wörter zusammensetzen und zerlegen.', 'Du kannst Wörter einer Wortfamilie erkennen.', 'Du kannst mit Nachsilben Nomen bilden.'],
       tasks: [
-        { type: 'sort', pool: 'familie', cover: true, keys: ['F', 'S', 'W'], n: 11, title: 'Wortfamilien', instr: 'Ordne jedes Wort seiner Wortfamilie zu.', opts: [['F', 'fahren'], ['S', 'spielen'], ['W', 'schreiben']] },
+        { type: 'sort', pool: 'familie', cover: true, keys: ['F', 'S', 'W'], n: 10, title: 'Wortfamilien', instr: 'Ordne jedes Wort seiner Wortfamilie zu.', opts: [['F', 'fahren'], ['S', 'spielen'], ['W', 'schreiben']] },
         { type: 'pair', pool: 'nomen', n: 5, inline: true, head: 'Wort → Nachsilbe', col: 'Nomen mit Artikel', title: 'Bilde Nomen.', instr: 'Achtung: Nomen schreibst du groß.' },
         { type: 'pair', pool: 'zerlegen', n: 4, inline: true, filter: x => /Nomen \+ Nomen|Verb \+ Nomen|Adjektiv \+ Nomen/.test(x.a), head: 'Zusammensetzung', col: 'Bestandteile', title: 'Zerlege die Wörter.', instr: 'Schreibe die Bestandteile in der Grundform auf.' }
       ]
