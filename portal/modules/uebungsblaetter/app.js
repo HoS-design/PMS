@@ -8,7 +8,7 @@
   const params = new URLSearchParams(location.search);
   const showDrafts = params.has('entwurf') || params.has('lehrer');
 
-  const state = { fach: 'deutsch', klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false };
+  const state = { fach: 'deutsch', klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false, format: 'blatt' };
   const fachOf = (t) => t.fach || 'deutsch';
 
   // ------------------------------------------------------------------
@@ -19,13 +19,14 @@
     if (mh) { state.merkheft = true; state.fach = mh[1] || 'deutsch'; if (mh[2] && +mh[2] >= 1 && +mh[2] <= 4) state.klasse = +mh[2]; return; }
     if (location.hash === '#mathe' || location.hash === '#deutsch') { state.fach = location.hash.slice(1); state.topic = null; state.merkheft = false; return; }
     state.merkheft = false;
-    const m = location.hash.replace('#', '').match(/^([a-z0-9-]+?)(?:-(\d))?(?:-(\d+|v\d+))?$/);
+    const m = location.hash.replace('#', '').match(/^([a-z0-9-]+?)(?:-(\d))?(?:-(\d+|v\d+))?(?:-(domino|memory|trimino))?$/);
     if (!m) return;
     const t = UB.topics.find(x => x.id === m[1]);
     if (!t || (t.review && !showDrafts)) return;
     state.topic = t.id;
     state.fach = fachOf(t);
     if (m[2] && +m[2] >= 1 && +m[2] <= 3) state.level = +m[2];
+    state.format = m[4] || 'blatt';
     if (m[3]) {
       if (m[3].startsWith('v')) { state.variant = m[3].slice(1); state.blatt = null; }
       else if (+m[3] >= 1 && +m[3] <= BLATT_COUNT) { state.blatt = +m[3]; state.variant = null; }
@@ -36,7 +37,7 @@
   function writeHash() {
     if (state.merkheft) { history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#merkheft-' + (state.fach === 'mathe' ? 'mathe-' : '') + state.klasse); return; }
     if (!state.topic) return;
-    const h = '#' + state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt);
+    const h = '#' + state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt) + (state.format !== 'blatt' ? '-' + state.format : '');
     history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + h);
   }
   const shareUrl = () => location.origin + '/uebungsblaetter/' + (showDrafts ? '?entwurf=1' : '') + location.hash;
@@ -91,10 +92,11 @@
     return state.topic + '|' + state.level + '|' + (state.variant ? 'v' + state.variant : 'b' + state.blatt);
   }
   function buildSheet(t, solution) {
+    const code = state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt) + (state.format !== 'blatt' ? '-' + state.format : '');
+    const blattLabel = state.variant ? 'Zusatzblatt ' + state.variant : 'Blatt ' + state.blatt;
+    if (state.format !== 'blatt') return UB.cards.build(t, { format: state.format, level: state.level, klasse: state.klasse, fach: fachOf(t), seed: seedText(), solution, code, meta: (state.variant ? 'Zusatzset ' + state.variant : 'Set ' + state.blatt) });
     const rng = UB.makeRng(seedText());
     const tasks = t.build(state.level, rng);
-    const code = state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt);
-    const blattLabel = state.variant ? 'Zusatzblatt ' + state.variant : 'Blatt ' + state.blatt;
     const img = solution ? 'MiniHoS_Lob_Pokal' : t.img;
     let html = '<article class="sheet fach-' + fachOf(t) + (solution ? ' solution' : '') + '">' +
       '<header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[fachOf(t)] + ' · ' + state.klasse + '. Klasse · ' + esc(UB.LEVEL_NAMES[state.level]) + '</div>' +
@@ -185,9 +187,16 @@
       setMsg('Wähle links ein Thema, dann Stufe und Blatt.', '');
       return;
     }
+    const av = UB.cards.available(t, state.level);
+    if (state.format !== 'blatt' && !av[state.format]) state.format = 'blatt';
+    document.querySelectorAll('#formatSeg button').forEach(b => { const f = b.dataset.format; b.disabled = f !== 'blatt' && !av[f]; b.classList.toggle('active', f === state.format); b.title = b.disabled ? 'Für dieses Thema/diese Stufe nicht möglich (zu wenige passende Aufgaben)' : ''; });
+    const cardsMode = state.format !== 'blatt';
+    document.querySelector('[data-view="blatt"]').textContent = cardsMode ? 'Karten' : 'Übungsblatt';
+    $('printBtn').textContent = cardsMode ? 'Karten drucken' : 'Blatt drucken';
     $('previewScale').innerHTML = buildSheet(t, state.view === 'loesung');
-    $('sheetInfo').textContent = t.title + ' · ' + UB.LEVEL_NAMES[state.level] + ' · ' + (state.variant ? 'Zusatzblatt ' + state.variant : 'Blatt ' + state.blatt);
-    setMsg(t.review ? 'Entwurf: Dieses Thema ist noch nicht freigegeben. Bitte in der Lehrer-Ansicht prüfen.' :
+    if (cardsMode) UB.cards.fit($('previewScale'));
+    $('sheetInfo').textContent = t.title + ' · ' + UB.LEVEL_NAMES[state.level] + ' · ' + (cardsMode ? UB.cards.FORMATS[state.format].label + ' · ' : '') + (state.variant ? 'Zusatz ' + state.variant : (cardsMode ? 'Set ' : 'Blatt ') + state.blatt);
+    setMsg(t.review ? 'Entwurf: Dieses Thema ist noch nicht freigegeben. Bitte in der Lehrer-Ansicht prüfen.' : cardsMode ? 'In 100 % drucken (am besten auf dickeres Papier) und entlang der Strichlinien ausschneiden. Die Lösung dient zur Selbstkontrolle.' :
       (state.variant ? 'Zusatzblatt zum Weiterüben. Über „Link kopieren“ kommst du später wieder genau zu diesem Blatt.' : 'Tipp: Erst selbst lösen, dann mit der Lösung vergleichen.'), t.review ? 'warn' : '');
     writeHash();
     fitPreview();
@@ -216,7 +225,12 @@
     const t = UB.topics.find(x => x.id === state.topic);
     if (state.merkheft) $('printArea').innerHTML = buildMerkheft();
     else if (!t) return;
-    else $('printArea').innerHTML = buildSheet(t, solution);
+    else if (state.format !== 'blatt') {
+      // Karten erst sichtbar (außerhalb des Bildschirms) setzen, Schrift anpassen, dann drucken
+      const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;left:-10000px;top:0';
+      tmp.innerHTML = buildSheet(t, solution); document.body.appendChild(tmp); UB.cards.fit(tmp);
+      $('printArea').innerHTML = tmp.innerHTML; tmp.remove();
+    } else $('printArea').innerHTML = buildSheet(t, solution);
     const imgs = Array.from($('printArea').querySelectorAll('img'));
     Promise.all(imgs.map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))).then(() => window.print());
   }
@@ -250,6 +264,7 @@
   }));
   document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; state.merkheft = false; render(); }));
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { state.view = b.dataset.view; render(); }));
+  document.querySelectorAll('#formatSeg button').forEach(b => b.addEventListener('click', () => { if (b.disabled) return; state.format = b.dataset.format; render(); }));
   $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 900000)); state.blatt = null; state.view = 'blatt'; render(); });
   window.addEventListener('hashchange', () => { readHash(); render(); });
 

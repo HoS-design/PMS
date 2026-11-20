@@ -100,7 +100,9 @@
           solH = '<div class="mgrid c' + (spec.cols || 1) + '">' + its.map(it => cell(it, true)).join('') + '</div>';
         }
         return { title: spec.title, instr: spec.instr || '', body, sol: solH };
-      }
+      },
+      // für Domino/Memory/Trimino: Frage-Antwort-Paare aus demselben Generator
+      gen: spec.gen, n: spec.n, pmode: spec.mode || 'inline', pinstr: spec.instr || ''
     };
   }
 

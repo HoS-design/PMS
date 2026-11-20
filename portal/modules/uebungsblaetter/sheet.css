@@ -133,3 +133,38 @@ svg.mfig.koord, .mi svg.mfig { max-width: 100%; }
 .mviews { display: flex; gap: 4mm; margin: 1mm 0; }
 .mview { display: inline-flex; flex-direction: column; align-items: center; }
 .mview small { font-size: 8pt; color: #555; }
+
+/* ---------- Kärtchen: Domino, Memory, Trimino ---------- */
+.cardsheet .cards-instr { margin: 0 0 3mm; }
+.cards-grid { display: grid; }
+.dom-grid { grid-template-columns: 1fr 1fr; }
+.dom { position: relative; height: 29mm; display: flex; border: 0.3mm dashed #8a8a8a; box-sizing: border-box; break-inside: avoid; }
+.dom-a { flex: 0 0 38%; width: 38%; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1.5mm; font-weight: 700; font-size: 11.5pt; background: #f4f4f5; border-right: 0.6mm solid #333; box-sizing: border-box; }
+.fach-mathe .dom-a { background: #eef3ff; } .fach-deutsch .dom-a { background: #fdf0f0; }
+.dom-q { flex: 1 1 0; min-width: 0; display: flex; align-items: center; padding: 1.5mm 2.5mm; font-size: 10.5pt; line-height: 1.25; }
+.dom-q.sm, .mem.sm div { font-size: 9pt; } .dom-q.xs, .mem.xs div { font-size: 8pt; }
+.dom-a.sm { font-size: 9.5pt; } .dom-a.xs { font-size: 8.5pt; }
+.dom svg.mfig, .mem svg.mfig { max-height: 26mm; }
+.cnum { position: absolute; top: 0.6mm; left: 1mm; font-size: 7pt; color: #888; }
+.mem-grid { grid-template-columns: repeat(4, 1fr); }
+.mem { position: relative; height: 34mm; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2mm; border: 0.3mm dashed #8a8a8a; box-sizing: border-box; font-size: 10.5pt; line-height: 1.25; }
+.mem-a { font-weight: 700; } .fach-mathe .mem-a { background: #eef3ff; } .fach-deutsch .mem-a { background: #fdf0f0; }
+.mem-tag { position: absolute; top: 0.8mm; right: 1.4mm; font-size: 8pt; font-weight: 700; color: var(--red, #c62828); }
+.cgap { display: inline-block; min-width: 9mm; border-bottom: 0.3mm solid #333; vertical-align: -0.4mm; margin: 0 0.5mm; }
+.tri-wrap { display: flex; justify-content: center; margin-top: 2mm; }
+.trisvg { display: block; }
+.tri-t { display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.12; color: #111; overflow: hidden; transform: scale(0.1); transform-origin: 0 0; }
+/* das Textfeld wird zehnfach groß gesetzt und auf 10 % verkleinert, damit dünne Linien dünn bleiben */
+.tri-t .cgap { min-width: 40px; border-bottom-width: 3px; }
+.tri-t .fr > span:first-child { border-bottom-width: 2.5px; padding: 0 5px; }
+.tri-t .fr > span:last-child { padding: 0 5px; }
+.tri-t .fr { margin: 0 4px; }
+.tri-t b, .tri-t .hint { font-size: 0.9em; }
+.dom-q, .mem { font-variant-numeric: tabular-nums; }
+.fach-mathe .dom-q { font-size: 12pt; } .fach-mathe .dom-a { font-size: 12.5pt; } .fach-mathe .mem { font-size: 12pt; }
+.cards-grid .fr { font-size: 1em; }
+#formatSeg button:disabled { opacity: .4; cursor: not-allowed; }
+
+.cards-hint { font-size: 9pt; color: #444; }
+.mem svg.mfig { max-height: 22mm; max-width: 38mm; }
+.dom-q > div, .dom-a > div, .mem > div, .tri-t > div { overflow-wrap: anywhere; hyphens: auto; -webkit-hyphens: auto; max-width: 100%; }

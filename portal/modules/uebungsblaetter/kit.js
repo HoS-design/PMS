@@ -246,6 +246,61 @@
     return html;
   }
 
+  // ---------------------------------------------------------------- Frage-Antwort-Paare (Domino, Memory, Trimino)
+  // Frage-Markup: Lücke als Strich, Auswahl als (a / b), **x** fett
+  function markQ(s) {
+    let h = esc(s).replace(/\*\*(.+?)\*\*/g, '<b class="mk">$1</b>');
+    h = h.replace(/\{([^{}]+)\}/g, (m, inner) => '(' + inner.split('|').slice().sort((a, b) => a.localeCompare(b, 'de')).join(' / ') + ')');
+    h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => { const i = inner.indexOf(':'); return '<span class="cgap"></span>' + (i < 0 ? '' : ' <span class="hint">(' + inner.slice(i + 1) + ')</span>'); });
+    return h;
+  }
+  function specPairs(def, spec, rng, level) {
+    const out = [];
+    if (spec.type === 'fn') {
+      if (!spec.gen || spec.pmode === 'grid') return out;
+      for (let i = 0; i < (spec.n || 6); i++) {
+        let it; try { it = spec.gen(rng, level, i); } catch (e) { continue; }
+        if (!it || it.a == null) continue;
+        const a = Array.isArray(it.a) ? (it.a.length === 1 ? it.a[0] : null) : it.a;
+        if (a == null) continue;
+        const n = (it.q.match(/\{\?\}/g) || []).length;
+        if (n > 1) continue;
+        const q = n === 1 ? it.q.replace('{?}', '<span class="cgap"></span>') : (spec.pmode === 'inline' ? it.q + ' = <span class="cgap"></span>' : it.q);
+        out.push({ q, a: String(a), instr: spec.pinstr || '' });
+      }
+      return out;
+    }
+    if (!spec.pool || !def.pools[spec.pool]) return out;
+    let its; try { its = itemsFor(def, spec); } catch (e) { return out; }
+    its = rng.shuffle(its.slice());
+    const ins = spec.instr || '';
+    if (spec.type === 'gap') its.forEach(x => {
+      const g = (x.q.match(/\[[^\[\]]+\]/g) || []).length, c = (x.q.match(/\{[^{}]+\}/g) || []).length;
+      if (g + c !== 1) return;
+      if (g) out.push({ q: markQ(x.q), a: esc(answersOf(x.q)[0]), instr: ins });
+      else { const right = x.q.match(/\{([^{}]+)\}/)[1].split('|')[0]; out.push({ q: markQ(x.q), a: esc(right), instr: ins }); }
+    });
+    if (spec.type === 'pair' || spec.type === 'error') its.forEach(x => { if (x.a && !/\[|\{/.test(x.q)) out.push({ q: markQ(x.q) + (x.hint ? ' <span class="hint">→ ' + esc(x.hint) + '</span>' : ''), a: esc(x.a), instr: ins }); });
+    if ((spec.type === 'choice' || spec.type === 'sort') && spec.opts) its.forEach(x => { if (!/\[/.test(x.q)) out.push({ q: markQ(x.q), a: esc(optLabel(spec, x.k)), instr: ins }); });
+    return out;
+  }
+  const plainOf = (h) => String(h).replace(/<svg[\s\S]*?<\/svg>/g, '▣').replace(/<[^>]+>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+  // Paare einer Stufe sammeln: eindeutige Antworten und Fragen, mehrere Durchläufe
+  function collectPairs(def, level, rng, want) {
+    const specs = [];
+    (def.levels[level].tasks || []).forEach(s => (s.oneOf || [s]).forEach(x => specs.push(x)));
+    const seenA = new Set(), seenQ = new Set(), res = [];
+    for (let round = 0; round < 12 && res.length < want; round++) {
+      specs.forEach(sp => specPairs(def, sp, rng, level).forEach(p => {
+        const ka = plainOf(p.a).toLowerCase(), kq = plainOf(p.q).toLowerCase();
+        if (!ka || !kq || seenA.has(ka) || seenQ.has(kq)) return;
+        seenA.add(ka); seenQ.add(kq); res.push(p);
+      }));
+    }
+    return rng.shuffle(res);
+  }
+  UB.plainOf = plainOf;
+
   // ---------------------------------------------------------------- Registrieren
   UB.mark = mark;
   UB.simple = function (def) {
@@ -256,6 +311,7 @@
         return { title: t.title || spec.title, instr: t.instr || spec.instr || '', body: t.body, sol: t.sol };
       });
     };
+    def.pairs = (level, rng, want) => collectPairs(def, level, rng, want || 40);
     def.pool = def.pool || (def.fach === 'mathe' ? (() => '<p>Die Aufgaben dieses Themas werden für jedes Blatt neu erzeugt, die Lösungen berechnet das Programm. Blatt 1–6 sind fest, „Neue Variante“ liefert beliebig viele weitere Blätter.</p>') : (() => poolView(def)));
     UB.register(def);
   };

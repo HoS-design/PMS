@@ -130,6 +130,14 @@
 
   UB.register({
     id: 'zeitformen',
+    pairs(level, rng) {
+      const out = [];
+      VERBS.forEach(v => LEVEL_TENSES[level].forEach(t => {
+        const f = form(v, t, 'er', '').replace(/^er /, '').replace(/\.$/, '').replace(/\s+/g, ' ').trim();
+        out.push({ q: '<b>' + esc(v.inf) + '</b> · ' + esc(tname(t, level)) + ': er <span class="cgap"></span>', a: esc(f) });
+      }));
+      return rng.shuffle(out);
+    },
     merk: '<b>Gegenwart</b> (Präsens): ich spiele. <b>Mitvergangenheit</b> (Präteritum): ich spielte, ich ging – Erzählzeit. <b>Vergangenheit</b> (Perfekt): ich habe gespielt, ich bin gegangen – mit haben/sein + 2. Mittelwort. <b>Vorvergangenheit</b> (Plusquamperfekt): ich hatte gespielt, ich war gegangen – geschah vor etwas anderem Vergangenem. <b>Zukunft</b> (Futur I): ich werde spielen. <b>Vollendete Zukunft</b> (Futur II): ich werde gespielt haben. <b>Stammformen</b>: Nennform – Mitvergangenheit – 2. Mittelwort (gehen – ging – gegangen).',
     title: 'Zeitformen',
     area: 'sprache',
