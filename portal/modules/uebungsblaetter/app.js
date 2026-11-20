@@ -99,7 +99,7 @@
     const tasks = t.build(state.level, rng);
     const img = solution ? 'MiniHoS_Lob_Pokal' : t.img;
     let html = '<article class="sheet fach-' + fachOf(t) + (solution ? ' solution' : '') + '">' +
-      '<header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[fachOf(t)] + ' · ' + state.klasse + '. Klasse · ' + esc(UB.LEVEL_NAMES[state.level]) + '</div>' +
+      '<header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[fachOf(t)] + ' · ' + state.klasse + '. Klasse</div>' +
       '<h1>' + esc(t.title) + '</h1><div class="sh-meta">' + esc(blattLabel) + '</div></div>' +
       '<img class="sh-img" src="' + IMG(img) + '" alt=""></header>';
     if (!solution) html += t.lang === 'en' ? '<div class="sh-name"><span>Name:</span><span class="short">Class:</span><span class="short">Date:</span></div>' : '<div class="sh-name"><span>Name:</span><span class="short">Klasse:</span><span class="short">Datum:</span></div>';
