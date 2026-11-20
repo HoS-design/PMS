@@ -254,4 +254,16 @@
   L4('m-winkel', ['Du berechnest Winkel in Dreieck und Viereck.', 'Du kennst Neben- und Scheitelwinkel.', 'Du berechnest Winkel zwischen Uhrzeigern.'],
     [winkel4(7), uhr(8)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_D4.push(
+    (r) => { const t = r.pick([7.5, 10, 12.5, 15]), w = R(r, 4, 10), k = R(r, 1500, 4500) / 100; const s = round(t * w - k, 2); if (s < 0) return { q: 'Tom bekommt 10 € Taschengeld pro Woche. Er spart 6 Wochen lang und kauft dann ein Buch um 14,90 €. Wie viel bleibt ihm?', a: '10 · 6 = 60 €; 60 − 14,90 = 45,10 €' }; return { q: 'Tom bekommt ' + F2(t) + ' € Taschengeld pro Woche. Er spart ' + w + ' Wochen lang alles und kauft dann ein Spiel um ' + F2(k) + ' €. Wie viel bleibt ihm?', a: F2(t) + ' · ' + w + ' = ' + F2(t * w) + ' €; ' + F2(t * w) + ' − ' + F2(k) + ' = ' + F2(s) + ' €' }; },
+    (r) => { const rd = R(r, 5, 25) / 2; return { q: 'Eine Laufbahn ist 400 m lang. Lena läuft ' + F(rd) + ' Runden. Wie viele Kilometer sind das?', a: F(rd) + ' · 400 = ' + F(rd * 400) + ' m = ' + F(rd * 0.4) + ' km' }; },
+    (r) => { const a = R(r, 99, 199) / 100, b = R(r, 49, 89) / 100; const pa = a / 1.5, pb = b * 2; return { q: 'Eine 1,5-l-Flasche Saft kostet ' + F2(a) + ' €, eine 0,5-l-Flasche ' + F2(b) + ' €. Welche ist pro Liter günstiger?', a: '1,5 l: ' + F2(a) + ' : 1,5 ≈ ' + F2(pa) + ' € pro Liter; 0,5 l: ' + F2(b) + ' · 2 = ' + F2(pb) + ' € pro Liter – ' + (pa < pb ? 'die große Flasche' : pa > pb ? 'die kleine Flasche' : 'beide gleich') }; }
+  );
+  TX_B4.push(
+    (r) => { const a = R(r, 1, 3); return { q: 'Eine Pizza wird in 8 gleiche Stücke geschnitten. Lena isst ' + frac(a, 8) + ' der Pizza, Tom ' + frac(1, 4) + '. Welcher Anteil bleibt übrig?', a: '1 − ' + frac(a, 8) + ' − ' + frac(2, 8) + ' = ' + mixed(6 - a, 8) }; },
+    (r) => { const n = r.pick([3, 4, 5]), z = R(r, 1, n - 1), x = R(r, 2, 6) * n; return { q: 'Ein Wanderweg ist ' + x + ' km lang. Familie Berger hat schon ' + frac(z, n) + ' davon geschafft. Wie viele Kilometer fehlen noch?', a: x + ' : ' + n + ' · ' + z + ' = ' + x / n * z + ' km gegangen; ' + x + ' − ' + x / n * z + ' = ' + (x - x / n * z) + ' km fehlen' }; },
+    (r) => { const n = r.pick([4, 5, 8, 10]), z = R(r, 1, n - 1), g = R(r, 2, 9) * n; return { q: 'Mia hat ' + g + ' €. Sie gibt ' + frac(z, n) + ' davon für ein Geschenk aus. Wie viel Geld hat sie noch?', a: g + ' : ' + n + ' · ' + z + ' = ' + g / n * z + ' € ausgegeben; ' + g + ' − ' + g / n * z + ' = ' + (g - g / n * z) + ' €' }; }
+  );
 })();

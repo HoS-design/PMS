@@ -71,7 +71,7 @@
     (r) => { const a = R(r, 8, 14), b = R(r, 6, 10), c = R(r, 3, 6), w = R(r, 1, 2) / 2; const ai = a - 2 * w, bi = b - 2 * w, ci = c - w; const V = a * b * c - ai * bi * ci;
       return { q: 'Ein oben offener Holzkasten ist außen ' + a + ' cm lang, ' + b + ' cm breit und ' + c + ' cm hoch. Die Wände und der Boden sind ' + F(w) + ' cm dick. Wie viel cm³ Holz wurden verbaut? Wie viel passt hinein?', a: 'außen ' + F(a * b * c) + ' cm³ − innen ' + F(ai) + ' · ' + F(bi) + ' · ' + F(ci) + ' = ' + F(ai * bi * ci) + ' cm³ → Holz: ' + F(V) + ' cm³; Inhalt: ' + F(ai * bi * ci) + ' cm³' }; }
   ];
-  const qText = (n) => task({ title: 'Sachaufgaben', instr: 'Fertige eine Skizze an und schreibe die Rechnung auf.', n, mode: 'lines', lines: 2, gen: (rng, lv, i) => { const x = TXQ[i % TXQ.length](rng); x.key = x.q; return x; } });
+  const qText = (n) => task({ title: 'Sachaufgaben', instr: 'Fertige eine Skizze an und schreibe die Rechnung auf.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TXQ, 'TXQ') });
   UB.simple({
     id: 'm-quaderkoerper', fach: 'mathe', title: 'Zusammengesetzte Quaderkörper', area: 'geometrie', klassen: [1, 2], img: 'MiniHoS_Forschen_Lupe',
     merk: '<b>Zusammengesetzte Körper</b> zerlegt man in Quader und addiert deren Volumen. Oder man <b>ergänzt</b> zu einem großen Quader und zieht ab, was fehlt (z. B. bei Löchern). <b>Oberfläche</b>: Nur die Flächen zählen, die man von außen berühren kann. Stoßen zwei Quader aneinander, fällt die Berührfläche zweimal weg (bei beiden Quadern). Bei einem durchgehenden Loch fallen Vorder- und Rückseite des Lochs weg, die Innenwände kommen dazu. 1 dm³ = 1 l, 1 m³ = 1 000 l.',
@@ -158,7 +158,7 @@
     (r) => { const a = R(r, 4, 10), rr = R(r, 1, Math.floor(a / 2) - 1), [m, d] = r.pick(DICHTE); const V = a ** 3 - rr * rr * PI * a;
       return { q: 'Durch einen Würfel aus ' + m + ' (Kante ' + a + ' cm, Dichte ' + F(d) + ' g/cm³) wird ein zylindrisches Loch (r = ' + rr + ' cm) ganz durchgebohrt. Wie viel cm³ bleiben übrig, wie schwer ist der Körper?', a: a + '³ − ' + rr + '² · 3,14 · ' + a + ' ≈ ' + F2(V) + ' cm³; m ≈ ' + F2(V * d) + ' g' }; }
   ];
-  const drehText = (n) => task({ title: 'Sachaufgaben', instr: 'Skizze, Rechnung, Antwort. π ≈ 3,14; runde auf zwei Dezimalstellen.', n, mode: 'lines', lines: 2, gen: (rng, lv, i) => { const x = TXD[i % TXD.length](rng); x.key = x.q; return x; } });
+  const drehText = (n) => task({ title: 'Sachaufgaben', instr: 'Skizze, Rechnung, Antwort. π ≈ 3,14; runde auf zwei Dezimalstellen.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TXD, 'TXD') });
   UB.simple({
     id: 'm-zuskoerper', fach: 'mathe', title: 'Zusammengesetzte Körper und Hohlkörper', area: 'geometrie', klassen: [4], img: 'MiniHoS_Forschen_Lupe',
     merk: '<b>Volumen</b>: in bekannte Körper zerlegen und addieren (Zylinder + Kegel, Zylinder + Halbkugel, Quader + Pyramide …). <b>Hohlkörper</b>: äußeren Körper minus Hohlraum, z. B. Rohr: V = (R² − r²) · π · h. <b>Oberfläche</b>: nur die Flächen außen zählen; die Berührfläche zwischen zwei Teilen fällt weg. Halbkugel: Volumen 2/3 · r³ · π, gekrümmte Fläche 2 · r² · π. <b>Masse</b> = Volumen · Dichte. π ≈ 3,14.',
@@ -188,4 +188,25 @@
   L4('m-zuskoerper', ['Du rechnest bei Hohlkörpern auf fehlende Maße zurück.', 'Du vergleichst Volumina und rechnest mit Anteilen.', 'Du berechnest Oberflächen zusammengesetzter Körper.'],
     [text('Sachaufgaben mit mehreren Schritten', 'Skizze, Rechnung, Antwort. π ≈ 3,14; runde auf zwei Dezimalstellen.', TXD4, 'd4', 3), drehOber(2, ['silo', 'kuppel', 'rohr'])]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TXQ.push(
+    (r) => { const a = R(r, 6, 12), b = R(r, 4, 6), c = R(r, 3, 5); const Vi = (a - 2) * (b - 2) * (c - 1); return { q: 'Ein Blumentrog aus Beton ist außen ' + a + ' dm lang, ' + b + ' dm breit und ' + c + ' dm hoch. Wände und Boden sind 1 dm dick. Wie viel Erde passt hinein? Wie viel Beton wurde verbaut?', a: 'innen: ' + (a - 2) + ' · ' + (b - 2) + ' · ' + (c - 1) + ' = ' + Vi + ' dm³ = ' + Vi + ' l Erde; Beton: ' + a * b * c + ' − ' + Vi + ' = ' + (a * b * c - Vi) + ' dm³' }; },
+    (r) => { const a = R(r, 8, 14), b = R(r, 7, 12), h = R(r, 5, 8), g = R(r, 3, 5), t = R(r, 5, 7); return { q: 'Ein Gebäude besteht aus einem Haus (' + a + ' m × ' + b + ' m, ' + h + ' m hoch) und einer angebauten Garage (' + g + ' m × ' + t + ' m, 3 m hoch). Wie groß ist der umbaute Raum?', a: a + ' · ' + b + ' · ' + h + ' + ' + g + ' · ' + t + ' · 3 = ' + F(a * b * h + g * t * 3) + ' m³' }; },
+    (r) => { const a = R(r, 6, 12), s = R(r, 2, Math.floor(a / 2)); return { q: 'Durch einen Holzwürfel mit ' + a + ' cm Kantenlänge wird ein quadratisches Loch (' + s + ' cm × ' + s + ' cm) ganz durchgesägt. Wie groß ist das Restvolumen?', a: a + '³ − ' + s + ' · ' + s + ' · ' + a + ' = ' + a ** 3 + ' − ' + s * s * a + ' = ' + (a ** 3 - s * s * a) + ' cm³' }; }
+  );
+  TXD.push(
+    (r) => { const R0 = R(r, 5, 10), ri = R(r, 2, R0 - 1), h = R(r, 10, 40); return { q: 'Ein Betonrohr ist ' + h + ' dm lang, hat einen Außenradius von ' + R0 + ' dm und einen Innenradius von ' + ri + ' dm. Wie viel dm³ Beton braucht man?', a: 'V = (' + R0 + '² − ' + ri + '²) · 3,14 · ' + h + ' ≈ ' + F2((R0 * R0 - ri * ri) * PI * h) + ' dm³' }; },
+    (r) => { const h = R(r, 12, 17), rr = 0.4; return { q: 'Ein Bleistift ist ein Zylinder (Durchmesser 8 mm, ' + h + ' cm lang) mit einer kegelförmigen Spitze (2 cm hoch). Wie groß ist sein Volumen?', a: '0,4² · 3,14 · ' + h + ' + 0,4² · 3,14 · 2 : 3 ≈ ' + F2(rr * rr * PI * h + rr * rr * PI * 2 / 3) + ' cm³' }; },
+    (r) => { const rr = R(r, 8, 15); const V = 2 / 3 * rr ** 3 * PI; return { q: 'Eine Salatschüssel hat die Form einer Halbkugel mit dem Innenradius ' + rr + ' cm. Wie viel Liter passen hinein?', a: 'V = 2/3 · ' + rr + '³ · 3,14 ≈ ' + F2(V) + ' cm³ ≈ ' + F2(V / 1000) + ' l' }; }
+  );
+  TXQ4.push(
+    (r) => { const l = R(r, 3, 6), b = R(r, 2, 4), h = R(r, 3, 8) / 10; const V = l * b * h / 2; return { q: 'Eine keilförmige Rampe aus Beton (dreiseitiges Prisma) ist ' + l + ' m lang, ' + b + ' m breit und an der höchsten Stelle ' + F(h) + ' m hoch. Wie viel m³ Beton braucht man? Wie viel kostet er bei 120 € pro m³?', a: 'V = ' + l + ' · ' + b + ' · ' + F(h) + ' : 2 = ' + F(V) + ' m³; ' + F(V) + ' · 120 = ' + F(round(V * 120, 2)) + ' €' }; },
+    (r) => { const a = R(r, 4, 8) * 10, b = R(r, 3, 5) * 10, h = R(r, 2, 5) * 10, c = R(r, 5, 10) * 10, d = R(r, 3, 6) * 10; return { q: 'Ein Aquarium (' + a + ' cm × ' + b + ' cm) ist ' + h + ' cm hoch mit Wasser gefüllt. Das Wasser wird in ein anderes Becken (' + c + ' cm × ' + d + ' cm) umgefüllt. Wie hoch steht es dort?', a: 'V = ' + F(a * b * h) + ' cm³; ' + F(a * b * h) + ' : (' + c + ' · ' + d + ') ≈ ' + F2(a * b * h / (c * d)) + ' cm' }; },
+    (r) => { const L = r.pick([60, 80, 120]), B = r.pick([40, 60, 80]), H = r.pick([40, 50, 60]), a = r.pick([20, 30]), b = r.pick([20, 40]), c = r.pick([10, 25]); const x = Math.floor(L / a), y = Math.floor(B / b), z = Math.floor(H / c); return { q: 'In eine Kiste (' + L + ' cm × ' + B + ' cm × ' + H + ' cm) sollen Schachteln (' + a + ' cm × ' + b + ' cm × ' + c + ' cm) gestellt werden, alle gleich ausgerichtet. Wie viele passen hinein?', a: x + ' · ' + y + ' · ' + z + ' = ' + x * y * z + ' Schachteln' }; }
+  );
+  TXD4.push(
+    (r) => { const rr = R(r, 2, 6), h = R(r, 5, 12); return { q: 'Ein kegelförmiges und ein zylinderförmiges Glas haben denselben Radius (' + rr + ' cm) und dieselbe Höhe (' + h + ' cm). Wie oft muss man das Kegelglas ausleeren, bis das Zylinderglas voll ist?', a: 'V(Zylinder) ≈ ' + F2(rr * rr * PI * h) + ' cm³, V(Kegel) ≈ ' + F2(rr * rr * PI * h / 3) + ' cm³ – dreimal' }; },
+    (r) => { const rr = R(r, 2, 5); const box = (4 * rr) * (6 * rr) * (2 * rr), balls = 6 * 4 / 3 * rr ** 3 * PI; return { q: 'Sechs Kugeln (r = ' + rr + ' cm) liegen in zwei Reihen zu je drei in einer genau passenden Schachtel (' + 4 * rr + ' cm × ' + 6 * rr + ' cm × ' + 2 * rr + ' cm). Wie viel Prozent der Schachtel sind leer?', a: 'Schachtel ' + F(box) + ' cm³, Kugeln ≈ ' + F2(balls) + ' cm³; leer ≈ ' + F(round((box - balls) / box * 100, 1)) + ' %' }; }
+  );
 })();

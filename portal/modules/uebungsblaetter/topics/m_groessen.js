@@ -101,7 +101,7 @@
     (r) => { const a = R(r, 20, 60), b = R(r, 15, 40); return { q: 'Ein Sportplatz ist ' + a + ' m lang und ' + b + ' m breit. Wie groß ist seine Fläche in m² und in a?', a: 'A = ' + a + ' · ' + b + ' = ' + F(a * b) + ' m² = ' + F(a * b / 100) + ' a' }; },
     (r) => { const s = R(r, 3, 9); return { q: 'Ein quadratisches Beet hat eine Seitenlänge von ' + s + ' m. Wie groß ist die Fläche? Wie lang ist der Rand?', a: 'A = ' + s + ' · ' + s + ' = ' + s * s + ' m², u = 4 · ' + s + ' = ' + 4 * s + ' m' }; }
   ];
-  const textFl = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_FL)(rng) });
+  const textFl = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_FL, 'TX_FL') });
   UB.simple({
     id: 'm-flaechen', fach: 'mathe', title: 'Rechteck und Quadrat', area: 'geometrie', klassen: [1, 2], img: 'MiniHoS_Erklaeren_Tafel-Idee',
     merk: '<b>Rechteck</b>: Umfang u = 2 · a + 2 · b = 2 · (a + b), Flächeninhalt A = a · b. <b>Quadrat</b>: u = 4 · a, A = a · a. <b>Flächenmaße</b> (Umwandlungszahl 100): 1 cm² = 100 mm², 1 dm² = 100 cm², 1 m² = 100 dm², 1 a = 100 m², 1 ha = 100 a, 1 km² = 100 ha. Umfang hat eine Längeneinheit (cm), Flächeninhalt eine Flächeneinheit (cm²).',
@@ -141,7 +141,7 @@
     (r) => { const a = R(r, 4, 9), b = R(r, 3, 6), c = R(r, 2, 4); return { q: 'Eine Kiste ist ' + a + ' dm lang, ' + b + ' dm breit und ' + c + ' dm hoch. Wie viele Würfel mit 1 dm Kantenlänge passen hinein?', a: a + ' · ' + b + ' · ' + c + ' = ' + a * b * c + ' – Es passen ' + a * b * c + ' Würfel hinein.' }; },
     (r) => { const a = R(r, 8, 15), b = R(r, 5, 9), V = a * b * R(r, 2, 6); return { q: 'Ein Quader hat ein Volumen von ' + V + ' cm³. Er ist ' + a + ' cm lang und ' + b + ' cm breit. Wie hoch ist er?', a: 'h = ' + V + ' : (' + a + ' · ' + b + ') = ' + V / (a * b) + ' cm' }; }
   ];
-  const textK = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis mit Einheit.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_K)(rng) });
+  const textK = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis mit Einheit.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_K, 'TX_K') });
   UB.simple({
     id: 'm-koerper', fach: 'mathe', title: 'Quader und Würfel', area: 'geometrie', klassen: [1, 2], img: 'MiniHoS_Forschen_Lupe',
     merk: '<b>Quader</b>: Volumen V = a · b · c, Oberfläche O = 2 · (a · b + a · c + b · c). <b>Würfel</b>: V = a · a · a, O = 6 · a · a. <b>Raummaße</b> (Umwandlungszahl 1 000): 1 cm³ = 1 000 mm³, 1 dm³ = 1 000 cm³, 1 m³ = 1 000 dm³. <b>1 dm³ = 1 l</b>, 1 cm³ = 1 ml.',
@@ -202,4 +202,26 @@
   L4('m-koerper', ['Du löst Sachaufgaben zu Volumen und Oberfläche mit mehreren Schritten.', 'Du schließt vom Volumen auf die Kantenlänge.'],
     [text('Sachaufgaben mit mehreren Schritten', 'Schreibe die Rechnung und das Ergebnis mit Einheit.', TX_K4, 'k4', 4), quader(2, true)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_FL.push(
+    (r) => { const a = R(r, 20, 60), b = R(r, 15, 45); return { q: 'Ein Bild ist ' + a + ' cm breit und ' + b + ' cm hoch. Es bekommt einen Rahmen. Wie lang ist die Rahmenleiste insgesamt?', a: 'u = 2 · (' + a + ' + ' + b + ') = ' + 2 * (a + b) + ' cm' }; },
+    (r) => { const a = R(r, 3, 8), h = R(r, 2, 3); const A = a * h; return { q: 'Eine Wand ist ' + a + ' m lang und ' + h + ' m hoch. Eine Dose Farbe reicht für 5 m². Wie viele Dosen braucht man?', a: 'A = ' + a + ' · ' + h + ' = ' + A + ' m²; ' + A + ' : 5 = ' + F(A / 5) + ' → ' + Math.ceil(A / 5) + ' Dosen' }; },
+    (r) => { const s = R(r, 6, 25); return { q: 'Ein quadratischer Spielplatz hat eine Seitenlänge von ' + s + ' m. Wie lang ist der Zaun rundherum? Wie groß ist die Fläche?', a: 'u = 4 · ' + s + ' = ' + 4 * s + ' m; A = ' + s + ' · ' + s + ' = ' + s * s + ' m²' }; },
+    (r) => { const a = R(r, 2, 8), b = R(r, 1, 4), k = R(r, 4, 9); return { q: 'Ein Blumenbeet ist ' + a + ' m lang und ' + b + ' m breit. Pro m² werden ' + k + ' Pflanzen gesetzt. Wie viele Pflanzen braucht man?', a: 'A = ' + a + ' · ' + b + ' = ' + a * b + ' m²; ' + a * b + ' · ' + k + ' = ' + a * b * k + ' Pflanzen' }; }
+  );
+  TX_K.push(
+    (r) => { const a = R(r, 10, 20), b = R(r, 10, 20), h = R(r, 2, 4); return { q: 'Eine Sandkiste ist ' + a + ' dm lang und ' + b + ' dm breit. Sie wird ' + h + ' dm hoch mit Sand gefüllt. Wie viel Sand braucht man (in dm³ und m³)?', a: 'V = ' + a + ' · ' + b + ' · ' + h + ' = ' + F(a * b * h) + ' dm³ = ' + F(a * b * h / 1000) + ' m³' }; },
+    (r) => { const a = R(r, 10, 30), b = R(r, 8, 20), c = R(r, 4, 12); const O = 2 * (a * b + a * c + b * c); return { q: 'Ein Geschenk ist ' + a + ' cm lang, ' + b + ' cm breit und ' + c + ' cm hoch. Wie viel Geschenkpapier braucht man mindestens?', a: 'O = 2 · (' + a + ' · ' + b + ' + ' + a + ' · ' + c + ' + ' + b + ' · ' + c + ') = ' + F(O) + ' cm²' }; },
+    (r) => { const a = R(r, 5, 9), b = R(r, 5, 9), h = R(r, 12, 20); return { q: 'Eine Saftpackung ist ' + a + ' cm lang, ' + b + ' cm breit und ' + h + ' cm hoch. Wie viel Saft passt hinein (in ml)?', a: 'V = ' + a + ' · ' + b + ' · ' + h + ' = ' + F(a * b * h) + ' cm³ = ' + F(a * b * h) + ' ml' }; },
+    (r) => { const a = R(r, 3, 7), b = R(r, 3, 6), h = r.pick([2.5, 3]); return { q: 'Ein Zimmer ist ' + a + ' m lang, ' + b + ' m breit und ' + F(h) + ' m hoch. Wie viel m³ Luft sind darin?', a: 'V = ' + a + ' · ' + b + ' · ' + F(h) + ' = ' + F(a * b * h) + ' m³' }; }
+  );
+  TX_FL4.push(
+    (r) => { const a = R(r, 10, 20), b = R(r, 8, 15); return { q: 'Ein rechteckiger Garten ist ' + a + ' m lang und ' + b + ' m breit. Innen am Rand entlang führt ein 1 m breiter Weg. Wie groß ist die Rasenfläche in der Mitte? Wie groß ist der Weg?', a: 'Rasen: ' + (a - 2) + ' · ' + (b - 2) + ' = ' + (a - 2) * (b - 2) + ' m²; Weg: ' + a * b + ' − ' + (a - 2) * (b - 2) + ' = ' + (a * b - (a - 2) * (b - 2)) + ' m²' }; },
+    (r) => { const a = R(r, 12, 30) * 10, b = R(r, 8, 20) * 10, p = R(r, 15, 40); const A = a * b / 10000; return { q: 'Ein Teppich ist ' + a + ' cm lang und ' + b + ' cm breit. 1 m² kostet ' + p + ' €. Wie viel kostet der Teppich?', a: 'A = ' + a + ' · ' + b + ' = ' + F(a * b) + ' cm² = ' + F(A) + ' m²; ' + F(A) + ' · ' + p + ' = ' + fmt(round(A * p, 2), 2) + ' €' }; }
+  );
+  TX_K4.push(
+    (r) => { const a = R(r, 4, 8), b = R(r, 4, 8), h = R(r, 8, 12), v = r.pick([2, 4, 5]); const V = a * b * h; return { q: 'Eine quaderförmige Regentonne ist ' + a + ' dm lang, ' + b + ' dm breit und ' + h + ' dm hoch. Pro Minute fließen ' + v + ' Liter Regenwasser hinein. Nach wie vielen Minuten ist sie voll?', a: 'V = ' + F(V) + ' dm³ = ' + F(V) + ' l; ' + F(V) + ' : ' + v + ' = ' + F(round(V / v, 2)) + ' min' }; },
+    (r) => { const a = R(r, 2, 9); return { q: 'Ein Würfel hat eine Oberfläche von ' + 6 * a * a + ' cm². Wie groß ist sein Volumen?', a: 'eine Fläche: ' + 6 * a * a + ' : 6 = ' + a * a + ' cm², also a = ' + a + ' cm; V = ' + a + ' · ' + a + ' · ' + a + ' = ' + a ** 3 + ' cm³' }; }
+  );
 })();

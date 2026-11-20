@@ -126,7 +126,7 @@
     (r) => { const a = R(r, 1200, 3500), b = R(r, 1200, 3500), c = R(r, 1200, 3500); return { q: 'Ein Bauer erntet ' + F(a) + ' kg Äpfel, ' + F(b) + ' kg Birnen und ' + F(c) + ' kg Zwetschken. Wie viel Obst erntet er insgesamt?', a: F(a) + ' + ' + F(b) + ' + ' + F(c) + ' = ' + F(a + b + c) + ' – Er erntet ' + F(a + b + c) + ' kg Obst.' }; },
     (r) => { const a = R(r, 3000, 3800), b = R(r, 1000, 2900); return { q: 'Der Großglockner ist 3 798 m hoch. Eine Hütte liegt auf ' + F(b) + ' m Höhe. Wie viele Höhenmeter sind es von der Hütte bis zum Gipfel?', a: '3 798 − ' + F(b) + ' = ' + F(3798 - b) + ' – Es sind ' + F(3798 - b) + ' Höhenmeter.', key: 'glockner' + b }; }
   ];
-  const textAS = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TEXT_AS)(rng) });
+  const textAS = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TEXT_AS, 'TEXT_AS') });
   const fachAS = (n) => task({
     title: 'Fachbegriffe', instr: 'Berechne.', n, cols: 1, w: 6,
     gen: (rng) => {
@@ -192,7 +192,7 @@
     (r) => { const w = R(r, 3, 6), t = R(r, 120, 380); return { q: 'Ein Lkw fährt an ' + w + ' Tagen jeweils ' + t + ' km. Wie viele Kilometer fährt er insgesamt?', a: w + ' · ' + t + ' = ' + w * t + ' – Er fährt ' + F(w * t) + ' km.' }; },
     (r) => { const m = R(r, 3, 9), p = R(r, 15, 48); return { q: 'Ein Fahrrad kostet ' + m * p + ' €. Es wird in ' + m + ' gleichen Monatsraten bezahlt. Wie hoch ist eine Rate?', a: m * p + ' : ' + m + ' = ' + p + ' – Eine Rate beträgt ' + p + ' €.' }; }
   ];
-  const textMD = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TEXT_MD)(rng) });
+  const textMD = (n) => task({ title: 'Textaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TEXT_MD, 'TEXT_MD') });
   UB.simple({
     id: 'm-multdiv', fach: 'mathe', title: 'Multiplizieren und Dividieren', area: 'zahlen', klassen: [1], img: 'MiniHoS_Erklaeren_Tafel-Idee',
     merk: '<b>Multiplizieren</b>: Faktor · Faktor = <b>Produkt</b>. <b>Dividieren</b>: Dividend : Divisor = <b>Quotient</b>. Beim schriftlichen Multiplizieren rechnest du mit jeder Ziffer des zweiten Faktors und rückst jede Zeile eine Stelle nach rechts. Beim Dividieren gehst du von links nach rechts vor; was übrig bleibt, ist der <b>Rest</b>. Probe: Quotient · Divisor + Rest = Dividend. Durch 0 kann man nicht dividieren.',
@@ -389,4 +389,33 @@
   L4('m-teilbarkeit', ['Du bestimmst ggT und kgV von drei Zahlen.', 'Du wendest Teilbarkeitsregeln beim Ergänzen von Ziffern an.', 'Du erkennst, ob eine Textaufgabe ggT oder kgV verlangt.'],
     [ggt3(3), ziffer(4), textT4(3)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TEXT_AS.push(
+    (r) => { const a = R(r, 2000, 5000), b = R(r, 300, 900), c = R(r, 100, b - 50); return { q: 'Eine Bücherei hat ' + F(a) + ' Bücher. Am Montag werden ' + b + ' ausgeliehen, am Dienstag kommen ' + c + ' zurück. Wie viele Bücher stehen jetzt im Regal?', a: F(a) + ' − ' + b + ' + ' + c + ' = ' + F(a - b + c) + ' – Es stehen ' + F(a - b + c) + ' Bücher im Regal.' }; },
+    (r) => { const a = R(r, 180, 420), b = R(r, 150, 380); return { q: 'Ein Lkw fährt am Vormittag ' + a + ' km und am Nachmittag ' + b + ' km. Wie weit fährt er an diesem Tag? Wie viele Kilometer fehlen noch auf 1 000 km?', a: a + ' + ' + b + ' = ' + (a + b) + ' km; 1 000 − ' + (a + b) + ' = ' + (1000 - a - b) + ' km' }; },
+    (r) => { const s = R(r, 8000, 15000), v = R(r, 3000, s - 500); return { q: 'Ein Stadion hat ' + F(s) + ' Plätze. Für ein Spiel wurden ' + F(v) + ' Karten verkauft. Wie viele Plätze sind noch frei?', a: F(s) + ' − ' + F(v) + ' = ' + F(s - v) + ' – Es sind noch ' + F(s - v) + ' Plätze frei.' }; },
+    (r) => { const a = R(r, 120, 380), b = R(r, 120, 380), c = R(r, 120, 380); return { q: 'Drei Klassen sammeln Spenden: die 1a ' + a + ' €, die 1b ' + b + ' € und die 1c ' + c + ' €. Wie viel Geld kommt zusammen?', a: a + ' + ' + b + ' + ' + c + ' = ' + (a + b + c) + ' € – Es kommen ' + (a + b + c) + ' € zusammen.' }; }
+  );
+  TEXT_MD.push(
+    (r) => { const a = R(r, 12, 28), b = R(r, 14, 32); return { q: 'Ein Saal hat ' + a + ' Reihen mit je ' + b + ' Sitzplätzen. Wie viele Personen haben Platz?', a: a + ' · ' + b + ' = ' + a * b + ' – Es haben ' + a * b + ' Personen Platz.' }; },
+    (r) => { const l = R(r, 120, 160), w = R(r, 2, 4); return { q: 'Eine Familie verbraucht pro Tag etwa ' + l + ' Liter Wasser. Wie viel Wasser ist das in ' + w + ' Wochen?', a: l + ' · 7 · ' + w + ' = ' + F(l * 7 * w) + ' – Es sind etwa ' + F(l * 7 * w) + ' Liter.' }; },
+    (r) => { const k = R(r, 3, 7), q = R(r, 8, 25), rest = R(r, 1, k - 1), x = k * q + rest; return { q: 'In einer Packung sind ' + x + ' Gummibärchen. ' + k + ' Kinder teilen sie gerecht auf. Wie viele bekommt jedes Kind? Wie viele bleiben übrig?', a: x + ' : ' + k + ' = ' + q + ' Rest ' + rest + ' – Jedes Kind bekommt ' + q + ', es bleiben ' + rest + ' übrig.' }; },
+    (r) => { const p = R(r, 12, 25), t = R(r, 8, 20); return { q: 'Ein Buch hat ' + p * t + ' Seiten. Mia liest jeden Tag ' + p + ' Seiten. Nach wie vielen Tagen ist sie fertig?', a: p * t + ' : ' + p + ' = ' + t + ' – Nach ' + t + ' Tagen ist sie fertig.' }; }
+  );
+  TEXT_AS4.push(
+    (r) => { const s = R(r, 40, 90), a = R(r, 8, 20), b = R(r, 15, 35), c = R(r, 5, 15); return { q: 'Lukas hat ' + s + ' € gespart. Er bekommt ' + b + ' € zum Geburtstag, kauft ein Buch um ' + a + ' € und gibt ' + c + ' € fürs Kino aus. Danach schenkt ihm Oma noch ' + a + ' €. Wie viel Geld hat er jetzt?', a: s + ' + ' + b + ' − ' + a + ' − ' + c + ' + ' + a + ' = ' + (s + b - c) + ' – Er hat ' + (s + b - c) + ' €.' }; },
+    (r) => { const h = R(r, 600, 1200), a = R(r, 400, 800), b = R(r, 100, 300), c = R(r, 200, 500); return { q: 'Eine Wanderung startet auf ' + F(h) + ' m Seehöhe. Es geht ' + a + ' m bergauf, dann ' + b + ' m bergab und zum Schluss noch ' + c + ' m bergauf zum Gipfel. Wie hoch ist der Gipfel? Wie viele Höhenmeter geht man insgesamt bergauf?', a: F(h) + ' + ' + a + ' − ' + b + ' + ' + c + ' = ' + F(h + a - b + c) + ' m; bergauf: ' + a + ' + ' + c + ' = ' + (a + c) + ' m' }; },
+    (r) => { const x = R(r, 1000, 9000), a = R(r, 200, 900), b = R(r, 100, 800); return { q: 'Ich denke mir eine Zahl. Wenn ich ' + a + ' addiere und danach ' + b + ' subtrahiere, erhalte ich ' + F(x + a - b) + '. Wie heißt meine Zahl?', a: F(x + a - b) + ' + ' + b + ' − ' + a + ' = ' + F(x) + ' – Die Zahl heißt ' + F(x) + '.' }; }
+  );
+  TEXT_MD4.push(
+    (r) => { const k = R(r, 20, 26), bk = R(r, 8, 15), u = R(r, 25, 40), n = R(r, 2, 4); return { q: 'Eine Klasse mit ' + k + ' Kindern fährt auf Projektwoche. Der Bus kostet insgesamt ' + k * bk + ' €, die Unterkunft ' + u + ' € pro Kind und Nacht. Sie bleiben ' + n + ' Nächte. Wie viel zahlt ein Kind?', a: k * bk + ' : ' + k + ' = ' + bk + ' €; ' + u + ' · ' + n + ' = ' + u * n + ' €; ' + bk + ' + ' + u * n + ' = ' + (bk + u * n) + ' – Ein Kind zahlt ' + (bk + u * n) + ' €.' }; },
+    (r) => { const w = R(r, 4, 16) * 250, p = R(r, 4, 7); const pk = w * 8 / 500; return { q: 'Eine Schule kopiert pro Woche ' + F(w) + ' Blätter. Ein Paket hat 500 Blatt und kostet ' + p + ' €. Wie viel kostet das Papier für 8 Wochen?', a: F(w) + ' · 8 = ' + F(w * 8) + ' Blatt; ' + F(w * 8) + ' : 500 = ' + pk + ' Pakete; ' + pk + ' · ' + p + ' = ' + pk * p + ' €' }; },
+    (r) => { const re = R(r, 4, 9), pr = R(r, 6, 12), kg = R(r, 2, 4), pe = R(r, 2, 3); return { q: 'Ein Gärtner pflanzt ' + re + ' Reihen mit je ' + pr + ' Tomatenstauden. Jede Staude bringt etwa ' + kg + ' kg Tomaten. Er verkauft 1 kg um ' + pe + ' €. Wie viel nimmt er ein?', a: re + ' · ' + pr + ' = ' + re * pr + ' Stauden; · ' + kg + ' = ' + re * pr * kg + ' kg; · ' + pe + ' = ' + re * pr * kg * pe + ' €' }; }
+  );
+  TEXT_T4.push(
+    (r) => { const g = r.pick([2, 3, 4, 5, 6]); const x = R(r, 3, 9); let y = R(r, 2, 8); while (gcd(x, y) !== 1) y++; return { q: 'Ein Raum ist ' + g * x + ' dm lang und ' + g * y + ' dm breit. Er soll mit möglichst großen quadratischen Fliesen ausgelegt werden, ohne Fliesen zu schneiden. Wie groß ist eine Fliese? Wie viele braucht man?', a: 'ggT(' + g * x + ', ' + g * y + ') = ' + g + ' – Fliesen mit ' + g + ' dm Seitenlänge; ' + x + ' · ' + y + ' = ' + x * y + ' Fliesen' }; },
+    (r) => { const a = r.pick([6, 8, 9, 10, 12]), b = r.pick([15, 16, 18, 20]); const m = lcm(a, b); return { q: 'Ein Leuchtturm blinkt alle ' + a + ' Sekunden, ein zweiter alle ' + b + ' Sekunden. Gerade haben beide gleichzeitig geblinkt. Nach wie vielen Sekunden blinken sie wieder gemeinsam?', a: 'kgV(' + a + ', ' + b + ') = ' + m + ' – nach ' + m + ' Sekunden' }; },
+    (r) => { const g = r.pick([4, 6, 8, 12]); const x = R(r, 2, 7); let y; do { y = R(r, 2, 9); } while (gcd(x, y) !== 1 || x === y); return { q: 'Für ein Fest sollen ' + g * x + ' Lebkuchen und ' + g * y + ' Äpfel so auf Sackerl verteilt werden, dass alle Sackerl gleich sind und nichts übrig bleibt. Wie viele Sackerl kann man höchstens füllen? Was ist in jedem?', a: 'ggT(' + g * x + ', ' + g * y + ') = ' + g + ' Sackerl, in jedem ' + x + ' Lebkuchen und ' + y + ' Äpfel' }; }
+  );
 })();

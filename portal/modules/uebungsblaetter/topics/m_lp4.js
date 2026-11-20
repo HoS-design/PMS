@@ -368,4 +368,20 @@
   L4('m-funktionen2', ['Du berechnest Funktionswerte und Nullstellen quadratischer Funktionen.', 'Du bestimmst den Faktor k bei indirekter Proportionalität.'],
     [quadF(3), indP(3), artTab(2)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TXL.push(
+    (r) => { const h = R(r, 2, 4) + 0.5 * R(r, 0, 1), s = R(r, 1, 3) * 0.5 + 0.5; const a = 3 * h + 2 * s, b = h + 4 * s; return { q: '3 Hefte und 2 Stifte kosten ' + fmt(round(a, 2), 2) + ' €, 1 Heft und 4 Stifte kosten ' + fmt(round(b, 2), 2) + ' €. Was kostet ein Heft, was ein Stift?', a: '3h + 2s = ' + F(a) + ', h + 4s = ' + F(b) + ' → h = ' + fmt(h, 2) + ' €, s = ' + fmt(s, 2) + ' €' }; },
+    (r) => { const b = R(r, 3, 15), l = b + R(r, 1, 10); return { q: 'Ein Rechteck hat einen Umfang von ' + 2 * (l + b) + ' cm. Die Länge ist um ' + (l - b) + ' cm größer als die Breite. Wie lang und wie breit ist es?', a: '2l + 2b = ' + 2 * (l + b) + ', l − b = ' + (l - b) + ' → l = ' + l + ' cm, b = ' + b + ' cm' }; },
+    (r) => { const s = R(r, 12, 16), v = 4 * (s - 5) + 5; return { q: 'Vater und Sohn sind zusammen ' + (s + v) + ' Jahre alt. Vor 5 Jahren war der Vater viermal so alt wie der Sohn. Wie alt sind beide heute?', a: 'v + s = ' + (s + v) + ', v − 5 = 4 · (s − 5) → s = ' + s + ', v = ' + v }; }
+  );
+  TXL4.push(
+    (r) => { const vb = R(r, 8, 15), vs = R(r, 1, 4), t1 = r.pick([2, 3]), s = (vb + vs) * t1, t2 = s / (vb - vs); if (!Number.isInteger(t2 * 2)) return { q: 'Ein Boot fährt flussabwärts 36 km in 2 Stunden und flussaufwärts dieselbe Strecke in 3 Stunden. Wie schnell ist das Boot im stehenden Wasser, wie schnell die Strömung?', a: 'b + s = 18, b − s = 12 → b = 15 km/h, s = 3 km/h' }; return { q: 'Ein Boot fährt flussabwärts ' + s + ' km in ' + t1 + ' Stunden und flussaufwärts dieselbe Strecke in ' + F(t2) + ' Stunden. Wie schnell ist das Boot im stehenden Wasser, wie schnell die Strömung?', a: 'b + s = ' + (vb + vs) + ', b − s = ' + (vb - vs) + ' → b = ' + vb + ' km/h, s = ' + vs + ' km/h' }; },
+    (r) => { const a = R(r, 2, 8), b = R(r, 2, 8), p1 = R(r, 8, 12), p2 = p1 + R(r, 4, 10); return { q: 'Ein Händler mischt Kaffee zu ' + p1 + ' €/kg mit Kaffee zu ' + p2 + ' €/kg. Er erhält ' + (a + b) + ' kg Mischung im Wert von ' + (a * p1 + b * p2) + ' €. Wie viel kg nimmt er von jeder Sorte?', a: 'x + y = ' + (a + b) + ', ' + p1 + 'x + ' + p2 + 'y = ' + (a * p1 + b * p2) + ' → x = ' + a + ' kg, y = ' + b + ' kg' }; },
+    (r) => { const k1 = R(r, 3, 6), d = R(r, 1, 2), k2 = k1 - d, g1 = R(r, 0, 3) * 5, x = R(r, 3, 12), g2 = g1 + d * x; return { q: 'Fitnessstudio A: ' + g1 + ' € Grundgebühr und ' + k1 + ' € pro Besuch. Studio B: ' + g2 + ' € Grundgebühr und ' + k2 + ' € pro Besuch. Bei wie vielen Besuchen kosten beide gleich viel?', a: 'y = ' + k1 + 'x + ' + g1 + ', y = ' + k2 + 'x + ' + g2 + ' → x = ' + x + ' Besuche (je ' + (k1 * x + g1) + ' €)' }; }
+  );
+  TX_PY24.push(
+    (r) => { const a = R(r, 30, 60), b = R(r, 20, 40), c = R(r, 20, 40), s = R(r, 50, 80); const d = Math.sqrt(a * a + b * b + c * c); return { q: 'Passt ein ' + s + ' cm langer Stab in eine Schachtel (' + a + ' cm × ' + b + ' cm × ' + c + ' cm), wenn man ihn schräg hineinlegt?', a: 'Raumdiagonale √(' + a + '² + ' + b + '² + ' + c + '²) ≈ ' + F2(d) + ' cm – ' + (s <= d ? 'ja, er passt.' : 'nein, er ist zu lang.') }; },
+    (r) => { const rr = R(r, 5, 10), h = R(r, 30, 60); const s = Math.sqrt(h * h + rr * rr); return { q: 'Eine Schultüte (Kegel) hat oben einen Radius von ' + rr + ' cm und ist ' + h + ' cm hoch. Wie lang ist die Mantellinie? Wie viel Karton braucht man für den Mantel?', a: 's = √(' + h + '² + ' + rr + '²) ≈ ' + F2(s) + ' cm; M = ' + rr + ' · 3,14 · s ≈ ' + F2(rr * PI * s) + ' cm²' }; }
+  );
 })();

@@ -136,7 +136,7 @@
     (r) => { const t = r.pick([[3, 4], [1, 2], [5, 6]]), k = r.pick([3, 4, 5, 6]); return { q: qs(t) + ' kg Kekse werden gerecht auf ' + k + ' Kinder aufgeteilt. Wie viel bekommt jedes Kind?', a: qs(t) + ' kg : ' + k + ' = ' + ans(divQ(t, [k, 1])) + ' kg' }; },
     (r) => { const g = r.pick([[3, 4], [2, 3], [3, 2], [5, 2]]), p = r.pick([[1, 4], [1, 8], [1, 2], [1, 6]]); return { q: 'Wie viele Gläser zu ' + qs(p) + ' l kann man aus ' + qs(g) + ' l Saft füllen?', a: qs(g) + ' : ' + qs(p) + ' = ' + ans(divQ(g, p)) + ' Gläser' + (divQ(g, p)[1] !== 1 ? ' (also ' + Math.floor(divQ(g, p)[0] / divQ(g, p)[1]) + ' volle Gläser)' : '') }; }
   ];
-  const brText = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 1, gen: (rng, lv, i) => { const x = TX_BR[i % TX_BR.length](rng); x.key = x.q; return x; } });
+  const brText = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 1, gen: (rng) => M.pickT(rng, TX_BR, 'TX_BR') });
   UB.simple({
     id: 'm-brueche2', fach: 'mathe', title: 'Brüche multiplizieren und dividieren', area: 'zahlen', klassen: [2], img: 'MiniHoS_Erklaeren_Tafel-Idee',
     merk: '<b>Multiplizieren</b>: Zähler mal Zähler, Nenner mal Nenner: ' + frac(2, 3) + ' · ' + frac(3, 5) + ' = ' + frac(6, 15) + ' = ' + frac(2, 5) + '. Vorher kürzen spart Arbeit! „<b>von</b>“ bedeutet „mal“: ' + frac(1, 2) + ' von ' + frac(3, 4) + ' = ' + frac(3, 8) + '. <b>Dividieren</b>: mit dem <b>Kehrwert</b> multiplizieren: ' + frac(3, 4) + ' : ' + frac(1, 2) + ' = ' + frac(3, 4) + ' · ' + frac(2, 1) + ' = ' + frac(3, 2) + '. Gemischte Zahlen zuerst in unechte Brüche verwandeln. Es gilt: Punktrechnung vor Strichrechnung, Klammern zuerst.',
@@ -377,4 +377,16 @@
   L4('m-schiebung', ['Du bestimmst Schiebungsvektoren.', 'Du verschiebst Figuren rechnerisch.', 'Du erkennst kongruente Figuren.'],
     [vec4(4), dSchieben(3), kongruent(2)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_BR.push(
+    (r) => { const p = r.pick([[3, 4], [1, 2], [2, 3]]), m = R(r, 3, 9); return { q: 'Für ein Kissen braucht man ' + qs(p) + ' m Stoff. Wie viele Kissen kann man aus ' + m + ' m nähen?', a: m + ' : ' + qs(p) + ' = ' + ans(divQ([m, 1], p)) + ' → ' + Math.floor(m * p[1] / p[0]) + ' Kissen' }; },
+    (r) => { const p = r.pick([[2, 5], [3, 4], [1, 3], [5, 6]]), t = r.pick([6, 10, 12, 15, 20]); return { q: 'Eine Schnecke kriecht in einer Minute ' + qs(p) + ' m. Wie weit kommt sie in ' + t + ' Minuten?', a: t + ' · ' + qs(p) + ' = ' + ans(mulQ([t, 1], p)) + ' m' }; },
+    (r) => { const p = r.pick([[3, 4], [2, 3], [5, 8], [1, 2]]); return { q: 'Für einen Teig braucht man ' + qs(p) + ' l Milch. Wie viel braucht man für die halbe Menge?', a: qs(p) + ' : 2 = ' + ans(divQ(p, [2, 1])) + ' l' }; }
+  );
+  TX_H4.push(
+    (r) => { const c = [R(r, 2, 6), R(r, 4, 8), R(r, 4, 9), R(r, 1, 5), R(r, 0, 3)]; const n = c.reduce((a, b) => a + b, 0); return { q: 'Notenverteilung bei einer Schularbeit: Sehr gut ' + c[0] + ', Gut ' + c[1] + ', Befriedigend ' + c[2] + ', Genügend ' + c[3] + ', Nicht genügend ' + c[4] + '. Wie groß ist die relative Häufigkeit von „Sehr gut“ und „Gut“ zusammen?', a: '(' + c[0] + ' + ' + c[1] + ') : ' + n + ' ≈ ' + F(round((c[0] + c[1]) / n * 100, 1)) + ' %' }; },
+    (r) => { const N = r.pick([50, 60, 80, 100]), k = R(r, Math.floor(N / 8), Math.floor(N / 4)); return { q: 'Ein Würfel wurde ' + N + '-mal geworfen, dabei fiel ' + k + '-mal eine Sechs. Wie groß ist die relative Häufigkeit? Vergleiche mit ' + frac(1, 6) + ' ≈ 16,7 %.', a: k + ' : ' + N + ' = ' + F(round(k / N * 100, 1)) + ' % – ' + (k / N > 1 / 6 ? 'öfter' : 'seltener') + ' als zu erwarten' }; },
+    (r) => { const N = r.pick([20, 40, 60, 80]), p1 = r.pick([25, 35, 45]), p2 = r.pick([20, 30]); const p3 = 100 - p1 - p2; return { q: 'Bei einer Umfrage unter ' + N + ' Kindern nennen ' + p1 + ' % Fußball, ' + p2 + ' % Schwimmen und der Rest Tanzen als Lieblingssport. Wie viele Kinder sind es jeweils?', a: 'Fußball ' + F(N * p1 / 100) + ', Schwimmen ' + F(N * p2 / 100) + ', Tanzen (' + p3 + ' %) ' + F(N * p3 / 100) }; }
+  );
 })();

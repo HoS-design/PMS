@@ -248,4 +248,23 @@
   L4('m-vielecke', ['Du konstruierst regelmäßige Sechsecke und berechnest Flächen.', 'Du schließt von Winkeln auf die Eckenzahl.'],
     [sechseck(70), nGes(4), vieleckWinkel(2)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_AE4.push(
+    (r) => { const k = r.pick([2, 3, 4]); return { q: 'Ein Foto (10 cm × 15 cm) wird so vergrößert, dass die kürzere Seite ' + 10 * k + ' cm lang ist. Wie lang wird die andere Seite? Wie verändert sich die Fläche?', a: 'k = ' + k + '; ' + 15 * k + ' cm; die Fläche wird ' + k * k + '-mal so groß (150 cm² → ' + 150 * k * k + ' cm²)' }; },
+    (r) => { const k = r.pick([20, 50, 100]), h = R(r, 6, 15); return { q: 'Ein Modell eines Hauses im Maßstab 1 : ' + k + ' ist ' + F(h * 100 / k) + ' cm hoch. Wie hoch ist das echte Haus? Wie oft passt das Modellvolumen in das echte Haus?', a: F(h * 100 / k) + ' · ' + k + ' = ' + F(h * 100) + ' cm = ' + h + ' m; Volumen: ' + k + '³ = ' + F(k ** 3) + '-mal' }; }
+  );
+  TX_W4.push(
+    () => ({ q: 'Zwei Würfel werden geworfen. Wie groß ist die Wahrscheinlichkeit, dass die Augensumme 7 ist?', a: 'günstig: (1|6), (2|5), (3|4), (4|3), (5|2), (6|1) – 6 von 36 → ' + frac(1, 6) + ' ≈ 16,7 %' }),
+    (r) => { const rt = R(r, 2, 5), bl = R(r, 2, 6), n = rt + bl; return { q: 'In einer Urne sind ' + rt + ' rote und ' + bl + ' blaue Kugeln. Man zieht zweimal mit Zurücklegen. Wie groß ist P(beide rot)?', a: frac(rt, n) + ' · ' + frac(rt, n) + ' = ' + qs(Q(rt * rt, n * n)) }; }
+  );
+  TX_WA4.push(
+    (r) => { const m = r.pick([400, 800, 1000]), t = r.pick([3, 4, 6]), k = R(r, 2, 4); return { q: 'Von einem Medikament baut der Körper alle ' + t + ' Stunden die Hälfte ab. Am Anfang sind ' + m + ' mg im Blut. Wie viel ist nach ' + t * k + ' Stunden noch da?', a: m + ' · 0,5<sup>' + k + '</sup> = ' + F(m / 2 ** k) + ' mg' }; },
+    (r) => { const W = R(r, 4, 12) * 100, p = r.pick([20, 25, 30]); const f = (1 - p / 100) ** 2; return { q: 'Ein Smartphone kostet neu ' + W + ' €. Es verliert jedes Jahr ' + p + ' % seines Wertes. Wie viel ist es nach 2 Jahren noch wert? Um wie viel Prozent ist es insgesamt weniger wert?', a: W + ' · ' + F(1 - p / 100) + '² = ' + fmt(round(W * f, 2), 2) + ' €; Verlust ' + F(round((1 - f) * 100, 2)) + ' % (nicht ' + 2 * p + ' %)' }; }
+  );
+  TX_PR4.push(
+    (r) => { const a = R(r, 3, 5), l = R(r, 15, 25); const hd = Math.sqrt(3) / 2 * a; return { q: 'Eine Schokoladenverpackung ist ein dreiseitiges Prisma. Die Grundfläche ist ein gleichseitiges Dreieck mit a = ' + a + ' cm, die Verpackung ist ' + l + ' cm lang. Wie groß ist das Volumen?', a: 'h = √(' + a + '² − ' + F(a / 2) + '²) ≈ ' + F2(hd) + ' cm; G ≈ ' + F2(a * hd / 2) + ' cm²; V ≈ ' + F2(a * hd / 2 * l) + ' cm³' }; },
+    (r) => { const a = R(r, 10, 40), h = R(r, 10, 30); return { q: 'Ein Glasdach hat die Form einer quadratischen Pyramide (a = ' + a + ' m, h = ' + h + ' m). Wie groß ist der umbaute Raum?', a: 'V = ' + a + '² · ' + h + ' : 3 = ' + F(round(a * a * h / 3, 2)) + ' m³' }; },
+    (r) => { const a = R(r, 2, 6), l = R(r, 10, 30); const G = 6 * a * a * Math.sqrt(3) / 4; return { q: 'Ein Prisma hat als Grundfläche ein regelmäßiges Sechseck mit der Seitenlänge ' + a + ' cm und ist ' + l + ' cm hoch. Wie groß ist das Volumen?', a: 'G = 6 · ' + a + '² · √3 : 4 ≈ ' + F2(G) + ' cm²; V ≈ ' + F2(G * l) + ' cm³' }; }
+  );
 })();

@@ -152,7 +152,7 @@
     (r) => { const l = R(r, 8, 14), b = R(r, 6, 10); return { q: 'Ein Zimmer ist ' + F(l / 2) + ' m lang und ' + F(b / 2) + ' m breit. Wie groß wird es im Plan mit dem Maßstab 1 : 50?', a: F(l * 50 / 50) + ' cm lang und ' + F(b * 50 / 50) + ' cm breit' }; },
     (r) => { const k = r.pick([5, 10]), mm = R(r, 3, 8); return { q: 'Eine Ameise ist ' + mm + ' mm lang. In einem Buch ist sie im Maßstab ' + k + ' : 1 abgebildet. Wie lang ist sie im Bild?', a: mm + ' mm · ' + k + ' = ' + (mm * k) + ' mm = ' + F(mm * k / 10) + ' cm' }; }
   ];
-  const msText = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng, lv, i) => { const x = TX_MS[i % TX_MS.length](rng); x.key = x.q; return x; } });
+  const msText = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_MS, 'TX_MS') });
   UB.simple({
     id: 'm-massstab', fach: 'mathe', title: 'Maßstab', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Unterwegs_Rucksack',
     merk: 'Der <b>Maßstab</b> gibt an, wie stark verkleinert oder vergrößert wurde. <b>1 : 100</b> heißt: 1 cm im Plan sind 100 cm = 1 m in Wirklichkeit. Plan → Wirklichkeit: <b>mal</b> der Maßstabszahl. Wirklichkeit → Plan: <b>durch</b> die Maßstabszahl (vorher in cm umwandeln!). Maßstab bestimmen: Wirklichkeit (in cm) : Plan (in cm). Bei Vergrößerungen steht die größere Zahl vorne: <b>10 : 1</b>.',
@@ -377,4 +377,23 @@
   L4('m-kombinatorik', ['Du unterscheidest Auswahl mit und ohne Reihenfolge.', 'Du löst schwierige Abzählaufgaben mit der Zählregel.'],
     [text('Wie viele Möglichkeiten?', 'Überlege: Spielt die Reihenfolge eine Rolle? Schreibe die Rechnung auf.', TX_KO4, 'kb4', 5, 1)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_MS.push(
+    (r) => { const c = R(r, 5, 25), s = r.pick([10000, 20000]); return { q: 'Auf einem Stadtplan (1 : ' + F(s) + ') ist dein Schulweg ' + c + ' cm lang. Wie lang ist er in Wirklichkeit?', a: c + ' cm · ' + F(s) + ' = ' + F(c * s) + ' cm = ' + real(c * s) }; },
+    (r) => { const m = R(r, 10, 30); return { q: 'Ein Modellbahn-Waggon (Maßstab 1 : 87) ist ' + m + ' cm lang. Wie lang ist der echte Waggon?', a: m + ' cm · 87 = ' + F(m * 87) + ' cm = ' + F(m * 0.87) + ' m' }; },
+    (r) => { const s = r.pick([10000, 25000, 50000, 100000]), c = R(r, 2, 10); return { q: 'Eine ' + real(c * s) + ' lange Straße ist auf einer Karte ' + c + ' cm lang. Welchen Maßstab hat die Karte?', a: real(c * s) + ' = ' + F(c * s) + ' cm; ' + F(c * s) + ' : ' + c + ' = ' + F(s) + ' → 1 : ' + F(s) }; }
+  );
+  TX_MS4.push(
+    (r) => { const a = R(r, 3, 6), b = R(r, 3, 5), c = R(r, 2, 5), d = R(r, 2, 4); return { q: 'Auf einem Plan (1 : 100) ist das Wohnzimmer ' + a + ' cm × ' + b + ' cm groß, die Küche ' + c + ' cm × ' + d + ' cm. Wie viele m² haben beide Räume zusammen?', a: '1 cm ≙ 1 m: ' + a * b + ' m² + ' + c * d + ' m² = ' + (a * b + c * d) + ' m²' }; },
+    (r) => { const c = R(r, 6, 20) * 2, v = r.pick([12, 15, 18, 20]); const km = c * 0.5, min = Math.round(km / v * 60); return { q: 'Auf einer Radkarte (1 : 50 000) ist eine Tour ' + c + ' cm lang. Wie lange braucht man bei ' + v + ' km/h?', a: c + ' · 50 000 cm = ' + F(km) + ' km; ' + F(km) + ' : ' + v + ' ≈ ' + (min >= 60 ? Math.floor(min / 60) + ' h ' : '') + (min % 60) + ' min' }; }
+  );
+  TX_BEM.push(
+    (r) => { const n = R(r, 3, 9); return { q: n + ' gleich große Würfel werden zu einem Turm übereinandergestapelt und auf den Tisch gestellt. Wie viele Würfelflächen sind sichtbar?', a: '4 · ' + n + ' + 1 = ' + (4 * n + 1) + ' Flächen (je vier Seitenflächen und oben eine)' }; },
+    (r) => { const n = R(r, 3, 8); return { q: 'Eine Treppe aus Würfeln hat ' + n + ' Stufen (unten ' + n + ' Würfel, darüber ' + (n - 1) + ' usw.). Wie viele Würfel braucht man? Wie viele für eine Treppe mit ' + (n + 1) + ' Stufen?', a: '1 + 2 + … + ' + n + ' = ' + n * (n + 1) / 2 + '; mit ' + (n + 1) + ' Stufen: ' + (n + 1) * (n + 2) / 2 + ' Würfel' }; }
+  );
+  TX_KO4.push(
+    (r) => { const n = R(r, 5, 12); return { q: 'Bei einer Feier begrüßen sich ' + n + ' Personen. Jede gibt jeder anderen genau einmal die Hand. Wie viele Handschläge sind das?', a: n + ' · ' + (n - 1) + ' : 2 = ' + n * (n - 1) / 2 }; },
+    (r) => { const a = R(r, 3, 6), b = R(r, 2, 4), c = R(r, 2, 3); return { q: 'Lisa hat ' + a + ' T-Shirts, ' + b + ' Hosen und ' + c + ' Paar Schuhe. Wie viele verschiedene Outfits kann sie zusammenstellen?', a: a + ' · ' + b + ' · ' + c + ' = ' + a * b * c + ' Outfits' }; }
+  );
 })();

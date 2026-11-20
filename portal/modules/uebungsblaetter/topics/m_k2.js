@@ -47,7 +47,7 @@
     (r) => { const alt = R(r, 2, 9) * 100, p = r.pick([5, 10, 15, 20]); return { q: 'Ein Verein hatte ' + alt + ' Mitglieder. Die Zahl ist um ' + p + ' % gestiegen. Wie viele Mitglieder hat er jetzt?', a: alt + ' · ' + F(1 + p / 100) + ' = ' + F(alt * (1 + p / 100)) + ' – Er hat jetzt ' + F(alt * (1 + p / 100)) + ' Mitglieder.' }; },
     (r) => { const a = R(r, 3, 12) * 3, p = r.pick([25, 50, 75]); const g = a * 100 / p; return { q: 'Lena hat schon ' + a + ' Seiten gelesen. Das sind ' + p + ' % des Buches. Wie viele Seiten hat das Buch?', a: a + ' · 100 : ' + p + ' = ' + g + ' – Das Buch hat ' + g + ' Seiten.' }; }
   ];
-  const textP = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_P)(rng) });
+  const textP = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_P, 'TX_P') });
   UB.simple({
     id: 'm-prozent', fach: 'mathe', title: 'Prozentrechnung', area: 'zahlen', klassen: [2, 3], img: 'MiniHoS_Lob_Daumen-Hoch',
     merk: '<b>Prozent</b> heißt „von Hundert“: 1 % = 1/100 = 0,01. 50 % = 1/2, 25 % = 1/4, 10 % = 1/10. <b>Grundwert</b> G (das Ganze), <b>Prozentsatz</b> p %, <b>Prozentanteil</b> A (auch Prozentwert). A = G · p : 100, p = A : G · 100, G = A · 100 : p. Rabatt wird abgezogen, Umsatzsteuer (20 %) dazugerechnet.',
@@ -125,7 +125,7 @@
     (r) => { const x = R(r, 3, 12), b = R(r, 4, 15); return { q: 'Ein Rechteck ist ' + b + ' cm lang. Sein Umfang beträgt ' + 2 * (x + b) + ' cm. Wie breit ist es?', a: '2 · (' + b + ' + x) = ' + 2 * (x + b) + ' → x = ' + x + ' cm' }; },
     (r) => { const x = R(r, 2, 8), p = R(r, 2, 6), g = R(r, 10, 30); return { q: 'Lena kauft ' + p + ' gleiche Hefte und einen Rucksack um ' + g + ' €. Sie zahlt ' + (p * x + g) + ' €. Wie viel kostet ein Heft?', a: p + 'x + ' + g + ' = ' + (p * x + g) + ' → x = ' + x + ' €' }; }
   ];
-  const textG = (n) => task({ title: 'Textgleichungen', instr: 'Stelle eine Gleichung auf und löse sie.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_G)(rng) });
+  const textG = (n) => task({ title: 'Textgleichungen', instr: 'Stelle eine Gleichung auf und löse sie.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_G, 'TX_G') });
   UB.simple({
     id: 'm-gleichungen', fach: 'mathe', title: 'Gleichungen', area: 'variablen', klassen: [2, 3, 4], img: 'MiniHoS_Gesicht_Nachdenken-Frage',
     merk: 'Eine <b>Gleichung</b> ist wie eine Waage: Was du auf einer Seite tust, musst du auch auf der anderen Seite tun. Umkehroperationen: + ↔ −, · ↔ :. Ziel: x allein auf einer Seite. Beispiel: 3x + 5 = 20 | − 5 → 3x = 15 | : 3 → x = 5. <b>Probe</b>: 3 · 5 + 5 = 20 ✓.',
@@ -279,4 +279,40 @@
   L4('m-statistik', ['Du berechnest fehlende Werte aus dem Mittelwert.', 'Du beurteilst, ob Mittelwert oder Median besser passt.'],
     [kennzahlen(3, 'voll'), mittelR(3), text('Sachaufgaben', 'Rechne und begründe.', TX_ST4, 'st4', 2)]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_P.push(
+    (r) => { const t = R(r, 2, 8) * 5, p = r.pick([10, 20]); return { q: 'Lisa bekommt ' + t + ' € Taschengeld im Monat. Ab nächstem Monat bekommt sie ' + p + ' % mehr. Wie viel bekommt sie dann?', a: t + ' · ' + F(1 + p / 100) + ' = ' + E(t * (100 + p) / 100) + ' € – Sie bekommt ' + E(t * (100 + p) / 100) + ' €.' }; },
+    (r) => { const N = r.pick([20, 40, 50]), pc = r.pick([60, 70, 80, 90]); const P = N * pc / 100; return { q: 'Bei einem Test gibt es ' + N + ' Punkte. Max erreicht ' + P + ' Punkte. Wie viel Prozent sind das?', a: P + ' : ' + N + ' = ' + F(pc / 100) + ' = ' + pc + ' % – Es sind ' + pc + ' %.' }; },
+    (r) => { const n = R(r, 8, 20) * 20, p = r.pick([15, 25, 35, 45, 55]); return { q: 'An einer Schule sind ' + n + ' Kinder. ' + p + ' % kommen mit dem Bus. Wie viele Kinder sind das?', a: n + ' · ' + p + ' : 100 = ' + F(n * p / 100) + ' – Es sind ' + F(n * p / 100) + ' Kinder.' }; }
+  );
+  TX_G.push(
+    (r) => { const x = R(r, 8, 15), m = r.pick([3, 4]); return { q: 'Ein Vater ist ' + m + '-mal so alt wie sein Sohn. Zusammen sind sie ' + (m + 1) * x + ' Jahre alt. Wie alt sind beide?', a: 'x + ' + m + 'x = ' + (m + 1) * x + ' → x = ' + x + ' – Sohn ' + x + ' Jahre, Vater ' + m * x + ' Jahre' }; },
+    (r) => { const x = R(r, 5, 30), d = R(r, 2, 10); return { q: 'Lena und Tom teilen ' + (2 * x + d) + ' €. Lena bekommt ' + d + ' € mehr als Tom. Wie viel bekommt jedes Kind?', a: 'x + x + ' + d + ' = ' + (2 * x + d) + ' → x = ' + x + ' – Tom ' + x + ' €, Lena ' + (x + d) + ' €' }; },
+    (r) => { const x = R(r, 4, 30), b = R(r, 2, 15); return { q: 'Wenn man das Doppelte einer Zahl um ' + b + ' vermindert, erhält man ' + (2 * x - b) + '. Wie heißt die Zahl?', a: '2x − ' + b + ' = ' + (2 * x - b) + ' → x = ' + x }; },
+    (r) => { const a = R(r, 15, 45); return { q: 'In einem Dreieck ist β doppelt so groß wie α, und γ = ' + (180 - 3 * a) + '°. Wie groß sind α und β?', a: 'x + 2x + ' + (180 - 3 * a) + ' = 180 → x = ' + a + ' – α = ' + a + '°, β = ' + 2 * a + '°' }; }
+  );
+  TX_P4.push(
+    (r) => { const g = R(r, 5, 30) * 10; const a = g * 1.1, b = a * 0.9; return { q: 'Ein Fahrrad kostet ' + g + ' €. Der Preis wird zuerst um 10 % erhöht und später um 10 % gesenkt. Kostet es jetzt wieder ' + g + ' €?', a: g + ' · 1,1 = ' + E(a) + ' €; ' + E(a) + ' · 0,9 = ' + E(b) + ' € – nein, es ist um ' + E(g - b) + ' € (1 %) billiger.' }; },
+    (r) => { const g = R(r, 4, 40) * 25; return { q: 'Eine Rechnung über ' + g + ' € wird sofort bezahlt. Dafür gibt es 3 % Skonto. Wie viel muss man zahlen? Wie viel spart man?', a: g + ' · 0,97 = ' + E(g * 0.97) + ' € – man spart ' + E(g * 0.03) + ' €' }; }
+  );
+  TX_S4.push(
+    (r) => { const v = r.pick([5, 6, 7, 8]), s = R(r, 3, 9) * 50, p = r.pick([1.6, 1.7, 1.8]); const l = v * s / 100; return { q: 'Ein Auto verbraucht ' + v + ' Liter Benzin auf 100 km. Wie viel Benzin braucht es für ' + s + ' km? Wie viel kostet das bei ' + E(p) + ' € pro Liter?', a: v + ' · ' + s + ' : 100 = ' + F(l) + ' l; ' + F(l) + ' · ' + E(p) + ' = ' + E(l * p) + ' €' }; },
+    (r) => { const m = R(r, 4, 8) * 50, p = r.pick([2, 6, 8, 10]); return { q: 'Für einen Kuchen für 4 Personen braucht man ' + m + ' g Mehl. Wie viel Mehl braucht man für ' + p + ' Personen?', a: m + ' : 4 · ' + p + ' = ' + F(m / 4 * p) + ' g (direkt)' }; },
+    (r) => { let a, t, b, u; do { a = r.pick([2, 3, 4, 6]); t = r.pick([8, 10, 12, 15, 18, 20]); b = r.pick([2, 3, 4, 5, 6, 8].filter(x => x !== a)); u = a * t / b; } while (!Number.isInteger(u)); return { q: 'Ein Heuvorrat reicht für ' + a + ' Pferde ' + t + ' Tage. Wie lange reicht er für ' + b + ' Pferde?', a: t + ' · ' + a + ' : ' + b + ' = ' + u + ' Tage (indirekt)' }; }
+  );
+  TX_G4.push(
+    (r) => { const x = R(r, 3, 15), d = R(r, 2, 8); return { q: 'Ein Rechteck ist ' + d + ' cm länger als breit. Sein Umfang beträgt ' + (4 * x + 2 * d) + ' cm. Wie lang und wie breit ist es?', a: '2 · (x + x + ' + d + ') = ' + (4 * x + 2 * d) + ' → x = ' + x + '; Breite ' + x + ' cm, Länge ' + (x + d) + ' cm' }; },
+    (r) => { const z = R(r, 3, 15), e = R(r, 3, 15); return { q: 'In einer Spardose sind nur 1-€- und 2-€-Münzen, insgesamt ' + (z + e) + ' Stück im Wert von ' + (2 * z + e) + ' €. Wie viele 2-€-Münzen sind es?', a: '2x + (' + (z + e) + ' − x) = ' + (2 * z + e) + ' → x = ' + z + '; ' + z + ' Zwei-Euro-Münzen und ' + e + ' Ein-Euro-Münzen' }; }
+  );
+  TX_V4.push(
+    (r) => { const a = R(r, 6, 12), c = R(r, 2, a - 2), h = R(r, 2, 6), k = R(r, 2, 4) * 2; const A = (a + c) * h / 2; return { q: 'Ein Beet hat die Form eines Trapezes (a = ' + a + ' m, c = ' + c + ' m, h = ' + h + ' m). Pro m² werden ' + k + ' Blumen gepflanzt. Wie viele Blumen braucht man?', a: 'A = (' + a + ' + ' + c + ') · ' + h + ' : 2 = ' + F(A) + ' m²; ' + F(A) + ' · ' + k + ' = ' + F(A * k) + ' Blumen' }; },
+    (r) => { const e = R(r, 4, 9) * 10, f = R(r, 3, 7) * 10; return { q: 'Für einen Drachen (Deltoid) mit den Diagonalen ' + e + ' cm und ' + f + ' cm wird Papier gebraucht. Wie viel cm² Papier sind das mindestens?', a: 'A = ' + e + ' · ' + f + ' : 2 = ' + F(e * f / 2) + ' cm²' }; },
+    (r) => { const g = R(r, 20, 40), h = R(r, 10, 25), p = R(r, 60, 150); return { q: 'Ein Grundstück hat die Form eines Parallelogramms (g = ' + g + ' m, h = ' + h + ' m). 1 m² kostet ' + p + ' €. Wie teuer ist das Grundstück?', a: 'A = ' + g + ' · ' + h + ' = ' + g * h + ' m²; ' + g * h + ' · ' + p + ' = ' + F(g * h * p) + ' €' }; }
+  );
+  TX_ST4.push(
+    (r) => { const t = [...Array(7)].map(() => R(r, -3, 12)); const s = t.reduce((a, b) => a + b, 0); return { q: 'Die Mittagstemperaturen einer Woche (in °C): ' + t.map(F).join('; ') + '. Berechne den Mittelwert (auf eine Dezimalstelle) und die Spannweite.', a: 'Summe ' + F(s) + ', : 7 ≈ ' + F(round(s / 7, 1)) + ' °C; Spannweite ' + (Math.max(...t) - Math.min(...t)) + ' °C' }; },
+    (r) => { const m = R(r, 2, 3); const xs = [...Array(5)].map(() => R(r, 0, 4)); const sum = xs.reduce((a, b) => a + b, 0), need = 6 * m - sum; if (need < 0 || need > 8) return { q: 'Eine Mannschaft schoss in 6 Spielen durchschnittlich 2 Tore. In den ersten 5 Spielen waren es 1, 3, 2, 0 und 4 Tore. Wie viele Tore waren es im 6. Spiel?', a: '6 · 2 − 10 = 2 Tore' }; return { q: 'Eine Mannschaft schoss in 6 Spielen durchschnittlich ' + m + ' Tore. In den ersten 5 Spielen waren es ' + xs.join(', ') + ' Tore. Wie viele Tore waren es im 6. Spiel?', a: '6 · ' + m + ' − ' + sum + ' = ' + need + ' Tore' }; },
+    (r) => { const xs = [...Array(6)].map(() => R(r, 120, 175)); const so = xs.slice().sort((a, b) => a - b); return { q: 'Körpergrößen (in cm) von sechs Kindern: ' + xs.join(', ') + '. Bestimme den Median.', a: 'geordnet: ' + so.join(', ') + '; Median = (' + so[2] + ' + ' + so[3] + ') : 2 = ' + F((so[2] + so[3]) / 2) + ' cm' }; }
+  );
 })();

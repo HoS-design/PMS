@@ -151,7 +151,7 @@
     (r) => { const s = R(r, 4, 20); return { q: 'Ein Quadrat hat die Seitenlänge ' + s + ' cm. Wie lang ist seine Diagonale?', a: '√(' + s + '² + ' + s + '²) ≈ ' + F2(Math.sqrt(2) * s) + ' cm' }; },
     (r) => { const a = R(r, 30, 80), b = R(r, 40, 90); return { q: 'Statt um die Ecke eines rechteckigen Parks (' + a + ' m und ' + b + ' m) zu gehen, geht Lena quer durch. Wie viele Meter spart sie?', a: 'Weg außen: ' + (a + b) + ' m, quer: √(' + a + '² + ' + b + '²) ≈ ' + F2(Math.sqrt(a * a + b * b)) + ' m, Ersparnis ≈ ' + F2(a + b - Math.sqrt(a * a + b * b)) + ' m' }; }
   ];
-  const textPy = (n) => task({ title: 'Sachaufgaben', instr: 'Fertige eine Skizze an und rechne.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_PY)(rng) });
+  const textPy = (n) => task({ title: 'Sachaufgaben', instr: 'Fertige eine Skizze an und rechne.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_PY, 'TX_PY') });
   UB.simple({
     id: 'm-pythagoras', fach: 'mathe', title: 'Pythagoräischer Lehrsatz', area: 'geometrie', klassen: [3, 4], img: 'MiniHoS_Forschen_Lupe',
     merk: 'Im <b>rechtwinkeligen Dreieck</b> heißt die längste Seite (gegenüber dem rechten Winkel) <b>Hypotenuse</b> c, die beiden anderen Seiten sind die <b>Katheten</b> a und b. <b>Pythagoräischer Lehrsatz</b>: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup>. Hypotenuse: c = √(a<sup>2</sup> + b<sup>2</sup>). Kathete: a = √(c<sup>2</sup> − b<sup>2</sup>).',
@@ -279,7 +279,7 @@
     (r) => { const d = r.pick([22, 24, 6, 4]); const rr = d / 2; return { q: 'Ein kugelförmiger Ball hat einen Durchmesser von ' + d + ' cm. Wie viel Luft (in Liter) ist darin, wie groß ist seine Oberfläche?', a: 'V = 4/3 · ' + F(rr) + '³ · 3,14 ≈ ' + F2(4 / 3 * rr * rr * rr * PI) + ' cm³ ≈ ' + F2(4 / 3 * rr * rr * rr * PI / 1000) + ' l; O = 4 · ' + F(rr) + '² · 3,14 ≈ ' + F2(4 * rr * rr * PI) + ' cm²' }; },
     (r) => { const rr = R(r, 2, 5), h = R(r, 8, 15); return { q: 'Eine Eistüte ist kegelförmig (r = ' + rr + ' cm, h = ' + h + ' cm). Wie viel cm³ Eis passen hinein (ohne Haube)?', a: 'V = ' + rr + '² · 3,14 · ' + h + ' : 3 ≈ ' + F2(rr * rr * PI * h / 3) + ' cm³' }; }
   ];
-  const textKo = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Formel, die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_KO)(rng) });
+  const textKo = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Formel, die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng) => M.pickT(rng, TX_KO, 'TX_KO') });
   UB.simple({
     id: 'm-koerper2', fach: 'mathe', title: 'Zylinder, Kegel und Kugel', area: 'geometrie', klassen: [4], img: 'MiniHoS_Forschen_Lupe',
     merk: '<b>Drehzylinder</b>: V = r<sup>2</sup> · π · h, O = 2 · r<sup>2</sup> · π + 2 · r · π · h. <b>Drehkegel</b>: V = r<sup>2</sup> · π · h : 3; Mantellinie s = √(r<sup>2</sup> + h<sup>2</sup>); O = r<sup>2</sup> · π + r · π · s. <b>Kugel</b>: V = 4/3 · r<sup>3</sup> · π, O = 4 · r<sup>2</sup> · π. Zylinder und Kegel mit gleicher Grundfläche und Höhe: Der Kegel hat ein Drittel des Volumens. 1 dm³ = 1 l.',
@@ -426,4 +426,47 @@
   L4('m-koerper2', ['Du berechnest fehlende Maße aus dem Volumen.', 'Du berechnest zusammengesetzte Körper und Massen.'],
     [text('Sachaufgaben', 'Schreibe die Formel, die Rechnung und das Ergebnis. Rechne mit π ≈ 3,14.', TX_KO4, 'ko4', 4), koerper(2, ['kegelO', 'kugel'])]);
 
+
+  // ================================================================ Mehr Sachaufgaben (Pool-Erweiterung)
+  TX_PY.push(
+    (r) => { const [a, b, c] = r.pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17]]); return { q: 'Eine Rampe überwindet ' + a + ' dm Höhe auf ' + b + ' dm waagrechter Länge. Wie lang ist die Rampe?', a: '√(' + a + '² + ' + b + '²) = ' + c + ' dm' }; },
+    (r) => { const h = R(r, 10, 40), d = R(r, 10, 40); return { q: 'Ein Drachen fliegt ' + h + ' m hoch. Lena steht ' + d + ' m von der Stelle direkt unter dem Drachen entfernt. Wie lang ist die Schnur mindestens?', a: '√(' + h + '² + ' + d + '²) ≈ ' + F2(Math.sqrt(h * h + d * d)) + ' m' }; },
+    (r) => { const [a, b, c] = r.pick([[6, 8, 10], [9, 12, 15], [5, 12, 13], [8, 15, 17], [12, 16, 20]]); return { q: 'Ein rechteckiges Tablet hat eine Bildschirmdiagonale von ' + c + ' cm und ist ' + b + ' cm breit. Wie hoch ist der Bildschirm?', a: '√(' + c + '² − ' + b + '²) = ' + a + ' cm' }; }
+  );
+  TX_KO.push(
+    (r) => { const d = R(r, 10, 16) / 10, h = R(r, 25, 40) / 10; return { q: 'Eine Litfaßsäule (Zylinder) hat einen Durchmesser von ' + F(d) + ' m und ist ' + F(h) + ' m hoch. Wie viel m² Plakatfläche bietet der Mantel?', a: 'M = ' + F(d) + ' · 3,14 · ' + F(h) + ' ≈ ' + F2(d * PI * h) + ' m²' }; },
+    (r) => { const rr = R(r, 2, 4), h = R(r, 8, 14); return { q: 'Eine kegelförmige Eiswaffel hat innen einen Radius von ' + rr + ' cm und ist ' + h + ' cm tief. Wie viel cm³ Eis passen hinein?', a: 'V = ' + rr + '² · 3,14 · ' + h + ' : 3 ≈ ' + F2(rr * rr * PI * h / 3) + ' cm³' }; },
+    (r) => { const d = r.pick([20, 26, 30, 32, 40]), rr = d / 2; return { q: 'Ein Globus hat einen Durchmesser von ' + d + ' cm. Wie viel cm² Papier braucht man für die Weltkarte darauf?', a: 'O = 4 · ' + F(rr) + '² · 3,14 ≈ ' + F2(4 * rr * rr * PI) + ' cm²' }; }
+  );
+  TX_Z4.push(
+    (r) => { const u = R(r, -4, -1), o = R(r, 5, 15); return { q: 'Ein Lift fährt vom Stockwerk ' + F(u) + ' (Tiefgarage) in den ' + o + '. Stock. Wie viele Stockwerke fährt er? Danach fährt er 7 Stockwerke nach unten. In welchem Stockwerk ist er jetzt?', a: o + ' − ' + P(u) + ' = ' + (o - u) + ' Stockwerke; ' + o + ' − 7 = ' + F(o - 7) }; },
+    (r) => { const t = R(r, 2, 15), h = R(r, 4, 7) * 500; const T = t - 6 * h / 1000; return { q: 'Im Tal (auf etwa 0 m) hat es ' + t + ' °C. Pro 1 000 m Höhe wird es um 6 °C kälter. Welche Temperatur hat es auf einem ' + F(h) + ' m hohen Gipfel?', a: t + ' − 6 · ' + F(h / 1000) + ' = ' + F(T) + ' °C' }; },
+    (r) => { const s = -R(r, 15, 40) * 10, a = R(r, 3, 6) * 10, b = R(r, 5, 12) * 5; return { q: 'Ein U-Boot befindet sich auf ' + F(s) + ' m. Es steigt dreimal um je ' + a + ' m und sinkt danach um ' + b + ' m. Wo befindet es sich jetzt?', a: F(s) + ' + 3 · ' + a + ' − ' + b + ' = ' + F(s + 3 * a - b) + ' m' }; }
+  );
+  TX_POT4.push(
+    (r) => { const g = r.pick([16, 32, 64, 128]), m = r.pick([2, 4, 5, 8]); return { q: 'Ein Foto braucht etwa ' + m + ' · ' + sup(10, 6) + ' Byte Speicher. Wie viele Fotos passen auf eine Speicherkarte mit ' + g + ' GB (' + g + ' · ' + sup(10, 9) + ' Byte)?', a: g + ' · ' + sup(10, 9) + ' : (' + m + ' · ' + sup(10, 6) + ') = ' + F(g * 1000 / m) + ' Fotos' }; },
+    () => ({ q: 'Die Sonne ist etwa 1,5 · ' + sup(10, 8) + ' km von der Erde entfernt. Licht legt in einer Sekunde 3 · ' + sup(10, 5) + ' km zurück. Wie lange braucht das Sonnenlicht zur Erde?', a: '1,5 · ' + sup(10, 8) + ' : (3 · ' + sup(10, 5) + ') = 0,5 · ' + sup(10, 3) + ' = 500 s ≈ 8 min 20 s' })
+  );
+  TX_PY4.push(
+    (r) => { const a = R(r, 5, 30), b = R(r, 5, 30); return { q: 'Ein Schiff fährt ' + a + ' km nach Norden und dann ' + b + ' km nach Osten. Wie weit ist es jetzt (Luftlinie) vom Hafen entfernt?', a: '√(' + a + '² + ' + b + '²) ≈ ' + F2(Math.sqrt(a * a + b * b)) + ' km' }; },
+    (r) => { const [x, h, s] = r.pick([[3, 4, 5], [6, 8, 10], [5, 12, 13], [4, 3, 5]]); const c = R(r, 4, 12), a = c + 2 * x; return { q: 'Ein gleichschenkeliges Trapez hat die Grundlinien a = ' + a + ' cm und c = ' + c + ' cm, die Schenkel sind je ' + s + ' cm lang. Wie hoch ist es? Wie groß ist die Fläche?', a: '(' + a + ' − ' + c + ') : 2 = ' + x + '; h = √(' + s + '² − ' + x + '²) = ' + h + ' cm; A = (' + a + ' + ' + c + ') · ' + h + ' : 2 = ' + F((a + c) * h / 2) + ' cm²' }; }
+  );
+  TX_KR4.push(
+    (r) => { const d1 = r.pick([24, 26, 28]), d2 = r.pick([34, 36, 40]); const a1 = 2 * (d1 / 2) ** 2 * PI, a2 = (d2 / 2) ** 2 * PI; return { q: 'Bekommt man mehr Pizza mit zwei kleinen Pizzen (Durchmesser ' + d1 + ' cm) oder mit einer großen (Durchmesser ' + d2 + ' cm)?', a: '2 · ' + F(d1 / 2) + '² · 3,14 ≈ ' + F2(a1) + ' cm²; ' + F(d2 / 2) + '² · 3,14 ≈ ' + F2(a2) + ' cm² – ' + (a1 > a2 ? 'mit den zwei kleinen' : 'mit der großen') }; },
+    (r) => { const l = R(r, 70, 100), rr = R(r, 25, 40); return { q: 'Eine Laufbahn besteht aus zwei geraden Stücken (je ' + l + ' m) und zwei Halbkreisen mit dem Radius ' + rr + ' m. Wie lang ist eine Runde?', a: '2 · ' + l + ' + 2 · ' + rr + ' · 3,14 = ' + F2(2 * l + 2 * rr * PI) + ' m' }; }
+  );
+  TX_ZI4.push(
+    (r) => { const p = r.pick([2, 2.5, 4, 5]), Z = R(r, 2, 20) * 10; return { q: 'Wie viel Geld muss man ein Jahr lang zu ' + F(p) + ' % anlegen, um ' + Z + ' € Zinsen zu bekommen (ohne KESt)?', a: 'K = ' + Z + ' · 100 : ' + F(p) + ' = ' + F(Z * 100 / p) + ' €' }; },
+    (r) => { const K = R(r, 10, 60) * 100, p = r.pick([3, 4, 6]), t = r.pick([30, 60, 90, 120, 180]); const Z = K * p / 100 * t / 360; return { q: F(K) + ' € werden ' + t + ' Tage lang mit ' + p + ' % verzinst (Bankjahr mit 360 Tagen). Wie viele Zinsen gibt es?', a: 'Z = ' + F(K) + ' · ' + p + ' : 100 · ' + t + ' : 360 = ' + fmt(round(Z, 2), 2) + ' €' }; },
+    (r) => { const p = r.pick([5, 6, 8, 10]); let k = 1, y = 0; while (k < 2) { k *= 1 + p / 100; y++; } return { q: 'Nach wie vielen Jahren hat sich ein Kapital bei ' + p + ' % Zinseszins (ohne KESt) mindestens verdoppelt?', a: 'Faktor ' + F(1 + p / 100) + ' pro Jahr: nach ' + y + ' Jahren ≈ ' + F2(Math.pow(1 + p / 100, y)) + '-fach – also nach ' + y + ' Jahren' }; }
+  );
+  TX_F4.push(
+    (r) => { const g = R(r, 5, 15), k = r.pick([2, 2.5, 3]), x = R(r, 2, 10); return { q: 'Ein Handytarif kostet ' + g + ' € Grundgebühr im Monat und ' + fmt(k, 2) + ' € pro GB Daten. Stelle die Funktionsgleichung auf. Wie viel zahlt man bei ' + x + ' GB?', a: 'y = ' + F(k) + 'x + ' + g + '; y = ' + F(k) + ' · ' + x + ' + ' + g + ' = ' + fmt(round(k * x + g, 2), 2) + ' €' }; },
+    (r) => { const c = R(r, 1, 3), t = R(r, 6, 12), h0 = c * t; return { q: 'Eine Kerze ist ' + h0 + ' cm hoch und brennt pro Stunde ' + c + ' cm ab. Stelle die Funktionsgleichung auf. Wie hoch ist sie nach 4 Stunden? Wann ist sie abgebrannt?', a: 'y = −' + c + 'x + ' + h0 + '; nach 4 h: ' + (h0 - 4 * c) + ' cm; abgebrannt nach ' + t + ' Stunden' }; },
+    (r) => { const s = R(r, 1, 5) * 5, v = R(r, 2, 6), t = R(r, 5, 20); return { q: 'In einem Becken stehen ' + s + ' cm Wasser. Pro Minute steigt der Wasserstand um ' + v + ' cm. Stelle die Funktionsgleichung auf. Wann ist das Wasser ' + (s + v * t) + ' cm hoch?', a: 'y = ' + v + 'x + ' + s + '; ' + (s + v * t) + ' = ' + v + 'x + ' + s + ' → x = ' + t + ' Minuten' }; }
+  );
+  TX_KO4.push(
+    (r) => { const d = r.pick([6, 6.6, 7]), h = R(r, 10, 16); const V = (d / 2) ** 2 * PI * h; return { q: 'Eine zylinderförmige Dose hat innen einen Durchmesser von ' + F(d) + ' cm und fasst ' + F2(V) + ' ml. Wie hoch ist sie innen?', a: 'h = ' + F2(V) + ' : (' + F(d / 2) + '² · 3,14) ≈ ' + h + ' cm' }; },
+    (r) => { const rr = R(r, 2, 10); const O = round(4 * rr * rr * PI, 2); return { q: 'Eine Kugel hat eine Oberfläche von ' + F2(O) + ' cm². Wie groß ist ihr Radius? Wie groß ist ihr Volumen?', a: 'r = √(' + F2(O) + ' : (4 · 3,14)) = ' + rr + ' cm; V = 4/3 · ' + rr + '³ · 3,14 ≈ ' + F2(4 / 3 * rr ** 3 * PI) + ' cm³' }; }
+  );
 })();
