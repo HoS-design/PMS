@@ -153,12 +153,12 @@
       const a = R(rng, 2, 8), h = R(rng, 1, 6) * 3; const V = a * a * h / 3; return { q: 'Eine quadratische Pyramide aus ' + mat + ' (Dichte ' + F(d) + ' g/cm³) hat a = ' + a + ' cm und h = ' + h + ' cm. Masse: {?}', a: 'V = ' + F(V) + ' cm³; m = ' + F(V) + ' · ' + F(d) + ' = ' + F(round(V * d, 2)) + ' g', key: mat + 'p' + a + h }; } });
   UB.simple({
     id: 'm-prisma', fach: 'mathe', title: 'Prisma und Pyramide', area: 'geometrie', klassen: [3], img: 'MiniHoS_Forschen_Lupe',
-    merk: 'Ein <b>gerades Prisma</b> hat zwei deckungsgleiche, parallele Grundflächen (Dreieck, Trapez, Sechseck …) und rechteckige Seitenflächen (Mantel). <b>V = G · h</b>, <b>O = 2 · G + M</b> mit M = u · h (u = Umfang der Grundfläche). Eine <b>Pyramide</b> hat eine Grundfläche und dreieckige Seitenflächen, die in der Spitze zusammenlaufen. <b>V = G · h : 3</b> (ein Drittel des Prismas mit gleicher Grundfläche und Höhe). Quadratische Pyramide: O = a² + 4 · a · h<sub>a</sub> : 2. <b>Masse</b> = Volumen · Dichte.',
+    merk: 'Ein <b>gerades Prisma</b> hat zwei deckungsgleiche, parallele Grundflächen (Dreieck, Trapez, Sechseck …) und rechteckige Seitenflächen (Mantel). <b>V = G · h</b>, <b>O = 2 · G + M</b> mit M = u · h (u = Umfang der Grundfläche). Eine <b>Pyramide</b> hat eine Grundfläche und dreieckige Seitenflächen, die in der Spitze zusammenlaufen. <b>V = G · h : 3</b> (ein Drittel des Prismas mit gleicher Grundfläche und Höhe). Quadratische Pyramide: O = a² + 4 · a · h<sub>a</sub> : 2. <b>Masse</b> = Volumen · Dichte. <b>Zusammengesetzte Körper</b> (z. B. Haus = Quader + Dachprisma): Teilvolumen addieren.',
     pools: {},
     levels: {
       1: { ichkann: ['Du berechnest das Volumen von Prismen.'], tasks: [prismaV(5)] },
       2: { ichkann: ['Du berechnest die Oberfläche von Prismen.', 'Du berechnest das Volumen von Pyramiden.'], tasks: [prismaO(2), pyramide(4)] },
-      3: { ichkann: ['Du berechnest Massen von Körpern.', 'Du berechnest Oberflächen von Pyramiden.'], tasks: [pyramide(3), masse(3), prismaV(1)] }
+      3: { ichkann: ['Du berechnest Massen von Körpern.', 'Du berechnest zusammengesetzte Körper aus Quader, Prisma und Pyramide.'], tasks: [pyramide(2), masse(2), UB.KZ.haus(2)] }
     }
   });
 
