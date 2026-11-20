@@ -11,12 +11,12 @@
   const nachWinkeln = (n) => task({
     title: 'Einteilung nach Winkeln', instr: 'Ist das Dreieck spitzwinkelig, rechtwinkelig oder stumpfwinkelig?', n, cols: 2, w: 7,
     gen: (rng, lv, i) => { const kind = i % 3; let a, b; do { a = R(rng, 4, 26) * 5; b = kind === 1 ? 90 - a : R(rng, 4, 26) * 5; if (kind === 1) { a = R(rng, 5, 17) * 5; b = 90; } } while (a + b >= 175 || 180 - a - b < 10 || (kind === 0 && Math.max(a, b, 180 - a - b) >= 90) || (kind === 2 && Math.max(a, b, 180 - a - b) <= 90));
-      const g = 180 - a - b, arr = rng.shuffle([a, b, g]); return { q: 'α = ' + arr[0] + '°, β = ' + arr[1] + '°, γ = ' + arr[2] + '°', a: artW(...arr), key: arr.join() }; }
+      const g = 180 - a - b, arr = rng.shuffle([a, b, g]); return { q: 'α = ' + arr[0] + '°, β = ' + arr[1] + '°, γ = ' + arr[2] + '° &nbsp;→ {?}', a: artW(...arr), key: arr.join() }; }
   });
   const nachSeiten = (n) => task({
     title: 'Einteilung nach Seiten', instr: 'Ist das Dreieck gleichseitig, gleichschenkelig oder allgemein?', n, cols: 2, w: 7,
     gen: (rng, lv, i) => { const kind = i % 3; let a = R(rng, 3, 9), b = a, c = a; if (kind === 1) { c = R(rng, 2, 2 * a - 1); if (c === a) c = a + 1; } if (kind === 2) { do { b = R(rng, 3, 9); c = R(rng, 3, 9); } while (b === a || c === a || b === c || a + b <= c || a + c <= b || b + c <= a); }
-      const arr = rng.shuffle([a, b, c]); return { q: 'a = ' + arr[0] + ' cm, b = ' + arr[1] + ' cm, c = ' + arr[2] + ' cm', a: artS(...arr), key: arr.join() }; }
+      const arr = rng.shuffle([a, b, c]); return { q: 'a = ' + arr[0] + ' cm, b = ' + arr[1] + ' cm, c = ' + arr[2] + ' cm &nbsp;→ {?}', a: artS(...arr), key: arr.join() }; }
   });
   const winkelsumme = (n) => task({
     title: 'Winkelsumme im Dreieck', instr: 'Die Winkelsumme im Dreieck beträgt 180°. Berechne den fehlenden Winkel.', n, cols: 2, w: 3,

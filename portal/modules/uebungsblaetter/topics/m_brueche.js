@@ -252,6 +252,6 @@
     }
   });
   L4('m-winkel', ['Du berechnest Winkel in Dreieck und Viereck.', 'Du kennst Neben- und Scheitelwinkel.', 'Du berechnest Winkel zwischen Uhrzeigern.'],
-    [winkel4(6), uhr(6), winkelBilder('art')]);
+    [winkel4(7), uhr(8)]);
 
 })();

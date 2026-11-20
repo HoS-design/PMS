@@ -95,9 +95,12 @@
 
   // ---------------------------------------------------------------- Gleichungen
   const sgn = (b) => b < 0 ? ' − ' + Math.abs(b) : ' + ' + b;
+  const arrow = (it) => Object.assign(it, { q: it.q + ' &nbsp;→ {?}' });
   const gl = (n) => task({
     title: 'Löse die Gleichungen.', instr: 'Rechne am Rand und mach die Probe.', n, cols: 3, w: 4,
-    gen: (rng, level) => {
+    gen: (rng, level) => arrow(glGen(rng, level))
+  });
+  function glGen(rng, level) {
       const x = R(rng, 2, level === 3 ? 15 : 12);
       if (level === 1) {
         const k = rng.int(4), a = R(rng, 2, 9);
@@ -115,8 +118,7 @@
       if (rng.int(2)) return { q: a + 'x + ' + b + ' = ' + c + 'x + ' + d, a: 'x = ' + x };
       const k = R(rng, 2, 5), m = R(rng, 1, 9); const rhs = k * (x + m) - (k > 2 ? 0 : 0);
       return { q: k + ' · (x + ' + m + ') = ' + rhs, a: 'x = ' + x };
-    }
-  });
+  }
   const TX_G = [
     (r) => { const x = R(r, 3, 20), a = R(r, 2, 5), b = R(r, 1, 20); return { q: 'Ich denke mir eine Zahl, nehme sie mal ' + a + ' und addiere ' + b + '. Ich erhalte ' + (a * x + b) + '. Wie heißt die Zahl?', a: a + 'x + ' + b + ' = ' + (a * x + b) + ' → x = ' + x }; },
     (r) => { const x = R(r, 5, 30), d = R(r, 2, 12); return { q: 'Max ist ' + d + ' Jahre älter als seine Schwester. Zusammen sind sie ' + (2 * x + d) + ' Jahre alt. Wie alt ist die Schwester?', a: 'x + x + ' + d + ' = ' + (2 * x + d) + ' → x = ' + x + ' – Die Schwester ist ' + x + ' Jahre alt.' }; },
@@ -212,4 +214,69 @@
       3: { ichkann: ['Du kannst Mittelwert, Median und Spannweite berechnen.'], tasks: [kennzahlen(7, 'voll')] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const TX_P4 = [
+    (r) => { const g = R(r, 6, 30) * 10, p1 = r.pick([10, 20]), p2 = r.pick([10, 20, 25]); const a1 = g * (100 - p1) / 100, a2 = a1 * (100 - p2) / 100; return { q: 'Eine Jacke kostet ' + g + ' €. Zuerst wird sie um ' + p1 + ' % reduziert, später noch einmal um ' + p2 + ' % vom neuen Preis. Wie viel kostet sie jetzt? Um wie viel Prozent ist sie insgesamt billiger?', a: g + ' · ' + F(1 - p1 / 100) + ' = ' + E(a1) + ' €; ' + E(a1) + ' · ' + F(1 - p2 / 100) + ' = ' + E(a2) + ' €; ' + E(g - a2) + ' : ' + g + ' = ' + F(round((g - a2) / g * 100, 2)) + ' % (nicht ' + (p1 + p2) + ' %!)' }; },
+    (r) => { const g = R(r, 4, 25) * 10, p = r.pick([10, 20, 25, 40]); const a = g * (100 - p) / 100; return { q: 'Nach einem Rabatt von ' + p + ' % kostet ein Rucksack nur noch ' + E(a) + ' €. Wie viel hat er vorher gekostet?', a: E(a) + ' € ≙ ' + (100 - p) + ' %; ' + E(a) + ' : ' + (100 - p) + ' · 100 = ' + E(g) + ' €' }; },
+    (r) => { const alt = R(r, 4, 20) * 20, p = r.pick([5, 10, 15, 20, 25, 30]); const neu = alt * (100 + p) / 100; return { q: 'Die Schülerzahl einer Schule stieg von ' + alt + ' auf ' + neu + '. Um wie viel Prozent ist sie gestiegen?', a: neu + ' − ' + alt + ' = ' + (neu - alt) + '; ' + (neu - alt) + ' : ' + alt + ' = ' + F(p / 100) + ' = ' + p + ' %' }; },
+    (r) => { const n = R(r, 3, 30) * 5, p = r.pick([10, 20, 25]); const ohne = n * (100 - p) / 100, brutto = ohne * 1.2; return { q: 'Ein Händler gewährt auf einen Preis von ' + n + ' € (ohne Steuer) ' + p + ' % Rabatt. Danach kommen 20 % Umsatzsteuer dazu. Wie viel zahlt man?', a: n + ' · ' + F(1 - p / 100) + ' = ' + E(ohne) + ' €; ' + E(ohne) + ' · 1,2 = ' + E(brutto) + ' €' }; },
+    (r) => { const brutto = R(r, 3, 40) * 6; return { q: 'Ein Spiel kostet mit 20 % Umsatzsteuer ' + brutto + ' €. Wie hoch ist der Preis ohne Steuer? Wie viel Steuer ist enthalten?', a: brutto + ' : 1,2 = ' + E(brutto / 1.2) + ' € ohne Steuer; Steuer: ' + E(brutto - brutto / 1.2) + ' €' }; }
+  ];
+  L4('m-prozent', ['Du rechnest mehrstufige Prozentaufgaben (Rabatt auf Rabatt, Rabatt und Steuer).', 'Du berechnest den Grundwert vor einer Veränderung.', 'Du berechnest prozentuelle Zu- und Abnahmen.'],
+    [text('Sachaufgaben mit mehreren Schritten', 'Schreibe die Rechnung und einen Antwortsatz.', TX_P4, 'p4', 4), dreisatzP(4)]);
+
+  const TX_S4 = [
+    (r) => { let p1, t1, b1, p2, b2, t2; do { p1 = r.pick([2, 3, 4, 6]); t1 = r.pick([4, 6, 8, 12]); b1 = r.pick([2, 3, 4]); p2 = r.pick([2, 3, 4, 6, 8].filter(x => x !== p1)); b2 = r.pick([3, 4, 5, 6, 8, 9].filter(x => x !== b1)); t2 = t1 * b2 * p1 / (b1 * p2); } while (!Number.isInteger(t2) || t2 > 40); return { q: p1 + ' Pumpen füllen ' + b1 + ' Becken in ' + t1 + ' Stunden. Wie lange brauchen ' + p2 + ' Pumpen für ' + b2 + ' Becken?', a: t1 + ' · ' + b2 + ' : ' + b1 + ' · ' + p1 + ' : ' + p2 + ' = ' + t2 + ' h – Sie brauchen ' + t2 + ' Stunden.' }; },
+    (r) => { let a1, d1, h1, a2, h2, d2; do { a1 = r.pick([4, 5, 6, 8]); d1 = r.pick([6, 8, 10, 12, 15]); h1 = r.pick([6, 8]); a2 = r.pick([3, 4, 5, 6, 10, 12].filter(x => x !== a1)); h2 = r.pick([6, 8, 10].filter(x => x !== h1)); d2 = a1 * d1 * h1 / (a2 * h2); } while (!Number.isInteger(d2)); return { q: a1 + ' Maler streichen ein Haus in ' + d1 + ' Tagen, wenn sie täglich ' + h1 + ' Stunden arbeiten. Wie viele Tage brauchen ' + a2 + ' Maler bei ' + h2 + ' Stunden pro Tag?', a: d1 + ' · ' + a1 + ' : ' + a2 + ' · ' + h1 + ' : ' + h2 + ' = ' + d2 + ' Tage' }; },
+    (r) => { let k1, t1, m1, k2, t2, m2; do { k1 = r.pick([4, 5, 6, 8, 10]); t1 = r.pick([5, 6, 10, 12]); m1 = k1 * t1 * r.pick([2, 3, 5]); k2 = r.pick([3, 4, 6, 12, 15, 20].filter(x => x !== k1)); t2 = r.pick([4, 7, 8, 9, 14, 15].filter(x => x !== t1)); m2 = m1 / (k1 * t1) * k2 * t2; } while (!Number.isInteger(m2)); return { q: k1 + ' Kühe fressen in ' + t1 + ' Tagen ' + m1 + ' kg Heu. Wie viel Heu fressen ' + k2 + ' Kühe in ' + t2 + ' Tagen?', a: m1 + ' : ' + k1 + ' : ' + t1 + ' = ' + F(m1 / (k1 * t1)) + ' kg pro Kuh und Tag; · ' + k2 + ' · ' + t2 + ' = ' + F(m2) + ' kg' }; },
+    (r) => { const v = r.pick([40, 50, 60, 75, 80, 90, 100, 120]), t = r.pick([1.5, 2, 2.5, 3]), s = v * t; const w = r.pick([50, 60, 75, 80, 90, 100, 120].filter(x => x !== v && (s / x * 60) % 5 === 0)); if (!w) return { q: 'Ein Auto fährt mit 60 km/h und braucht 2 h. Wie lange braucht es mit 80 km/h?', a: '120 km : 80 = 1,5 h = 1 h 30 min (indirekt)' }; const min = s / w * 60; return { q: 'Ein Bus braucht für eine Strecke bei ' + v + ' km/h ' + F(t) + ' Stunden. Wie lange braucht er bei ' + w + ' km/h? Wie lang ist die Strecke?', a: 'Strecke: ' + v + ' · ' + F(t) + ' = ' + F(s) + ' km; ' + F(s) + ' : ' + w + ' = ' + Math.floor(min / 60) + ' h ' + (min % 60) + ' min (indirekt)' }; }
+  ];
+  L4('m-schlussrechnung', ['Du löst zusammengesetzte Schlussrechnungen mit drei Größen.', 'Du entscheidest bei jedem Schritt: direkt oder indirekt?'],
+    [text('Zusammengesetzte Schlussrechnung', 'Überlege bei jeder Größe: direkt oder indirekt? Schreibe die Rechnung und das Ergebnis.', TX_S4, 's4', 4)]);
+
+  const gl4 = (n) => task({
+    title: 'Löse die Gleichungen.', instr: 'Löse zuerst die Klammern auf. Mach die Probe.', n, cols: 2, w: 4,
+    gen: (rng) => arrow((() => {
+      const x = R(rng, -6, 15) || 3, k = rng.int(4);
+      if (k === 0) { const a = R(rng, 3, 6), b = R(rng, 1, 5), c = R(rng, 2, a - 1), d = R(rng, 1, 9); const e = a * (x - b) - c * (x + d); return { q: a + ' · (x − ' + b + ') = ' + c + ' · (x + ' + d + ')' + (e ? (e < 0 ? ' − ' + F(-e) : ' + ' + F(e)) : ''), a: 'x = ' + F(x), key: 'g' + a + b + c + d + x }; }
+      if (k === 1) { const a = R(rng, 4, 9), b = R(rng, 1, a - 2), c = R(rng, 1, 9); return { q: a + 'x − (' + b + 'x + ' + c + ') = ' + F(a * x - b * x - c), a: 'x = ' + F(x) }; }
+      if (k === 2) { const d = R(rng, 2, 5), b = R(rng, 1, 12); return { q: '<span class="fr"><span>x</span><span>' + d + '</span></span> + ' + b + ' = ' + F(x + b), a: 'x = ' + F(x * d), key: 'f' + d + b + x }; }
+      const a = R(rng, 2, 5), b = R(rng, 2, 9), e = R(rng, 1, a - 1); return { q: a + ' · (x + ' + b + ') − ' + e + 'x = ' + F(a * (x + b) - e * x), a: 'x = ' + F(x), key: 'h' + a + b + e + x };
+    })())
+  });
+  const TX_G4 = [
+    (r) => { const x = R(r, 10, 40); return { q: 'Die Summe von drei aufeinanderfolgenden natürlichen Zahlen ist ' + (3 * x + 3) + '. Wie heißen die Zahlen?', a: 'x + (x + 1) + (x + 2) = ' + (3 * x + 3) + ' → x = ' + x + '; die Zahlen: ' + x + ', ' + (x + 1) + ', ' + (x + 2) }; },
+    (r) => { const x = R(r, 3, 12); return { q: 'Ein Rechteck ist doppelt so lang wie breit. Sein Umfang beträgt ' + 6 * x + ' cm. Wie lang und wie breit ist es?', a: '2 · (2x + x) = ' + 6 * x + ' → x = ' + x + '; Breite ' + x + ' cm, Länge ' + 2 * x + ' cm' }; },
+    (r) => { const k = R(r, 8, 14), m = R(r, 3, 5); const v = m * k; return { q: 'Eine Mutter ist heute ' + m + '-mal so alt wie ihr Sohn. In ' + ((m - 1) * k - 2 * k) + ' Jahren ist sie nur noch doppelt so alt. Wie alt sind beide heute?', a: m + 'x + ' + ((m - 1) * k - 2 * k) + ' = 2 · (x + ' + ((m - 1) * k - 2 * k) + ') → x = ' + k + '; Sohn ' + k + ' Jahre, Mutter ' + v + ' Jahre' }; },
+    (r) => { const x = R(r, 4, 20), d = R(r, 2, 6); const t = 2 * x + d * x; return { q: 'Lena hat doppelt so viele Sticker wie Tom, Mia hat ' + d + '-mal so viele wie Tom. Zusammen haben sie ' + (t + x) + ' Sticker. Wie viele hat jedes Kind?', a: 'x + 2x + ' + d + 'x = ' + (t + x) + ' → x = ' + x + '; Tom ' + x + ', Lena ' + 2 * x + ', Mia ' + d * x }; },
+    (r) => { const x = R(r, 3, 9), b = R(r, 4, 12); return { q: 'Bei einem gleichschenkeligen Dreieck ist jeder Schenkel ' + b + ' cm länger als die Basis. Der Umfang beträgt ' + (3 * x + 2 * b) + ' cm. Wie lang sind die Seiten?', a: 'x + 2 · (x + ' + b + ') = ' + (3 * x + 2 * b) + ' → x = ' + x + '; Basis ' + x + ' cm, Schenkel je ' + (x + b) + ' cm' }; }
+  ];
+  L4('m-gleichungen', ['Du löst Gleichungen mit Klammern, Brüchen und negativen Lösungen.', 'Du stellst Gleichungen zu schwierigen Textaufgaben auf.'],
+    [gl4(8), text('Textgleichungen', 'Lege fest, wofür x steht. Stelle eine Gleichung auf und löse sie.', TX_G4, 'g4', 3)]);
+
+  const TX_V4 = [
+    (r) => { const a = R(r, 6, 14), b = R(r, 4, 10), h = R(r, 2, 6) * 2; return { q: 'Die Vorderseite eines Hauses besteht aus einem Rechteck (' + a + ' m breit, ' + b + ' m hoch) und einem dreieckigen Giebel (Höhe ' + h + ' m). Wie groß ist die Fläche?', a: a + ' · ' + b + ' + ' + a + ' · ' + h + ' : 2 = ' + (a * b) + ' + ' + F(a * h / 2) + ' = ' + F(a * b + a * h / 2) + ' m²' }; },
+    (r) => { const a = R(r, 30, 60), c = R(r, 15, a - 8), h = R(r, 10, 30) * 2, p = R(r, 80, 250); const A = (a + c) * h / 2; return { q: 'Ein Grundstück hat die Form eines Trapezes (a = ' + a + ' m, c = ' + c + ' m, h = ' + h + ' m). 1 m² kostet ' + p + ' €. Wie viel kostet das Grundstück?', a: 'A = (' + a + ' + ' + c + ') · ' + h + ' : 2 = ' + F(A) + ' m²; ' + F(A) + ' · ' + p + ' = ' + F(A * p) + ' €' }; },
+    (r) => { const e = R(r, 4, 12) * 2, A = e * R(r, 3, 10) / 2 * 2; const f = 2 * A / e; return { q: 'Ein Drachen (Deltoid) hat eine Fläche von ' + F(A) + ' dm². Die eine Diagonale ist ' + e + ' dm lang. Wie lang ist die andere?', a: 'f = 2 · ' + F(A) + ' : ' + e + ' = ' + F(f) + ' dm' }; },
+    (r) => { const g = R(r, 6, 16), h = R(r, 3, 10); return { q: 'Ein Parallelogramm hat g = ' + g + ' cm und h = ' + h + ' cm. Ein Dreieck mit derselben Grundlinie soll gleich groß sein. Wie hoch muss es sein?', a: 'A = ' + g * h + ' cm²; ' + g + ' · h : 2 = ' + g * h + ' → h = ' + 2 * h + ' cm' }; }
+  ];
+  L4('m-vierecke', ['Du berechnest zusammengesetzte Flächen.', 'Du löst Sachaufgaben zu Dreieck, Trapez und Deltoid.', 'Du schließt von der Fläche auf eine fehlende Länge.'],
+    [text('Sachaufgaben', 'Schreibe die Rechnung und das Ergebnis mit Einheit.', TX_V4, 'v4', 3), rueck(4)]);
+
+  const mittelR = (n) => task({
+    title: 'Mittelwert rückwärts', instr: 'Berechne den fehlenden Wert.', n, cols: 1, w: 4,
+    gen: (rng) => {
+      const k = R(rng, 4, 6), m = R(rng, 8, 18); const xs = [...Array(k - 1)].map(() => R(rng, m - 6, m + 6)); const last = k * m - xs.reduce((a, b) => a + b, 0);
+      if (last < 0 || last > 40) return { q: 'Die Werte 12, 15, {?} haben den Mittelwert 14.', a: '15', key: 'fix' };
+      return { q: 'Die Werte ' + xs.join(', ') + ' und {?} haben den Mittelwert ' + m + '.', a: String(last), key: xs.join() + m };
+    }
+  });
+  const TX_ST4 = [
+    (r) => { const k = R(r, 3, 5), a = R(r, 12, 17), z = R(r, a + 1, a + 3); const need = (k + 1) * z - k * a; if (need > 25) return { q: 'Max hat in 4 Tests im Schnitt 15 Punkte. Wie viele braucht er im 5. Test für einen Schnitt von 16 Punkten?', a: '5 · 16 − 4 · 15 = 20 Punkte' }; return { q: 'Lena hat in ' + k + ' Tests durchschnittlich ' + a + ' Punkte erreicht. Wie viele Punkte braucht sie im nächsten Test, damit ihr Durchschnitt ' + z + ' Punkte beträgt?', a: (k + 1) + ' · ' + z + ' − ' + k + ' · ' + a + ' = ' + need + ' Punkte' }; },
+    (r) => { const xs = [...Array(6)].map(() => R(r, 8, 14)); const big = R(r, 60, 90); const all = xs.concat(big); const mw = all.reduce((a, b) => a + b, 0) / 7; return { q: 'Taschengeld pro Woche in einer Gruppe (in €): ' + all.join(', ') + '. Berechne Mittelwert und Median. Welcher Wert beschreibt die Gruppe besser? Begründe.', a: 'Mittelwert ≈ ' + F(round(mw, 2)) + ' €, Median ' + F(median(all)) + ' € – der Median, weil der Ausreißer ' + big + ' € den Mittelwert stark erhöht.' }; }
+  ];
+  L4('m-statistik', ['Du berechnest fehlende Werte aus dem Mittelwert.', 'Du beurteilst, ob Mittelwert oder Median besser passt.'],
+    [kennzahlen(3, 'voll'), mittelR(3), text('Sachaufgaben', 'Rechne und begründe.', TX_ST4, 'st4', 2)]);
+
 })();
