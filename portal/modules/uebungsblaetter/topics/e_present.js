@@ -117,9 +117,9 @@ he >> is >> usually >> in the garden`
       3: {
         ichkann: ['Du kannst Fragen im present simple stellen.', 'Du kannst Kurzantworten geben.', 'Du weißt, wo Häufigkeitswörter im Satz stehen.'],
         tasks: [
-          { type: 'pair', pool: 'quest', n: 5, inline: true, head: 'Words', col: 'Question', title: 'Ask questions.', instr: 'Use Do … ? or Does … ?' },
+          { type: 'pair', pool: 'quest', n: 4, inline: true, head: 'Words', col: 'Question', title: 'Ask questions.', instr: 'Use Do … ? or Does … ?' },
           { type: 'gap', pool: 'answer', n: 5, bw: 8, title: 'Short answers', instr: 'Complete the short answers.' },
-          { type: 'order', pool: 'freq', n: 3, title: 'Put the words in the right order.', instr: 'Number the words 1–4 (or 1–5).' }
+          { type: 'order', pool: 'freq', n: 2, title: 'Put the words in the right order.', instr: 'Number the words 1–4.' }
         ]
       }
     }
