@@ -291,4 +291,81 @@
       3: { ichkann: ['Du unterscheidest lineare, indirekt proportionale und quadratische Zusammenhänge.'], tasks: [artTab(3), fWerte(3)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const wTerm = (n) => task({
+    title: 'Mit Wurzeln rechnen', instr: 'Ziehe teilweise die Wurzel und fasse gleichartige Wurzeln zusammen. Mach den Nenner wurzelfrei.', n, cols: 2, w: 5,
+    gen: (rng) => {
+      const b = rng.pick([2, 3, 5, 6, 7]), k = rng.int(3);
+      if (k === 0) { const p = R(rng, 2, 5), q = R(rng, 2, 5); return { q: '√' + (p * p * b) + ' + √' + (q * q * b), a: (p + q) + '·√' + b, key: 'a' + b + p + q }; }
+      if (k === 1) { const p = R(rng, 3, 7), q = R(rng, 1, p - 1); return { q: p + '·√' + b + ' − √' + (q * q * b), a: (p - q === 1 ? '' : (p - q)) + '√' + b, key: 's' + b + p + q }; }
+      const m = R(rng, 1, 4) * b; return { q: frac(m, '√' + b), a: (m / b === 1 ? '' : m / b + '·') + '√' + b, key: 'n' + b + m };
+    }
+  });
+  L4('m-wurzeln', ['Du fasst Wurzelterme zusammen.', 'Du ziehst teilweise die Wurzel und machst Nenner wurzelfrei.'],
+    [wTerm(8), wRegeln(6)]);
+
+  const bGl4 = (n) => task({
+    title: 'Bruchgleichungen mit x in beiden Nennern', instr: 'Gib an, welche Zahlen x nicht sein darf. Multipliziere über Kreuz und löse.', n, cols: 1, w: 7,
+    gen: (rng) => {
+      for (;;) { const a = R(rng, 1, 6), d = R(rng, 1, 5), x = nz(rng, -6, 9), c = x * d / a; if (!Number.isInteger(c) || c === 0 || x + c === 0) continue; const b = a + d;
+        return { q: frac(a, 'x') + ' = ' + frac(b, lin(1, c)) + ': &nbsp; Definitionsmenge {?} &nbsp; Lösung {?}', a: ['x ≠ 0, x ≠ ' + fmt(-c), 'x = ' + fmt(x)], key: a + '|' + b + '|' + c }; }
+    }
+  });
+  L4('m-bruchterme', ['Du löst Bruchgleichungen mit x in mehreren Nennern.', 'Du rechnest sicher mit Bruchtermen.'],
+    [bGl4(4), bruchRechnen(4), kuerzen(2)]);
+
+  const TXL4 = [
+    (r) => { const a = R(r, 1, 8), b = R(r, 1, 9); if (a === b) return { q: 'Eine zweistellige Zahl hat die Quersumme 9. Vertauscht man die Ziffern, wird sie um 27 größer. Wie heißt die Zahl?', a: 'x + y = 9, 10y + x = 10x + y + 27 → x = 3, y = 6: 36' }; const z = 10 * a + b, s = 10 * b + a; return { q: 'Bei einer zweistelligen Zahl ist die Quersumme ' + (a + b) + '. Vertauscht man die Ziffern, wird die Zahl um ' + Math.abs(s - z) + (s > z ? ' größer' : ' kleiner') + '. Wie heißt die Zahl?', a: 'x + y = ' + (a + b) + ', 10y + x = 10x + y ' + (s > z ? '+ ' : '− ') + Math.abs(s - z) + ' → x = ' + a + ', y = ' + b + ': ' + z }; },
+    (r) => { const l1 = R(r, 2, 8), l2 = R(r, 2, 8), p1 = r.pick([20, 30, 40]), p2 = r.pick([60, 70, 80]); const tot = l1 + l2, pm = (l1 * p1 + l2 * p2); return { q: 'Ein Saft mit ' + p1 + ' % Fruchtanteil wird mit einem Saft mit ' + p2 + ' % Fruchtanteil gemischt. Man erhält ' + tot + ' l mit insgesamt ' + F(pm / 100) + ' l Fruchtanteil. Wie viel Liter wurden von jeder Sorte genommen?', a: 'x + y = ' + tot + ', ' + F(p1 / 100) + 'x + ' + F(p2 / 100) + 'y = ' + F(pm / 100) + ' → x = ' + l1 + ' l, y = ' + l2 + ' l' }; },
+    (r) => { const v1 = R(r, 3, 6) * 10, v2 = R(r, 6, 10) * 10, t = R(r, 1, 3); const s = (v1 + v2) * t; return { q: 'Zwei Orte sind ' + s + ' km voneinander entfernt. Ein Lkw (' + v1 + ' km/h) und ein Auto (' + v2 + ' km/h) fahren gleichzeitig aufeinander zu. Nach wie vielen Stunden treffen sie einander? Wie weit ist der Lkw dann gefahren?', a: v1 + 't + ' + v2 + 't = ' + s + ' → t = ' + t + ' h; Lkw: ' + v1 * t + ' km' }; }
+  ];
+  L4('m-gleichungssysteme', ['Du löst schwierige Textaufgaben (Ziffern, Mischungen, Bewegung) mit Gleichungssystemen.', 'Du wählst ein passendes Lösungsverfahren.'],
+    [text('Textaufgaben', 'Lege die Variablen fest, stelle das Gleichungssystem auf und löse es.', TXL4, 'l4', 3), allgemein(2)]);
+
+  const boxVgl = (n) => task({
+    title: 'Boxplots vergleichen', instr: 'Vergleiche die beiden Gruppen anhand der Kennzahlen.', n, mode: 'lines', lines: 2,
+    gen: (rng) => {
+      const mk = () => { const a = R(rng, 1, 6), q1 = a + R(rng, 2, 6), md = q1 + R(rng, 1, 6), q3 = md + R(rng, 1, 6), mx = q3 + R(rng, 2, 8); return [a, q1, md, q3, mx]; };
+      const A = mk(), B = mk(); const sp = (x) => x[4] - x[0], iq = (x) => x[3] - x[1];
+      const cmp = (x, y, more, less) => x > y ? more : x < y ? less : 'gleich';
+      return { q: 'Punkte bei einem Test – Klasse A: Min ' + A[0] + ', q₁ ' + A[1] + ', Median ' + A[2] + ', q₃ ' + A[3] + ', Max ' + A[4] + '; Klasse B: Min ' + B[0] + ', q₁ ' + B[1] + ', Median ' + B[2] + ', q₃ ' + B[3] + ', Max ' + B[4] + '. Welche Klasse hat den höheren Median? Wo streuen die mittleren 50 % stärker?',
+        a: 'Median: ' + cmp(A[2], B[2], 'A', 'B') + (A[2] === B[2] ? '' : ' höher') + '; Quartilsabstand A = ' + iq(A) + ', B = ' + iq(B) + ' → ' + cmp(iq(A), iq(B), 'A streut stärker', 'B streut stärker') + '; Spannweite A = ' + sp(A) + ', B = ' + sp(B), key: A.join() + B.join() };
+    }
+  });
+  L4('m-statistik2', ['Du vergleichst Datenreihen mit Boxplots und Kennzahlen.', 'Du ergänzt und interpretierst Kreuztabellen.'],
+    [boxVgl(2), kennzahlen(1), kreuz()]);
+
+  const sektorR = (n) => task({
+    title: 'Radius gesucht', instr: 'Forme die Formel nach r um. π ≈ 3,14; runde auf zwei Dezimalstellen.', n, cols: 1, w: 4,
+    gen: (rng) => {
+      const r = R(rng, 3, 15), al = R(rng, 2, 20) * 15;
+      if (rng.int(2)) { const b = round(2 * r * PI * al / 360, 2); return { q: 'Ein Kreisbogen mit α = ' + al + '° ist ' + F(b) + ' cm lang. r ≈ {?}', a: F2(b * 360 / (2 * PI * al)) + ' cm', key: 'b' + r + al }; }
+      const A = round(r * r * PI * al / 360, 2); return { q: 'Ein Kreissektor mit α = ' + al + '° hat den Flächeninhalt ' + F(A) + ' cm². r ≈ {?}', a: F2(Math.sqrt(A * 360 / (PI * al))) + ' cm', key: 'a' + r + al };
+    }
+  });
+  L4('m-kreisteile', ['Du berechnest Radius und Winkel aus Bogenlänge oder Sektorfläche.', 'Du berechnest zusammengesetzte Figuren.'],
+    [sektorR(4), sektorRueck(2), zusammen(2)]);
+
+  const TX_PY24 = [
+    (r) => { const a = R(r, 2, 8) * 2, h = R(r, 4, 14); const d2 = a * a / 2; return { q: 'Eine quadratische Pyramide hat die Grundkante a = ' + a + ' cm und die Höhe h = ' + h + ' cm. Wie lang ist eine Seitenkante s?', a: 'halbe Diagonale: √(' + a + '² · 2) : 2 ≈ ' + F2(Math.sqrt(2) * a / 2) + ' cm; s = √(' + h + '² + ' + F2(Math.sqrt(2) * a / 2) + '²) ≈ ' + F2(Math.sqrt(h * h + d2)) + ' cm' }; },
+    (r) => { const s = R(r, 6, 15), rr = R(r, 2, s - 2); return { q: 'Ein kegelförmiges Zelt hat einen Radius von ' + rr + ' m und eine Mantellinie von ' + s + ' m. Wie hoch ist es? Wie groß ist das Volumen?', a: 'h = √(' + s + '² − ' + rr + '²) ≈ ' + F2(Math.sqrt(s * s - rr * rr)) + ' m; V ≈ ' + F2(rr * rr * PI * round(Math.sqrt(s * s - rr * rr), 2) / 3) + ' m³' }; },
+    (r) => { const a = R(r, 4, 12); return { q: 'Ein Würfel hat die Kantenlänge ' + a + ' cm. Eine Ameise krabbelt außen von einer Ecke zur gegenüberliegenden Ecke. Wie lang ist der kürzeste Weg? (Tipp: Netz zeichnen)', a: '√((2 · ' + a + ')² + ' + a + '²) = √' + 5 * a * a + ' ≈ ' + F2(Math.sqrt(5) * a) + ' cm' }; }
+  ];
+  L4('m-pythagoras2', ['Du wendest den pythagoräischen Lehrsatz mehrmals hintereinander an.', 'Du löst Knobelaufgaben an Körpern.'],
+    [text('Sachaufgaben', 'Fertige eine Skizze an, markiere die rechtwinkeligen Dreiecke und rechne. Runde auf zwei Dezimalstellen.', TX_PY24, 'p24', 3), HKS(2)]);
+
+  const quadF = (n) => task({
+    title: 'Quadratische Funktionen', instr: 'Berechne die Funktionswerte und die Nullstellen (dort, wo f(x) = 0 ist).', n, cols: 1, w: 3,
+    gen: (rng) => { const z = R(rng, 1, 6), a = rng.pick([1, 1, 2, -1]); const c = -a * z * z; const fs = 'f(x) = ' + (a === 1 ? '' : a === -1 ? '−' : a + ' · ') + 'x² ' + (c < 0 ? '− ' + (-c) : '+ ' + c); const xs = [-2, 0, 3];
+      return { q: fs + ': ' + xs.map(x => 'f(' + fmt(x) + ') = {?}').join(', ') + '; Nullstellen {?}', a: xs.map(x => F(a * x * x + c)).concat(['x = ' + z + ' und x = −' + z]), key: fs }; }
+  });
+  const indP = (n) => task({
+    title: 'Indirekte Proportionalität', instr: 'Bei y = k : x ist x · y immer gleich k. Bestimme k und die fehlenden Werte.', n, cols: 1, w: 3,
+    gen: (rng) => { const k = rng.pick([12, 18, 24, 36, 48, 60]), x0 = rng.pick([2, 3, 4, 6].filter(v => k % v === 0)); const xs = [1, 2, 3, 4, 6].filter(v => v !== x0 && k % v === 0).slice(0, 3);
+      return { q: 'Der Punkt (' + x0 + ' | ' + k / x0 + ') liegt auf y = k : x. &nbsp; k = {?}; ' + xs.map(x => 'y(' + x + ') = {?}').join(', '), a: [String(k)].concat(xs.map(x => F(k / x))), key: k + '|' + x0 }; }
+  });
+  L4('m-funktionen2', ['Du berechnest Funktionswerte und Nullstellen quadratischer Funktionen.', 'Du bestimmst den Faktor k bei indirekter Proportionalität.'],
+    [quadF(3), indP(3), artTab(2)]);
+
 })();

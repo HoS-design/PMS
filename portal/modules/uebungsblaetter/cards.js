@@ -180,7 +180,9 @@
     tris.forEach((t, ti) => t.v.forEach((p, i) => { const k = ekey(p, t.v[(i + 1) % 3]); (edges[k] = edges[k] || []).push([ti, i]); }));
     const inner = Object.values(edges).filter(e => e.length === 2);
     // beim Trimino ohne „= ___“ am Ende, damit der Text auf die Kante passt
-    const use = ps.slice(0, inner.length).map(p => ({ q: p.q.replace(/\s*=\s*<span class="cgap"><\/span>\s*$/, ''), a: p.a }));
+    // keine Silbentrennung auf den Kanten: Fachbegriffe und „er ___“ bleiben zusammen
+    const glue = (h) => h.replace(/ (?=<span class="cgap">)/g, '&nbsp;').replace(/\b(Futur|Plusquamperfekt|Perfekt|Präsens|Präteritum) (I{1,2}\b)/g, '$1&nbsp;$2');
+    const use = ps.slice(0, inner.length).map(p => ({ q: glue(p.q.replace(/\s*=\s*<span class="cgap"><\/span>\s*$/, '')), a: glue(p.a) }));
     const labels = tris.map(() => ['', '', '']);
     inner.forEach((e, k) => { const p = use[k], flip = o.rng.int(2); labels[e[0][0]][e[0][1]] = flip ? p.a : p.q; labels[e[1][0]][e[1][1]] = flip ? p.q : p.a; });
     const fs = N === 4 ? 3.3 : 3.8;

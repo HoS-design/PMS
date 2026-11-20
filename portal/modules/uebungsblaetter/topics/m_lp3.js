@@ -204,4 +204,48 @@
       3: { ichkann: ['Du konstruierst regelmäßige Sechsecke und berechnest ihren Flächeninhalt.'], tasks: [sechseck(76), vieleckWinkel(3)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const TX_AE4 = [
+    (r) => { const s2 = R(r, 2, 4) * 50, h2 = R(r, 1, 3), k = R(r, 3, 8); return { q: 'Ein ' + h2 + ' m hoher Stab wirft einen ' + F(s2 / 100) + ' m langen Schatten. Zur selben Zeit wirft ein Baum einen ' + F(s2 * k / 100) + ' m langen Schatten. Wie hoch ist der Baum?', a: 'h : ' + F(s2 * k / 100) + ' = ' + h2 + ' : ' + F(s2 / 100) + ' → h = ' + F(h2 * k) + ' m' }; },
+    (r) => { const k = r.pick([2, 3, 0.5]), a = R(r, 2, 6); return { q: 'Ein Würfel mit a = ' + a + ' cm wird mit k = ' + F(k) + ' gestreckt. Wie verändern sich Kantenlänge, Oberfläche und Volumen?', a: "a' = " + F(a * k) + ' cm (·' + F(k) + "), O' = " + F(6 * a * a * k * k) + ' cm² (·' + F(k * k) + "), V' = " + F(a ** 3 * k ** 3) + ' cm³ (·' + F(k ** 3) + ')' }; },
+    (r) => { const v = r.pick([[2, 3, 5], [1, 2, 3], [3, 4, 5], [1, 3, 4]]), t = R(r, 2, 20) * 10, s = v[0] + v[1] + v[2]; return { q: F(t * s) + ' € werden im Verhältnis ' + v.join(' : ') + ' auf drei Personen aufgeteilt. Wie viel bekommt jede?', a: F(t * s) + ' : ' + s + ' = ' + t + ' € pro Teil → ' + v.map(x => F(x * t) + ' €').join(', ') }; },
+    (r) => { const a = R(r, 1, 3), b = R(r, 3, 6), l = R(r, 1, 4); return { q: 'Für Saft wird Sirup und Wasser im Verhältnis ' + a + ' : ' + b + ' gemischt. Wie viel Wasser braucht man für ' + F(l * a / 2) + ' l Sirup? Wie viel Saft entsteht?', a: 'Wasser: ' + F(l * a / 2) + ' : ' + a + ' · ' + b + ' = ' + F(l * b / 2) + ' l; Saft: ' + F(l * (a + b) / 2) + ' l' }; }
+  ];
+  L4('m-aehnlichkeit', ['Du löst Sachaufgaben mit ähnlichen Figuren (Schatten, Modelle).', 'Du weißt: Längen ·k, Flächen ·k², Volumen ·k³.', 'Du teilst in mehreren Verhältnissen.'],
+    [text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz.', TX_AE4, 'ae4', 3), kFaktor(2)]);
+
+  const TX_W4 = [
+    () => ({ q: 'Ein Würfel wird zweimal geworfen. Wie groß ist die Wahrscheinlichkeit, mindestens eine Sechs zu werfen? Tipp: Gegenereignis.', a: '1 − ' + frac(5, 6) + ' · ' + frac(5, 6) + ' = 1 − ' + frac(25, 36) + ' = ' + frac(11, 36) + ' ≈ 30,6 %' }),
+    (r) => { const k = R(r, 2, 4); const p = Math.pow(2, k); return { q: 'Eine Münze wird ' + k + '-mal geworfen. Wie groß ist P(mindestens einmal Kopf)?', a: '1 − ' + frac(1, p) + ' = ' + frac(p - 1, p) + ' ≈ ' + F(round((p - 1) / p * 100, 1)) + ' %' }; },
+    (r) => { const g = r.pick([4, 5, 6, 8]), e = r.pick([1, 2]); const ew = round(g / 6 - e, 2); return { q: 'Ein Spiel kostet ' + e + ' € Einsatz. Bei einer Sechs bekommt man ' + g + ' € ausbezahlt, sonst nichts. Lohnt sich das Spiel auf Dauer?', a: 'Erwartung: ' + frac(1, 6) + ' · ' + g + ' − ' + e + ' ≈ ' + fmt(ew, 2) + ' € pro Spiel – ' + (ew < 0 ? 'nein, man verliert im Schnitt.' : ew > 0 ? 'ja, man gewinnt im Schnitt.' : 'Das Spiel ist fair.') }; },
+    (r) => { const n = r.pick([5, 6, 8, 10]), g = r.pick([1, 2]); const p = g === 1 ? Q(2, n) : Q(1, n * (n - 1) / 2); return { q: 'In einer Lostrommel sind ' + n + ' Lose, davon ' + (g === 1 ? 'ist 1 Gewinnlos' : 'sind 2 Gewinnlose') + '. Du ziehst 2 Lose ohne Zurücklegen. Wie groß ist P(' + (g === 1 ? 'du hast das Gewinnlos' : 'beide sind Gewinnlose') + ')?', a: g === 1 ? '1 − ' + frac(n - 1, n) + ' · ' + frac(n - 2, n - 1) + ' = ' + qs(p) : frac(2, n) + ' · ' + frac(1, n - 1) + ' = ' + qs(p) }; }
+  ];
+  L4('m-wahrscheinlichkeit', ['Du nutzt das Gegenereignis.', 'Du berechnest Erwartungswerte bei Spielen.', 'Du rechnest mit zweistufigen Zufallsversuchen.'],
+    [zweistufig(2), text('Knobelaufgaben', 'Zeichne ein Baumdiagramm, wenn es hilft. Gib die Wahrscheinlichkeit als Bruch an.', TX_W4, 'w4', 3)]);
+
+  const TX_WA4 = [
+    (r) => { const p = r.pick([10, 20, 25, 50]); const back = round(100 / (100 - p) * 100 - 100, 2); return { q: 'Ein Preis wird um ' + p + ' % gesenkt. Um wie viel Prozent muss er danach steigen, damit er wieder so hoch ist wie vorher?', a: '1 : ' + F(1 - p / 100) + ' = ' + F(round(1 / (1 - p / 100), 4)) + ' → um ' + F(round(back, 2)) + ' % (nicht ' + p + ' %!)' }; },
+    (r) => { const W = R(r, 12, 40) * 1000, p = r.pick([10, 15, 20]), y = R(r, 2, 4); return { q: 'Ein Auto kostet ' + F(W) + ' €. Es verliert jedes Jahr ' + p + ' % seines Wertes. Wie viel ist es nach ' + y + ' Jahren wert?', a: F(W) + ' · ' + F(1 - p / 100) + '<sup>' + y + '</sup> ≈ ' + fmt(round(W * Math.pow(1 - p / 100, y), 2), 2) + ' €' }; },
+    (r) => { const N = R(r, 2, 9) * 1000, p = r.pick([2, 3, 5]), y = r.pick([3, 5, 10]); return { q: 'Eine Stadt hat ' + F(N) + ' Einwohner und wächst jedes Jahr um ' + p + ' %. Wie viele Einwohner hat sie nach ' + y + ' Jahren (gerundet)?', a: F(N) + ' · ' + F(1 + p / 100) + '<sup>' + y + '</sup> ≈ ' + F(Math.round(N * Math.pow(1 + p / 100, y))) + ' Einwohner' }; },
+    (r) => { const a = R(r, 2, 6) * 10, d = R(r, 2, 8), p = r.pick([10, 20]); let L = a, P = a, y = 0; while (P <= L && y < 30) { y++; L += d; P *= 1 + p / 100; } return { q: 'Sparplan A: Start ' + a + ' €, jedes Jahr + ' + d + ' €. Sparplan B: Start ' + a + ' €, jedes Jahr + ' + p + ' %. Ab welchem Jahr hat B mehr?', a: 'A wächst linear, B prozentuell; ab Jahr ' + y + ' (A: ' + F(L) + ' €, B: ' + fmt(round(P, 2), 2) + ' €)' }; }
+  ];
+  L4('m-wachstum', ['Du rechnest mit mehrjährigem prozentuellem Wachstum und Wertverlust.', 'Du vergleichst lineares und prozentuelles Wachstum.', 'Du erkennst, dass sich Prozentänderungen nicht einfach aufheben.'],
+    [mehrstufigP(3), text('Sachaufgaben', 'Rechne mit dem Änderungsfaktor. Runde sinnvoll.', TX_WA4, 'wa4', 3)]);
+
+  const TX_PR4 = [
+    (r) => { const [a, b, c] = r.pick(TRIP), h = R(r, 15, 40); return { q: 'Ein Zelt hat die Form eines dreiseitigen Prismas. Die Vorder- und Rückwand sind gleichschenkelige Dreiecke mit Basis ' + 2 * a + ' dm und Höhe ' + b + ' dm. Das Zelt ist ' + F(h / 10) + ' m lang. Wie viel Stoff braucht man für Wände, Dach und Boden?', a: 'Schräge: √(' + a + '² + ' + b + '²) = ' + c + ' dm; O = 2 · ' + 2 * a + ' · ' + b + ' : 2 + 2 · ' + c + ' · ' + h + ' + ' + 2 * a + ' · ' + h + ' = ' + F(2 * a * b + 2 * c * h + 2 * a * h) + ' dm²' }; },
+    (r) => { const a = R(r, 2, 8), h = R(r, 2, 10) * 3; return { q: 'Eine quadratische Pyramide hat ein Volumen von ' + F(a * a * h / 3) + ' cm³ und die Grundkante a = ' + a + ' cm. Wie hoch ist sie?', a: 'h = 3 · V : a² = 3 · ' + F(a * a * h / 3) + ' : ' + a * a + ' = ' + h + ' cm' }; },
+    (r) => { const [a, b, c] = r.pick(TRIP), h = R(r, 4, 15); const V = a * b / 2 * h; return { q: 'Ein dreiseitiges Prisma (Grundfläche: rechtwinkeliges Dreieck mit den Katheten ' + a + ' cm und ' + b + ' cm) hat das Volumen ' + F(V) + ' cm³. Wie hoch ist es? Wie groß ist die Oberfläche?', a: 'G = ' + F(a * b / 2) + ' cm², h = ' + F(V) + ' : ' + F(a * b / 2) + ' = ' + h + ' cm; O = 2 · ' + F(a * b / 2) + ' + ' + (a + b + c) + ' · ' + h + ' = ' + F(a * b + (a + b + c) * h) + ' cm²' }; }
+  ];
+  L4('m-prisma', ['Du rechnest von Volumen auf Höhen zurück.', 'Du berechnest Oberflächen in Sachaufgaben, auch mit Pythagoras.'],
+    [text('Sachaufgaben', 'Fertige eine Skizze an. Schreibe Formel, Rechnung und Ergebnis.', TX_PR4, 'pr4', 3), masse(1)]);
+
+  const nGes = (n) => task({
+    title: 'Wie viele Ecken?', instr: 'Rechne rückwärts: Außenwinkel = 180° − Innenwinkel, n = 360° : Außenwinkel; oder n = Winkelsumme : 180° + 2.', n, cols: 1, w: 3,
+    gen: (rng) => { const k = rng.pick([5, 6, 8, 9, 10, 12, 15, 18, 20]); return rng.int(2) ? { q: 'Ein regelmäßiges Vieleck hat Innenwinkel von ' + F((k - 2) * 180 / k) + '°. n = {?}', a: String(k), key: 'i' + k } : { q: 'Die Winkelsumme eines Vielecks ist ' + F((k - 2) * 180) + '°. n = {?}', a: String(k), key: 's' + k }; }
+  });
+  L4('m-vielecke', ['Du konstruierst regelmäßige Sechsecke und berechnest Flächen.', 'Du schließt von Winkeln auf die Eckenzahl.'],
+    [sechseck(70), nGes(4), vieleckWinkel(2)]);
+
 })();

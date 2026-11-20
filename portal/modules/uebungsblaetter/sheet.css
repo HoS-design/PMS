@@ -171,3 +171,5 @@ svg.mfig.koord, .mi svg.mfig { max-width: 100%; }
 .cards-hint { font-size: 9pt; color: #444; }
 .mem svg.mfig { max-height: 22mm; max-width: 38mm; }
 .dom-q > div, .dom-a > div, .mem > div, .tri-t > div { overflow-wrap: anywhere; hyphens: auto; -webkit-hyphens: auto; max-width: 100%; }
+/* Trimino: Wörter nie trennen – die Schrift wird stattdessen verkleinert (UB.cards.fit) */
+.tri-t > div { overflow-wrap: normal; word-break: normal; hyphens: manual; -webkit-hyphens: manual; }

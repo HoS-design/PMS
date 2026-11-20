@@ -297,4 +297,84 @@
       3: { ichkann: ['Du erkennst kongruente Figuren.', 'Du rechnest Schiebungen mit negativen Koordinaten.'], tasks: [kongruent(4), vektor(4)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const dreieck4 = (n) => task({
+    title: 'Winkel mit Bedingungen', instr: 'Stelle eine Gleichung auf oder überlege mit der Winkelsumme.', n, cols: 1, w: 3,
+    gen: (rng) => {
+      const k = rng.int(3);
+      if (k === 0) { const v = rng.pick([[1, 2, 3], [1, 1, 2], [2, 3, 4], [1, 2, 2], [3, 4, 5], [1, 3, 5], [2, 3, 5], [4, 5, 6]]), s = v[0] + v[1] + v[2]; return { q: 'α : β : γ = ' + v.join(' : ') + ' &nbsp; α = {?} β = {?} γ = {?}', a: v.map(x => 180 * x / s + '°'), key: 'v' + v.join() }; }
+      if (k === 1) { const m = R(rng, 2, 3), x = R(rng, 15, Math.floor(170 / (2 + m))), d = 180 - (2 + m) * x; return { q: 'β ist um ' + d + '° größer als α, γ ist ' + (m === 2 ? 'doppelt' : 'dreimal') + ' so groß wie α. &nbsp; α = {?} β = {?} γ = {?}', a: [x + '°', (x + d) + '°', m * x + '°'], key: 'e' + m + x }; }
+      const a = R(rng, 25, 90), b = R(rng, 25, 150 - a); return { q: 'α = ' + a + '°, β = ' + b + '°. Wie groß ist der Außenwinkel bei C? {?}', a: (a + b) + '° (= α + β)', key: 'a' + a + b };
+    }
+  });
+  L4('m-dreiecke', ['Du berechnest Winkel aus Verhältnissen und Bedingungen.', 'Du kennst den Außenwinkelsatz.', 'Du nutzt Winkel an Parallelen.'],
+    [dreieck4(5), paraWinkel(2)]);
+
+  const viereck4 = (n) => task({
+    title: 'Winkel mit Bedingungen', instr: 'Nutze die Eigenschaften des Vierecks.', n, cols: 1, w: 3,
+    gen: (rng) => {
+      const k = rng.int(3);
+      if (k === 0) { const d = R(rng, 1, 8) * 10; return { q: 'Parallelogramm: α ist um ' + d + '° größer als β. α = {?} β = {?}', a: [(180 + d) / 2 + '°', (180 - d) / 2 + '°'], key: 'p' + d }; }
+      if (k === 1) { const m = rng.pick([2, 3, 4, 5]); return { q: 'Gleichschenkeliges Trapez: γ ist ' + m + '-mal so groß wie α. α = {?} γ = {?}', a: [F(180 / (m + 1)) + '°', F(180 * m / (m + 1)) + '°'], key: 't' + m }; }
+      const e = R(rng, 4, 14), f = R(rng, 2, 9) * 2; return { q: 'Deltoid: A = ' + F(e * f / 2) + ' cm², e = ' + e + ' cm. f = {?}', a: f + ' cm', key: 'd' + e + f };
+    }
+  });
+  L4('m-viereckarten', ['Du berechnest Winkel in Vierecken mit Bedingungen.', 'Du rechnest von der Fläche auf eine Diagonale zurück.'],
+    [viereck4(5), vWinkel(3), eigenschaften(3)]);
+
+  const klammer4 = (n) => task({
+    title: 'Klammerrechnungen', instr: 'Klammern zuerst. Kürze das Ergebnis.', n, cols: 2, w: 4,
+    gen: (rng) => {
+      let a, b, c, d; do { a = rq(rng, 6); b = rq(rng, 6); } while (a[0] * b[1] <= b[0] * a[1]); c = rq(rng, 6); d = rq(rng, 6);
+      const x = subQ(a, b), y = addQ(c, d);
+      return { q: '(' + frac(a[0], a[1]) + ' − ' + frac(b[0], b[1]) + ') : (' + frac(c[0], c[1]) + ' + ' + frac(d[0], d[1]) + ')', a: ans(divQ(x, y)), key: '' + a + b + c + d };
+    }
+  });
+  const glBr = (n) => task({
+    title: 'Gleichungen mit Brüchen', instr: 'Löse mit der Umkehroperation. Gib x gekürzt an.', n, cols: 2, w: 4,
+    gen: (rng) => {
+      const k = rq(rng, 7), r = rq(rng, 9), t = rng.int(3);
+      if (t === 0) return { q: frac(k[0], k[1]) + ' · x = ' + frac(r[0], r[1]) + ' &nbsp;→ {?}', a: 'x = ' + ans(divQ(r, k)), key: 'm' + k + r };
+      if (t === 1) return { q: 'x : ' + frac(k[0], k[1]) + ' = ' + frac(r[0], r[1]) + ' &nbsp;→ {?}', a: 'x = ' + ans(mulQ(r, k)), key: 'd' + k + r };
+      const s = addQ(k, r); return { q: 'x + ' + frac(k[0], k[1]) + ' = ' + qm(s) + ' &nbsp;→ {?}', a: 'x = ' + ans(r), key: 'a' + k + r };
+    }
+  });
+  L4('m-brueche2', ['Du löst Klammerrechnungen mit Brüchen.', 'Du löst Gleichungen mit Brüchen.', 'Du rechnest mit gemischten Zahlen und allen vier Rechenarten.'],
+    [klammer4(4), glBr(6), verbindung(4)]);
+
+  const TX_H4 = [
+    (r) => { const N = r.pick([20, 24, 30, 36, 40, 60, 72]), w = r.pick([30, 45, 60, 72, 90, 120, 150].filter(x => (x * N) % 360 === 0)); return { q: 'In einem Kreisdiagramm zu einer Umfrage mit ' + N + ' Kindern hat der Sektor „Rad“ einen Winkel von ' + w + '°. Wie viele Kinder fahren mit dem Rad? Wie viel Prozent sind das?', a: w + ' : 360 · ' + N + ' = ' + w * N / 360 + ' Kinder; ' + F(round(w / 360 * 100, 1)) + ' %' }; },
+    (r) => { const p = r.pick([12, 15, 24, 35, 45, 64]), N = r.pick([25, 50, 200, 400].filter(x => (x * p) % 100 === 0)); return { q: 'Bei einer Umfrage gaben ' + p + ' % von ' + N + ' Befragten an, täglich Sport zu machen. Wie viele Personen sind das? Welcher Winkel gehört im Kreisdiagramm dazu?', a: N + ' · ' + F(p / 100) + ' = ' + N * p / 100 + ' Personen; ' + F(round(p / 100 * 360, 1)) + '°' }; },
+    (r) => { const k = R(r, 6, 14), N = k + R(r, 4, 16); return { q: 'Lena trifft bei ' + N + ' Freiwürfen ' + k + '-mal, Tom bei ' + (N + 10) + ' Würfen ' + (k + 5) + '-mal. Wer ist relativ gesehen besser?', a: 'Lena: ' + k + ' : ' + N + ' ≈ ' + F(round(k / N * 100, 1)) + ' %, Tom: ' + (k + 5) + ' : ' + (N + 10) + ' ≈ ' + F(round((k + 5) / (N + 10) * 100, 1)) + ' % – ' + (k / N > (k + 5) / (N + 10) ? 'Lena' : k / N < (k + 5) / (N + 10) ? 'Tom' : 'beide gleich') }; }
+  ];
+  L4('m-haeufigkeiten', ['Du rechnest zwischen Anzahl, Prozent und Winkel im Kreisdiagramm.', 'Du vergleichst relative Häufigkeiten.', 'Du rechnest mit Anteilen von Anteilen.'],
+    [text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz.', TX_H4, 'h4', 3), mehrstufig(2)]);
+
+  const UMF4 = [
+    { f: 'v = s : t', g: 't', r: 't = s : v', v: (r) => { const v = R(r, 3, 20) * 5, t = R(r, 2, 6); return ['s = ' + v * t + ' km, v = ' + v + ' km/h', t + ' h']; } },
+    { f: 'A = (a + c) · h : 2', g: 'a', r: 'a = 2 · A : h − c', v: (r) => { const a = R(r, 6, 14), c = R(r, 2, 5), h = R(r, 2, 6) * 2; return ['A = ' + (a + c) * h / 2 + ' cm², c = ' + c + ' cm, h = ' + h + ' cm', a + ' cm']; } },
+    { f: 'O = 2 · (a · b + a · c + b · c)', g: 'c', r: 'c = (O : 2 − a · b) : (a + b)', v: (r) => { const a = R(r, 2, 8), b = R(r, 2, 6), c = R(r, 2, 9); return ['O = ' + 2 * (a * b + a * c + b * c) + ' cm², a = ' + a + ' cm, b = ' + b + ' cm', c + ' cm']; } },
+    { f: 'K = 4 + 2 · x', g: 'x', r: 'x = (K − 4) : 2', v: (r) => { const x = R(r, 3, 25); return ['K = ' + (4 + 2 * x) + ' €', x + ' km']; } },
+    { f: 'F = 1,8 · C + 32', g: 'C', r: 'C = (F − 32) : 1,8', v: (r) => { const C = R(r, -2, 8) * 5; return ['F = ' + F(1.8 * C + 32) + ' °F', F(C) + ' °C']; } },
+    { f: 'u = 2 · a + 2 · b', g: 'a', r: 'a = u : 2 − b', v: (r) => { const a = R(r, 3, 20), b = R(r, 2, 15); return ['u = ' + 2 * (a + b) + ' m, b = ' + b + ' m', a + ' m']; } }
+  ];
+  const fU4 = (n) => task({ title: 'Formeln umformen', instr: 'Forme die Formel nach der gesuchten Größe um und berechne sie.', n, cols: 1, w: 9,
+    gen: (rng) => { const k = rng.int(UMF4.length), f = UMF4[k], [give, val] = f.v(rng); return { q: '<b>' + f.f + '</b> nach ' + f.g + ' umformen: {?}; ' + give + ' → ' + f.g + ' = {?}', a: [f.r, val], key: 'u' + k }; } });
+  L4('m-formeln', ['Du formst auch schwierigere Formeln um (mit Klammern und mehreren Schritten).', 'Du stellst Formeln zu Sachsituationen auf.'],
+    [fU4(5), fAufstellen(2)]);
+
+  const P2 = (p) => '(' + fmt(p[0]) + ' | ' + fmt(p[1]) + ')';
+  const vec4 = (n) => task({
+    title: 'Schiebungsvektor', instr: 'Gib an, um wie viel nach rechts/links (x) und oben/unten (y) verschoben wurde: v = (Δx | Δy).', n, cols: 1, w: 4,
+    gen: (rng) => { const A = [R(rng, -6, 6), R(rng, -6, 6)], d = [R(rng, -7, 7) || 3, R(rng, -7, 7) || -2]; return { q: 'A' + P2(A) + ' → A′' + P2([A[0] + d[0], A[1] + d[1]]) + ': v = {?}', a: P2(d), key: A + '|' + d }; }
+  });
+  const dSchieben = (n) => task({
+    title: 'Dreieck verschieben', instr: 'Verschiebe alle Eckpunkte um den Vektor v. Zeichne Original und Bild in dein Heft.', n, cols: 1, w: 8,
+    gen: (rng) => { const pts = [0, 1, 2].map(() => [R(rng, -5, 5), R(rng, -5, 5)]), d = [R(rng, -6, 6) || 4, R(rng, -6, 6) || -3]; const im = pts.map(p => [p[0] + d[0], p[1] + d[1]]);
+      return { q: 'A' + P2(pts[0]) + ', B' + P2(pts[1]) + ', C' + P2(pts[2]) + ', v = ' + P2(d) + ': {?}', a: 'A′' + P2(im[0]) + ', B′' + P2(im[1]) + ', C′' + P2(im[2]), key: JSON.stringify(pts) + d }; }
+  });
+  L4('m-schiebung', ['Du bestimmst Schiebungsvektoren.', 'Du verschiebst Figuren rechnerisch.', 'Du erkennst kongruente Figuren.'],
+    [vec4(4), dSchieben(3), kongruent(2)]);
+
 })();
