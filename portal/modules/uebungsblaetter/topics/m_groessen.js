@@ -60,7 +60,7 @@
     }
   });
   UB.simple({
-    id: 'm-masse', fach: 'mathe', title: 'Maße und Größen', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Lob_Checkliste',
+    id: 'm-masse', fach: 'mathe', title: 'Maße und Größen', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Mathe_Lineal',
     merk: '<b>Länge</b>: 1 km = 1 000 m, 1 m = 10 dm = 100 cm, 1 cm = 10 mm. <b>Masse</b>: 1 t = 1 000 kg, 1 kg = 100 dag = 1 000 g, 1 dag = 10 g. <b>Hohlmaß</b>: 1 hl = 100 l, 1 l = 10 dl = 100 cl = 1 000 ml. <b>Zeit</b>: 1 d = 24 h, 1 h = 60 min, 1 min = 60 s. <b>Geld</b>: 1 € = 100 c. Kommaschreibweise: 3,5 m = 3 m 50 cm = 350 cm.',
     pools: {},
     levels: {

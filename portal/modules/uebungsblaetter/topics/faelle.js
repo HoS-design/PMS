@@ -148,7 +148,7 @@
     title: 'Die vier Fälle',
     area: 'sprache',
     klassen: [1, 2],
-    img: 'MiniHoS_Forschen_Lupe',
+    img: 'MiniHoS_Rosa_Nachdenken-Frage',
     levels: {
       1: { ichkann: ['Du kannst mit den Fragen Wer oder was?, Wessen?, Wem? und Wen oder was? nach Satzteilen fragen.', 'Du kannst die richtige Form eines Nomens auswählen.'] },
       2: { ichkann: ['Du kannst den 1. bis 4. Fall bestimmen.', 'Du kannst Nomen in den 3. und 4. Fall setzen.', 'Du kannst Nomen in allen vier Fällen aufschreiben.'] },

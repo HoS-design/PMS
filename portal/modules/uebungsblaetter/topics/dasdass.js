@@ -143,7 +143,7 @@
     title: 'das oder dass',
     area: 'rechtschreibung',
     klassen: [2],
-    img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+    img: 'MiniHoS_Rosa_Idee-Gluehbirne',
     levels: {
       1: { ichkann: ['Du kannst „das“ als Begleiter und „dass“ als Bindewort unterscheiden.', 'Du kennst die Ersatzprobe mit „ein“.'] },
       2: { ichkann: ['Du kannst „das“ und „dass“ mit der Ersatzprobe richtig schreiben.', 'Du kannst zwei Sätze mit „dass“ verbinden.'] },

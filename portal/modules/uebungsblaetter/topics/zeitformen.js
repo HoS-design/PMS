@@ -142,7 +142,7 @@
     title: 'Zeitformen',
     area: 'sprache',
     klassen: [1, 2],
-    img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    img: 'MiniHoS_Planen_Uhr',
     levels: {
       1: { ichkann: ['Du kannst Gegenwart, Mitvergangenheit und Vergangenheit unterscheiden.', 'Du kannst Verben in der Mitvergangenheit einsetzen.'] },
       2: { ichkann: ['Du kennst vier Zeitformen und ihre Namen.', 'Du kannst Sätze in eine andere Zeitform setzen.', 'Du kannst die Stammformen von Verben bilden.'] },

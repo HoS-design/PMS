@@ -86,7 +86,7 @@
   const bruchGl = (n) => task({ title: 'Bruchgleichungen', instr: 'Gib zuerst an, welche Zahl x nicht sein darf. Multipliziere dann mit dem Nenner und löse.', n, cols: 2, w: 5,
     gen: (rng, lv, i) => { const [q, s, d] = BGL[typ(rng, i, BGL.length, 'BGL4')](rng); return { q: q + '<br>{?}', a: d + '; x = ' + fmt(s), key: q }; } });
   UB.simple({
-    id: 'm-bruchterme', fach: 'mathe', title: 'Bruchterme und Bruchgleichungen', area: 'variablen', klassen: [4], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-bruchterme', fach: 'mathe', title: 'Bruchterme und Bruchgleichungen', area: 'variablen', klassen: [4], img: 'MiniHoS_Korrigieren_Rotstift',
     merk: 'Ein <b>Bruchterm</b> hat eine Variable im Nenner, z. B. ' + frac(3, 'x − 2') + '. Der Nenner darf nie 0 werden: hier x ≠ 2 (<b>Definitionsmenge</b>). <b>Kürzen</b> darf man nur Faktoren, nie Summanden: Zähler und Nenner zuerst zerlegen (herausheben, binomische Formeln), dann kürzen. Rechnen wie mit Brüchen: gleichnamig machen, dann Zähler addieren; multiplizieren: Zähler · Zähler, Nenner · Nenner; dividieren: mit dem Kehrwert multiplizieren. <b>Bruchgleichung</b>: Definitionsmenge angeben, mit dem Nenner multiplizieren, lösen, Lösung prüfen.',
     pools: {},
     levels: {
@@ -132,7 +132,7 @@
   ];
   const lgsText = (n) => task({ title: 'Textaufgaben', instr: 'Stelle zwei Gleichungen auf und löse das Gleichungssystem.', n, mode: 'lines', lines: 2, gen: (rng, lv, i) => { const x = TXL[typ(rng, i, TXL.length, 'TXL5')](rng); x.key = x.q.slice(0, 20); return x; } });
   UB.simple({
-    id: 'm-gleichungssysteme', fach: 'mathe', title: 'Lineare Gleichungssysteme', area: 'variablen', klassen: [4], img: 'MiniHoS_Digital_Laptop',
+    id: 'm-gleichungssysteme', fach: 'mathe', title: 'Lineare Gleichungssysteme', area: 'variablen', klassen: [4], img: 'MiniHoS_Erklaeren_Idee-Gluehbirne',
     merk: 'Ein <b>lineares Gleichungssystem</b> mit zwei Variablen besteht aus zwei Gleichungen (I und II). Lösung: ein Zahlenpaar (x | y), das <b>beide</b> Gleichungen erfüllt. <b>Gleichsetzungsverfahren</b>: beide Gleichungen nach derselben Variablen auflösen und gleichsetzen. <b>Einsetzungsverfahren</b>: eine Gleichung nach einer Variablen auflösen und in die andere einsetzen. <b>Additionsverfahren</b>: Gleichungen so multiplizieren, dass beim Addieren eine Variable wegfällt. <b>Grafisch</b>: Die Lösung ist der Schnittpunkt der beiden Geraden (parallele Geraden: keine Lösung). Immer die Probe machen!',
     pools: {},
     levels: {
@@ -175,7 +175,7 @@
     return { title: 'Kreuztabelle', instr: 'Ergänze die fehlenden Zahlen in der Kreuztabelle. Beantworte dann die Fragen (runde auf eine Dezimalstelle).', body: tab(false) + qs.map((q, i) => '<div class="mi">' + 'abc'[i] + ') ' + q + ' ' + UB.blank(6) + '</div>').join(''), sol: tab(true) + qs.map((q, i) => '<div class="mi">' + 'abc'[i] + ') ' + q + ' ' + UB.sol(as[i]) + '</div>').join('') };
   } });
   UB.simple({
-    id: 'm-statistik2', fach: 'mathe', title: 'Boxplot und Kreuztabellen', area: 'daten', klassen: [4], img: 'MiniHoS_Digital_Laptop',
+    id: 'm-statistik2', fach: 'mathe', title: 'Boxplot und Kreuztabellen', area: 'daten', klassen: [4], img: 'MiniHoS_Digital_Tablet',
     merk: 'Die Daten werden der Größe nach geordnet. <b>Median</b>: der Wert in der Mitte (bei gerader Anzahl: Mittelwert der beiden mittleren). <b>Unteres Quartil q₁</b>: Median der unteren Hälfte; <b>oberes Quartil q₃</b>: Median der oberen Hälfte (bei ungerader Anzahl gehört der Median zu keiner Hälfte). Zwischen q₁ und q₃ liegt die mittlere Hälfte der Daten. <b>Boxplot</b>: Box von q₁ bis q₃ mit Strich beim Median, „Antennen“ bis Minimum und Maximum. <b>Spannweite</b> = Max − Min, <b>Quartilsabstand</b> = q₃ − q₁. Eine <b>Kreuztabelle</b> zeigt zwei Merkmale gleichzeitig; Zeilen- und Spaltensummen helfen beim Ergänzen.',
     pools: {},
     levels: {
@@ -234,7 +234,7 @@
   const HKS = (n) => task({ title: 'Höhensatz und Kathetensatz', instr: 'Im rechtwinkeligen Dreieck teilt die Höhe h die Hypotenuse c in p und q. Höhensatz: h² = p · q. Kathetensatz: a² = c · p, b² = c · q.', n, cols: 1, w: 4,
     gen: (rng) => { const p = R(rng, 1, 12), q = R(rng, 1, 12), k = rng.int(2); return k ? { q: 'p = ' + p + ' cm, q = ' + q + ' cm: h ≈ {?}', a: '√(' + p + ' · ' + q + ') ≈ ' + sq2(p * q) + ' cm', key: 'h' + p + q } : { q: 'p = ' + p + ' cm, q = ' + q + ' cm (c = ' + (p + q) + ' cm): Kathete a ≈ {?} (a liegt bei p)', a: '√(' + (p + q) + ' · ' + p + ') ≈ ' + sq2((p + q) * p) + ' cm', key: 'k' + p + q }; } });
   UB.simple({
-    id: 'm-pythagoras2', fach: 'mathe', title: 'Pythagoras in Figuren und Körpern', area: 'geometrie', klassen: [4], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-pythagoras2', fach: 'mathe', title: 'Pythagoras in Figuren und Körpern', area: 'geometrie', klassen: [4], img: 'MiniHoS_Gesicht_Nachdenken-Frage-HoS',
     merk: '<b>Lehrsatz des Pythagoras</b>: Im rechtwinkeligen Dreieck gilt a² + b² = c² (c ist die Hypotenuse, sie liegt gegenüber dem rechten Winkel). Vorgehen: Skizze, rechtwinkeliges Dreieck suchen und färben, Formel aufstellen. Häufige Fälle: Rechteckdiagonale d = √(a² + b²); Höhe im gleichseitigen Dreieck h = √(a² − (a/2)²); Raute a = √((e/2)² + (f/2)²); Raumdiagonale des Quaders d = √(a² + b² + c²); Kegel s = √(r² + h²). <b>Höhensatz</b>: h² = p · q. <b>Kathetensatz</b>: a² = c · p.',
     pools: {},
     levels: {

@@ -1,6 +1,6 @@
 /* Wortbildung – 2. Klasse */
 UB.simple({
-  id: 'wortbildung', title: 'Wortbildung', area: 'sprache', klassen: [2], img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+  id: 'wortbildung', title: 'Wortbildung', area: 'sprache', klassen: [2], img: 'MiniHoS_Basteln_Schere',
   merk: '<b>Zusammensetzung</b> (Kompositum): Zwei Wörter werden verbunden – Schreib + Tisch = Schreibtisch. Das Grundwort steht hinten und bestimmt die Wortart und den Artikel, das Bestimmungswort steht vorne. <b>Ableitung</b>: Ein Wort bekommt eine Vorsilbe (Präfix: ver-, be-, un-, ent-) oder Nachsilbe (Suffix: -ung, -heit, -keit, -lich, -ig). Mit -ung, -heit, -keit, -nis, -schaft entstehen Nomen: wohnen → die Wohnung. <b>Wortfamilie</b>: Wörter mit demselben Wortstamm – fahren, Fahrer, Abfahrt, Fahrrad.',
   pools: {
     art: `der Schreibtisch|Z

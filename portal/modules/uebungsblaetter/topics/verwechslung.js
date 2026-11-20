@@ -1,6 +1,6 @@
 /* Verwechslungswörter – 2./3. Klasse */
 UB.simple({
-  id: 'verwechslung', title: 'Verwechslungswörter', area: 'rechtschreibung', klassen: [2, 3], img: 'MiniHoS_Geste_Ratlos',
+  id: 'verwechslung', title: 'Verwechslungswörter', area: 'rechtschreibung', klassen: [2, 3], img: 'MiniHoS_Geste_Stopp',
   merk: '<b>seit</b> (Zeit: seit Montag) – <b>seid</b> (Verb sein: ihr seid). <b>wieder</b> (noch einmal) – <b>wider</b> (gegen: widersprechen). <b>tot</b> (Adjektiv) – <b>der Tod</b> (Nomen). <b>statt</b> (anstatt) – <b>die Stadt</b>. <b>viel</b> (Menge) – <b>fiel</b> (fallen). <b>war</b> (sein) – <b>wahr</b> (richtig). <b>mal</b> (einmal) – <b>das Mal</b> (zum ersten Mal). <b>malen</b> (Bild) – <b>mahlen</b> (Mühle). <b>die Seite</b> (Buch) – <b>die Saite</b> (Gitarre). <b>das Lied</b> (singen) – <b>das Lid</b> (Auge). <b>ist</b> (sein) – <b>isst</b> (essen).',
   pools: {
     wahl: `Wir warten {seit|seid} einer Stunde.

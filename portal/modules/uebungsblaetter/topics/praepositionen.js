@@ -1,6 +1,6 @@
 /* Präpositionen und Fall – 2. Klasse */
 UB.simple({
-  id: 'praepositionen', title: 'Präpositionen', area: 'sprache', klassen: [2], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+  id: 'praepositionen', title: 'Präpositionen', area: 'sprache', klassen: [2], img: 'MiniHoS_Forschen_Fernglas',
   merk: '<b>Präpositionen</b> (Verhältniswörter) bestimmen den Fall des folgenden Nomens. Mit dem <b>3. Fall</b> (Dativ): aus, bei, mit, nach, seit, von, zu. Mit dem <b>4. Fall</b> (Akkusativ): durch, für, gegen, ohne, um. Mit dem <b>2. Fall</b> (Genitiv): wegen, während, trotz, statt. <b>Wechselpräpositionen</b> (an, auf, hinter, in, neben, über, unter, vor, zwischen): Wo? → 3. Fall (Die Katze liegt auf dem Sofa.) – Wohin? → 4. Fall (Die Katze springt auf das Sofa.).',
   pools: {
     sorte: `aus|D

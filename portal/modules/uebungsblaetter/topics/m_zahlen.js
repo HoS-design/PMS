@@ -80,7 +80,7 @@
   } });
 
   UB.simple({
-    id: 'm-zahlen', fach: 'mathe', title: 'Natürliche Zahlen', area: 'zahlen', klassen: [1], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-zahlen', fach: 'mathe', title: 'Natürliche Zahlen', area: 'zahlen', klassen: [1], img: 'MiniHoS_Forschen_Fernrohr',
     merk: '<b>Stellenwerte</b>: E (Einer), Z (Zehner), H (Hunderter), T (Tausender), ZT, HT, M (Million). 1 M = 1 000 000. <b>Runden</b>: Schau auf die Ziffer rechts von der Rundungsstelle – bei 0 bis 4 abrunden, bei 5 bis 9 aufrunden: 4 372 ≈ 4 400 (H). <b>Vorgänger</b> = Zahl − 1, <b>Nachfolger</b> = Zahl + 1. Große Zahlen schreibt man in Dreiergruppen: 2 450 300.',
     pools: {},
     levels: {
@@ -135,7 +135,7 @@
     }
   });
   UB.simple({
-    id: 'm-addsub', fach: 'mathe', title: 'Addieren und Subtrahieren', area: 'zahlen', klassen: [1], img: 'MiniHoS_Schreiben_Stift-Heft',
+    id: 'm-addsub', fach: 'mathe', title: 'Addieren und Subtrahieren', area: 'zahlen', klassen: [1], img: 'MiniHoS_Lob_Daumen-Hoch-2',
     merk: '<b>Addieren</b>: Summand + Summand = <b>Summe</b>. <b>Subtrahieren</b>: Minuend − Subtrahend = <b>Differenz</b>. Beim schriftlichen Rechnen schreibst du die Zahlen stellengerecht untereinander (Einer unter Einer …) und beginnst bei den Einern. Überschlage vorher: 487 + 316 ≈ 500 + 300 = 800. Probe: Differenz + Subtrahend = Minuend.',
     pools: {},
     levels: {
@@ -231,7 +231,7 @@
     gen: (rng, level) => { let e; do { e = expr(rng, level); } while (e.v < 0); return { q: e.q, a: F(e.v) }; }
   });
   UB.simple({
-    id: 'm-rechenregeln', fach: 'mathe', title: 'Rechenregeln', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+    id: 'm-rechenregeln', fach: 'mathe', title: 'Rechenregeln', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Geste_Stopp',
     merk: '<b>1. Klammern zuerst</b> (innen nach außen: ( ) vor [ ]). <b>2. Punkt vor Strich</b>: · und : vor + und −. <b>3.</b> Sonst rechnet man <b>von links nach rechts</b>. Beispiel: 20 − 3 · 4 = 20 − 12 = 8, aber (20 − 3) · 4 = 17 · 4 = 68.',
     pools: {},
     levels: {

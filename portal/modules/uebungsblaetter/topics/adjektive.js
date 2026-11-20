@@ -1,6 +1,6 @@
 /* Adjektive – 1. Klasse */
 UB.simple({
-  id: 'adjektive', title: 'Adjektive', area: 'sprache', klassen: [1], img: 'MiniHoS_Gesicht_Ueberrascht',
+  id: 'adjektive', title: 'Adjektive', area: 'sprache', klassen: [1], img: 'MiniHoS_Kreativ_Bild',
   merk: '<b>Adjektive</b> sagen, wie jemand oder etwas ist: groß, freundlich, rot. Man kann sie <b>steigern</b>: Grundstufe (schnell) – Vergleichsstufe (schneller) – Höchststufe (am schnellsten). Achtung: gut – besser – am besten, viel – mehr – am meisten. Beim Vergleich: <i>so groß <b>wie</b></i> (gleich) – <i>größer <b>als</b></i> (ungleich). Mit den Nachsilben -ig, -lich, -isch, -bar, -sam, -haft bildet man Adjektive: sonnig, freundlich, stürmisch, essbar.',
   pools: {
     steigern: `schnell => schneller – am schnellsten

@@ -1,6 +1,6 @@
 /* Bericht – 2./3. Klasse */
 UB.simple({
-  id: 'bericht', title: 'Bericht', area: 'schreiben', klassen: [2, 3], img: 'MiniHoS_Original_Notizbuch',
+  id: 'bericht', title: 'Bericht', area: 'schreiben', klassen: [2, 3], img: 'MiniHoS_Schreiben_Notiz-Idee',
   merk: 'Ein <b>Bericht</b> informiert sachlich und genau über ein Ereignis (Unfall, Schulveranstaltung, Zeitungsmeldung). Er beantwortet die <b>W-Fragen</b>: Wer? Was? Wann? Wo? Wie? Warum? Welche Folgen? Zeitform ist das <b>Präteritum</b>. Erzähle in der richtigen zeitlichen Reihenfolge, ohne Spannung, ohne Gefühle, ohne eigene Meinung und ohne wörtliche Rede. Aufbau: Einleitung (Wer? Wann? Wo? Was?) – Hauptteil (Wie? Warum? genauer Ablauf) – Schluss (Folgen).',
   pools: {
     wfrage: `**Am Montag gegen 7.30 Uhr** stießen zwei Fahrzeuge zusammen.|Wann

@@ -1,6 +1,6 @@
 /* Wortarten – 1./2. Klasse */
 UB.simple({
-  id: 'wortarten', title: 'Wortarten', area: 'sprache', klassen: [1, 2], img: 'MiniHoS_Forschen_Lupe',
+  id: 'wortarten', title: 'Wortarten', area: 'sprache', klassen: [1, 2], img: 'MiniHoS_Ordnen_Ordner',
   merk: '<b>Nomen</b> (Hund, Freude) schreibt man groß, sie haben einen Artikel. <b>Verben</b> (laufen, ist) sagen, was jemand tut oder was geschieht. <b>Adjektive</b> (groß, leise) sagen, wie etwas ist. <b>Artikel</b>: der, die, das, ein, eine. <b>Pronomen</b> stehen für ein Nomen: ich, du, er, sie, es, wir, ihr, mein … <b>Präpositionen</b> zeigen Verhältnisse: auf, unter, mit, nach, wegen … <b>Konjunktionen</b> verbinden: und, oder, aber, weil, dass … <b>Adverbien</b> sagen wann, wo, wie: heute, dort, gern …',
   pools: {
     woerter: `Hund|N

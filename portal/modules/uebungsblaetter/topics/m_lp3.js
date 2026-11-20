@@ -152,7 +152,7 @@
       if (k === 0) { const a = R(rng, 2, 10), b = R(rng, 2, 10), c = R(rng, 2, 10); const V = a * b * c; return { q: 'Ein Quader aus ' + mat + ' (Dichte ' + F(d) + ' g/cm³) ist ' + a + ' cm × ' + b + ' cm × ' + c + ' cm groß. Masse: {?}', a: 'V = ' + V + ' cm³; m = ' + V + ' · ' + F(d) + ' = ' + F(V * d) + ' g', key: mat + V }; }
       const a = R(rng, 2, 8), h = R(rng, 1, 6) * 3; const V = a * a * h / 3; return { q: 'Eine quadratische Pyramide aus ' + mat + ' (Dichte ' + F(d) + ' g/cm³) hat a = ' + a + ' cm und h = ' + h + ' cm. Masse: {?}', a: 'V = ' + F(V) + ' cm³; m = ' + F(V) + ' · ' + F(d) + ' = ' + F(round(V * d, 2)) + ' g', key: mat + 'p' + a + h }; } });
   UB.simple({
-    id: 'm-prisma', fach: 'mathe', title: 'Prisma und Pyramide', area: 'geometrie', klassen: [3], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-prisma', fach: 'mathe', title: 'Prisma und Pyramide', area: 'geometrie', klassen: [3], img: 'MiniHoS_Forschen_Prisma',
     merk: 'Ein <b>gerades Prisma</b> hat zwei deckungsgleiche, parallele Grundflächen (Dreieck, Trapez, Sechseck …) und rechteckige Seitenflächen (Mantel). <b>V = G · h</b>, <b>O = 2 · G + M</b> mit M = u · h (u = Umfang der Grundfläche). Eine <b>Pyramide</b> hat eine Grundfläche und dreieckige Seitenflächen, die in der Spitze zusammenlaufen. <b>V = G · h : 3</b> (ein Drittel des Prismas mit gleicher Grundfläche und Höhe). Quadratische Pyramide: O = a² + 4 · a · h<sub>a</sub> : 2. <b>Masse</b> = Volumen · Dichte. <b>Zusammengesetzte Körper</b> (z. B. Haus = Quader + Dachprisma): Teilvolumen addieren.',
     pools: {},
     levels: {

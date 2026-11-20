@@ -108,7 +108,7 @@
     title: 'Direkte Rede',
     area: 'rechtschreibung',
     klassen: [1, 2],
-    img: 'MiniHoS_Schreiben_Stift-Heft',
+    img: 'MiniHoS_Spielen_Theatermaske',
     levels: {
       1: { ichkann: ['Du kannst die Redezeichen „ “ richtig setzen.', 'Du weißt, dass nach dem Begleitsatz ein Doppelpunkt steht.'] },
       2: { ichkann: ['Du kannst Satzzeichen bei vorangestelltem und nachgestelltem Begleitsatz setzen.', 'Du kannst statt „sagte“ ein genaueres Verb verwenden.'] },

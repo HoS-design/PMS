@@ -1,6 +1,6 @@
 /* Brief und E-Mail – 1.–3. Klasse */
 UB.simple({
-  id: 'brief', title: 'Brief und E-Mail', area: 'schreiben', klassen: [1, 2, 3], img: 'MiniHoS_Digital_Laptop',
+  id: 'brief', title: 'Brief und E-Mail', area: 'schreiben', klassen: [1, 2, 3], img: 'MiniHoS_Rosa_Laptop-Sitzend',
   merk: '<b>Aufbau</b>: Ort und Datum – Anrede – Einleitung – Hauptteil – Schluss – Grußformel – Unterschrift. <b>Persönlicher Brief</b>: Liebe Oma, … / Hallo Max, … – Liebe Grüße. <b>Formeller Brief</b> (an Firmen, Ämter, Schule): Sehr geehrte Frau …, / Sehr geehrte Damen und Herren, … – Mit freundlichen Grüßen; dazu Absender, Empfänger und Betreff. Die höfliche Anrede schreibt man groß: Sie, Ihnen, Ihr. Nach der Anrede mit Beistrich geht es klein weiter. <b>E-Mail</b>: aussagekräftiger Betreff, kurze Absätze.',
   pools: {
     aufbau: `Ort und Datum >> Anrede >> Einleitung >> Hauptteil >> Schluss >> Grußformel >> Unterschrift

@@ -227,7 +227,7 @@
   const fUmformen = (n) => task({ title: 'Formeln umformen', instr: 'Forme die Formel nach der gesuchten Größe um und berechne sie.', n, cols: 1, w: 7,
     gen: (rng) => { const f = rng.pick(UMF), [give, val] = f.v(rng); return { q: '<b>' + f.f + '</b> nach ' + f.g + ' umformen: {?}; ' + give + ' → ' + f.g + ' = {?}', a: [f.r, val], key: f.f + give }; } });
   UB.simple({
-    id: 'm-formeln', fach: 'mathe', title: 'Formeln', area: 'variablen', klassen: [1, 2, 3], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-formeln', fach: 'mathe', title: 'Formeln', area: 'variablen', klassen: [1, 2, 3], img: 'MiniHoS_Schreiben_Notiz-Idee',
     merk: 'Eine <b>Formel</b> beschreibt mit Variablen (Buchstaben) einen Zusammenhang, z. B. A = a · b. <b>Anwenden</b>: Werte einsetzen, dann rechnen (Punkt vor Strich!). <b>Aufstellen</b>: Was bleibt gleich (feste Zahl)? Was ändert sich (Variable)? Beispiel: Grundgebühr 4 € plus 2 € pro km → K = 4 + 2 · x. <b>Umformen</b>: wie bei Gleichungen auf beiden Seiten dieselbe Umkehrrechnung: A = a · b | : a → b = A : a.',
     pools: {},
     levels: {
@@ -288,7 +288,7 @@
     gen: (rng) => { const A = [R(rng, -6, 6), R(rng, -6, 6)], dx = R(rng, -7, 7) || 2, dy = R(rng, -7, 7) || -3, B = [R(rng, -6, 6), R(rng, -6, 6)];
       return { q: 'A(' + fmt(A[0]) + ' | ' + fmt(A[1]) + ') wird auf A′(' + fmt(A[0] + dx) + ' | ' + fmt(A[1] + dy) + ') verschoben. Dann wird B(' + fmt(B[0]) + ' | ' + fmt(B[1]) + ') auf B′( {?} | {?} ) verschoben.', a: [fmt(B[0] + dx), fmt(B[1] + dy)], key: A + '|' + B + dx + dy }; } });
   UB.simple({
-    id: 'm-schiebung', fach: 'mathe', title: 'Schiebung und Kongruenz', area: 'geometrie', klassen: [2], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-schiebung', fach: 'mathe', title: 'Schiebung und Kongruenz', area: 'geometrie', klassen: [2], img: 'MiniHoS_Forschen_Magnet',
     merk: 'Bei einer <b>Schiebung</b> werden alle Punkte einer Figur um dieselbe Strecke in dieselbe Richtung verschoben (Schiebepfeil). Bildpunkte bekommen einen Strich: A → A′. Im Koordinatensystem: 3 nach rechts und 2 nach unten heißt x + 3 und y − 2. <b>Kongruent</b> (deckungsgleich) sind Figuren, die durch Verschieben, Drehen oder Spiegeln genau aufeinander passen: Alle Seitenlängen und Winkel sind gleich.',
     pools: {},
     levels: {

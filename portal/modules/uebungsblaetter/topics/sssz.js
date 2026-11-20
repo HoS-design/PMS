@@ -1,6 +1,6 @@
 /* s, ss oder ß – 1./2. Klasse */
 UB.simple({
-  id: 's-ss-sz', title: 's, ss oder ß', area: 'rechtschreibung', klassen: [1, 2], img: 'MiniHoS_Original_Notizbuch',
+  id: 's-ss-sz', title: 's, ss oder ß', area: 'rechtschreibung', klassen: [1, 2], img: 'MiniHoS_Korrigieren_Rotstift',
   merk: 'Nach einem <b>kurzen</b> Selbstlaut schreibt man <b>ss</b>: Fluss, essen, Schloss. Nach einem <b>langen</b> Selbstlaut oder nach einem Zwielaut (ei, au, eu) schreibt man <b>ß</b>, wenn das s scharf (stimmlos) klingt: Straße, groß, heißen, draußen. Klingt das s weich (summend), schreibt man <b>s</b>: Rose, Hase, lesen. Am Wortende hilft die <b>Verlängerungsprobe</b>: Gras – Gräser (weich → s), Fuß – Füße (scharf, lang → ß), Kuss – küssen (kurz → ss).',
   pools: {
     einsetzen: `Der Flu{ss|ß|s} ist breit.

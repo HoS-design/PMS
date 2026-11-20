@@ -1,6 +1,6 @@
 /* Indirekte Rede und Konjunktiv I – 3./4. Klasse */
 UB.simple({
-  id: 'indirekte-rede', title: 'Indirekte Rede (Konjunktiv I)', area: 'sprache', klassen: [3, 4], img: 'MiniHoS_Schreiben_Stift-Heft',
+  id: 'indirekte-rede', title: 'Indirekte Rede (Konjunktiv I)', area: 'sprache', klassen: [3, 4], img: 'MiniHoS_Rosa_Notizblock',
   merk: 'Mit der <b>indirekten Rede</b> gibt man wieder, was jemand gesagt hat – ohne Anführungszeichen. Man verwendet den <b>Konjunktiv I</b>: Er sagt, er <i>sei</i> müde / er <i>habe</i> Hunger / er <i>komme</i> später. Die Pronomen werden angepasst (ich → er/sie, mein → sein/ihr). Ist der Konjunktiv I gleich wie der Indikativ (sie <i>haben</i>), nimmt man den <b>Konjunktiv II</b> (sie <i>hätten</i>) oder die würde-Form. Fragen werden mit „ob“ oder dem Fragewort eingeleitet: Sie fragt, ob er mitkomme.',
   pools: {
     formen: `er kommt => er komme

@@ -154,7 +154,7 @@
   ];
   const msText = (n) => task({ title: 'Sachaufgaben', instr: 'Schreibe die Rechnung und das Ergebnis.', n, mode: 'lines', lines: 2, gen: (rng, lv, i) => { const x = TX_MS[i % TX_MS.length](rng); x.key = x.q; return x; } });
   UB.simple({
-    id: 'm-massstab', fach: 'mathe', title: 'Maßstab', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-massstab', fach: 'mathe', title: 'Maßstab', area: 'zahlen', klassen: [1, 2], img: 'MiniHoS_Unterwegs_Rucksack',
     merk: 'Der <b>Maßstab</b> gibt an, wie stark verkleinert oder vergrößert wurde. <b>1 : 100</b> heißt: 1 cm im Plan sind 100 cm = 1 m in Wirklichkeit. Plan → Wirklichkeit: <b>mal</b> der Maßstabszahl. Wirklichkeit → Plan: <b>durch</b> die Maßstabszahl (vorher in cm umwandeln!). Maßstab bestimmen: Wirklichkeit (in cm) : Plan (in cm). Bei Vergrößerungen steht die größere Zahl vorne: <b>10 : 1</b>.',
     pools: {},
     levels: {
@@ -173,7 +173,7 @@
   const bin = (n) => task({ title: 'Zweiersystem', instr: 'Im Zweiersystem gibt es nur 0 und 1. Die Stellenwerte sind 1, 2, 4, 8, 16, 32, 64 …', n, cols: 3, w: 4,
     gen: (rng) => { const x = R(rng, 3, 63); return rng.int(2) ? { q: x.toString(2) + '<sub>2</sub>', a: F(x), key: x } : { q: F(x) + ' = {?}<sub>2</sub>', a: x.toString(2), key: x }; } });
   UB.simple({
-    id: 'm-zahlensysteme', fach: 'mathe', title: 'Römische Zahlen und Zweiersystem', area: 'zahlen', klassen: [1], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-zahlensysteme', fach: 'mathe', title: 'Römische Zahlen und Zweiersystem', area: 'zahlen', klassen: [1], img: 'MiniHoS_Digital_Programmieren',
     merk: '<b>Römische Zahlzeichen</b>: I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000. Gleiche Zeichen werden addiert (III = 3), höchstens dreimal hintereinander. Steht ein kleineres Zeichen <b>vor</b> einem größeren, wird es abgezogen: IV = 4, IX = 9, XL = 40, XC = 90, CD = 400, CM = 900. Unser <b>Zehnersystem</b> ist ein Stellenwertsystem mit den Ziffern 0–9 (E, Z, H, T …). Das <b>Zweiersystem</b> verwendet nur 0 und 1, die Stellenwerte sind 1, 2, 4, 8, 16, 32 … Beispiel: 1011<sub>2</sub> = 8 + 2 + 1 = 11.',
     pools: {},
     levels: {
@@ -255,7 +255,7 @@
     r.body = r.body.replace(/<div class="mviews"><span class="blank"[^>]*><\/span><\/div>/g, '<div class="mviews">' + viewSvg([0, 0, 0], 'von vorne') + viewSvg([0, 0, 0], 'von rechts') + '</div>');
     r.sol = r.sol.replace(/<div class="mviews"><span class="sol">([\s\S]*?)<\/span><\/div>/g, '<div class="mviews">$1</div>'); return r; }; return t; };
   UB.simple({
-    id: 'm-netze', fach: 'mathe', title: 'Würfelnetze und Ansichten', area: 'geometrie', klassen: [1, 2], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-netze', fach: 'mathe', title: 'Würfelnetze und Ansichten', area: 'geometrie', klassen: [1, 2], img: 'MiniHoS_Basteln_Schere',
     merk: 'Ein <b>Würfel</b> hat 6 gleich große quadratische Flächen, 12 gleich lange Kanten und 8 Ecken; ein <b>Quader</b> hat 6 rechteckige Flächen (je zwei gegenüberliegende sind gleich). Ein <b>Netz</b> ist der „aufgeklappte“ Körper. Es gibt genau 11 verschiedene Würfelnetze. Nie Würfelnetz: 4 Quadrate in einem 2 × 2-Block, oder 5 und mehr in einer Reihe. Gegenüberliegende Flächen liegen im Netz nie nebeneinander. <b>Ansichten</b>: Vorderansicht (von vorne), Seitenansicht (von rechts oder links), Draufsicht (von oben). Im Bauplan steht, wie viele Würfel übereinander stehen.',
     pools: {},
     levels: {
@@ -308,7 +308,7 @@
   const abz = (n, from, to) => task({ title: 'Wie viele Möglichkeiten?', instr: 'Überlege mit einem Baumdiagramm oder mit der Zählregel und schreibe die Rechnung auf.', n, mode: 'lines', lines: 1,
     gen: (rng, lv, i) => { if (i === 0) plan = rng.shuffle(Array.from({ length: to - from + 1 }, (_, k) => from + k)); const idx = plan[i % plan.length]; const x = ABZ[idx](rng); x.key = 'f' + idx + (i >= plan.length ? x.q : ''); return x; } });
   UB.simple({
-    id: 'm-kombinatorik', fach: 'mathe', title: 'Abzählen und Baumdiagramme', area: 'daten', klassen: [1, 2], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-kombinatorik', fach: 'mathe', title: 'Abzählen und Baumdiagramme', area: 'daten', klassen: [1, 2], img: 'MiniHoS_Ordnen_Ordner',
     merk: 'Ein <b>Baumdiagramm</b> zeigt alle Möglichkeiten Schritt für Schritt: Jeder Ast ist eine Wahl, jeder Weg vom Anfang bis zum Ende ist eine Möglichkeit. <b>Zählregel</b>: Gibt es beim 1. Schritt a Möglichkeiten und beim 2. Schritt b Möglichkeiten, dann gibt es insgesamt a · b Möglichkeiten. <b>Reihenfolgen</b> von 4 Dingen: 4 · 3 · 2 · 1 = 24 (weil jedes Ding nur einmal vorkommt). <b>Händeschütteln</b> bei n Personen: n · (n − 1) : 2.',
     pools: {},
     levels: {

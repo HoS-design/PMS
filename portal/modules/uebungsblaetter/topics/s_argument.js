@@ -124,7 +124,7 @@ Erörtere die Frage: **Sollen Schulen Noten abschaffen?** => Einleitung ; Argume
   });
 
   UB.simple({
-    id: 'eroerterung', title: 'Erörterung', area: 'schreiben', klassen: [4], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'eroerterung', title: 'Erörterung', area: 'schreiben', klassen: [4], img: 'MiniHoS_Erklaeren_Diagramm',
     merk: '<b>Erörterung</b>: Eine Frage wird mit Argumenten von allen Seiten betrachtet. <b>Einleitung</b>: Hinführung zum Thema (aktueller Anlass, Erfahrung) und die Frage. <b>Hauptteil</b>: bei der dialektischen (Pro-Contra-)Erörterung zuerst die Argumente der Gegenseite, dann die eigene Seite; innerhalb jeder Seite vom schwächsten zum stärksten Argument. Jedes Argument: Behauptung – Begründung – Beispiel. <b>Schluss</b>: Abwägung, eigene begründete Meinung, eventuell Ausblick. Zeitform Präsens, sachliche Sprache.',
     pools: { besser, einl, konn, auftragE, uniform: PRO.uniform, handy: PRO.handy, haustier: PRO.haustier },
     levels: {

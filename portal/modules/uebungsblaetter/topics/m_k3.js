@@ -121,7 +121,7 @@
     }
   });
   UB.simple({
-    id: 'm-terme', fach: 'mathe', title: 'Terme', area: 'variablen', klassen: [3, 4], img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+    id: 'm-terme', fach: 'mathe', title: 'Terme', area: 'variablen', klassen: [3, 4], img: 'MiniHoS_Schreiben_Notizblock',
     merk: 'Nur <b>gleichartige Glieder</b> (gleiche Variable) kann man zusammenfassen: 3x + 5x = 8x, aber 3x + 5y bleibt. <b>Ausmultiplizieren</b>: 3 · (x + 4) = 3x + 12. <b>Herausheben</b>: 6x + 9 = 3 · (2x + 3). <b>Binomische Formeln</b>: (a + b)<sup>2</sup> = a<sup>2</sup> + 2ab + b<sup>2</sup>, (a − b)<sup>2</sup> = a<sup>2</sup> − 2ab + b<sup>2</sup>, (a + b)(a − b) = a<sup>2</sup> − b<sup>2</sup>.',
     pools: {},
     levels: {
@@ -211,7 +211,7 @@
     gen: (rng) => { const K = R(rng, 10, 90) * 100, p = rng.pick([1, 2, 3, 4]); return { q: 'Kapital ' + F(K) + ' €, ' + p + ' % Zinsen, 1 Jahr: {?}', a: fmt(round(K * p / 100 * 0.75, 2), 2) + ' €' }; }
   });
   UB.simple({
-    id: 'm-zinsen', fach: 'mathe', title: 'Zinsrechnung', area: 'zahlen', klassen: [3, 4], img: 'MiniHoS_Lob_Pokal',
+    id: 'm-zinsen', fach: 'mathe', title: 'Zinsrechnung', area: 'zahlen', klassen: [3, 4], img: 'MiniHoS_Mathe_Taschenrechner',
     merk: '<b>Kapital</b> K, <b>Zinssatz</b> p % (pro Jahr), <b>Zinsen</b> Z. Jahreszinsen: Z = K · p : 100. Für m Monate: Z = K · p : 100 · m : 12. <b>Zinseszinsen</b>: Kapital nach n Jahren = K · (1 + p/100)<sup>n</sup>. In Österreich werden von Sparzinsen 25 % <b>Kapitalertragsteuer</b> (KESt) abgezogen.',
     pools: {},
     levels: {
@@ -250,7 +250,7 @@
     gen: (rng) => { const k = nz(rng, -3, 3), d = R(rng, -5, 5), x = R(rng, -4, 4), on = rng.int(2); const y = k * x + d + (on ? 0 : nz(rng, -2, 2)); return { q: fstr(k, d) + ', P(' + F(x) + ' | ' + F(y) + '): {?}', a: on ? 'ja' : 'nein' }; }
   });
   UB.simple({
-    id: 'm-funktionen', fach: 'mathe', title: 'Lineare Funktionen', area: 'variablen', klassen: [4], img: 'MiniHoS_Digital_Laptop',
+    id: 'm-funktionen', fach: 'mathe', title: 'Lineare Funktionen', area: 'variablen', klassen: [4], img: 'MiniHoS_Digital_Laptop-Sitzend',
     merk: 'Eine <b>lineare Funktion</b> hat die Form y = k · x + d. Der Graph ist eine Gerade. <b>d</b> (Achsenabschnitt): Dort schneidet die Gerade die y-Achse. <b>k</b> (Steigung): Geht man 1 nach rechts, geht man k nach oben (k > 0) oder nach unten (k < 0). Ein Punkt P(x | y) liegt auf dem Graphen, wenn beim Einsetzen eine wahre Aussage entsteht.',
     pools: {},
     levels: {

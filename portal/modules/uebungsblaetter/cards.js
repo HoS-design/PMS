@@ -71,7 +71,7 @@
     return '<article class="sheet cardsheet fach-' + o.fach + (o.solution ? ' solution' : '') + '">' +
       '<header class="sh-head"><div><div class="sh-kicker">' + UB.FACH[o.fach] + ' · ' + o.klasse + '. Klasse · ' + esc(UB.LEVEL_NAMES[o.level]) + '</div>' +
       '<h1>' + esc(o.heading) + '</h1><div class="sh-meta">' + esc(o.meta) + '</div></div>' +
-      '<img class="sh-img" src="/assets/minihos/' + (o.solution ? 'MiniHoS_Lob_Pokal' : o.img) + '.webp" alt=""></header>' +
+      '<img class="sh-img" src="/assets/minihos/' + (o.solution ? 'MiniHoS_Lob_Medaille' : 'MiniHoS_Basteln_Schere') + '.webp" alt=""></header>' +
       (o.instr ? '<p class="instr cards-instr">' + o.instr + (o.hints && !o.solution ? '<br><span class="cards-hint">Zu den Aufgaben: ' + esc(o.hints) + '</span>' : '') + '</p>' : '') + inner +
       '<div class="sh-spacer"></div><footer class="sh-foot"><span>chatisthisreal.at/uebungsblaetter</span><span>Code: ' + esc(o.code) + '</span></footer></article>';
   }

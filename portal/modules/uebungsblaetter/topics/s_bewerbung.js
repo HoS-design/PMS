@@ -1,6 +1,6 @@
 /* Bewerbung und Lebenslauf – 4. Klasse */
 UB.simple({
-  id: 'bewerbung', title: 'Bewerbung und Lebenslauf', area: 'schreiben', klassen: [4], img: 'MiniHoS_Lob_Daumen-Hoch',
+  id: 'bewerbung', title: 'Bewerbung und Lebenslauf', area: 'schreiben', klassen: [4], img: 'MiniHoS_Unterwegs_Rucksack',
   merk: '<b>Bewerbungsschreiben</b> (formeller Brief): Absender – Empfänger – Ort, Datum – Betreff – Anrede – Einleitung (Worauf bewerbe ich mich? Wie habe ich davon erfahren?) – Hauptteil (Warum interessiert mich der Beruf? Was kann ich? Welche Stärken habe ich – mit Beispiel?) – Schluss (Bitte um ein Gespräch oder eine Schnupperlehre) – Mit freundlichen Grüßen – Unterschrift – Beilagen. <b>Lebenslauf</b>: tabellarisch mit Foto, persönlichen Daten, Schulbildung, Praktika, Kenntnissen (Sprachen, EDV) und Interessen.',
   pools: {
     aufbau: `Absender >> Empfänger >> Ort und Datum >> Betreff >> Anrede >> Einleitung: Worauf bewerbe ich mich? >> Hauptteil: Warum gerade ich? >> Schluss: Bitte um ein Gespräch >> Grußformel und Unterschrift >> Beilagen`,

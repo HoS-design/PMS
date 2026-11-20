@@ -1,6 +1,6 @@
 /* Fremdwörter – 3./4. Klasse */
 UB.simple({
-  id: 'fremdwoerter', title: 'Fremdwörter', area: 'rechtschreibung', klassen: [3, 4], img: 'MiniHoS_Digital_Laptop',
+  id: 'fremdwoerter', title: 'Fremdwörter', area: 'rechtschreibung', klassen: [3, 4], img: 'MiniHoS_Forschen_Globus',
   merk: '<b>Fremdwörter</b> kommen aus anderen Sprachen (Griechisch, Latein, Französisch, Englisch). Typische Schreibungen: <b>ph</b> (Physik, Strophe), <b>th</b> (Theater, Mathematik), <b>y</b> (Gymnastik, Typ), <b>rh</b> (Rhythmus). Typische Endungen: <b>-ieren</b> (telefonieren), <b>-ik</b> (Musik), <b>-ion</b> (Information), <b>-tät</b> (Qualität), <b>-ismus</b> (Tourismus), <b>-ie</b> (Fantasie). Schlag im Zweifel im Wörterbuch nach!',
   pools: {
     schreibung: `Wir gehen ins {Theater|Teater|Theather}.

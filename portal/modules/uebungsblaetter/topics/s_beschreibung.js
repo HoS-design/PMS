@@ -3,7 +3,7 @@
   const CHECK_G = ['Präsens', 'sachlich, ohne Gefühle', 'vom Ganzen zu den Einzelheiten', 'genaue Adjektive (Farbe, Form, Material)', 'treffende Verben statt „ist“ und „hat“'];
 
   UB.simple({
-    id: 'gegenstandsbeschreibung', title: 'Gegenstände und Tiere beschreiben', area: 'schreiben', klassen: [1], img: 'MiniHoS_Forschen_Lupe',
+    id: 'gegenstandsbeschreibung', title: 'Gegenstände und Tiere beschreiben', area: 'schreiben', klassen: [1], img: 'MiniHoS_Forschen_Lupe-Blatt',
     merk: '<b>Beschreibung</b>: Schreibe im Präsens, sachlich und genau, damit sich andere den Gegenstand oder das Tier vorstellen können. Aufbau: <b>Einleitung</b> (Was ist es? Gesamteindruck: Größe, Form, Farbe) – <b>Hauptteil</b> (Einzelheiten in sinnvoller Reihenfolge, z. B. von oben nach unten oder von außen nach innen) – <b>Schluss</b> (Besonderheiten, Verwendung). Verwende genaue Adjektive (dunkelblau, rechteckig, aus Leder) und treffende Verben (befindet sich, besteht aus, ist verziert mit).',
     pools: {
       besser: `Mein Rucksack ist voll cool und ich mag ihn sehr. || Mein Rucksack ist aus dunkelblauem, wasserfestem Stoff. || b || Eine Beschreibung ist sachlich und genau.
@@ -146,7 +146,7 @@ Beschreibe einen **erfundenen Räuber** für ein Fahndungsplakat. => Größe, Ge
   });
 
   UB.simple({
-    id: 'vorgangsbeschreibung', title: 'Vorgänge beschreiben', area: 'schreiben', klassen: [2], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'vorgangsbeschreibung', title: 'Vorgänge beschreiben', area: 'schreiben', klassen: [2], img: 'MiniHoS_Lob_Klemmbrett',
     merk: '<b>Vorgangsbeschreibung</b> (Anleitung, Rezept, Spielregel): Präsens, genaue Reihenfolge, einheitliche Form – entweder „du“ (Du schneidest …), „man“ (Man schneidet …) oder Passiv (Das Brot wird geschnitten). Zuerst Material oder Zutaten nennen, dann die Arbeitsschritte. Verbinde die Schritte mit Wörtern wie zuerst, danach, anschließend, sobald, zum Schluss. Verwende genaue Verben: schälen, verrühren, falten.',
     pools: {
       schritte: `Zuerst wäschst du die Äpfel. >> Dann schneidest du sie in kleine Stücke. >> Anschließend gibst du die Stücke mit etwas Wasser in einen Topf. >> Danach lässt du alles etwa zehn Minuten köcheln. >> Zum Schluss zerdrückst du die weichen Äpfel mit einer Gabel.

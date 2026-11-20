@@ -1,6 +1,6 @@
 /* Satzarten – 1. Klasse */
 UB.simple({
-  id: 'satzarten', title: 'Satzarten', area: 'sprache', klassen: [1], img: 'MiniHoS_Gesicht_Ueberrascht',
+  id: 'satzarten', title: 'Satzarten', area: 'sprache', klassen: [1], img: 'MiniHoS_Geste_Fragezeichen',
   merk: '<b>Aussagesatz</b>: Er teilt etwas mit. Am Ende steht ein Punkt. <b>Fragesatz</b>: Am Ende steht ein Fragezeichen. W-Fragen (Ergänzungsfragen) beginnen mit einem Fragewort (Wer? Wann? Warum?), Entscheidungsfragen beginnen mit dem Verb und man antwortet mit Ja oder Nein. <b>Aufforderungssatz</b>: Man bittet oder befiehlt etwas. Am Ende steht meist ein Rufzeichen. <b>Ausrufesatz</b>: Man drückt ein Gefühl aus (Freude, Schreck, Staunen). Am Ende steht ein Rufzeichen.',
   pools: {
     zeichen: `Wann beginnt der Film{?|.|!}

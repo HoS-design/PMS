@@ -31,7 +31,7 @@
   }
 
   UB.simple({
-    id: 'verben', title: 'Verben', area: 'sprache', klassen: [1], img: 'MiniHoS_Jubeln_Sprung',
+    id: 'verben', title: 'Verben', area: 'sprache', klassen: [1], img: 'MiniHoS_Rosa_Jubeln',
     merk: '<b>Verben</b> sagen, was jemand tut oder was geschieht. Die <b>Nennform</b> (Infinitiv) endet auf -en oder -n: spielen, sein. Im Satz steht die <b>Personalform</b>: ich spiele, du spielst, er spielt … Manche Verben ändern dabei den Selbstlaut: ich fahre – du fährst, ich lese – du liest. Mit der <b>Befehlsform</b> (Imperativ) fordert man auf: Lies! Komm! Seid leise!',
     pools: {
       form: `spielen :: du => du spielst

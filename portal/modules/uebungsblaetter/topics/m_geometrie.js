@@ -169,7 +169,7 @@
   } });
 
   UB.simple({
-    id: 'm-dreieckkonstruktion', fach: 'mathe', title: 'Dreiecke konstruieren', area: 'geometrie', klassen: [2, 3], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-dreieckkonstruktion', fach: 'mathe', title: 'Dreiecke konstruieren', area: 'geometrie', klassen: [2, 3], img: 'MiniHoS_Schreiben_Bleistift',
     merk: 'Beschriftung: Eckpunkte A, B, C gegen den Uhrzeigersinn; Seite a liegt gegenüber von A, b gegenüber von B, c gegenüber von C; Winkel α bei A, β bei B, γ bei C. Winkelsumme: 180°. <b>SSS</b>: c zeichnen, Kreisbögen um A (Radius b) und um B (Radius a). <b>SWS</b>: c zeichnen, α bei A antragen, b auf dem Schenkel abtragen. <b>WSW</b>: c zeichnen, α bei A und β bei B antragen – der Schnittpunkt ist C. <b>Thaleskreis</b>: Jeder Winkel im Halbkreis über AB ist 90°. <b>Höhe</b>: Normale von einer Ecke auf die gegenüberliegende Seite (bei stumpfen Winkeln auf deren Verlängerung). Umkreismittelpunkt U: Schnitt der Streckensymmetralen. Inkreismittelpunkt I: Schnitt der Winkelsymmetralen. Schwerpunkt S: Schnitt der Schwerlinien. Höhenschnittpunkt H: Schnitt der Höhen.',
     pools: {},
     levels: {
@@ -275,7 +275,7 @@
       : { title: 'Punkte eintragen', instr: 'Trage die Punkte ein und verbinde sie der Reihe nach. Welche Figur entsteht?', body: mk(false), sol: mk(true) };
   } });
   UB.simple({
-    id: 'm-koordinaten', fach: 'mathe', title: 'Koordinatensystem', area: 'geometrie', klassen: [1, 2, 3], img: 'MiniHoS_Forschen_Lupe',
+    id: 'm-koordinaten', fach: 'mathe', title: 'Koordinatensystem', area: 'geometrie', klassen: [1, 2, 3], img: 'MiniHoS_Forschen_Globus',
     merk: 'Ein Punkt hat zwei <b>Koordinaten</b>: P(x | y). Zuerst gehst du die x-Achse entlang nach rechts (bei negativen Zahlen nach links), dann parallel zur y-Achse nach oben (bei negativen Zahlen nach unten). Der Ursprung ist O(0 | 0). Merkspruch: „Erst durch den Flur (x), dann die Treppe hinauf (y).“',
     pools: {},
     levels: {

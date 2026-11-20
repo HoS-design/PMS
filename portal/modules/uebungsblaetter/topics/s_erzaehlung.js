@@ -2,7 +2,7 @@
 (function () {
   const CHECK = ['Präteritum', 'spannende Überschrift', 'Einleitung – Hauptteil – Höhepunkt – Schluss', 'Gefühle und Gedanken', 'wörtliche Rede', 'abwechslungsreiche Satzanfänge', '170–200 Wörter'];
   UB.simple({
-    id: 'erzaehlung', title: 'Erzählen', area: 'schreiben', klassen: [1, 2], img: 'MiniHoS_Schreiben_Stift-Heft',
+    id: 'erzaehlung', title: 'Erzählen', area: 'schreiben', klassen: [1, 2], img: 'MiniHoS_Lesen_Buch-Burg',
     merk: '<b>Erzählung</b>: Erzählzeit ist die Mitvergangenheit (Präteritum). <b>Einleitung</b>: Wer? Wo? Wann? – kurz. <b>Hauptteil</b>: Die Spannung steigt Schritt für Schritt bis zum <b>Höhepunkt</b>, der am ausführlichsten erzählt wird. <b>Schluss</b>: Wie ging es aus? Kurz, eventuell mit einem Gedanken. Mach deine Geschichte lebendig: wörtliche Rede, Gefühle und Gedanken, treffende Verben und Adjektive, abwechslungsreiche Satzanfänge, eine Überschrift, die neugierig macht, aber nicht alles verrät.',
     pools: {
       ordnen: `Letzten Sommer fuhr ich mit meiner Familie an den Wörthersee. >> Am zweiten Tag lieh ich mir ein Tretboot aus und fuhr weit hinaus. >> Plötzlich zogen dunkle Wolken auf und der Wind wurde immer stärker. >> Mit letzter Kraft trat ich in die Pedale, während die Wellen gegen das Boot klatschten. >> Endlich erreichte ich das Ufer, wo mich Papa erleichtert in die Arme schloss.

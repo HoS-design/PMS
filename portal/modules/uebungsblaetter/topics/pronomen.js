@@ -1,6 +1,6 @@
 /* Pronomen – 1./2. Klasse */
 UB.simple({
-  id: 'pronomen', title: 'Pronomen', area: 'sprache', klassen: [1, 2], img: 'MiniHoS_Geste_Winken',
+  id: 'pronomen', title: 'Pronomen', area: 'sprache', klassen: [1, 2], img: 'MiniHoS_Rosa_Winken-Buch',
   merk: '<b>Pronomen</b> (Fürwörter) stehen für ein Nomen oder begleiten es. <b>Personalpronomen</b>: ich, du, er, sie, es, wir, ihr, sie (mich, dir, ihm …). <b>Possessivpronomen</b> zeigen, wem etwas gehört: mein, dein, sein, ihr, unser, euer. <b>Reflexivpronomen</b> beziehen sich auf das Subjekt: ich wasche mich. <b>Demonstrativpronomen</b> weisen hin: dieser, jener, der da. <b>Relativpronomen</b> leiten einen Relativsatz ein: der, die, das, welcher.',
   pools: {
     ersetzen: `Lena kommt heute. [Sie] bringt einen Kuchen mit.

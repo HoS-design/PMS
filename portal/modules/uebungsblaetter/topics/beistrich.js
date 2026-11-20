@@ -1,6 +1,6 @@
 /* Beistrichsetzung – 1.–4. Klasse */
 UB.simple({
-  id: 'beistrich', title: 'Beistriche setzen', area: 'rechtschreibung', klassen: [1, 2, 3, 4], img: 'MiniHoS_Lob_Checkliste',
+  id: 'beistrich', title: 'Beistriche setzen', area: 'rechtschreibung', klassen: [1, 2, 3, 4], img: 'MiniHoS_Schreiben_Bleistift',
   merk: 'Ein <b>Beistrich</b> steht: 1. bei <b>Aufzählungen</b> (nicht vor und/oder): Äpfel, Birnen und Bananen. 2. vor <b>aber, sondern, doch</b>: klein, aber stark. 3. nach <b>Anreden und Ausrufen</b>: Lena, komm her! Ach, wie schade! 4. zwischen <b>Haupt- und Nebensatz</b>: Ich weiß, dass du recht hast. 5. bei <b>Einschüben</b> und Beifügungen (Appositionen) – vorne und hinten: Tom, mein Freund, kommt. 6. vor <b>Infinitivgruppen</b> mit um, ohne, statt/anstatt, außer, als: Ich lerne, um gute Noten zu bekommen. 7. bei der <b>direkten Rede</b> nach dem Redesatz: „Komm her“, rief Mama.',
   pools: {
     einfach: `Ich kaufe Äpfel, Birnen und Bananen.

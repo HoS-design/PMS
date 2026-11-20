@@ -74,7 +74,7 @@
     title: 'Aktiv und Passiv',
     area: 'sprache',
     klassen: [3, 4],
-    img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    img: 'MiniHoS_Rosa_Tafel',
     levels: {
       1: { ichkann: ['Du kannst Aktiv- und Passivsätze unterscheiden.', 'Du weißt, wie man das Passiv bildet.'] },
       2: { ichkann: ['Du kannst Sätze im Präsens vom Aktiv ins Passiv umformen.', 'Du kannst Passivsätze ins Aktiv umformen.'] },

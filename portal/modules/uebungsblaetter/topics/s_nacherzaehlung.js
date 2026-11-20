@@ -67,7 +67,7 @@
   }
 
   UB.simple({
-    id: 'nacherzaehlung', title: 'Nacherzählung', area: 'schreiben', klassen: [2], img: 'MiniHoS_Lesen_Buch-Sitzend',
+    id: 'nacherzaehlung', title: 'Nacherzählung', area: 'schreiben', klassen: [2], img: 'MiniHoS_Rosa_Lesen-Buch',
     pool: () => FABELN.map(f => storyBox(f) + '<div class="item"><b>Lehre:</b> ' + esc(f.lehre) + '</div><ol class="pool-ol">' + f.steps.map(x => '<li>' + esc(x) + '</li>').join('') + '</ol>').join(''),
     merk: '<b>Nacherzählung</b>: Erzähle eine Geschichte mit eigenen Worten nach. Halte die Reihenfolge ein und erfinde nichts dazu. Erzählzeit ist das Präteritum. Wichtige wörtliche Reden darfst du übernehmen. Tipp: Lies den Text zweimal, mach dir einen Stichwortzettel und erzähle dann ohne Vorlage. <b>Fabel</b>: kurze Geschichte, in der Tiere wie Menschen handeln; am Ende steht eine Lehre.',
     pools: {

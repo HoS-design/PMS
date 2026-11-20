@@ -125,7 +125,7 @@
   ];
   const textG = (n) => task({ title: 'Textgleichungen', instr: 'Stelle eine Gleichung auf und löse sie.', n, mode: 'lines', lines: 2, gen: (rng) => rng.pick(TX_G)(rng) });
   UB.simple({
-    id: 'm-gleichungen', fach: 'mathe', title: 'Gleichungen', area: 'variablen', klassen: [2, 3, 4], img: 'MiniHoS_Erklaeren_Tafel-Idee',
+    id: 'm-gleichungen', fach: 'mathe', title: 'Gleichungen', area: 'variablen', klassen: [2, 3, 4], img: 'MiniHoS_Gesicht_Nachdenken-Frage',
     merk: 'Eine <b>Gleichung</b> ist wie eine Waage: Was du auf einer Seite tust, musst du auch auf der anderen Seite tun. Umkehroperationen: + ↔ −, · ↔ :. Ziel: x allein auf einer Seite. Beispiel: 3x + 5 = 20 | − 5 → 3x = 15 | : 3 → x = 5. <b>Probe</b>: 3 · 5 + 5 = 20 ✓.',
     pools: {},
     levels: {
@@ -203,7 +203,7 @@
     }
   });
   UB.simple({
-    id: 'm-statistik', fach: 'mathe', title: 'Daten und Diagramme', area: 'daten', klassen: [1, 2, 3, 4], img: 'MiniHoS_Digital_Laptop',
+    id: 'm-statistik', fach: 'mathe', title: 'Daten und Diagramme', area: 'daten', klassen: [1, 2, 3, 4], img: 'MiniHoS_Erklaeren_Diagramm',
     merk: '<b>Mittelwert</b> (arithmetisches Mittel): alle Werte addieren, durch die Anzahl dividieren. <b>Median</b> (Zentralwert): Werte ordnen, der mittlere Wert (bei gerader Anzahl: Mittelwert der beiden mittleren). <b>Spannweite</b>: größter Wert − kleinster Wert. <b>Modalwert</b>: der häufigste Wert. Diagramme: Säulen-, Balken-, Kreis- und Liniendiagramm.',
     pools: {},
     levels: {
