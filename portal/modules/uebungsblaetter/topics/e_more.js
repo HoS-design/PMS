@@ -233,7 +233,7 @@ The music is loud. They play it very [loudly].`
       2: {
         ichkann: ['Du kannst Adjektiv und Adverb unterscheiden.', 'Du weißt, wann man good und wann well verwendet.'],
         tasks: [
-          { type: 'gap', pool: 'choose', n: 8, filter: x => !/tastes|look|sounds/.test(x.q), title: 'Adjective or adverb?', instr: 'Circle the correct word.' },
+          { type: 'gap', pool: 'choose', n: 8, filter: x => !/tastes|look|sounds|smells|hardly|surprising|extremely/.test(x.q), title: 'Adjective or adverb?', instr: 'Circle the correct word.' },
           { type: 'gap', pool: 'gap', n: 5, title: 'How do they do it?', instr: 'Fill in the adverb.' }
         ]
       },
@@ -315,7 +315,7 @@ Graz, [where] I live, has a famous clock tower.`
   // ------------------------------------------------------------------ conditionals
   def({
     id: 'e-conditionals', title: 'If-clauses', klassen: [3, 4], img: 'MiniHoS_Erklaeren_Idee-Gluehbirne',
-    merk: '<b>Typ 1</b> (real, gut möglich): <b>If</b> + present simple, will + Grundform: If it rains, we <b>will stay</b> at home. <b>Typ 2</b> (unwahrscheinlich, nur vorgestellt): If + past simple, <b>would</b> + Grundform: If I <b>had</b> a million euros, I <b>would buy</b> a house. (If I were you … = An deiner Stelle …) <b>Typ 3</b> (nicht mehr möglich, Vergangenheit): If + past perfect, <b>would have</b> + 3. Form: If you <b>had studied</b>, you <b>would have passed</b>. Im if-Satz steht <b>nie will oder would</b>! Beistrich, wenn der if-Satz vorne steht.',
+    merk: '<b>Typ 1</b> (real, gut möglich): <b>If</b> + present simple, will + Grundform: If it rains, we <b>will stay</b> at home. <b>Typ 2</b> (unwahrscheinlich, nur vorgestellt): If + past simple, <b>would</b> + Grundform: If I <b>had</b> a million euros, I <b>would buy</b> a house. (If I were you … = An deiner Stelle …) <b>Typ 3</b> (nicht mehr möglich, Vergangenheit): If + past perfect, <b>would have</b> + 3. Form: If you <b>had studied</b>, you <b>would have passed</b>. Im if-Satz steht <b>nie will oder would</b>! <b>unless</b> = wenn … nicht (Unless you hurry = If you don\'t hurry). Beistrich, wenn der if-Satz vorne steht.',
     pools: {
       t1: `If it [rains:rain] tomorrow, we will stay at home.
 If you hurry, you [will catch:catch] the bus.

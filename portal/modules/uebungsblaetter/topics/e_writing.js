@@ -181,7 +181,7 @@ Write a story about a day when everything went wrong. => first problem ; then â€
         tasks: [
           { type: 'order', pool: 'order', n: 1, title: 'Put the story in order.', instr: 'Number the parts.' },
           { type: 'gap', pool: 'link', n: 6, wordbox: true, title: 'Linking words', instr: 'Use the words from the box.' },
-          { type: 'write', pool: 'write', n: 1, lines: 6, title: 'Write the beginning of a story.', instr: '' }
+          { type: 'write', pool: 'write', n: 1, lines: 6, filter: x => !/ends:/.test(x.q), title: 'Write the beginning of a story.', instr: '' }
         ]
       },
       2: {

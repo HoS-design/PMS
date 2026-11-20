@@ -137,7 +137,7 @@
     const its = pick(def, spec, rng);
     const hintOf = (x) => {
       let h = x.hint;
-      if (spec.type === 'error' && spec.count !== false) { const n = diffCount(x.q, x.a); if (n) h = (h ? h + ', ' : '') + n + (def.lang === 'en' ? (n === 1 ? ' mistake' : ' mistakes') : ' Fehler'); }
+      if (spec.type === 'error' && spec.count !== false && def.lang !== 'en') { const n = diffCount(x.q, x.a); if (n) h = (h ? h + ', ' : '') + n + (def.lang === 'en' ? (n === 1 ? ' mistake' : ' mistakes') : ' Fehler'); }
       return h ? ' <span class="hint">→ ' + esc(h) + '</span>' : '';
     };
     if (spec.inline) {

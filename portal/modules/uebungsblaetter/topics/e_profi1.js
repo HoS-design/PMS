@@ -93,7 +93,7 @@ Has your sister got a dog? – Yes, she have. => Has your sister got a dog? – 
       tasks: [
         { type: 'gap', pool: 'text', n: 3, title: 'Complete the texts.', instr: 'Use have got, has got, haven\'t got, hasn\'t got – or short answers.' },
         { type: 'pair', pool: 'trans', n: 4, title: 'Translate into English.', instr: '' },
-        { type: 'error', pool: 'err', n: 4, title: 'Find the mistake.', instr: 'Write the sentences correctly.' }
+        { type: 'error', pool: 'err', n: 3, title: 'Find the mistake.', instr: 'Write the sentences correctly.' }
       ]
     }
   });
@@ -196,7 +196,6 @@ Look at that birds! => Look at those birds!`
     more: {
       isare: `There {is|are} a lot of noise outside.
 There {are|is} two bathrooms in our house.
-There {is|are} a girl and two boys at the door.
 There {are|is} lots of tourists in Salzburg.`,
       someany: `Are there {any|some} questions?
 Could I have {some|any} more juice, please?
@@ -273,7 +272,7 @@ Tom studys a lot. => Tom studies a lot.`
       tasks: [
         { type: 'gap', pool: 'text', n: 3, title: 'Complete the texts.', instr: 'There are no verbs in brackets. Think: Which verb fits? Which form?' },
         { type: 'pair', pool: 'trans', n: 3, title: 'Translate into English.', instr: '' },
-        { type: 'error', pool: 'err', n: 4, title: 'Find the mistake.', instr: 'Each sentence has one mistake. Write it correctly.' }
+        { type: 'error', pool: 'err', n: 3, title: 'Find the mistake.', instr: 'Each sentence has one mistake. Write it correctly.' }
       ]
     }
   });

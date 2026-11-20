@@ -295,7 +295,7 @@ The two friends hugged [each other].`
         tasks: [
           { type: 'pair', pool: 'subj', n: 6, inline: true, head: 'Noun', col: 'Pronoun', title: 'Which pronoun?', instr: 'Write he, she, it, we or they.' },
           { type: 'gap', pool: 'obj', n: 8, title: 'me, him, her, it, us, them', instr: 'Fill in the object pronoun.' },
-          { type: 'gap', pool: 'choose', n: 4, filter: x => /\{(me|We|them|They|him|He)\|/.test(x.q), title: 'Circle the correct word.', instr: 'Subject or object?' }
+          { type: 'gap', pool: 'choose', n: 4, filter: x => /\{(me|We|them|They|him|He)\|/.test(x.q) && !/my|My/.test(x.q), title: 'Circle the correct word.', instr: 'Subject or object?' }
         ]
       },
       2: {
@@ -397,7 +397,7 @@ The farmer has got a lot of [sheep:sheep].`
       1: {
         ichkann: ['Du kannst die Mehrzahl von Nomen bilden.', 'Du kannst a und an richtig verwenden.'],
         tasks: [
-          { type: 'pair', pool: 'plural', n: 8, filter: x => !/man|child|foot|tooth|mouse|person|knife|leaf|sheep|fish/.test(x.q), inline: true, head: 'Singular', col: 'Plural', title: 'One – many', instr: 'Write the plural.' },
+          { type: 'pair', pool: 'plural', n: 8, filter: x => !/man|child|foot|tooth|mouse|person|knife|leaf|sheep|fish|wife|potato|tomato/.test(x.q), inline: true, head: 'Singular', col: 'Plural', title: 'One – many', instr: 'Write the plural.' },
           { type: 'gap', pool: 'aan', n: 8, title: 'a or an?', instr: 'Circle a or an. Listen to the first sound!' }
         ]
       },
