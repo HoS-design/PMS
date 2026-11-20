@@ -169,4 +169,23 @@
       3: { ichkann: ['Du löst Sachaufgaben mit zusammengesetzten Körpern und Hohlkörpern.'], tasks: [drehText(4)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const TXQ4 = [
+    (r) => { const l = R(r, 8, 20), b = R(r, 4, 10), t = R(r, 12, 20) / 10, p = r.pick([200, 250, 400, 500]); const V = round(l * b * t, 2), min = V * 1000 / p; return { q: 'Ein Becken (' + l + ' m × ' + b + ' m, ' + F(t) + ' m tief) wird mit einer Pumpe gefüllt, die ' + p + ' Liter pro Minute schafft. Wie lange dauert das Füllen?', a: 'V = ' + F(V) + ' m³ = ' + F(V * 1000) + ' l; ' + F(V * 1000) + ' : ' + p + ' = ' + F(round(min, 2)) + ' min ≈ ' + Math.floor(min / 60) + ' h ' + Math.round(min % 60) + ' min' }; },
+    (r) => { const a = R(r, 6, 12), b = R(r, 4, 8), c = R(r, 3, 6), d = r.pick([40, 50, 60]); const O = a * b + 2 * a * c + 2 * b * c; return { q: 'Ein oben offener Kasten (' + a + ' dm × ' + b + ' dm, ' + c + ' dm hoch) wird außen gestrichen (Boden und vier Seiten). Eine Dose Farbe reicht für ' + d + ' dm². Wie viele Dosen braucht man?', a: 'O = ' + a + ' · ' + b + ' + 2 · ' + a + ' · ' + c + ' + 2 · ' + b + ' · ' + c + ' = ' + O + ' dm²; ' + O + ' : ' + d + ' ≈ ' + F(round(O / d, 2)) + ' → ' + Math.ceil(O / d) + ' Dosen' }; },
+    (r) => { const a = R(r, 4, 10), b = R(r, 4, 9), c1 = R(r, 2, 5), b2 = R(r, 2, b - 1), c2 = R(r, 2, 6); const V = a * b * c1 + a * b2 * c2; return { q: 'Ein Körper besteht aus zwei Quadern: unten ' + a + ' cm × ' + b + ' cm × ' + c1 + ' cm, darauf ein Quader ' + a + ' cm × ' + b2 + ' cm. Das Gesamtvolumen ist ' + V + ' cm³. Wie hoch ist der obere Quader?', a: '(' + V + ' − ' + a * b * c1 + ') : (' + a + ' · ' + b2 + ') = ' + c2 + ' cm' }; }
+  ];
+  L4('m-quaderkoerper', ['Du berechnest Volumen und Oberfläche zusammengesetzter und ausgehöhlter Körper.', 'Du löst mehrstufige Sachaufgaben und rechnest auf fehlende Maße zurück.'],
+    [qOber(2, ['hohl', 'stufe', 'turm']), text('Sachaufgaben mit mehreren Schritten', 'Fertige eine Skizze an und schreibe die Rechnung auf.', TXQ4, 'q4', 3)]);
+
+  const TXD4 = [
+    (r) => { const R0 = R(r, 4, 9), ri = R(r, 2, R0 - 1), h = R(r, 2, 8) * 10; const V = round((R0 * R0 - ri * ri) * PI * h, 2); return { q: 'Ein Rohr ist ' + h + ' cm lang und hat den Außenradius ' + R0 + ' cm. Das Material hat ein Volumen von ' + F2(V) + ' cm³. Wie groß ist der Innenradius? Wie dick ist die Wand?', a: 'r² = ' + R0 + '² − ' + F2(V) + ' : (3,14 · ' + h + ') = ' + ri * ri + ' → r = ' + ri + ' cm; Wand ' + (R0 - ri) + ' cm' }; },
+    (r) => { const rr = R(r, 2, 4), h = R(r, 8, 14); const V = rr * rr * PI * h / 3 + 2 / 3 * rr ** 3 * PI; return { q: 'Eine Eistüte (Kegel, r = ' + rr + ' cm, h = ' + h + ' cm) ist ganz mit Eis gefüllt, darauf sitzt eine Halbkugel Eis. Wie viel cm³ Eis sind das? Wie viel Prozent davon stecken in der Tüte?', a: 'Kegel ' + F2(rr * rr * PI * h / 3) + ' cm³ + Halbkugel ' + F2(2 / 3 * rr ** 3 * PI) + ' cm³ = ' + F2(V) + ' cm³; ' + F(round(rr * rr * PI * h / 3 / V * 100, 1)) + ' % in der Tüte' }; },
+    (r) => { const a = R(r, 2, 10) * 2; const rr = a / 2, Vk = 4 / 3 * rr ** 3 * PI; return { q: 'In einen Würfel (Kante ' + a + ' cm) passt genau eine Kugel. Wie viel Prozent des Würfels füllt die Kugel aus?', a: 'Würfel ' + a ** 3 + ' cm³, Kugel ' + F2(Vk) + ' cm³ → ' + F(round(Vk / a ** 3 * 100, 2)) + ' % (für jede Würfelgröße gleich!)' }; },
+    (r) => { const d = R(r, 6, 12), h = R(r, 10, 20), k = R(r, 2, 5); const rr = d / 2, V = rr * rr * PI * h, Vk = 4 / 3 * PI; return { q: 'Ein zylindrisches Glas (Durchmesser ' + d + ' cm) ist bis ' + h + ' cm hoch mit Wasser gefüllt. Es werden ' + k + ' Kugeln mit r = 1 cm hineingelegt. Um wie viel steigt der Wasserstand?', a: k + ' · 4/3 · 1³ · 3,14 ≈ ' + F2(k * Vk) + ' cm³; ' + F2(k * Vk) + ' : (' + F(rr) + '² · 3,14) ≈ ' + F2(k * Vk / (rr * rr * PI)) + ' cm' }; }
+  ];
+  L4('m-zuskoerper', ['Du rechnest bei Hohlkörpern auf fehlende Maße zurück.', 'Du vergleichst Volumina und rechnest mit Anteilen.', 'Du berechnest Oberflächen zusammengesetzter Körper.'],
+    [text('Sachaufgaben mit mehreren Schritten', 'Skizze, Rechnung, Antwort. π ≈ 3,14; runde auf zwei Dezimalstellen.', TXD4, 'd4', 3), drehOber(2, ['silo', 'kuppel', 'rohr'])]);
+
 })();
