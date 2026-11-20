@@ -254,6 +254,20 @@
     h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => { const i = inner.indexOf(':'); return '<span class="cgap"></span>' + (i < 0 ? '' : ' <span class="hint">(' + inner.slice(i + 1) + ')</span>'); });
     return h;
   }
+  // Karten-Antwort aus einer Mathe-Lösung: nur das Ergebnis, nicht die ganze Rechnung mit den Zahlen der Angabe
+  // („16 950 : 7 = 2421 Rest 3“ → „2421 Rest 3“; „3 · 125 = 375 – Er fährt 375 km.“ → „Er fährt 375 km.“)
+  function cardResult(a, q) {
+    const numsOf = h => (plainOf(h).replace(/(\d) (?=\d{3}\b)/g, '$1').match(/\d+(?:,\d+)?/g) || []);
+    const qn = new Set(numsOf(q));
+    // Antwortsatz nach dem Gedankenstrich
+    const d = a.lastIndexOf(' – ');
+    if (d > 0 && !/<[^>]*$/.test(a.slice(0, d))) { const tail = a.slice(d + 3).trim(); if (tail) return tail; }
+    // letztes „=“ außerhalb von HTML-Tags
+    let depth = 0, last = -1;
+    for (let i = 0; i < a.length; i++) { const ch = a[i]; if (ch === '<') depth++; else if (ch === '>') depth--; else if (ch === '=' && depth === 0) last = i; }
+    if (last > 0) { const pre = a.slice(0, last); if (numsOf(pre).some(n => qn.has(n))) return a.slice(last + 1).trim(); }
+    return a;
+  }
   function specPairs(def, spec, rng, level) {
     const out = [];
     if (spec.type === 'fn') {
@@ -265,8 +279,8 @@
         if (a == null) continue;
         const n = (it.q.match(/\{\?\}/g) || []).length;
         if (n > 1) continue;
-        const q = n === 1 ? it.q.replace('{?}', '<span class="cgap"></span>') : (spec.pmode === 'inline' ? it.q + ' = <span class="cgap"></span>' : it.q);
-        out.push({ q, a: String(a), instr: spec.pinstr || '' });
+        const q = n === 1 ? it.q.replace('{?}', '<span class="cgap"></span>') : (spec.pmode === 'inline' ? it.q + (/=/.test(plainOf(it.q)) ? ' → <span class="cgap"></span>' : ' = <span class="cgap"></span>') : it.q);
+        out.push({ q, a: cardResult(String(a), it.q), instr: spec.pinstr || '' });
       }
       return out;
     }

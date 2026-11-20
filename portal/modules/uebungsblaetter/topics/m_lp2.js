@@ -90,7 +90,7 @@
       if (k === 1) { const a = R(rng, 9, 17) * 5; return { q: 'Parallelogramm: α = ' + a + '°. β = {?}, γ = {?}, δ = {?}', a: [(180 - a) + '°', a + '°', (180 - a) + '°'], key: 'p' + a }; }
       if (k === 2) { const a = R(rng, 9, 17) * 5; return { q: 'Gleichschenkeliges Trapez: α = β = ' + a + '°. γ = {?}, δ = {?}', a: [(180 - a) + '°', (180 - a) + '°'], key: 't' + a }; }
       const a = R(rng, 8, 16) * 5, c = R(rng, 8, 16) * 5; if (a + c >= 300) return { q: 'Deltoid: α = 80°, γ = 60°, β = δ. β = {?}', a: '110°', key: 'd0' };
-      return { q: 'Deltoid: α = ' + a + '°, γ = ' + c + '°, β = δ. β = {?}', a: ((360 - a - c) / 2) + '°', key: 'd' + a + c };
+      return { q: 'Deltoid: α = ' + a + '°, γ = ' + c + '°, β = δ. β = {?}', a: String((360 - a - c) / 2).replace('.', ',') + '°', key: 'd' + a + c };
     }
   });
   const flDiag = (n) => task({

@@ -35,10 +35,10 @@
       let raw = [];
       try { raw = t.pairs(level, UB.makeRng(seed + (round ? '|r' + round : '')), 80) || []; } catch (e) { break; }
       raw.forEach(p => {
-        if (!F.fits(p) || leak(p)) return;
-        const ka = p.caps ? plain(p.a) : plain(p.a).toLowerCase(), kq = plain(p.q).toLowerCase();
+        if (!F.fits(p) || leak(p) || selfLeak(p)) return;
+        const ka = p.caps ? plain(p.a) : plain(p.a).toLowerCase(), kq = plain(p.q).toLowerCase().replace(/\s*[=→]\s*$/, '');
         // Memory: dieselbe Antwort höchstens zweimal (dem/den …), sonst nur „sortieren“ statt Memory
-        if (!ka || !kq || (seenA.get(ka) || 0) >= (F.dupA ? 2 : 1) || seenQ.has(kq)) return;
+        if (!ka || !kq || (seenA.get(ka) || 0) >= (F.dupA ? 2 : 1) || seenQ.has(kq) || seenQ.has(ka.toLowerCase()) || seenA.has(kq)) return;
         seenA.set(ka, (seenA.get(ka) || 0) + 1); seenQ.add(kq); cand.push(p);
       });
     }
@@ -55,13 +55,71 @@
     free.forEach(p => { if (out.length < F.n) out.push(p); });
     return UB.makeRng(seed + '|mix').shuffle(out);
   }
+  // Lässt sich ein Set ohne Wissen lösen? Für jede Frage: Hat genau eine Antwortkarte die meisten gleichen Wortanfänge
+  // (z. B. „Der Gärtner gießt die Blumen.“ ⇒ „Die Blumen werden vom Gärtner gegossen.“)? Dann findet man sie durch Vergleichen.
+  const STOP = new Set('der die das den dem des ein eine einen einem einer eines und oder ist sind war hat haben wird werden er sie es ich du wir ihr mit von zu im in am an auf für nicht wie als sich'.split(' '));
+  const toks = h => plain(h).toLowerCase().replace(/(\d) (?=\d{3}\b)/g, '$1').replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss')
+    .replace(/[^a-z0-9]+/g, ' ').split(' ').filter(w => w.length >= 3 && !STOP.has(w));
+  // gleicher Wortstamm: gemeinsamer Anfang ≥ 3 Zeichen und ≥ 60 % des kürzeren Worts (Haus/Häuser, geht/gehe, Gra?/Gras)
+  const same = (x, y) => { let k = 0; while (k < x.length && k < y.length && x[k] === y[k]) k++; return k >= 3 && k >= 0.6 * Math.min(x.length, y.length); };
+  const overlap = (qa, aa) => aa.filter(a => qa.some(q => same(q, a))).length;
+  // Paar verrät sich selbst (Antwort enthält ein Wort der Frage)? Gruppen (Zeitformen, Fälle, Groß/Klein, Auswahl) sind bewusst so gebaut.
+  // Wortanfang mit Fragezeichen („der Ku?“, „na?“): steckt er am Anfang eines Antwortworts, verrät sich das Paar
+  const frags = h => (plain(h).match(/[A-Za-zÄÖÜäöüß]+\?/g) || []).map(w => w.slice(0, -1).toLowerCase());
+  const fragLeak = p => { const f = frags(p.q); if (!f.length) return false; const aw = plain(p.a).toLowerCase().split(/[^a-zäöüß]+/); return f.some(x => aw.some(w => w.length > x.length && w.startsWith(x))); };
+  // Ziffern verraten das Ergebnis: 26 km² → 2600, 58 870 ≈ 58 900, 3 ZT + 3 T + 8 H … → 33 893, T36 → … 36
+  const numsOf = h => (plain(h).replace(/(\d)[\s\u2009\u202f](?=\d{3}(?!\d))/g, '$1').match(/\d+(?:,\d+)?/g) || []).map(n => n.replace(',', ''));
+  function numLeak(p) {
+    const Q = numsOf(p.q), A = numsOf(p.a);
+    if (!Q.length || !A.length) return false;
+    const strip = n => { const t = n.replace(/^0+/, '').replace(/0+$/, ''); return { t, z: t.length < n.replace(/^0+/, '').length }; };
+    const qs = Q.map(strip), as = A.map(strip);
+    for (const a of as) for (const q of qs) {
+      if (!a.t || !q.t) continue;
+      if (a.t === q.t && (a.t.length >= 2 || a.z || q.z)) return true;
+      let k = 0; while (k < a.t.length && k < q.t.length && a.t[k] === q.t[k]) k++;
+      if (k >= 2 && k >= 0.6 * Math.min(a.t.length, q.t.length)) return true;
+    }
+    const cat = Q.join('').replace(/0/g, ''), ca = A.join('').replace(/0/g, '');
+    if ((ca.length >= 3 || (Q.length >= 2 && ca.length >= 2)) && cat.includes(ca)) return true; // 6 l 3 dl → 6,3
+    if (/≈/.test(plain(p.q))) return true;
+    // alle Zahlen der Antwort stehen schon in der Angabe (Kinokarte 6 € → P = 6 · n)
+    if (A.every(a => Q.includes(a))) return true; // Runden: die nächstgelegene Zahl findet man ohne Rundungsregel
+    // Runden/Schätzen: Ergebnis liegt ganz nah an einer Zahl der Angabe → man findet es über die Größe
+    const val = h => (plain(h).replace(/(\d)[\s\u2009\u202f](?=\d{3}(?!\d))/g, '$1').match(/\d+(?:,\d+)?/g) || []).map(n => parseFloat(n.replace(',', '.')));
+    const qv = val(p.q).filter(v => v >= 5), av = val(p.a);
+    return av.some(a => qv.some(q => a !== q && Math.abs(a - q) / q < 0.04));
+  }
+  const selfLeak = p => !p.grp && !p.caps && !p.opt && (overlap(toks(p.q), toks(p.a)) > 0 || fragLeak(p) || numLeak(p));
+  function guessable(ps) {
+    if (!ps.length) return 1;
+    const A = ps.map(p => toks(p.a));
+    let g = 0;
+    ps.forEach((p, i) => {
+      if (p.grp && ps.some((o, j) => j !== i && o.grp === p.grp)) return; // Gegenkarte im Set: Wortvergleich hilft nicht
+      const q = toks(p.q), sc = A.map(a => overlap(q, a)), mx = Math.max(...sc);
+      if (mx > 0 && sc[i] === mx && sc.filter(x => x === mx).length === 1) g++;
+    });
+    return g / ps.length;
+  }
+  // Karten eines Blatts; fällt ein Set zu klein aus, mit abgeleitetem Startwert nachziehen (gleiches Blatt → gleiches Ergebnis)
+  function setFor(t, level, seed, fmt) {
+    const F = FORMATS[fmt]; let ps = [];
+    for (let r = 0; r < 6 && ps.length < F.n; r++) { const x = pairsFor(t, level, seed + '|' + fmt + (r ? '|n' + r : ''), fmt).slice(0, F.n); if (x.length > ps.length) ps = x; }
+    return ps;
+  }
   // Welche Formate sind für Thema + Stufe möglich? (einmal pro Thema/Stufe berechnet)
+  // Nur wenn genug Paare da sind UND man sie nicht einfach durch Wortvergleich zuordnen kann – sonst lieber nur das Arbeitsblatt.
+  const MAX_GUESS = 0.25;
   const availCache = {};
   function available(t, level) {
     const k = t.id + '|' + level;
     if (!availCache[k]) {
       availCache[k] = {};
-      Object.keys(FORMATS).forEach(f => { availCache[k][f] = pairsFor(t, level, 'avail|' + k + '|' + f, f).length >= FORMATS[f].min; });
+      Object.keys(FORMATS).forEach(f => {
+        const sets = ['avail|', 'b1|', 'b2|'].map(s => pairsFor(t, level, s + k + '|' + f, f).slice(0, FORMATS[f].n));
+        availCache[k][f] = sets.every(ps => ps.length >= FORMATS[f].min && guessable(ps) <= MAX_GUESS);
+      });
     }
     return availCache[k];
   }
@@ -153,7 +211,7 @@
 
   function build(t, info) {
     const F = FORMATS[info.format];
-    const ps = pairsFor(t, info.level, info.seed + '|' + info.format, info.format).slice(0, F.n);
+    const ps = setFor(t, info.level, info.seed, info.format);
     const hints = Array.from(new Set(ps.map(p => p.instr).filter(Boolean))).join(' ');
     const o = Object.assign({}, info, { title: t.title, img: t.img, hints: hints.length > 260 ? '' : hints, rng: UB.makeRng(info.seed + '|' + info.format + '|lay') });
     if (ps.length < F.min) return page(Object.assign({}, o, { heading: F.label + ': ' + t.title, instr: 'Für dieses Thema und diese Stufe gibt es zu wenige passende Aufgaben für ein ' + F.label + '.' }), '');
@@ -172,5 +230,5 @@
     });
   }
 
-  UB.cards = { FORMATS, available, build, pairsFor, fit };
+  UB.cards = { guessable, setFor, FORMATS, available, build, pairsFor, fit };
 })();
