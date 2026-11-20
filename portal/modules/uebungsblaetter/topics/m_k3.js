@@ -58,7 +58,7 @@
     gen: (rng) => { const b = R(rng, 2, 20); const k = rng.int(3); const v = k === 2 ? b * 10 : b; return { q: '√' + F(v * v), a: F(v), key: v }; }
   });
   const gleitkomma = (n, small) => task({
-    title: 'Zehnerpotenzen', instr: 'Schreibe in Gleitkommadarstellung (z. B. 3,4 · 10<sup>6</sup>) oder als Dezimalzahl.', n, cols: 2, w: 6,
+    title: 'Zehnerpotenzen', instr: 'Schreibe in Gleitkommadarstellung (z. B. 3,4 · 10⁶) oder als Dezimalzahl.', n, cols: 2, w: 6,
     gen: (rng) => {
       const m = round(R(rng, 11, 99) / 10, 1); const e = small && rng.int(2) ? -R(rng, 1, 5) : R(rng, 3, 9);
       const val = m * Math.pow(10, e); const dec = e < 0 ? round(val, 8).toFixed(-e + 1).replace('.', ',') : F(round(val, 0));
