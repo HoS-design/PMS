@@ -240,6 +240,10 @@
   background: #3b82f6;
 }
 
+.app-header .badge-main.is-englisch {
+  background: #16a34a;
+}
+
 .app-header .header-actions {
   margin-left: auto;
   display: flex;

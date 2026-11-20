@@ -97,9 +97,9 @@
 
   T.choice = (def, spec, rng) => {
     const its = pick(def, spec, rng);
-    const head = spec.head || 'Satz';
+    const en = def.lang === 'en', head = spec.head || (en ? 'Sentence' : 'Satz');
     if (spec.asText) {
-      const col = spec.col || 'Lösung';
+      const col = spec.col || (en ? 'Answer' : 'Lösung');
       return {
         body: table([head, col], its.map(x => [mark(x.q), blank(spec.w || 9)])),
         sol: table([head, col], its.map(x => [mark(x.q), sol(esc(optLabel(spec, x.k)))]))
@@ -137,11 +137,11 @@
     const its = pick(def, spec, rng);
     const hintOf = (x) => {
       let h = x.hint;
-      if (spec.type === 'error' && spec.count !== false) { const n = diffCount(x.q, x.a); if (n) h = (h ? h + ', ' : '') + n + (n === 1 ? ' Fehler' : ' Fehler'); }
+      if (spec.type === 'error' && spec.count !== false) { const n = diffCount(x.q, x.a); if (n) h = (h ? h + ', ' : '') + n + (def.lang === 'en' ? (n === 1 ? ' mistake' : ' mistakes') : ' Fehler'); }
       return h ? ' <span class="hint">→ ' + esc(h) + '</span>' : '';
     };
     if (spec.inline) {
-      const head = [spec.head || 'Aufgabe', spec.col || 'Lösung'];
+      const head = [spec.head || (def.lang === 'en' ? 'Task' : 'Aufgabe'), spec.col || (def.lang === 'en' ? 'Answer' : 'Lösung')];
       return {
         body: table(head, its.map(x => [mark(x.q) + hintOf(x), ''])),
         sol: table(head, its.map(x => [mark(x.q) + hintOf(x), sol(esc(x.a))]))
@@ -190,8 +190,8 @@
 
   T.write = (def, spec, rng) => {
     const x = pick(def, Object.assign({}, spec, { n: 1 }), rng)[0];
-    const check = spec.check ? '<div class="checklist"><b>Checkliste:</b> ' + spec.check.map(c => '☐ ' + esc(c)).join('&nbsp;&nbsp; ') + '</div>' : '';
-    const plan = spec.plan ? table(['Teil', 'Stichwörter'], spec.plan.map(r => ['<b>' + esc(r[0]) + '</b><br><span class="hint">' + esc(r[1]) + '</span>', '']), 'plan') : '';
+    const check = spec.check ? '<div class="checklist"><b>' + (def.lang === 'en' ? 'Checklist:' : 'Checkliste:') + '</b> ' + spec.check.map(c => '☐ ' + esc(c)).join('&nbsp;&nbsp; ') + '</div>' : '';
+    const plan = spec.plan ? table(def.lang === 'en' ? ['Part', 'Notes'] : ['Teil', 'Stichwörter'], spec.plan.map(r => ['<b>' + esc(r[0]) + '</b><br><span class="hint">' + esc(r[1]) + '</span>', '']), 'plan') : '';
     const note = spec.note ? '<div class="item"><b>' + esc(spec.note) + '</b></div>' : '';
     return {
       body: '<div class="prompt">' + mark(x.q) + '</div>' + check + plan + note + (spec.lines === 0 ? '' : lines(spec.lines || 10)),
@@ -303,7 +303,7 @@
           instr: caps ? 'Wird das Wort in GROSSBUCHSTABEN groß oder klein geschrieben? Suche die passende Schreibung.' : 'Welche Möglichkeit ist richtig? Achtung: Auch die anderen Möglichkeiten gibt es als Karte.' });
       }
     });
-    if (spec.type === 'pair' || spec.type === 'error') its.forEach(x => { if (x.a && !/\[|\{/.test(x.q)) out.push({ q: markQ(x.q) + (x.hint ? ' <span class="hint">→ ' + esc(x.hint) + '</span>' : ''), a: esc(x.a), instr: ins }); });
+    if (spec.type === 'pair' || spec.type === 'error') its.forEach(x => { if (x.a && !/\[|\{/.test(x.q)) out.push({ q: markQ(x.q) + (x.hint ? ' <span class="hint">→ ' + esc(x.hint) + '</span>' : ''), a: esc(x.a), instr: ins, grp: spec.cardGrp ? spec.cardGrp(x) : undefined }); });
     if ((spec.type === 'choice' || spec.type === 'sort') && spec.opts) its.forEach(x => { if (!/\[/.test(x.q)) out.push({ q: markQ(x.q), a: esc(optLabel(spec, x.k)), instr: ins }); });
     return out;
   }

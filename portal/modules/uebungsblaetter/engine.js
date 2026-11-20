@@ -85,9 +85,12 @@
       zahlen: 'Zahlen und Rechnen',
       variablen: 'Terme, Gleichungen, Funktionen',
       geometrie: 'Figuren und Körper',
-      daten: 'Daten und Zufall'
+      daten: 'Daten und Zufall',
+      'e-grammar': 'Grammar',
+      'e-words': 'Words and phrases',
+      'e-writing': 'Writing'
     },
-    FACH: { deutsch: 'Deutsch', mathe: 'Mathematik' },
+    FACH: { deutsch: 'Deutsch', mathe: 'Mathematik', englisch: 'Englisch' },
     LEVEL_NAMES: { 1: 'Stufe 1 · leicht', 2: 'Stufe 2 · mittel', 3: 'Stufe 3 · schwer' }
   };
 })();
