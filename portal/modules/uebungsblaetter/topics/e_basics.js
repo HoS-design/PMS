@@ -103,7 +103,7 @@ Are you and Ben friends? – Yes, [we are].`
         ichkann: ['Du kannst Fragen mit to be stellen.', 'Du kannst Kurzantworten geben (Yes, I am. / No, she isn\'t.).'],
         tasks: [
           { type: 'pair', pool: 'quest', n: 6, inline: true, head: 'Words', col: 'Question', title: 'Ask questions.', instr: 'Make questions with to be.' },
-          { type: 'gap', pool: 'answer', n: 7, title: 'Short answers', instr: 'Complete the short answers.' },
+          { type: 'gap', pool: 'answer', n: 7, bw: 8, title: 'Short answers', instr: 'Complete the short answers.' },
           { type: 'pair', pool: 'neg', n: 3, title: 'Make the sentences negative.', instr: 'Use short forms.' }
         ]
       }
@@ -195,7 +195,7 @@ My school {has|have} got a swimming pool.`
         ichkann: ['Du kannst Fragen mit have got stellen.', 'Du kannst Kurzantworten geben (Yes, I have. / No, she hasn\'t.).'],
         tasks: [
           { type: 'pair', pool: 'quest', n: 6, inline: true, head: 'Words', col: 'Question', title: 'Ask questions.', instr: 'Make questions with have got / has got.' },
-          { type: 'gap', pool: 'answer', n: 6, title: 'Short answers', instr: 'Complete the short answers.' },
+          { type: 'gap', pool: 'answer', n: 6, bw: 8, title: 'Short answers', instr: 'Complete the short answers.' },
           { type: 'gap', pool: 'form', n: 4, title: 'have got or has got?', instr: 'Fill in the correct form.' }
         ]
       }
@@ -491,14 +491,14 @@ Describe your town or village. Write 6 sentences with there is / there are. => T
         tasks: [
           { type: 'pair', pool: 'neg', n: 4, title: 'Make the sentences negative.', instr: 'Use isn\'t a … / aren\'t any …' },
           { type: 'pair', pool: 'quest', n: 4, inline: true, head: 'Words', col: 'Question', title: 'Ask questions.', instr: 'Is there a …? / Are there any …?' },
-          { type: 'gap', pool: 'answer', n: 5, title: 'Short answers', instr: 'Complete the answers.' }
+          { type: 'gap', pool: 'answer', n: 5, bw: 8, title: 'Short answers', instr: 'Complete the answers.' }
         ]
       },
       3: {
         ichkann: ['Du kannst some und any richtig verwenden.', 'Du weißt, dass man bei Angeboten und Bitten some verwendet.'],
         tasks: [
           { type: 'gap', pool: 'someany', n: 10, title: 'some or any?', instr: 'Circle the correct word.' },
-          { type: 'gap', pool: 'answer', n: 4, title: 'Short answers', instr: 'Complete the answers.' },
+          { type: 'gap', pool: 'answer', n: 4, bw: 8, title: 'Short answers', instr: 'Complete the answers.' },
           { type: 'write', pool: 'room', n: 1, lines: 5, title: 'Write about a place.', instr: 'Use some and any, too.' }
         ]
       }

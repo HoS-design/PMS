@@ -23,7 +23,7 @@
   const { esc, lines, sol, blank, table, box } = UB;
 
   // ---------------------------------------------------------------- Markup
-  function mark(s, solution) {
+  function mark(s, solution, bw) {
     let h = esc(s);
     h = h.replace(/\*\*(.+?)\*\*/g, '<b class="mk">$1</b>');
     h = h.replace(/\{([^{}]+)\}/g, (m, inner) => {
@@ -39,7 +39,7 @@
       const i = inner.indexOf(':');
       const ans = i < 0 ? inner : inner.slice(0, i);
       const hint = i < 0 ? '' : inner.slice(i + 1);
-      const w = Math.max(3, Math.round(ans.length * 0.62) + 2);
+      const w = bw || Math.max(3, Math.round(ans.length * 0.62) + 2);
       return (solution ? sol(ans) : blank(w)) + (hint ? ' <span class="hint">(' + hint + ')</span>' : '');
     });
     return h;
@@ -123,7 +123,7 @@
       wb = '<div class="wordbox">' + rng.shuffle(words).map(esc).join(' · ') + '</div>';
     }
     return {
-      body: wb + '<div class="' + cls + '">' + its.map(x => '<div class="item">' + mark(x.q) + '</div>').join('') + '</div>',
+      body: wb + '<div class="' + cls + '">' + its.map(x => '<div class="item">' + mark(x.q, false, spec.bw) + '</div>').join('') + '</div>',
       sol: wb + '<div class="' + cls + '">' + its.map(x => '<div class="item">' + mark(x.q, true) + '</div>').join('') + '</div>'
     };
   };
