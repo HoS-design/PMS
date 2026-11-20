@@ -94,8 +94,8 @@ Wir spilen im Garten. => Wir spielen im Garten.`
     level4: {
       ichkann: ['Du unterscheidest gleich klingende Wörter mit verschiedener Schreibung (Lied – Lid, Wal – Wahl).', 'Du findest Dehnungs- und Schärfungsfehler.'],
       tasks: [
-        { type: 'gap', pool: 'paar', n: 8, title: 'Welches Wort passt?', instr: 'Kreise ein. Achte auf die Bedeutung.' },
-        { type: 'error', pool: 'fehler', n: 4, filter: x => !/richtig/.test(x.a), title: 'Finde den Fehler.', instr: 'Schreibe den Satz richtig.' },
+        { type: 'gap', pool: 'paar', n: 7, title: 'Welches Wort passt?', instr: 'Kreise ein. Achte auf die Bedeutung.' },
+        { type: 'error', pool: 'fehler', n: 3, filter: x => !/richtig/.test(x.a), title: 'Finde den Fehler.', instr: 'Schreibe den Satz richtig.' },
         { type: 'sort', pool: 'markierung', cover: true, keys: ['H', 'D', 'I'], n: 6, title: 'Kennzeichen der Dehnung', instr: 'Ordne die Wörter.', opts: [['H', 'Dehnungs-h'], ['D', 'Doppelvokal'], ['I', 'ie']] }
       ]
     }

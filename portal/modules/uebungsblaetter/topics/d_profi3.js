@@ -19,7 +19,7 @@ Schreibe eine Erzählung mit einer **Rückblende**: Beginne mitten im Höhepunkt
     level4: {
       ichkann: ['Du überarbeitest Sätze stilistisch (Satzanfänge, Verben, Gefühle, wörtliche Rede).', 'Du schreibst Erzählungen mit besonderen Vorgaben (Schlusssatz, Perspektive, Reizwörter, Rückblende).'],
       tasks: [
-        { type: 'pair', pool: 'stil4', n: 4, title: 'Überarbeite die Sätze.', instr: 'Beachte den Tipp und schreibe den Satz besser.' },
+        { type: 'pair', pool: 'stil4', n: 2, title: 'Überarbeite die Sätze.', instr: 'Beachte den Tipp und schreibe den Satz besser.' },
         { type: 'write', pool: 'auftrag4', lines: 0, check: ['Präteritum (Rückblende: Plusquamperfekt)', 'Spannungsbogen mit Höhepunkt', 'innere Handlung (Gefühle, Gedanken)', 'wörtliche Rede', 'treffende Verben und Adjektive', '250–300 Wörter'], plan: [['Einleitung', 'Wer? Wo? Wann? – oder Einstieg mitten im Geschehen'], ['Hauptteil', 'Spannung steigern'], ['Höhepunkt', 'ausführlich, mit Gefühlen und wörtlicher Rede'], ['Schluss', 'Auflösung, Gedanken']], note: 'Schreibe deine Erzählung in dein Heft. Kontrolliere sie danach mit der Checkliste.', title: 'Schreibauftrag' }
       ]
     }
@@ -109,7 +109,7 @@ Du hast online Kopfhörer bestellt, die nicht funktionieren. Schreibe eine **Rek
     level4: {
       ichkann: ['Du formulierst umgangssprachliche Sätze in höfliche, sachliche Briefsprache um.', 'Du schreibst Beschwerden, Anfragen und Reklamationen formal richtig.'],
       tasks: [
-        { type: 'pair', pool: 'formell', n: 4, title: 'Formell formulieren', instr: 'Schreibe den Satz höflich und sachlich.' },
+        { type: 'pair', pool: 'formell', n: 3, title: 'Formell formulieren', instr: 'Schreibe den Satz höflich und sachlich.' },
         { type: 'write', pool: 'auftrag4', lines: 0, check: ['Absender, Empfänger, Ort/Datum, Betreff', 'passende Anrede und Grußformel', 'sachliche, höfliche Sprache', 'Sie/Ihnen/Ihr groß', 'klares Anliegen mit Begründung', 'Absätze'], plan: [['Betreff', 'Worum geht es?'], ['Einleitung', 'Anlass'], ['Hauptteil', 'genaue Angaben, Begründung'], ['Schluss', 'Bitte, Frist, Dank']], note: 'Schreibe den Brief in dein Heft oder am Computer.', title: 'Schreibauftrag' }
       ]
     }
@@ -130,7 +130,7 @@ Schreibe einen **Unfallbericht für die Versicherung**. Notizen: Mittwoch, 8.10 
     level4: {
       ichkann: ['Du formulierst Ausdrücke sachlich und ohne Wertung um.', 'Du schreibst einen Zeitungs- oder Unfallbericht mit Überschrift, Vorspann und indirekter Rede.'],
       tasks: [
-        { type: 'pair', pool: 'umf4', n: 4, title: 'Sachlich formulieren', instr: 'Schreibe den Satz so, dass er in einen Bericht passt.' },
+        { type: 'pair', pool: 'umf4', n: 3, title: 'Sachlich formulieren', instr: 'Schreibe den Satz so, dass er in einen Bericht passt.' },
         { type: 'write', pool: 'auftrag4', lines: 0, check: ['Überschrift', 'Vorspann mit den wichtigsten W-Fragen', 'Präteritum', 'zeitliche Reihenfolge', 'sachlich, keine Gefühle', 'Aussagen in indirekter Rede'], plan: [['Überschrift', 'kurz, informativ'], ['Vorspann', 'Wer? Was? Wann? Wo?'], ['Hauptteil', 'Wie? Warum? Ablauf'], ['Schluss', 'Folgen, Ausblick']], note: 'Schreibe den Bericht in dein Heft.', title: 'Schreibauftrag' }
       ]
     }
@@ -212,7 +212,7 @@ Schreibe zusätzlich einen **tabellarischen Lebenslauf** zur Bewerbung für das 
     level4: {
       ichkann: ['Du formulierst Sätze in passende Bewerbungssprache um.', 'Du schreibst eine vollständige Bewerbung mit Lebenslauf.'],
       tasks: [
-        { type: 'pair', pool: 'formel', n: 4, title: 'Bewerbungssprache', instr: 'Schreibe den Satz so, wie er in eine Bewerbung passt.' },
+        { type: 'pair', pool: 'formel', n: 3, title: 'Bewerbungssprache', instr: 'Schreibe den Satz so, wie er in eine Bewerbung passt.' },
         { type: 'write', pool: 'auftrag4', lines: 0, check: ['Absender, Empfänger, Ort/Datum, Betreff', 'Bezug auf die Anzeige', 'Motivation und Stärken mit Beispielen', 'formelle Sprache, Sie groß', 'Bitte um Gespräch', 'Beilagen'], plan: [['Einleitung', 'Bewerbung worauf? Anzeige'], ['Hauptteil', 'Motivation, Stärken, Erfahrungen'], ['Schluss', 'Bitte um Gespräch, Grußformel'], ['Beilagen', 'Lebenslauf, Zeugnis']], note: 'Schreibe die Bewerbung in dein Heft oder am Computer.', title: 'Schreibauftrag' }
       ]
     }

@@ -53,8 +53,8 @@ It isn't cold? => Isn't it cold?`
       ichkann: ['Du verwendest to be in Texten sicher – auch Verneinungen und Fragen.', 'Du kannst einfache Sätze mit to be ins Englische übersetzen.', 'Du findest Fehler bei am, is, are.'],
       tasks: [
         { type: 'gap', pool: 'text', n: 3, title: 'Complete the texts.', instr: 'Fill in am, is, are, isn\'t, aren\'t or am not.' },
-        { type: 'pair', pool: 'trans', n: 4, title: 'Translate into English.', instr: 'Use short forms.' },
-        { type: 'error', pool: 'err', n: 4, filter: x => !/isn't cold/.test(x.q), title: 'Find the mistake.', instr: 'Each sentence has one mistake. Write it correctly.' }
+        { type: 'pair', pool: 'trans', n: 3, title: 'Translate into English.', instr: 'Use short forms.' },
+        { type: 'error', pool: 'err', n: 3, filter: x => !/isn't cold/.test(x.q), title: 'Find the mistake.', instr: 'Each sentence has one mistake. Write it correctly.' }
       ]
     }
   });

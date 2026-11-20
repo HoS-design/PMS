@@ -161,7 +161,7 @@
   }
 
   function taskEinsetzen4(rng) {
-    const its = pick4(rng, 5);
+    const its = pick4(rng, 4);
     return {
       title: 'Setze im richtigen Fall ein.',
       instr: 'Begleiter, Adjektiv und Nomen müssen zusammenpassen. Achte auf die Präposition!',

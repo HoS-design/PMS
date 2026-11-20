@@ -58,7 +58,7 @@
 
   function taskUmformen4(rng, dir) {
     const pool = PAIRS4.filter(x => dir === 'pa' ? !x.man : true);
-    const its = rng.fresh(pool, dir === 'ap' ? 4 : 3, x => x.a);
+    const its = rng.fresh(pool, dir === 'ap' ? 3 : 2, x => x.a);
     const from = (x) => dir === 'ap' ? x.a : x.p, to = (x) => dir === 'ap' ? x.p : x.a;
     return {
       title: dir === 'ap' ? 'Forme ins Passiv um.' : 'Forme ins Aktiv um.',
@@ -69,7 +69,7 @@
   }
 
   function taskZustand(rng) {
-    const zs = rng.shuffle(rng.sample(ZUSTAND.filter(x => x[1] === 'Z'), 3).concat(rng.sample(ZUSTAND.filter(x => x[1] === 'V'), 3)));
+    const zs = rng.shuffle(rng.sample(ZUSTAND.filter(x => x[1] === 'Z'), 3).concat(rng.sample(ZUSTAND.filter(x => x[1] === 'V'), 2)));
     return {
       title: 'Vorgang oder Zustand?',
       instr: 'Vorgangspassiv (werden + Partizip II): Etwas geschieht gerade. Zustandspassiv (sein + Partizip II): Das Ergebnis ist schon da. Kreuze an.',

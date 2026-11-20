@@ -54,7 +54,7 @@
 
   function taskSetzen(level, rng) {
     const forms = level === 1 ? ['vorne'] : (level === 2 ? ['vorne', 'hinten'] : (level === 4 ? ['mitte', 'hinten', 'mitte', 'vorne', 'hinten'] : ['vorne', 'hinten', 'mitte']));
-    const n = level === 1 ? 5 : (level === 2 ? 6 : (level === 4 ? 5 : 4));
+    const n = level === 1 ? 5 : (level === 2 ? 6 : (level === 4 ? 4 : 4));
     const its = [];
     for (let i = 0; i < n; i++) its.push(make(forms[i % forms.length], rng));
     const sh = rng.shuffle(its);
@@ -109,8 +109,8 @@
     const lage = rng.pick(['bemerken kurz vor dem Schulausflug, dass der Bus schon abgefahren ist', 'finden im Keller eine alte, verschlossene Kiste', 'sollen gemeinsam ein Referat halten, aber einer hat alles vergessen']);
     return {
       title: 'Schreibe ein Gespräch.',
-      instr: name1 + ' und ' + name2 + ' ' + lage + '. Schreibe sechs Sätze mit direkter Rede: jede Stellung des Begleitsatzes mindestens einmal, mindestens eine Frage und ein Ausruf, kein „sagte“.',
-      body: lines(6),
+      instr: name1 + ' und ' + name2 + ' ' + lage + '. Schreibe ein Gespräch mit direkter Rede (mindestens sechs Sätze): jede Stellung des Begleitsatzes mindestens einmal, mindestens eine Frage und ein Ausruf, kein „sagte“.',
+      body: '<div class="item hint">Schreibe das Gespräch in dein Heft.</div>',
       sol: '<div class="item">Eigene Lösung. Beispiel für die drei Stellungen:</div><div class="item">' + sol(esc(name1 + ' rief: „Oh nein, schau mal!“')) + '<br>' +
         sol(esc('„Was ist denn los?“, fragte ' + name2 + '.')) + '<br>' + sol(esc('„Keine Panik“, meinte ' + name1 + ', „wir finden eine Lösung.“')) + '</div>'
     };
