@@ -290,4 +290,140 @@
       3: { ichkann: ['Du löst Sachaufgaben zu Zylinder, Kegel und Kugel.'], tasks: [textKo(3), koerper(3, ['zylinder', 'kugel', 'kegelO'])] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const mixZ4 = (n) => task({
+    title: 'Gemischte Aufgaben', instr: 'Klammern zuerst, dann Potenzen, dann Punkt vor Strich.', n, cols: 2, w: 3.5,
+    gen: (rng) => {
+      const a = nz(rng, -6, 6), b = nz(rng, -9, 9), c = nz(rng, -9, 9), d = nz(rng, 2, 5), k = rng.int(4);
+      if (k === 0) return { q: (a < 0 ? '(' + F(a) + ')' : F(a)) + '<sup>2</sup> − ' + d + ' · ' + P(b), a: F(a * a - d * b) };
+      if (k === 1) { const q = nz(rng, -9, 9), s = b - c === 0 ? 1 : b - c; return { q: F(q * s) + ' : [' + F(b) + ' − ' + P(c) + ']' + (s === b - c ? '' : ''), a: F(q), skip: s !== b - c }; }
+      if (k === 2) return { q: '−' + d + ' · [' + F(b) + ' − (' + F(c) + ' + ' + P(a) + ')]', a: F(-d * (b - (c + a))) };
+      return { q: (a < 0 ? '(' + F(a) + ')' : F(a)) + '<sup>3</sup> + ' + P(b) + ' · ' + P(c), a: F(a * a * a + b * c) };
+    }
+  });
+  const TX_Z4 = [
+    (r) => { const t1 = R(r, -18, -4), t2 = R(r, 3, 14), h = R(r, 4, 9); return { q: 'In der Früh hatte es ' + F(t1) + ' °C, zu Mittag ' + F(t2) + ' °C. Um wie viel Grad ist es pro Stunde wärmer geworden, wenn ' + h + ' Stunden vergangen sind? (auf eine Dezimalstelle runden)', a: F(t2) + ' − ' + P(t1) + ' = ' + (t2 - t1) + ' °C; ' + (t2 - t1) + ' : ' + h + ' ≈ ' + F(round((t2 - t1) / h, 1)) + ' °C pro Stunde' }; },
+    (r) => { const k = R(r, -300, -50), e = R(r, 2, 6) * 50, a = R(r, 40, 90); return { q: 'Ein Konto steht bei ' + F(k) + ' €. Es werden ' + e + ' € eingezahlt, dann dreimal ' + a + ' € abgehoben. Wie hoch ist der Kontostand?', a: F(k) + ' + ' + e + ' − 3 · ' + a + ' = ' + F(k + e - 3 * a) + ' €' }; },
+    (r) => { const tief = R(r, 8, 30), hoch = R(r, 120, 900); return { q: 'Ein Taucher ist ' + tief + ' m unter dem Meeresspiegel, eine Möwe fliegt ' + hoch + ' m darüber. Wie groß ist der Höhenunterschied?', a: hoch + ' − (−' + tief + ') = ' + (hoch + tief) + ' m' }; }
+  ];
+  L4('m-negative', ['Du rechnest mit ganzen Zahlen auch bei Klammern und Potenzen.', 'Du löst Sachaufgaben mit negativen Zahlen.'],
+    [task(Object.assign({}, { title: 'Gemischte Aufgaben', instr: 'Klammern zuerst, dann Potenzen, dann Punkt vor Strich.', n: 8, cols: 2, w: 3.5, gen: (rng) => { let it; do { it = mixZ4(1).gen(rng); } while (it.skip); return it; } })),
+     text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz.', TX_Z4, 'z4', 3)]);
+
+  const supE = (b, e) => sup(b, e < 0 ? '−' + -e : e);
+  const potRech = (n) => task({
+    title: 'Potenzregeln anwenden', instr: 'Vereinfache und berechne, wenn möglich.', n, cols: 2, w: 4,
+    gen: (rng) => {
+      const k = rng.int(4);
+      if (k === 0) { const a = R(rng, 2, 6), b = R(rng, 2, 6), c = R(rng, 2, a + b - 1); return { q: sup(2, a) + ' · ' + sup(2, b) + ' : ' + sup(2, c), a: sup(2, a + b - c) + ' = ' + F(Math.pow(2, a + b - c)) }; }
+      if (k === 1) { const a = R(rng, 2, 4), b = R(rng, 2, 3), c = R(rng, 1, 5); return { q: '(' + sup('x', a) + ')<sup>' + b + '</sup> · ' + sup('x', c), a: sup('x', a * b + c) }; }
+      if (k === 2) { const a = -R(rng, 2, 6), b = R(rng, 3, 9); return { q: supE(10, a) + ' · ' + supE(10, b), a: supE(10, a + b) + ' = ' + F(Math.pow(10, a + b)) }; }
+      const a = R(rng, 2, 9), b = R(rng, 2, 4); return { q: sup(a, b) + ' · ' + sup(a, 0) + ' + ' + sup(a, 1), a: F(Math.pow(a, b) + 1 + a) };
+    }
+  });
+  const gkRech = (n) => task({
+    title: 'Rechnen in Gleitkommadarstellung', instr: 'Gib das Ergebnis in Gleitkommadarstellung an.', n, cols: 1, w: 6,
+    gen: (rng) => {
+      const m1 = R(rng, 2, 4), m2 = R(rng, 2, 2), e1 = R(rng, 3, 8), e2 = R(rng, 2, 6);
+      if (rng.int(2)) { const m = m1 * m2; return { q: '(' + m1 + ' · ' + sup(10, e1) + ') · (' + m2 + ' · ' + sup(10, e2) + ')', a: (m >= 10 ? F(m / 10) + ' · ' + sup(10, e1 + e2 + 1) : m + ' · ' + sup(10, e1 + e2)) }; }
+      const q = R(rng, 2, 4), d = R(rng, 2, 2); return { q: '(' + q * d + ' · ' + sup(10, e1 + e2) + ') : (' + d + ' · ' + sup(10, e2) + ')', a: q + ' · ' + sup(10, e1) };
+    }
+  });
+  const TX_POT4 = [
+    (r) => { const j = R(r, 2, 9); return { q: 'Licht legt in einer Sekunde etwa 3 · ' + sup(10, 5) + ' km zurück. Wie weit kommt es in ' + j + ' · ' + sup(10, 2) + ' Sekunden?', a: '3 · ' + sup(10, 5) + ' · ' + j + ' · ' + sup(10, 2) + ' = ' + (3 * j >= 10 ? F(3 * j / 10) + ' · ' + sup(10, 8) : 3 * j + ' · ' + sup(10, 7)) + ' km' }; },
+    (r) => { const n = R(r, 2, 6); return { q: 'Ein Bakterium teilt sich alle 20 Minuten. Wie viele Bakterien sind es nach ' + n + ' Stunden, wenn man mit einem beginnt?', a: sup(2, 3 * n) + ' = ' + F(Math.pow(2, 3 * n)) + ' Bakterien' }; },
+    (r) => { const m = R(r, 2, 9), e = R(r, 6, 8); return { q: 'Ein Sandkorn wiegt etwa ' + m + ' · ' + supE(10, -4) + ' g. Wie viel wiegen ' + sup(10, e) + ' Sandkörner in kg?', a: m + ' · ' + supE(10, e - 4) + ' g = ' + F(m * Math.pow(10, e - 4) / 1000) + ' kg' }; }
+  ];
+  L4('m-potenzen', ['Du wendest die Potenzregeln auch bei negativen Hochzahlen an.', 'Du rechnest mit Zahlen in Gleitkommadarstellung.', 'Du löst Sachaufgaben mit großen und kleinen Zahlen.'],
+    [potRech(6), gkRech(3), text('Sachaufgaben', 'Schreibe die Rechnung und das Ergebnis.', TX_POT4, 'pt4', 2)]);
+
+  const v2 = (v) => v + '<sup>2</sup>';
+  const zweiKl = (n) => task({
+    title: 'Klammern auflösen und zusammenfassen', instr: 'Multipliziere aus und fasse zusammen.', n, cols: 2, w: 7,
+    gen: (rng) => {
+      const k = rng.int(2);
+      if (k === 0) { const a = R(rng, 2, 6), b = nz(rng, -7, 7), c = R(rng, 2, 5); let d; do { d = nz(rng, -7, 7); } while (d === b); return { q: a + ' · (x' + (b < 0 ? ' − ' + -b : ' + ' + b) + ') − ' + c + ' · (x' + (d < 0 ? ' − ' + -d : ' + ' + d) + ')', a: term([[a - c, 'x'], [a * b - c * d, '']]) }; }
+      const a = R(rng, 1, 4), b = nz(rng, -6, 6), c = R(rng, 1, 3), d = nz(rng, -6, 6);
+      const A = (m, v) => (m === 1 ? '' : m) + v;
+      return { q: '(' + A(a, 'x') + (b < 0 ? ' − ' + -b : ' + ' + b) + ') · (' + A(c, 'x') + (d < 0 ? ' − ' + -d : ' + ' + d) + ')', a: term([[a * c, v2('x')], [a * d + b * c, 'x'], [b * d, '']]) };
+    }
+  });
+  const heraus2 = (n) => task({
+    title: 'Herausheben mit Variablen', instr: 'Hebe den größten gemeinsamen Faktor (Zahl und Variable) heraus.', n, cols: 2, w: 6,
+    gen: (rng) => { const k = R(rng, 2, 6); let a, b; do { a = R(rng, 1, 5); b = R(rng, 1, 7); } while (M.gcd(a, b) !== 1); return { q: term([[k * a, v2('x')], [k * b, 'x']]), a: k + 'x · (' + term([[a, 'x'], [b, '']]) + ')', key: k * a + 'xx' + k * b }; }
+  });
+  const binomR = (n) => task({
+    title: 'Binomische Formeln rückwärts', instr: 'Schreibe als Quadrat oder als Produkt.', n, cols: 2, w: 6,
+    gen: (rng) => {
+      const b = R(rng, 1, 9), k = rng.int(3);
+      if (k === 0) return { q: term([[1, v2('x')], [2 * b, 'x'], [b * b, '']]), a: '(x + ' + b + ')<sup>2</sup>' };
+      if (k === 1) return { q: term([[1, v2('x')], [-2 * b, 'x'], [b * b, '']]), a: '(x − ' + b + ')<sup>2</sup>' };
+      return { q: term([[1, v2('x')], [-b * b, '']]), a: '(x + ' + b + ') · (x − ' + b + ')' };
+    }
+  });
+  L4('m-terme', ['Du multiplizierst zwei Klammern aus.', 'Du hebst Zahlen und Variablen heraus.', 'Du wendest die binomischen Formeln auch rückwärts an.'],
+    [zweiKl(6), heraus2(4), binomR(6)]);
+
+  const TX_PY4 = [
+    (r) => { const a = R(r, 3, 12), b = R(r, 2, 8), c = R(r, 2, 8); const d = Math.sqrt(a * a + b * b + c * c); return { q: 'Ein Quader ist ' + a + ' cm lang, ' + b + ' cm breit und ' + c + ' cm hoch. Wie lang ist die Raumdiagonale?', a: 'Flächendiagonale: √(' + a + '² + ' + b + '²) ≈ ' + F2(Math.sqrt(a * a + b * b)) + ' cm; Raumdiagonale: √(' + a + '² + ' + b + '² + ' + c + '²) ≈ ' + F2(d) + ' cm' }; },
+    (r) => { const a = R(r, 4, 16); return { q: 'Ein gleichseitiges Dreieck hat die Seitenlänge ' + a + ' cm. Wie hoch ist es? Wie groß ist seine Fläche?', a: 'h = √(' + a + '² − ' + F(a / 2) + '²) ≈ ' + F2(Math.sqrt(3) / 2 * a) + ' cm; A ≈ ' + F2(a * round(Math.sqrt(3) / 2 * a, 2) / 2) + ' cm²' }; },
+    (r) => { const x1 = R(r, -4, 2), y1 = R(r, -3, 2), t = r.pick([[3, 4], [6, 8], [5, 12], [4, 3], [8, 6]]); const x2 = x1 + t[0], y2 = y1 + t[1]; return { q: 'Wie weit sind die Punkte A(' + F(x1) + ' | ' + F(y1) + ') und B(' + F(x2) + ' | ' + F(y2) + ') voneinander entfernt (1 Einheit = 1 cm)?', a: 'Δx = ' + t[0] + ', Δy = ' + t[1] + '; AB = √(' + t[0] + '² + ' + t[1] + '²) = ' + Math.sqrt(t[0] ** 2 + t[1] ** 2) + ' cm' }; },
+    (r) => { const g = R(r, 6, 16) * 2, s = g / 2 + R(r, 2, 8); const h = Math.sqrt(s * s - g * g / 4); return { q: 'Ein Satteldach ist ' + g + ' m breit, die Dachschrägen sind je ' + s + ' m lang. Wie hoch ist der Dachgiebel?', a: 'h = √(' + s + '² − ' + g / 2 + '²) ≈ ' + F2(h) + ' m' }; }
+  ];
+  L4('m-pythagoras', ['Du berechnest Raumdiagonalen und Höhen mit dem pythagoräischen Lehrsatz.', 'Du berechnest Abstände im Koordinatensystem.'],
+    [pyth(3, 'kathete'), text('Sachaufgaben', 'Fertige eine Skizze an und rechne. Runde auf zwei Dezimalstellen.', TX_PY4, 'py4', 3)]);
+
+  const TX_KR4 = [
+    (r) => { const R2 = R(r, 6, 15), r1 = R(r, 2, R2 - 2); return { q: 'Ein Kreisring hat den Außenradius ' + R2 + ' cm und den Innenradius ' + r1 + ' cm. Wie groß ist seine Fläche?', a: 'A = ' + R2 + '² · 3,14 − ' + r1 + '² · 3,14 = ' + F2((R2 * R2 - r1 * r1) * PI) + ' cm²' }; },
+    (r) => { const d = r.pick([50, 56, 60, 66, 70]), km = R(r, 1, 5); const u = d * PI; return { q: 'Ein Fahrrad hat Räder mit ' + d + ' cm Durchmesser. Wie oft dreht sich ein Rad auf einer Strecke von ' + km + ' km?', a: 'u = ' + d + ' · 3,14 = ' + F2(u) + ' cm; ' + F(km * 100000) + ' : ' + F2(u) + ' ≈ ' + F(Math.round(km * 100000 / u)) + ' Umdrehungen' }; },
+    (r) => { const a = R(r, 4, 20) * 2; return { q: 'In ein Quadrat mit der Seitenlänge ' + a + ' cm wird ein möglichst großer Kreis gezeichnet. Wie groß ist die Fläche, die vom Quadrat übrig bleibt?', a: a + '² − ' + a / 2 + '² · 3,14 = ' + a * a + ' − ' + F2(a * a / 4 * PI) + ' = ' + F2(a * a - a * a / 4 * PI) + ' cm²' }; },
+    (r) => { const u = R(r, 40, 120); const rr = u / (2 * PI); return { q: 'Ein Baumstamm hat einen Umfang von ' + u + ' cm. Wie groß ist die Querschnittsfläche?', a: 'r = ' + u + ' : (2 · 3,14) ≈ ' + F2(rr) + ' cm; A ≈ ' + F2(round(rr, 2) ** 2 * PI) + ' cm²' }; }
+  ];
+  L4('m-kreis', ['Du berechnest Kreisringe und zusammengesetzte Flächen.', 'Du löst Sachaufgaben mit Umfang und Fläche.'],
+    [kreisRueck(4), text('Sachaufgaben', 'Rechne mit π ≈ 3,14 und runde auf zwei Dezimalstellen.', TX_KR4, 'kr4', 3)]);
+
+  const zinsR = (n) => task({
+    title: 'Rückwärts rechnen', instr: 'Berechne die fehlende Größe (Zinsen für 1 Jahr).', n, cols: 1, w: 5,
+    gen: (rng) => {
+      const K = R(rng, 5, 80) * 100, p = rng.pick([0.5, 1, 1.5, 2, 2.5, 3, 4]), Z = round(K * p / 100, 2);
+      return rng.int(2) ? { q: 'Kapital ' + F(K) + ' €, Zinsen ' + fmt(Z, 2) + ' € – Zinssatz: {?}', a: F(p) + ' %' } : { q: 'Zinssatz ' + F(p) + ' %, Zinsen ' + fmt(Z, 2) + ' € – Kapital: {?}', a: F(K) + ' €' };
+    }
+  });
+  const TX_ZI4 = [
+    (r) => { const K = R(r, 10, 50) * 100, p = r.pick([2, 3, 4]), y = R(r, 2, 4); let k = K; const rows = []; for (let i = 0; i < y; i++) { const z = round(k * p / 100 * 0.75, 2); k = round(k + z, 2); rows.push(fmt(k, 2)); } return { q: F(K) + ' € werden ' + y + ' Jahre lang mit ' + p + ' % verzinst. Von den Zinsen werden jedes Jahr 25 % KESt abgezogen. Wie hoch ist das Endkapital?', a: 'effektiv ' + F(p * 0.75) + ' % pro Jahr: ' + rows.join(' € → ') + ' €' }; },
+    (r) => { const K = R(r, 20, 80) * 100, p1 = r.pick([2, 2.5, 3]), p2 = p1 + r.pick([0.5, 1]), g = R(r, 2, 6) * 5; const z1 = K * p1 / 100, z2 = K * p2 / 100 - g; return { q: 'Bank A bietet ' + F(p1) + ' % Zinsen, Bank B ' + F(p2) + ' %, verlangt aber ' + g + ' € Kontogebühr pro Jahr. Welche Bank ist für ' + F(K) + ' € (1 Jahr) besser?', a: 'A: ' + fmt(z1, 2) + ' €; B: ' + fmt(K * p2 / 100, 2) + ' − ' + g + ' = ' + fmt(z2, 2) + ' € – ' + (z1 > z2 ? 'Bank A' : z1 < z2 ? 'Bank B' : 'beide gleich') }; },
+    (r) => { const K = R(r, 10, 40) * 100, p = r.pick([4, 5, 6, 8]), m = r.pick([3, 4, 6, 8, 9]); const Z = round(K * p / 100 * m / 12, 2); return { q: 'Für einen Kredit über ' + F(K) + ' € verlangt die Bank ' + p + ' % Zinsen pro Jahr. Der Kredit wird nach ' + m + ' Monaten mit Zinsen zurückgezahlt. Wie viel muss man zurückzahlen?', a: 'Z = ' + F(K) + ' · ' + p + ' : 100 · ' + m + ' : 12 = ' + fmt(Z, 2) + ' €; gesamt ' + fmt(K + Z, 2) + ' €' }; }
+  ];
+  L4('m-zinsen', ['Du berechnest Zinssatz und Kapital rückwärts.', 'Du rechnest Zinseszinsen mit KESt.', 'Du vergleichst Angebote und berechnest Kreditzinsen.'],
+    [zinsR(4), text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz. Runde auf Cent.', TX_ZI4, 'zi4', 3)]);
+
+  const zweiP = (n) => task({
+    title: 'Funktionsgleichung aus zwei Punkten', instr: 'Berechne k = (y₂ − y₁) : (x₂ − x₁), dann d.', n, cols: 1, w: 6,
+    gen: (rng) => {
+      const k = nz(rng, -3, 3) * rng.pick([1, 1, 0.5]), d = R(rng, -5, 5), x1 = R(rng, -4, 0), x2 = x1 + R(rng, 2, 5);
+      return { q: 'A(' + F(x1) + ' | ' + F(k * x1 + d) + '), B(' + F(x2) + ' | ' + F(k * x2 + d) + '): {?}', a: fstr(k, d), key: k + '/' + d };
+    }
+  });
+  const nullst = (n) => task({
+    title: 'Schnittpunkt mit der x-Achse', instr: 'Setze y = 0 und löse nach x auf.', n, cols: 2, w: 5,
+    gen: (rng) => { const k = nz(rng, -4, 4), x0 = R(rng, -5, 5); const d = -k * x0; return { q: fstr(k, d) + ': N({?} | 0)', a: F(x0), key: k + '/' + d }; }
+  });
+  const TX_F4 = [
+    (r) => { const g = r.pick([3, 3.5, 4, 4.5]), p = r.pick([1.5, 1.8, 2, 2.2]), km = R(r, 4, 20); return { q: 'Ein Taxi verlangt ' + fmt(g, 2) + ' € Grundgebühr und ' + fmt(p, 2) + ' € pro km. Stelle die Funktionsgleichung auf. Wie viel kostet eine Fahrt über ' + km + ' km?', a: 'y = ' + F(p) + 'x + ' + F(g) + '; y = ' + F(p) + ' · ' + km + ' + ' + F(g) + ' = ' + fmt(round(p * km + g, 2), 2) + ' €' }; },
+    (r) => { const g1 = R(r, 0, 4) * 5, k1 = R(r, 6, 9) * 0.5, k2 = k1 - r.pick([0.5, 1, 1.5]), x = R(r, 4, 20); const g2 = g1 + (k1 - k2) * x; return { q: 'Tarif A: ' + F(g1) + ' € Grundgebühr und ' + fmt(k1, 2) + ' € pro Stunde. Tarif B: ' + F(g2) + ' € Grundgebühr und ' + fmt(k2, 2) + ' € pro Stunde. Ab wie vielen Stunden ist Tarif B günstiger?', a: F(k1) + 'x + ' + F(g1) + ' = ' + F(k2) + 'x + ' + F(g2) + ' → x = ' + x + '; ab mehr als ' + x + ' Stunden ist B günstiger.' }; },
+    (r) => { const v = R(r, 3, 9) * 10, t = R(r, 2, 5); return { q: 'Ein Tank enthält ' + v * t + ' l Wasser. Pro Minute fließen ' + v + ' l ab. Stelle die Funktionsgleichung auf. Wann ist der Tank leer?', a: 'y = −' + v + 'x + ' + v * t + '; 0 = −' + v + 'x + ' + v * t + ' → x = ' + t + ' Minuten' }; }
+  ];
+  L4('m-funktionen', ['Du stellst die Funktionsgleichung aus zwei Punkten auf.', 'Du berechnest den Schnittpunkt mit der x-Achse.', 'Du löst Sachaufgaben mit linearen Funktionen.'],
+    [zweiP(4), nullst(4), text('Sachaufgaben', 'Stelle die Funktionsgleichung auf und rechne.', TX_F4, 'f4', 2)]);
+
+  const TX_KO4 = [
+    (r) => { const rr = R(r, 3, 10), h = R(r, 5, 20); const V = round(rr * rr * PI * h, 2); return { q: 'Ein Zylinder hat ein Volumen von ' + F2(V) + ' cm³ und einen Radius von ' + rr + ' cm. Wie hoch ist er?', a: 'h = ' + F2(V) + ' : (' + rr + '² · 3,14) = ' + h + ' cm' }; },
+    (r) => { const rr = R(r, 2, 8); const V = round(4 / 3 * rr ** 3 * PI, 2); return { q: 'Eine Kugel hat ein Volumen von ' + F2(V) + ' cm³. Wie groß ist ihr Radius?', a: 'r = ∛(' + F2(V) + ' · 3 : 4 : 3,14) ≈ ' + rr + ' cm' }; },
+    (r) => { const rr = R(r, 2, 6), h = R(r, 6, 15); const V = rr * rr * PI * h + 2 / 3 * rr ** 3 * PI; return { q: 'Ein Silo besteht aus einem Zylinder (r = ' + rr + ' m, h = ' + h + ' m) mit einer Halbkugel als Dach. Wie groß ist das Volumen?', a: 'V = ' + rr + '² · 3,14 · ' + h + ' + 2/3 · ' + rr + '³ · 3,14 ≈ ' + F2(V) + ' m³' }; },
+    (r) => { const rr = R(r, 2, 6), h = R(r, 10, 40); const V = rr * rr * PI * h; return { q: 'Eine Eisenstange (Zylinder, r = ' + rr + ' mm, Länge ' + h + ' cm) hat die Dichte 7,8 g/cm³. Wie schwer ist sie?', a: 'V = ' + F(rr / 10) + '² · 3,14 · ' + h + ' ≈ ' + F2(V / 100) + ' cm³; m ≈ ' + F2(round(V / 100, 2) * 7.8) + ' g' }; }
+  ];
+  L4('m-koerper2', ['Du berechnest fehlende Maße aus dem Volumen.', 'Du berechnest zusammengesetzte Körper und Massen.'],
+    [text('Sachaufgaben', 'Schreibe die Formel, die Rechnung und das Ergebnis. Rechne mit π ≈ 3,14.', TX_KO4, 'ko4', 4), koerper(2, ['kegelO', 'kugel'])]);
+
 })();
