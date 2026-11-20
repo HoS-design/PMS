@@ -25,7 +25,7 @@
     if (!t || (t.review && !showDrafts)) return;
     state.topic = t.id;
     state.fach = fachOf(t);
-    if (m[2] && +m[2] >= 1 && +m[2] <= 3) state.level = +m[2];
+    if (m[2] && +m[2] >= 1 && +m[2] <= 4) state.level = +m[2];
     state.format = m[4] || 'blatt';
     if (m[3]) {
       if (m[3].startsWith('v')) { state.variant = m[3].slice(1); state.blatt = null; }
@@ -154,7 +154,6 @@
     document.querySelectorAll('#fachSeg button').forEach(b => b.classList.toggle('active', b.dataset.fach === state.fach));
     ['deutsch', 'mathe', 'englisch'].forEach(f => document.body.classList.toggle('subject-' + f, state.fach === f));
     const fb = $('fachBadge'); if (fb) { fb.textContent = UB.FACH[state.fach]; fb.className = 'badge-main is-' + state.fach; }
-  document.querySelectorAll('#levelSeg button').forEach(b => b.classList.toggle('active', +b.dataset.level === state.level));
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
     $('blattBtns').innerHTML = Array.from({ length: BLATT_COUNT }, (_, i) => '<button type="button" data-blatt="' + (i + 1) + '" class="' + (!state.variant && state.blatt === i + 1 ? 'active' : '') + '">' + (i + 1) + '</button>').join('');
     $('blattBtns').querySelectorAll('[data-blatt]').forEach(b => b.addEventListener('click', () => { state.blatt = +b.dataset.blatt; state.variant = null; state.merkheft = false; render(); }));
@@ -173,6 +172,9 @@
     }
     const t = UB.topics.find(x => x.id === state.topic);
     const hasTopic = !!t && t.klassen.includes(state.klasse);
+    // Stufe 4 (Profi) gibt es nicht bei jedem Thema: dann auf die höchste vorhandene Stufe zurückfallen
+    if (hasTopic && !t.levels[state.level]) state.level = Math.max(...Object.keys(t.levels).map(Number));
+    document.querySelectorAll('#levelSeg button').forEach(b => { const off = hasTopic && !t.levels[+b.dataset.level]; b.classList.toggle('off', off); b.title = off ? 'Für dieses Thema gibt es diese Stufe (noch) nicht' : ''; b.classList.toggle('active', +b.dataset.level === state.level); });
     ['printBtn', 'printSolBtn', 'linkBtn', 'poolBtn', 'variantBtn'].forEach(id => { $(id).disabled = !hasTopic; });
     if (!hasTopic) {
       $('previewScale').innerHTML = '';
@@ -255,7 +257,7 @@
     if (!state.merkheft && (!t || !t.klassen.includes(state.klasse))) { state.topic = null; history.replaceState(null, '', location.pathname + location.search); }
     render();
   }));
-  document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; state.merkheft = false; render(); }));
+  document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { if (b.classList.contains('off')) { setMsg('Die Profi-Stufe gibt es für dieses Thema noch nicht.', 'warn'); return; } state.level = +b.dataset.level; state.merkheft = false; render(); }));
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { state.view = b.dataset.view; render(); }));
   document.querySelectorAll('#fachSeg button').forEach(b => b.addEventListener('click', () => {
     if (state.fach === b.dataset.fach) return;

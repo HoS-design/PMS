@@ -91,6 +91,6 @@
       'e-writing': 'Writing'
     },
     FACH: { deutsch: 'Deutsch', mathe: 'Mathematik', englisch: 'Englisch' },
-    LEVEL_NAMES: { 1: 'Stufe 1 · leicht', 2: 'Stufe 2 · mittel', 3: 'Stufe 3 · schwer' }
+    LEVEL_NAMES: { 1: 'Stufe 1 · leicht', 2: 'Stufe 2 · mittel', 3: 'Stufe 3 · schwer', 4: 'Stufe 4 · Profi' }
   };
 })();
