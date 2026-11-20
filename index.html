@@ -283,17 +283,21 @@
 
         /* --- Übungsblätter-Banner --- */
         .ub-banner { display:flex; align-items:center; gap:18px; margin:24px 0 8px; padding:16px 20px;
-            background:var(--surface); border:1px solid var(--line); border-left:6px solid var(--de-accent);
+            background:var(--surface); border:1px solid var(--line); position:relative; overflow:hidden; padding-left:26px;
             border-radius:var(--radius); box-shadow:var(--shadow-md); }
+        .ub-banner::before { content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:linear-gradient(#dc2626 0 33.3%, #2563eb 33.3% 66.6%, #16a34a 66.6%); }
         .ub-banner img { width:64px; height:64px; object-fit:contain; flex:none; }
         .ub-banner .ub-text { flex:1; min-width:0; }
         .ub-banner h2 { margin:0 0 2px; font-size:1.15rem; color:var(--ink); }
         .ub-banner p { margin:0; color:var(--muted); font-size:.92rem; }
-        .ub-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-        .ub-links a { text-decoration:none; font-size:.85rem; font-weight:600; padding:6px 12px; border-radius:999px;
-            background:var(--de-bg); color:#b91c1c; border:1px solid #fecaca; }
-        .ub-links a:hover { background:#fee2e2; }
-        .ub-links a.ub-all { background:var(--de-accent); color:#fff; border-color:var(--de-accent); }
+        .ub-groups { display:flex; flex-direction:column; gap:7px; margin-top:10px; }
+        .ub-links { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
+        .ub-fach { font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.04em; width:76px; flex:none; }
+        .ub-links a { text-decoration:none; font-size:.85rem; font-weight:600; padding:5px 11px; border-radius:999px; border:1px solid; }
+        .ub-de .ub-fach { color:#b91c1c; } .ub-de a { background:#fef2f2; color:#b91c1c; border-color:#fecaca; } .ub-de a:hover { background:#fee2e2; }
+        .ub-ma .ub-fach { color:#1d4ed8; } .ub-ma a { background:#eff6ff; color:#1d4ed8; border-color:#bfdbfe; } .ub-ma a:hover { background:#dbeafe; }
+        .ub-en .ub-fach { color:#15803d; } .ub-en a { background:#f0fdf4; color:#15803d; border-color:#bbf7d0; } .ub-en a:hover { background:#dcfce7; }
+        a.ub-all { display:inline-block; margin-top:10px; text-decoration:none; font-size:.85rem; font-weight:700; padding:6px 14px; border-radius:999px; background:var(--ink); color:#fff; }
         @media (max-width: 640px) { .ub-banner { align-items:flex-start; } .ub-banner img { width:48px; height:48px; } }
     </style>
 </head>
@@ -324,19 +328,33 @@
             <div class="ub-text">
                 <h2>🖨️ Übungsblätter zum Ausdrucken</h2>
                 <p>Deutsch, Mathematik und Englisch für die 1.–4. Klasse – in 3 Stufen, mit Lösungsblatt und Merkheft. Daheim ausdrucken: <strong>chatisthisreal.at/uebungsblaetter</strong></p>
-                <div class="ub-links">
-                    <a href="/uebungsblaetter/#zeitformen">Zeitformen</a>
-                    <a href="/uebungsblaetter/#wortarten">Wortarten</a>
-                    <a href="/uebungsblaetter/#gross-klein">Groß/klein</a>
-                    <a href="/uebungsblaetter/#beistrich">Beistriche</a>
-                    <a href="/uebungsblaetter/#erzaehlung">Erzählen</a>
-                    <a href="/uebungsblaetter/#bericht">Bericht</a>
-                    <a href="/uebungsblaetter/#inhaltsangabe">Inhaltsangabe</a>
-                    <a href="/uebungsblaetter/#merkheft-1">📒 Merkheft</a>
-                    <a href="/uebungsblaetter/#mathe" style="background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe">📐 Mathe-Blätter</a>
-                    <a href="/uebungsblaetter/#englisch" style="background:#ecfdf3;color:#15803d;border-color:#bbf7d0">🇬🇧 Englisch-Blätter</a>
-                    <a class="ub-all" href="/uebungsblaetter/">Alle Themen →</a>
+                <div class="ub-groups">
+                    <div class="ub-links ub-de"><span class="ub-fach">Deutsch</span>
+                        <a href="/uebungsblaetter/#zeitformen">Zeitformen</a>
+                        <a href="/uebungsblaetter/#wortarten">Wortarten</a>
+                        <a href="/uebungsblaetter/#gross-klein">Groß/klein</a>
+                        <a href="/uebungsblaetter/#beistrich">Beistriche</a>
+                        <a href="/uebungsblaetter/#erzaehlung">Erzählen</a>
+                        <a href="/uebungsblaetter/#merkheft-1">📒 Merkheft</a>
+                    </div>
+                    <div class="ub-links ub-ma"><span class="ub-fach">Mathe</span>
+                        <a href="/uebungsblaetter/#m-brueche">Brüche</a>
+                        <a href="/uebungsblaetter/#m-gleichungen">Gleichungen</a>
+                        <a href="/uebungsblaetter/#m-prozent">Prozent</a>
+                        <a href="/uebungsblaetter/#m-dreieckkonstruktion">Dreiecke konstruieren</a>
+                        <a href="/uebungsblaetter/#m-pythagoras">Pythagoras</a>
+                        <a href="/uebungsblaetter/#merkheft-mathe-1">📒 Merkheft</a>
+                    </div>
+                    <div class="ub-links ub-en"><span class="ub-fach">Englisch</span>
+                        <a href="/uebungsblaetter/#e-presentsimple">Present simple</a>
+                        <a href="/uebungsblaetter/#e-pastsimple">Past simple</a>
+                        <a href="/uebungsblaetter/#e-irregular">Irregular verbs</a>
+                        <a href="/uebungsblaetter/#e-vocab">Vocabulary</a>
+                        <a href="/uebungsblaetter/#e-w-email">Emails</a>
+                        <a href="/uebungsblaetter/#merkheft-englisch-1">📒 Merkheft</a>
+                    </div>
                 </div>
+                <a class="ub-all" href="/uebungsblaetter/">Alle Themen →</a>
             </div>
         </div>
 
