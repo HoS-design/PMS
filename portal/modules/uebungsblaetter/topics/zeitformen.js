@@ -134,7 +134,7 @@
       const out = [];
       VERBS.forEach(v => LEVEL_TENSES[level].forEach(t => {
         const f = form(v, t, 'er', '').replace(/^er /, '').replace(/\.$/, '').replace(/\s+/g, ' ').trim();
-        out.push({ q: '<b>' + esc(v.inf) + '</b> · ' + esc(tname(t, level)) + ': er <span class="cgap"></span>', a: esc(f) });
+        out.push({ q: '<b>' + esc(v.inf) + '</b> · ' + esc(tname(t, level)) + ': er <span class="cgap"></span>', a: esc(f), grp: 'v:' + v.inf });
       }));
       return rng.shuffle(out);
     },

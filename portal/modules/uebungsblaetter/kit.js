@@ -278,7 +278,16 @@
       const g = (x.q.match(/\[[^\[\]]+\]/g) || []).length, c = (x.q.match(/\{[^{}]+\}/g) || []).length;
       if (g + c !== 1) return;
       if (g) out.push({ q: markQ(x.q), a: esc(answersOf(x.q)[0]), instr: ins });
-      else { const right = x.q.match(/\{([^{}]+)\}/)[1].split('|')[0]; out.push({ q: markQ(x.q), a: esc(right), instr: ins }); }
+      else {
+        // Auswahl {richtig|falsch}: Auf Karten nur, wenn auch die Gegenkarte im Set liegt (grp = gleiche Auswahl) –
+        // sonst sucht man einfach das Wort, das in der Klammer steht. Nur Groß/Klein verschieden → Wort in GROSSBUCHSTABEN.
+        const opts = x.q.match(/\{([^{}]+)\}/)[1].split('|'), right = opts[0], lo = v => v.toLowerCase();
+        const caps = opts.length > 1 && opts.every(o => lo(o) === lo(right));
+        if (caps && !/[A-Za-zÄÖÜäöüß0-9]/.test(x.q.slice(0, x.q.indexOf('{')).replace(/\*\*/g, ''))) return; // Satzanfang ist immer groß
+        const q = caps ? markQ(x.q.replace(/\{[^{}]+\}/, '\u0001')).replace('\u0001', '<b class="ccaps">' + esc(right.toUpperCase()) + '</b>') : markQ(x.q);
+        out.push({ q, a: esc(right), caps, opt: true, grp: (caps ? 'c:' : 's:') + opts.map(lo).sort().join('|'),
+          instr: caps ? 'Wird das Wort in GROSSBUCHSTABEN groß oder klein geschrieben? Suche die passende Schreibung.' : 'Welche Möglichkeit ist richtig? Achtung: Auch die anderen Möglichkeiten gibt es als Karte.' });
+      }
     });
     if (spec.type === 'pair' || spec.type === 'error') its.forEach(x => { if (x.a && !/\[|\{/.test(x.q)) out.push({ q: markQ(x.q) + (x.hint ? ' <span class="hint">→ ' + esc(x.hint) + '</span>' : ''), a: esc(x.a), instr: ins }); });
     if ((spec.type === 'choice' || spec.type === 'sort') && spec.opts) its.forEach(x => { if (!/\[/.test(x.q)) out.push({ q: markQ(x.q), a: esc(optLabel(spec, x.k)), instr: ins }); });
@@ -288,11 +297,11 @@
   // Paare einer Stufe sammeln: eindeutige Antworten und Fragen, mehrere Durchläufe
   function collectPairs(def, level, rng, want) {
     const specs = [];
-    (def.levels[level].tasks || []).forEach(s => (s.oneOf || [s]).forEach(x => specs.push(x)));
+    (def.levels[level].tasks || []).concat(def.levels[level].cards || []).forEach(s => (s.oneOf || [s]).forEach(x => specs.push(x)));
     const seenA = new Set(), seenQ = new Set(), res = [];
     for (let round = 0; round < 12 && res.length < want; round++) {
       specs.forEach(sp => specPairs(def, sp, rng, level).forEach(p => {
-        const ka = plainOf(p.a).toLowerCase(), kq = plainOf(p.q).toLowerCase();
+        const ka = p.caps ? plainOf(p.a) : plainOf(p.a).toLowerCase(), kq = plainOf(p.q).toLowerCase();
         if (!ka || !kq || seenA.has(ka) || seenQ.has(kq)) return;
         seenA.add(ka); seenQ.add(kq); res.push(p);
       }));

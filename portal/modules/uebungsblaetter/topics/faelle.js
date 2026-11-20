@@ -140,7 +140,7 @@
   UB.register({
     pairs(level, rng) {
       const out = [], seen = new Set();
-      NOUNS.forEach(n => [1, 2, 3, 4].forEach(c => { const a = n[c - 1]; if (seen.has(a)) return; seen.add(a); out.push({ q: '<b>' + esc(n[0]) + '</b> · ' + esc(cname(c, level)) + ': <span class="cgap"></span>', a: esc(a) }); }));
+      NOUNS.forEach(n => [1, 2, 3, 4].forEach(c => { const a = n[c - 1]; if (seen.has(a)) return; seen.add(a); out.push({ q: '<b>' + esc(n[0]) + '</b> · ' + esc(cname(c, level)) + ': <span class="cgap"></span>', a: esc(a), grp: 'n:' + n[0] }); }));
       return rng.shuffle(out);
     },
     id: 'faelle',

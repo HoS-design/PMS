@@ -10,26 +10,50 @@
 
   const FORMATS = {
     domino: { label: 'Domino', n: 14, min: 10, fits: (p) => plain(p.q).length <= 80 && plain(p.a).length <= 34 && !hasSvg(p.q + p.a) && !/<table/.test(p.q + p.a) },
-    memory: { label: 'Memory', n: 12, min: 8, fits: (p) => plain(p.q).length <= 100 && plain(p.a).length <= 60 && !hasSvg(p.a) && svgW(p.q) <= 40 && !/<table/.test(p.q + p.a) },
+    memory: { label: 'Memory', n: 12, min: 8, dupA: true, fits: (p) => plain(p.q).length <= 100 && plain(p.a).length <= 60 && !hasSvg(p.a) && svgW(p.q) <= 40 && !/<table/.test(p.q + p.a) },
     trimino: { label: 'Trimino', n: 18, min: 9, fits: (p) => plain(p.q).length <= 21 && plain(p.a).length <= 14 && !hasSvg(p.q + p.a) && !/<table|<div/.test(p.q + p.a) }
   };
 
+  // Karten sind nur sinnvoll, wenn man die Antwort nicht einfach am gleichen Wort erkennt:
+  // – Antwort steht schon in der Frage (z. B. Satz → derselbe Satz richtig geschrieben) → weg
+  // – Frage und Antwort fast wortgleich (Ihr öffnet die Fenster. → Öffnet die Fenster!) → weg
+  // – Paare mit Gruppe (grp: gleiches Wort in mehreren Formen, ist/isst …) kommen nur zu zweit oder mehr aufs Blatt
+  const words = h => plain(h).toLowerCase().replace(/[^a-zäöüß0-9]+/g, ' ').trim();
+  function leak(p) {
+    if (p.caps || p.opt) return false; // Auswahl-Paare: Gegenkarte liegt im Set (grp)
+    const a = words(p.a), q = words(p.q);
+    if (!a || (' ' + q + ' ').includes(' ' + a + ' ')) return true;
+    const wa = a.split(' '), wq = q.split(' ');
+    if (wa.length >= 3) { const sq = new Set(wq), inter = new Set(wa.filter(w => sq.has(w))).size, uni = new Set(wa.concat(wq)).size; if (inter / uni >= 0.6) return true; }
+    return false;
+  }
   function pairsFor(t, level, seed, fmt) {
     if (!t.pairs) return [];
-    const F = FORMATS[fmt], seenA = new Set(), seenQ = new Set(), out = [];
-    // mehrere Durchgänge, bis das Set voll ist (manche Generatoren liefern pro Durchgang nur wenige passende Paare)
-    for (let round = 0; round < 4 && out.length < F.n; round++) {
-    let raw = [];
-    try { raw = t.pairs(level, UB.makeRng(seed + (round ? '|r' + round : '')), 80) || []; } catch (e) { break; }
-    raw.forEach(p => {
-      if (!F.fits(p)) return;
-      const ka = plain(p.a).toLowerCase(), kq = plain(p.q).toLowerCase();
-      if (!ka || !kq || seenA.has(ka) || seenQ.has(kq)) return;
-      // eine Antwort darf nicht zugleich als Frage auftauchen (sonst Verwechslung beim Anlegen)
-      seenA.add(ka); seenQ.add(kq); out.push(p);
-    });
+    const F = FORMATS[fmt], seenA = new Map(), seenQ = new Set(), cand = [];
+    // mehrere Durchgänge (manche Generatoren liefern pro Durchgang nur wenige passende Paare)
+    for (let round = 0; round < 4 && cand.length < F.n * 3; round++) {
+      let raw = [];
+      try { raw = t.pairs(level, UB.makeRng(seed + (round ? '|r' + round : '')), 80) || []; } catch (e) { break; }
+      raw.forEach(p => {
+        if (!F.fits(p) || leak(p)) return;
+        const ka = p.caps ? plain(p.a) : plain(p.a).toLowerCase(), kq = plain(p.q).toLowerCase();
+        // Memory: dieselbe Antwort höchstens zweimal (dem/den …), sonst nur „sortieren“ statt Memory
+        if (!ka || !kq || (seenA.get(ka) || 0) >= (F.dupA ? 2 : 1) || seenQ.has(kq)) return;
+        seenA.set(ka, (seenA.get(ka) || 0) + 1); seenQ.add(kq); cand.push(p);
+      });
     }
-    return out;
+    const groups = {}, free = [], out = [];
+    cand.forEach(p => { if (p.grp) (groups[p.grp] = groups[p.grp] || []).push(p); else free.push(p); });
+    // Gruppe nur mit mindestens zwei verschiedenen Antworten; verschiedene Antworten zuerst
+    const key = p => p.caps ? plain(p.a) : plain(p.a).toLowerCase();
+    Object.values(groups).forEach(g => {
+      const first = [], rest = [], seen = new Set();
+      g.forEach(p => { if (seen.has(key(p))) rest.push(p); else { seen.add(key(p)); first.push(p); } });
+      const room = F.n - out.length;
+      if (first.length >= 2 && room >= 2) out.push(...first.concat(rest).slice(0, Math.min(F.dupA ? 4 : 3, room)));
+    });
+    free.forEach(p => { if (out.length < F.n) out.push(p); });
+    return UB.makeRng(seed + '|mix').shuffle(out);
   }
   // Welche Formate sind für Thema + Stufe möglich? (einmal pro Thema/Stufe berechnet)
   const availCache = {};

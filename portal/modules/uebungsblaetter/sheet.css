@@ -151,6 +151,7 @@ svg.mfig.koord, .mi svg.mfig { max-width: 100%; }
 .mem-a { font-weight: 700; } .fach-mathe .mem-a { background: #eef3ff; } .fach-deutsch .mem-a { background: #fdf0f0; }
 .mem-tag { position: absolute; top: 0.8mm; right: 1.4mm; font-size: 8pt; font-weight: 700; color: var(--red, #c62828); }
 .cgap { display: inline-block; min-width: 9mm; border-bottom: 0.3mm solid #333; vertical-align: -0.4mm; margin: 0 0.5mm; }
+.ccaps { letter-spacing: 0.04em; font-weight: 700; hyphens: none; white-space: nowrap; }
 .tri-wrap { display: flex; justify-content: center; margin-top: 2mm; }
 .trisvg { display: block; }
 .tri-t { display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.12; color: #111; overflow: hidden; transform: scale(0.1); transform-origin: 0 0; }

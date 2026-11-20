@@ -67,7 +67,45 @@ Wir haben viel {Schönes|schönes} erlebt.
 Er mag das {Rote|rote} am liebsten.
 Vom {Schreien|schreien} bin ich heiser.
 Lass das {Lachen|lachen}!
-Sie {lachen|Lachen} laut.`,
+Sie {lachen|Lachen} laut.
+Wir {laufen|Laufen} um die Wette.
+Wir {turnen|Turnen} am Reck.
+Wir {malen|Malen} ein Bild für Oma.
+Wir {spielen|Spielen} im Hof Fangen.
+Das ist eine {gute|Gute} Idee.
+Ich habe ein {neues|Neues} Heft.
+Das ist das {beste|Beste} Eis der Stadt.
+Das war ein {schönes|Schönes} Fest.
+Wir sehen ein {lustiges|Lustiges} Video.
+Das {rote|Rote} Auto gehört mir.`,
+    paar: `Der Hund ist {weg|Weg}.
+Der {Weg|weg} ist steil.
+Die Autos {rasen|Rasen} vorbei.
+Der {Rasen|rasen} ist grün.
+Der Bettler ist {arm|Arm}.
+Mein {Arm|arm} tut weh.
+Die Birne ist {reif|Reif}.
+Am Morgen liegt {Reif|reif} auf der Wiese.
+Die Musik ist {laut|Laut}.
+Ich höre einen leisen {Laut|laut}.
+Halte dich gut {fest|Fest}!
+Das {Fest|fest} war toll.
+Die {Fliegen|fliegen} summen.
+Die Vögel {fliegen|Fliegen} in den Süden.
+Der {Wagen|wagen} ist rot.
+Wir {wagen|Wagen} den Sprung ins Wasser.
+Die Blätter {fallen|Fallen} vom Baum.
+Der Jäger stellt {Fallen|fallen} auf.
+Der {Laden|laden} hat schon zu.
+Wir {laden|Laden} dich zur Party ein.
+Mein {Rücken|rücken} tut weh.
+Wir {rücken|Rücken} näher zusammen.
+Die {Waren|waren} im Geschäft sind teuer.
+Gestern {waren|Waren} wir im Kino.
+Wir {essen|Essen} heute Pizza.
+Das {Essen|essen} ist fertig.
+Wir sehen uns {morgen|Morgen} wieder.
+Am {Morgen|morgen} scheint die Sonne.`,
     zeit: `Am {Montag|montag} habe ich Turnen.
 Wir haben {montags|Montags} Turnen.
 Wir treffen uns heute {Abend|abend}.
@@ -94,7 +132,16 @@ Liebe Frau Berger, ich danke {Ihnen|ihnen} herzlich.
 Haben {Sie|sie} gut geschlafen, Herr Maier?
 Die Großeltern sagen, {sie|Sie} kommen bald.
 Wir fahren zum {Wolfgangsee|wolfgangsee}.
-Der {Große|große} Bär ist ein Sternbild.`,
+Der {Große|große} Bär ist ein Sternbild.
+Der {große|Große} Hund bellt.
+Wir baden in einem {stillen|Stillen} See.
+Das {rote|Rote} Auto parkt vor dem Haus.
+Wir sehen uns {morgen|Morgen} wieder.
+Kommt {ihr|Ihr} mit ins Kino?
+Herr Maier, ist das {Ihr|ihr} Auto?
+Lena und Tom? Ich habe {ihnen|Ihnen} geschrieben.
+Frau Berger, ist das {Ihre|ihre} Tasche?
+Die Kinder holen {ihre|Ihre} Jacken.`,
     fehler: `heute gehen wir ins kino. => Heute gehen wir ins Kino.
 mein bruder hat einen neuen ball. => Mein Bruder hat einen neuen Ball.
 im sommer fahren wir ans meer. => Im Sommer fahren wir ans Meer.
@@ -121,6 +168,7 @@ mein opa wohnt in linz. => Mein Opa wohnt in Linz.`
   levels: {
     1: {
       ichkann: ['Du schreibst Nomen und Namen groß.', 'Du schreibst das erste Wort im Satz groß.'],
+      cards: [{ type: 'gap', pool: 'paar' }],
       tasks: [
         { type: 'gap', pool: 'satz', n: 8, title: 'Groß oder klein?', instr: 'Kreise die richtige Schreibung ein.' },
         { type: 'error', pool: 'fehler', n: 3, filter: x => !/schwimmen|spielen|liebe|laufen|neues|lesen|essen|schönes|warmen|basteln/.test(x.q), title: 'Schreibe richtig ab.', instr: 'Hier stimmt die Groß- und Kleinschreibung nicht. Schreibe die Sätze richtig auf.' }
