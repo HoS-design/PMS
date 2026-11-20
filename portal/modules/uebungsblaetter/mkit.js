@@ -139,12 +139,13 @@
     return svgBox(52, deg <= 180 ? 28 : 52, '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + r) + '" y2="' + cy + '" stroke="#111" stroke-width="0.5"/>' +
       '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(2) + '" y2="' + y2.toFixed(2) + '" stroke="#111" stroke-width="0.5"/>' +
       '<path d="M' + (cx + arcR) + ' ' + cy + ' A' + arcR + ' ' + arcR + ' 0 ' + large + ' 0 ' + ax.toFixed(2) + ' ' + ay.toFixed(2) + '" fill="none" stroke="#1d4ed8" stroke-width="0.45"/>' +
+      (deg === 90 ? '<circle cx="' + (cx + arcR * 0.45 * Math.SQRT1_2).toFixed(2) + '" cy="' + (cy - arcR * 0.45 * Math.SQRT1_2).toFixed(2) + '" r="0.6" fill="#1d4ed8"/>' : '') +
       '<circle cx="' + cx + '" cy="' + cy + '" r="0.8" fill="#111"/>');
   }
   // Rechtwinkeliges Dreieck mit Beschriftung (Pythagoras)
   function rtri(la, lb, lc) {
     return svgBox(58, 32, '<polygon points="18,26 52,26 18,6" fill="#f3f6ff" stroke="#111" stroke-width="0.45"/>' +
-      '<rect x="18" y="22.5" width="3.5" height="3.5" fill="none" stroke="#111" stroke-width="0.3"/>' +
+      '<path d="M22.2 26 A4.2 4.2 0 0 0 18 21.8" fill="none" stroke="#111" stroke-width="0.35"/><circle cx="19.34" cy="24.66" r="0.5" fill="#111"/>' +
       lbl(35, 30.5, la) + lbl(16.5, 17, lb, 'end') + lbl(36.5, 14, lc, 'start'));
   }
   // Zahlenstrahl mit Markierungen
