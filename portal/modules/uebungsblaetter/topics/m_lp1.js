@@ -317,4 +317,64 @@
       3: { ichkann: ['Du löst auch schwierigere Abzählaufgaben.'], tasks: [abz(6, 1, 6)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const WF = [
+    ['Ein Strahl hat genau einen Anfangspunkt.', true], ['Eine Strecke ist unendlich lang.', false], ['Der Durchmesser ist die längste Sehne eines Kreises.', true],
+    ['Eine Tangente hat mit dem Kreis zwei Punkte gemeinsam.', false], ['Die Streckensymmetrale steht normal auf der Strecke.', true],
+    ['Jeder Punkt der Winkelsymmetrale ist von beiden Schenkeln gleich weit entfernt.', true], ['Zwei Geraden, die beide zu einer dritten Geraden normal stehen, sind zueinander parallel.', true],
+    ['Eine Sekante schneidet den Kreis in genau einem Punkt.', false], ['Parallele Geraden haben genau einen Schnittpunkt.', false],
+    ['Jeder Punkt der Streckensymmetrale ist von beiden Endpunkten der Strecke gleich weit entfernt.', true], ['Ein Kreissektor wird von zwei Radien und einem Kreisbogen begrenzt.', true],
+    ['Den Abstand eines Punktes von einer Geraden misst man schräg zur Geraden.', false]
+  ];
+  const wahrFalsch = (n) => ({ type: 'fn', fn: (rng) => {
+    const its = rng.sample(WF, n);
+    const mk = (s) => UB.table(['Aussage', 'wahr', 'falsch'], its.map(x => [x[0], s ? (x[1] ? UB.sol('✗') : '') : UB.box, s ? (x[1] ? '' : UB.sol('✗')) : UB.box]), 'center-cols');
+    return { title: 'Wahr oder falsch?', instr: 'Kreuze an.', body: mk(false), sol: mk(true) };
+  } });
+  L4('m-grundbegriffe', ['Du beurteilst Aussagen über geometrische Grundbegriffe.', 'Du konstruierst Strecken- und Winkelsymmetralen genau.'],
+    [wahrFalsch(6), { type: 'fn', fn: (rng, lv) => (rng.int(2) ? streckenSym(58) : winkelSym(58)).fn(rng, lv) }]);
+
+  const TX_MS4 = [
+    (r) => { const s = r.pick([100, 200, 500, 1000]), a = R(r, 3, 9), b = R(r, 2, 7); const ra = a * s / 100, rb = b * s / 100; return { q: 'Auf einem Plan (1 : ' + F(s) + ') ist ein rechteckiges Grundstück ' + a + ' cm lang und ' + b + ' cm breit. Wie groß ist es in Wirklichkeit (in m²)?', a: F(ra) + ' m · ' + F(rb) + ' m = ' + F(ra * rb) + ' m² (Flächen wachsen mit ' + F(s) + ' · ' + F(s) + ', nicht nur mit ' + F(s) + ')' }; },
+    (r) => { const c = R(r, 6, 16), v = r.pick([3, 4, 5]); const km = c * 25000 / 100000; const min = Math.round(km / v * 60); return { q: 'Auf einer Wanderkarte (1 : 25 000) ist ein Weg ' + c + ' cm lang. Wie lange braucht man bei ' + v + ' km/h?', a: c + ' · 25 000 = ' + F(c * 25000) + ' cm = ' + F(km) + ' km; ' + F(km) + ' : ' + v + ' ≈ ' + (min >= 60 ? Math.floor(min / 60) + ' h ' : '') + (min % 60) + ' min' }; },
+    (r) => { const c = R(r, 2, 8) * 2, s1 = r.pick([50000, 100000]), s2 = r.pick([20000, 25000]); return { q: 'Eine Strecke ist auf einer Karte (1 : ' + F(s1) + ') ' + c + ' cm lang. Wie lang ist sie auf einer Karte mit dem Maßstab 1 : ' + F(s2) + '?', a: c + ' · ' + F(s1) + ' = ' + real(c * s1) + '; ' + F(c * s1) + ' : ' + F(s2) + ' = ' + F(c * s1 / s2) + ' cm' }; },
+    (r) => { const k = r.pick([18, 24, 43, 87]), m = R(r, 8, 25) * 1; return { q: 'Ein echtes Auto ist ' + F(m * k / 100) + ' m lang. Wie lang ist ein Modell im Maßstab 1 : ' + k + '?', a: F(m * k) + ' cm : ' + k + ' = ' + F(m) + ' cm' }; }
+  ];
+  L4('m-massstab', ['Du rechnest mit Maßstäben auch bei Flächen.', 'Du rechnest zwischen Karten mit verschiedenen Maßstäben um.', 'Du verbindest Maßstab mit Zeit und Geschwindigkeit.'],
+    [ms2(4), ms3(4), text('Sachaufgaben', 'Schreibe die Rechnung und das Ergebnis.', TX_MS4, 'ms4', 3)]);
+
+  const binAdd = (n) => task({
+    title: 'Rechnen im Zweiersystem', instr: 'Rechne im Zweiersystem. Tipp: 1 + 1 = 10₂.', n, cols: 2, w: 5,
+    gen: (rng) => { const a = R(rng, 5, 31), b = R(rng, 3, 31); return { q: a.toString(2) + '₂ + ' + b.toString(2) + '₂', a: (a + b).toString(2) + '₂', key: a + '+' + b }; }
+  });
+  const basis = (n) => task({
+    title: 'Andere Zahlensysteme', instr: 'Im Fünfersystem sind die Stellenwerte 1, 5, 25, 125 …, im Achtersystem 1, 8, 64, 512 …', n, cols: 2, w: 4,
+    gen: (rng) => { const b = rng.pick([5, 8]), x = R(rng, 9, b === 5 ? 124 : 300); return rng.int(2) ? { q: x.toString(b) + '<sub>' + b + '</sub> = {?}', a: F(x), key: b + 'a' + x } : { q: F(x) + ' = {?}<sub>' + b + '</sub>', a: x.toString(b), key: b + 'b' + x }; }
+  });
+  const romRech = (n) => task({
+    title: 'Römisch rechnen', instr: 'Rechne und schreibe das Ergebnis römisch.', n, cols: 2, w: 6,
+    gen: (rng) => { const a = R(rng, 400, 2000), b = R(rng, 14, 390), p = rng.int(2); return { q: toRom(a) + (p ? ' + ' : ' − ') + toRom(b), a: toRom(p ? a + b : a - b), key: a + (p ? '+' : '-') + b }; }
+  });
+  L4('m-zahlensysteme', ['Du rechnest im Zweiersystem.', 'Du rechnest zwischen Zehner-, Fünfer- und Achtersystem um.', 'Du rechnest mit römischen Zahlen.'],
+    [binAdd(6), basis(6), romRech(4)]);
+
+  const TX_BEM = [
+    (r) => { const n = R(r, 3, 5); return { q: 'Ein großer Würfel aus ' + n ** 3 + ' kleinen Würfeln (' + n + ' × ' + n + ' × ' + n + ') wird außen rot angemalt und dann zerlegt. Wie viele kleine Würfel haben 3, 2, 1 oder 0 rote Flächen?', a: '3: 8 (Ecken) · 2: ' + 12 * (n - 2) + ' (Kanten) · 1: ' + 6 * (n - 2) ** 2 + ' (Flächen) · 0: ' + (n - 2) ** 3 + ' (innen)' }; },
+    (r) => { const a = R(r, 2, 5), b = R(r, 2, 4), c = R(r, 2, 3); return { q: 'Ein Quader wird aus ' + a * b * c + ' Würfeln (' + a + ' × ' + b + ' × ' + c + ') gebaut. Wie viele Würfelflächen sind außen sichtbar, wenn der Quader auf dem Tisch steht?', a: 'Oberfläche ohne Boden: ' + a * b + ' + 2 · ' + a * c + ' + 2 · ' + b * c + ' = ' + (a * b + 2 * a * c + 2 * b * c) + ' Flächen' }; }
+  ];
+  L4('m-netze', ['Du zeichnest Ansichten und zählst Würfel.', 'Du löst Denkaufgaben zu Würfelgebäuden.'],
+    [text('Denkaufgaben', 'Stell dir die Würfel genau vor. Eine Skizze hilft.', TX_BEM, 'bem', 2), ansichtenTask(2, true)]);
+
+  const TX_KO4 = [
+    (r) => { const k = R(r, 5, 9); return { q: 'Aus ' + k + ' Kindern werden eine Klassensprecherin bzw. ein Klassensprecher und eine Stellvertretung gewählt. Wie viele Möglichkeiten gibt es?', a: k + ' · ' + (k - 1) + ' = ' + k * (k - 1) }; },
+    (r) => { const k = R(r, 5, 10); return { q: 'Aus ' + k + ' Kindern wird ein 2er-Team für ein Projekt gebildet (die Reihenfolge ist egal). Wie viele Teams sind möglich?', a: k + ' · ' + (k - 1) + ' : 2 = ' + k * (k - 1) / 2 }; },
+    (r) => { const w = r.pick([['OTTO', 6, '4 · 3 · 2 · 1 : (2 · 2)'], ['LAMA', 12, '4 · 3 · 2 · 1 : 2'], ['ANNA', 6, '4 · 3 · 2 · 1 : (2 · 2)'], ['OMA', 6, '3 · 2 · 1']]); return { q: 'Wie viele verschiedene „Wörter“ (auch sinnlose) kann man aus allen Buchstaben von ' + w[0] + ' legen?', a: w[2] + ' = ' + w[1] }; },
+    (r) => { const b = 2, z = R(r, 2, 4); return { q: 'Ein Kennzeichen besteht aus ' + b + ' Buchstaben (26 zur Wahl) und danach ' + z + ' Ziffern (0 bis 9). Wie viele Kennzeichen gibt es?', a: Array(b).fill(26).concat(Array(z).fill(10)).join(' · ') + ' = ' + F(Math.pow(26, b) * Math.pow(10, z)) }; },
+    (r) => { const k = r.pick([5, 6]); return { q: 'Für eine Pizza darf man 3 von ' + k + ' Belägen wählen (keinen doppelt, Reihenfolge egal). Wie viele Pizzen sind möglich?', a: k + ' · ' + (k - 1) + ' · ' + (k - 2) + ' : (3 · 2 · 1) = ' + k * (k - 1) * (k - 2) / 6 }; },
+    () => ({ q: 'Wie viele dreistellige gerade Zahlen kann man aus den Ziffern 1, 2, 3, 4, 5 bilden, wenn jede Ziffer höchstens einmal vorkommt?', a: 'Einer: 2 oder 4 (2 Möglichkeiten), dann 4 · 3: 2 · 4 · 3 = 24' })
+  ];
+  L4('m-kombinatorik', ['Du unterscheidest Auswahl mit und ohne Reihenfolge.', 'Du löst schwierige Abzählaufgaben mit der Zählregel.'],
+    [text('Wie viele Möglichkeiten?', 'Überlege: Spielt die Reihenfolge eine Rolle? Schreibe die Rechnung auf.', TX_KO4, 'kb4', 5, 1)]);
+
 })();

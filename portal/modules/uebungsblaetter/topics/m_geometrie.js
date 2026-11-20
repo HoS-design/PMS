@@ -196,7 +196,7 @@
     const e = r1(60, 100), f = r1(30, 55);
     return { pts: [[0, 0], [e / 2, -f / 2], [e, 0], [e / 2, f / 2]], given: 'e = ' + F1(e) + ' cm, f = ' + F1(f) + ' cm (Diagonalen)', name: 'Raute', art: 'die', ask: 'Miss die Seitenlänge a und die Winkel α und β.', diags: ['e', 'f'], fromDiag: true };
   }
-  const viereckTask = (kinds, H) => ({ type: 'fn', fn: (rng) => {
+  const viereckTask = (kinds, H, area) => ({ type: 'fn', fn: (rng) => {
     let v, fr; for (let t = 0; t < 200; t++) { v = rawQuad(rng.pick(kinds), rng); if (!v) continue; fr = frame(v.pts, W0, H, 8); if (fr.ok) break; }
     const Q = v.pts, P = Q.map(fr.P), G = mul(P.reduce((s, p) => add(s, p), [0, 0]), 1 / 4);
     let s = PL(P, { f: '#f3f6ff', cls: 'fig' });
@@ -208,7 +208,8 @@
     for (let i = 0; i < 4; i++) s += angleMark(P[(i + 3) % 4], P[i], P[(i + 1) % 4], angAt(Q[(i + 3) % 4], Q[i], Q[(i + 1) % 4]));
     ['A', 'B', 'C', 'D'].forEach((n, i) => { s += vlabel(P[i], G, n); });
     ['a', 'b', 'c', 'd'].forEach((n, i) => { s += slabel(P[i], P[(i + 1) % 4], G, n); });
-    return { title: v.name + ' konstruieren', instr: 'Konstruiere ' + v.art + ' ' + v.name + ' ABCD: ' + v.given + '. ' + v.ask, body: kfeld(H) + '<div class="mi">Gemessen: ' + UB.blank(16) + '</div>', sol: solBox(H, s) + '<div class="mi">' + UB.sol(meas.join(' · ')) + ' <span class="hint">(Messwerte, ±1 mm bzw. ±1°)</span></div>' };
+    if (area) { const Ar = Math.abs(Q.reduce((acc, p, i) => { const q = Q[(i + 1) % 4]; return acc + p[0] * q[1] - q[0] * p[1]; }, 0)) / 2; meas.push('A ≈ ' + F1(Ar) + ' cm²'); }
+    return { title: v.name + ' konstruieren', instr: 'Konstruiere ' + v.art + ' ' + v.name + ' ABCD: ' + v.given + '. ' + v.ask + (area ? ' Berechne danach mit deinen Messwerten den Flächeninhalt.' : ''), body: kfeld(H) + '<div class="mi">Gemessen: ' + UB.blank(16) + (area ? ' &nbsp; A ≈ ' + UB.blank(5) : '') + '</div>', sol: solBox(H, s) + '<div class="mi">' + UB.sol(meas.join(' · ')) + ' <span class="hint">(Messwerte, ±1 mm bzw. ±1°)</span></div>' };
   } });
   UB.simple({
     id: 'm-viereckkonstruktion', fach: 'mathe', title: 'Vierecke konstruieren', area: 'geometrie', klassen: [1, 2, 3], img: 'MiniHoS_Lob_Checkliste',
@@ -244,7 +245,7 @@
     return { W, H, P, s, u, ox, oy };
   }
   const koordTask = (mode) => ({ type: 'fn', fn: (rng, level) => {
-    const neg = level === 3;
+    const neg = level >= 3;
     const [minX, maxX, minY, maxY] = neg ? [-6, 6, -4, 4] : [0, 12, 0, 8];
     const its = M.uniq(2, () => { for (let tr = 0; tr < 30; tr++) {
       const [name, fn] = rng.pick(FIGS);
@@ -330,4 +331,36 @@
       3: { ichkann: ['Du kannst Figuren an einer schrägen Achse spiegeln.'], tasks: [spiegel('d'), spiegel('h')] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text, task } = M;
+  const F = (x) => fmt(round(x, 6));
+  const bpPick = (H, list) => ({ type: 'fn', fn: (rng, lv) => besonderePunkte(H, rng.pick(list)).fn(rng, lv) });
+  L4('m-dreieckkonstruktion', ['Du konstruierst zwei besondere Punkte im selben Aufgabenblatt sicher.', 'Du erkennst, wann der Höhenschnittpunkt außerhalb liegt.'],
+    [besonderePunkte(76, 'H'), bpPick(76, ['U', 'I', 'S'])]);
+  L4('m-viereckkonstruktion', ['Du konstruierst Trapez, Parallelogramm und Raute.', 'Du berechnest den Flächeninhalt aus deinen Messwerten.'],
+    [viereckTask(['trapez'], 70, true), viereckTask(['parallelogramm', 'rauteD'], 70, true)]);
+
+  const KOO = [
+    (r) => { const A = [R(r, -5, 0), R(r, -4, 0)], B = [A[0] + R(r, 3, 6), A[1]], d = [R(r, 1, 3), R(r, 2, 4)]; const Cc = [B[0] + d[0], B[1] + d[1]], D = [A[0] + d[0], A[1] + d[1]]; const P = (p) => '(' + F(p[0]) + ' | ' + F(p[1]) + ')'; return { q: 'A' + P(A) + ', B' + P(B) + ', C' + P(Cc) + ' sind Eckpunkte eines Parallelogramms ABCD. Zeichne und gib D an.', a: 'D' + P(D) + ' (D = A + C − B)' }; },
+    (r) => { const A = [R(r, -6, 0) * 1, R(r, -4, 2)], B = [A[0] + 2 * R(r, 2, 4), A[1] + 2 * R(r, -2, 2)]; const M2 = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2]; const P = (p) => '(' + F(p[0]) + ' | ' + F(p[1]) + ')'; return { q: 'Bestimme den Mittelpunkt M der Strecke AB mit A' + P(A) + ' und B' + P(B) + '.', a: 'M' + P(M2) }; },
+    (r) => { const A = [R(r, -5, -1), R(r, -4, -1)], w = R(r, 3, 8), h = R(r, 2, 6); const P = (p) => '(' + F(p[0]) + ' | ' + F(p[1]) + ')'; return { q: 'Zeichne das Dreieck A' + P(A) + ', B' + P([A[0] + w, A[1]]) + ', C' + P([A[0] + w, A[1] + h]) + '. Berechne den Flächeninhalt (1 Einheit = 1 cm).', a: 'rechtwinkelig bei B; A = ' + w + ' · ' + h + ' : 2 = ' + F(w * h / 2) + ' cm²' }; },
+    (r) => { const x1 = R(r, -6, -1), x2 = R(r, 1, 6), y1 = R(r, -4, -1), y2 = R(r, 1, 4); const P = (p) => '(' + F(p[0]) + ' | ' + F(p[1]) + ')'; return { q: 'Ein Rechteck hat die Eckpunkte A' + P([x1, y1]) + ' und C' + P([x2, y2]) + ' (gegenüberliegend), die Seiten sind parallel zu den Achsen. Gib B und D an und berechne Umfang und Fläche.', a: 'B' + P([x2, y1]) + ', D' + P([x1, y2]) + '; u = ' + 2 * (x2 - x1 + y2 - y1) + ' cm, A = ' + (x2 - x1) * (y2 - y1) + ' cm²' }; }
+  ];
+  L4('m-koordinaten', ['Du arbeitest im Koordinatensystem mit allen vier Quadranten.', 'Du ergänzt Figuren und berechnest Mittelpunkte, Umfang und Fläche.'],
+    [koordTask('eintragen'), text('Rechnen im Koordinatensystem', 'Zeichne in dein Heft und rechne.', KOO, 'ko', 3)]);
+
+  const ACHS = [['Quadrat', '4'], ['Rechteck (kein Quadrat)', '2'], ['gleichseitiges Dreieck', '3'], ['gleichschenkeliges Dreieck', '1'], ['Raute (kein Quadrat)', '2'], ['Parallelogramm (allgemein)', '0'], ['gleichschenkeliges Trapez', '1'], ['Deltoid', '1'], ['Kreis', 'unendlich viele'], ['regelmäßiges Sechseck', '6'], ['allgemeines Dreieck', '0']];
+  const achsen = (n) => task({ title: 'Symmetrieachsen', instr: 'Wie viele Symmetrieachsen hat die Figur?', n, cols: 2, w: 5, gen: (rng) => { const x = rng.pick(ACHS); return { q: x[0] + ': {?}', a: x[1], key: x[0] }; } });
+  const spP = (n) => task({
+    title: 'Punkte spiegeln', instr: 'Gib die Koordinaten des Spiegelpunkts an.', n, cols: 2, w: 5,
+    gen: (rng) => {
+      const x = R(rng, -6, 6), y = R(rng, -5, 5), k = rng.int(3), P = (a, b) => '(' + F(a) + ' | ' + F(b) + ')';
+      if (k === 0) return { q: 'P' + P(x, y) + ' an der x-Achse: {?}', a: "P'" + P(x, -y) };
+      if (k === 1) return { q: 'P' + P(x, y) + ' an der y-Achse: {?}', a: "P'" + P(-x, y) };
+      const g = R(rng, -2, 3); return { q: 'P' + P(x, y) + ' an der Geraden x = ' + F(g) + ': {?}', a: "P'" + P(2 * g - x, y) };
+    }
+  });
+  L4('m-symmetrie', ['Du spiegelst Figuren an schrägen Achsen.', 'Du kennst die Symmetrieachsen wichtiger Figuren.', 'Du berechnest Spiegelpunkte im Koordinatensystem.'],
+    [spiegel('d'), achsen(6), spP(6)]);
+
 })();
