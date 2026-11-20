@@ -29,6 +29,55 @@
     { a: 'Man hat den Dieb gefasst.', p: 'Der Dieb ist gefasst worden.', t: 'pf', man: true }
   ];
 
+  // Stufe 4: Plusquamperfekt, Futur I, Modalverben, Passiv ohne Subjekt
+  const T4 = { pr: 'Präsens', pt: 'Präteritum', pq: 'Plusquamperfekt', f1: 'Futur I', mod: 'mit Modalverb' };
+  const PAIRS4 = [
+    { a: 'Der Arzt hatte den Patienten bereits untersucht.', p: 'Der Patient war vom Arzt bereits untersucht worden.', t: 'pq' },
+    { a: 'Die Feuerwehr hatte das Feuer schnell gelöscht.', p: 'Das Feuer war von der Feuerwehr schnell gelöscht worden.', t: 'pq' },
+    { a: 'Die Stadt hatte den Park neu gestaltet.', p: 'Der Park war von der Stadt neu gestaltet worden.', t: 'pq' },
+    { a: 'Die Gemeinde wird die Straße erneuern.', p: 'Die Straße wird von der Gemeinde erneuert werden.', t: 'f1' },
+    { a: 'Der Architekt wird das Museum planen.', p: 'Das Museum wird vom Architekten geplant werden.', t: 'f1' },
+    { a: 'Der Hausmeister muss die Heizung reparieren.', p: 'Die Heizung muss vom Hausmeister repariert werden.', t: 'mod' },
+    { a: 'Die Schüler sollen die Aufgabe bis morgen lösen.', p: 'Die Aufgabe soll von den Schülern bis morgen gelöst werden.', t: 'mod' },
+    { a: 'Die Lehrerin darf die Ergebnisse noch nicht veröffentlichen.', p: 'Die Ergebnisse dürfen von der Lehrerin noch nicht veröffentlicht werden.', t: 'mod' },
+    { a: 'Der Trainer kann das Spiel verschieben.', p: 'Das Spiel kann vom Trainer verschoben werden.', t: 'mod' },
+    { a: 'Man kann das Fenster nicht öffnen.', p: 'Das Fenster kann nicht geöffnet werden.', t: 'mod', man: true },
+    { a: 'Man wird die Gewinner morgen verständigen.', p: 'Die Gewinner werden morgen verständigt werden.', t: 'f1', man: true },
+    { a: 'Man hilft dem verletzten Radfahrer.', p: 'Dem verletzten Radfahrer wird geholfen.', t: 'pr', man: true },
+    { a: 'Man dankte den Helferinnen.', p: 'Den Helferinnen wurde gedankt.', t: 'pt', man: true },
+    { a: 'Man hatte die Brücke gesperrt.', p: 'Die Brücke war gesperrt worden.', t: 'pq', man: true }
+  ];
+  const ZUSTAND = [
+    ['Das Geschäft ist heute geschlossen.', 'Z'], ['Das Geschäft wird um 18 Uhr geschlossen.', 'V'],
+    ['Die Straße ist gesperrt.', 'Z'], ['Die Straße wird wegen des Festes gesperrt.', 'V'],
+    ['Der Tisch ist schon gedeckt.', 'Z'], ['Der Tisch wird gerade gedeckt.', 'V'],
+    ['Das Fenster ist geöffnet.', 'Z'], ['Die Briefe werden morgen verschickt.', 'V'],
+    ['Das Auto ist repariert.', 'Z'], ['Das Auto wird in der Werkstatt repariert.', 'V'],
+    ['Die Hausübung ist erledigt.', 'Z'], ['Die Wäsche wird aufgehängt.', 'V']
+  ];
+
+  function taskUmformen4(rng, dir) {
+    const pool = PAIRS4.filter(x => dir === 'pa' ? !x.man : true);
+    const its = rng.fresh(pool, dir === 'ap' ? 4 : 3, x => x.a);
+    const from = (x) => dir === 'ap' ? x.a : x.p, to = (x) => dir === 'ap' ? x.p : x.a;
+    return {
+      title: dir === 'ap' ? 'Forme ins Passiv um.' : 'Forme ins Aktiv um.',
+      instr: dir === 'ap' ? 'Die Zeitform bleibt gleich. Plusquamperfekt: war … worden, Futur I: wird … werden, Modalverb: muss/soll/kann … werden.' : 'Wer handelt? Diese Person oder Sache wird zum Subjekt. Die Zeitform bleibt gleich.',
+      body: its.map(x => '<div class="item">' + esc(from(x)) + ' <span class="hint">(' + T4[x.t] + ')</span></div>' + lines(1)).join(''),
+      sol: its.map(x => '<div class="item">' + esc(from(x)) + '<br>' + sol(esc(to(x))) + '</div>').join('')
+    };
+  }
+
+  function taskZustand(rng) {
+    const zs = rng.shuffle(rng.sample(ZUSTAND.filter(x => x[1] === 'Z'), 3).concat(rng.sample(ZUSTAND.filter(x => x[1] === 'V'), 3)));
+    return {
+      title: 'Vorgang oder Zustand?',
+      instr: 'Vorgangspassiv (werden + Partizip II): Etwas geschieht gerade. Zustandspassiv (sein + Partizip II): Das Ergebnis ist schon da. Kreuze an.',
+      body: table(['Satz', 'Vorgang', 'Zustand'], zs.map(x => [esc(x[0]), box, box]), 'center-cols'),
+      sol: table(['Satz', 'Vorgang', 'Zustand'], zs.map(x => [esc(x[0]), x[1] === 'V' ? sol('✗') : '', x[1] === 'Z' ? sol('✗') : '']), 'center-cols')
+    };
+  }
+
   function taskErkennen(level, rng) {
     const ps = rng.fresh(PAIRS.filter(x => level === 3 || !x.man), level === 1 ? 8 : 6, x => x.a);
     const its = ps.map((x, i) => ({ s: i % 2 ? x.p : x.a, isP: !!(i % 2) }));
@@ -78,11 +127,13 @@
     levels: {
       1: { ichkann: ['Du kannst Aktiv- und Passivsätze unterscheiden.', 'Du weißt, wie man das Passiv bildet.'] },
       2: { ichkann: ['Du kannst Sätze im Präsens vom Aktiv ins Passiv umformen.', 'Du kannst Passivsätze ins Aktiv umformen.'] },
-      3: { ichkann: ['Du kannst das Vorgangspassiv in Präsens, Präteritum und Perfekt bilden.', 'Du kannst Sätze mit „man“ ins Passiv setzen.'] }
+      3: { ichkann: ['Du kannst das Vorgangspassiv in Präsens, Präteritum und Perfekt bilden.', 'Du kannst Sätze mit „man“ ins Passiv setzen.'] },
+      4: { ichkann: ['Du bildest das Passiv auch im Plusquamperfekt, im Futur I und mit Modalverben.', 'Du formst Passivsätze ins Aktiv um.', 'Du unterscheidest Vorgangspassiv und Zustandspassiv.'] }
     },
     build(level, rng) {
       if (level === 1) return [taskErkennen(1, rng), taskMerk(1)];
       if (level === 2) return [taskErkennen(2, rng), taskUmformen(2, rng, 'ap'), taskUmformen(2, rng, 'pa')];
+      if (level === 4) return [taskUmformen4(rng, 'ap'), taskUmformen4(rng, 'pa'), taskZustand(rng)];
       return [taskUmformen(3, rng, 'ap'), taskUmformen(3, rng, 'pa'), taskMerk(3)];
     },
     pool() {

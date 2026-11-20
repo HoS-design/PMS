@@ -13,7 +13,7 @@
     f1: { de: 'Zukunft', fach: 'Futur I' },
     f2: { de: 'vollendete Zukunft', fach: 'Futur II' }
   };
-  const LEVEL_TENSES = { 1: ['pr', 'pt', 'pf'], 2: ['pr', 'pt', 'pf', 'f1'], 3: ['pr', 'pt', 'pf', 'pq', 'f1', 'f2'] };
+  const LEVEL_TENSES = { 1: ['pr', 'pt', 'pf'], 2: ['pr', 'pt', 'pf', 'f1'], 3: ['pr', 'pt', 'pf', 'pq', 'f1', 'f2'], 4: ['pr', 'pt', 'pf', 'pq', 'f1', 'f2'] };
   const tname = (t, level) => level === 1 ? TENSES[t].de : (level === 2 ? TENSES[t].de + ' (' + TENSES[t].fach + ')' : TENSES[t].fach);
 
   // inf, pr (er/sie), pt, p2 (Partizip II), aux (hat/ist), rest = passende Satzergänzungen
@@ -65,7 +65,7 @@
 
   function taskBestimmen(level, rng) {
     const ts = LEVEL_TENSES[level];
-    const its = items(rng, level === 1 ? 6 : 6).map((it, i) => Object.assign(it, { t: ts[i % ts.length] }));
+    const its = items(rng, 6).map((it, i) => Object.assign(it, { t: ts[i % ts.length] }));
     const shuffled = rng.shuffle(its);
     const choices = ts.map(t => tname(t, level));
     return {
@@ -118,6 +118,36 @@
     };
   }
 
+  // Stufe 4: von einer beliebigen Zeitform in eine andere
+  function taskUmformen4(rng) {
+    const ts = LEVEL_TENSES[4];
+    const its = items(rng, 3).map(it => { const from = rng.pick(ts); return Object.assign(it, { from, t: rng.pick(ts.filter(x => x !== from)) }); });
+    const head = (it) => esc(form(it.v, it.from, it.name, it.rest)) + ' <span class="hint">→ ' + esc(tname(it.t, 4)) + '</span>';
+    return {
+      title: 'Setze in die angegebene Zeitform.',
+      instr: 'Achtung: Der Ausgangssatz steht nicht immer im Präsens. Schreibe den ganzen Satz neu.',
+      body: its.map(it => '<div class="item"><div>' + head(it) + '</div>' + lines(1) + '</div>').join(''),
+      sol: its.map(it => '<div class="item"><div>' + head(it) + '</div><div>' + sol(esc(form(it.v, it.t, it.name, it.rest))) + '</div></div>').join('')
+    };
+  }
+
+  // Stufe 4: Vorzeitigkeit mit „nachdem“ (Plusquamperfekt + Präteritum)
+  function taskNachdem(rng) {
+    const vs = rng.fresh(VERBS, 8, v => v.inf);
+    const rows = [0, 2, 4].map(i => {
+      const a = vs[i], b = vs[i + 1];
+      const n1 = rng.pick(UB.NAMES), n2 = rng.pick(UB.NAMES.filter(n => n !== n1));
+      return { a, b, n1, n2, ra: rng.pick(a.rest), rb: rng.pick(b.rest) };
+    });
+    const line = (r, x, y) => 'Nachdem ' + esc(r.n1) + ' ' + esc(r.ra) + ' ' + x + ', ' + y + ' ' + esc(r.n2) + ' ' + esc(r.rb) + '.';
+    return {
+      title: 'Was passierte zuerst?',
+      instr: 'Die Handlung im nachdem-Satz passierte vorher: Plusquamperfekt. Die zweite Handlung steht im Präteritum.',
+      body: rows.map(r => '<div class="item">' + line(r, blank(9), blank(5)) + ' <span class="hint">(' + esc(r.a.inf) + ' / ' + esc(r.b.inf) + ')</span></div>').join(''),
+      sol: rows.map(r => '<div class="item">' + line(r, sol(esc(r.a.p2 + ' ' + (r.a.aux === 'ist' ? 'war' : 'hatte'))), sol(esc(r.b.pt))) + '</div>').join('')
+    };
+  }
+
   function taskSelbst(level, rng) {
     const ex = items(rng, 2);
     return {
@@ -146,11 +176,13 @@
     levels: {
       1: { ichkann: ['Du kannst Gegenwart, Mitvergangenheit und Vergangenheit unterscheiden.', 'Du kannst Verben in der Mitvergangenheit einsetzen.'] },
       2: { ichkann: ['Du kennst vier Zeitformen und ihre Namen.', 'Du kannst Sätze in eine andere Zeitform setzen.', 'Du kannst die Stammformen von Verben bilden.'] },
-      3: { ichkann: ['Du kennst alle sechs Zeitformen mit Fachbegriffen.', 'Du kannst Sätze in jede Zeitform setzen.', 'Du kannst eigene Sätze im Plusquamperfekt und Futur II bilden.'] }
+      3: { ichkann: ['Du kennst alle sechs Zeitformen mit Fachbegriffen.', 'Du kannst Sätze in jede Zeitform setzen.', 'Du kannst eigene Sätze im Plusquamperfekt und Futur II bilden.'] },
+      4: { ichkann: ['Du bestimmst alle sechs Zeitformen sicher.', 'Du setzt Sätze von jeder Zeitform in jede andere.', 'Du drückst mit „nachdem“ aus, was vorher passiert ist (Plusquamperfekt + Präteritum).'] }
     },
     build(level, rng) {
       if (level === 1) return [taskBestimmen(1, rng), taskEinsetzen(1, rng), taskUmformen(1, rng)];
       if (level === 2) return [taskBestimmen(2, rng), taskUmformen(2, rng), taskStammformen(2, rng)];
+      if (level === 4) return [taskBestimmen(4, rng), taskUmformen4(rng), taskNachdem(rng)];
       // Stufe 3: abwechselnd Stammformen oder eigene Sätze, damit das Blatt auf eine Seite passt
       return [taskBestimmen(3, rng), taskUmformen(3, rng), rng.next() < 0.5 ? taskStammformen(3, rng) : taskSelbst(3, rng)];
     },

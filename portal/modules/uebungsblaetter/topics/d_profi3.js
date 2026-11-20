@@ -143,7 +143,7 @@ Schreibe einen **Unfallbericht für die Versicherung**. Notizen: Mittwoch, 8.10 
     const t3 = nach.levels[3].tasks;
     nach.levels[4] = {
       ichkann: ['Du erzählst eine Geschichte in eigenen Worten nach.', 'Du erzählst sie aus der Sicht einer anderen Figur (Perspektivwechsel).'],
-      tasks: [t3[0], t3[2], { type: 'write', pool: 'perspektive', lines: 6, check: ['Ich-Form', 'Gedanken und Gefühle', 'Handlung vollständig', 'Präteritum'], title: 'Perspektivwechsel', instr: '' }]
+      tasks: [t3[0], t3[2], { type: 'write', pool: 'perspektive', lines: 6, title: 'Perspektivwechsel', instr: '' }]
     };
   }
   const inh = UB.topics.find(x => x.id === 'inhaltsangabe');
@@ -152,7 +152,7 @@ Schreibe einen **Unfallbericht für die Versicherung**. Notizen: Mittwoch, 8.10 
     const t3 = inh.levels[3].tasks;
     inh.levels[4] = {
       ichkann: ['Du schreibst eine vollständige Inhaltsangabe mit Einleitung, Hauptteil und Schluss.', 'Du deutest eine Geschichte und begründest deine Meinung.'],
-      tasks: [t3[0], t3[2], { type: 'write', pool: 'deutung', lines: 5, check: ['Präsens', 'Botschaft benennen', 'Begründung'], title: 'Deutung', instr: '' }]
+      tasks: [t3[0], t3[2], { type: 'write', pool: 'deutung', lines: 5, title: 'Deutung', instr: '' }]
     };
   }
 

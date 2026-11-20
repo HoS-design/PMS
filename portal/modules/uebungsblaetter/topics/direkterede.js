@@ -48,12 +48,13 @@
   const MERK = {
     1: '<div class="merk"><b>Merke:</b> Was jemand sagt, steht zwischen Redezeichen: <b>Lena ruft: „Hilfe!“</b><br>Nach dem Begleitsatz steht ein Doppelpunkt.</div>',
     2: '<div class="merk"><b>Merke:</b> Begleitsatz vorne: <b>Lena ruft: „Hilfe!“</b><br>Begleitsatz hinten: <b>„Hilfe!“, ruft Lena.</b> — Nach dem Redesatz kommt ein Beistrich.</div>',
-    3: ''
+    3: '',
+    4: ''
   };
 
   function taskSetzen(level, rng) {
-    const forms = level === 1 ? ['vorne'] : (level === 2 ? ['vorne', 'hinten'] : ['vorne', 'hinten', 'mitte']);
-    const n = level === 1 ? 5 : (level === 2 ? 6 : 4);
+    const forms = level === 1 ? ['vorne'] : (level === 2 ? ['vorne', 'hinten'] : (level === 4 ? ['mitte', 'hinten', 'mitte', 'vorne', 'hinten'] : ['vorne', 'hinten', 'mitte']));
+    const n = level === 1 ? 5 : (level === 2 ? 6 : (level === 4 ? 5 : 4));
     const its = [];
     for (let i = 0; i < n; i++) its.push(make(forms[i % forms.length], rng));
     const sh = rng.shuffle(its);
@@ -91,6 +92,30 @@
     };
   }
 
+  // Stufe 4: Begleitsatz umstellen
+  function taskUmstellen(rng) {
+    const its = rng.fresh(SPEECH, 3, x => x.t).map(s => { const name = rng.pick(UB.NAMES); const v = verbFor(s.e, rng);
+      return { vorne: name + ' ' + v + ': „' + s.t + s.e + '“', hinten: '„' + s.t + (s.e === '.' ? '' : s.e) + '“, ' + v + ' ' + name + '.' }; });
+    return {
+      title: 'Stelle den Begleitsatz nach hinten.',
+      instr: 'Schreibe den Satz neu. Achte auf Beistrich und Punkt – und darauf, wann der Punkt im Redesatz wegfällt.',
+      body: its.map(x => '<div class="item">' + esc(x.vorne) + '</div>' + lines(1)).join(''),
+      sol: its.map(x => '<div class="item">' + esc(x.vorne) + '<br>' + sol(esc(x.hinten)) + '</div>').join('')
+    };
+  }
+
+  function taskDialog4(rng) {
+    const name1 = rng.pick(UB.NAMES), name2 = rng.pick(UB.NAMES.filter(n => n !== name1));
+    const lage = rng.pick(['bemerken kurz vor dem Schulausflug, dass der Bus schon abgefahren ist', 'finden im Keller eine alte, verschlossene Kiste', 'sollen gemeinsam ein Referat halten, aber einer hat alles vergessen']);
+    return {
+      title: 'Schreibe ein Gespräch.',
+      instr: name1 + ' und ' + name2 + ' ' + lage + '. Schreibe sechs Sätze mit direkter Rede: jede Stellung des Begleitsatzes mindestens einmal, mindestens eine Frage und ein Ausruf, kein „sagte“.',
+      body: lines(6),
+      sol: '<div class="item">Eigene Lösung. Beispiel für die drei Stellungen:</div><div class="item">' + sol(esc(name1 + ' rief: „Oh nein, schau mal!“')) + '<br>' +
+        sol(esc('„Was ist denn los?“, fragte ' + name2 + '.')) + '<br>' + sol(esc('„Keine Panik“, meinte ' + name1 + ', „wir finden eine Lösung.“')) + '</div>'
+    };
+  }
+
   function taskDialog(level, rng) {
     const name1 = rng.pick(UB.NAMES), name2 = rng.pick(UB.NAMES.filter(n => n !== name1));
     return {
@@ -112,11 +137,13 @@
     levels: {
       1: { ichkann: ['Du kannst die Redezeichen „ “ richtig setzen.', 'Du weißt, dass nach dem Begleitsatz ein Doppelpunkt steht.'] },
       2: { ichkann: ['Du kannst Satzzeichen bei vorangestelltem und nachgestelltem Begleitsatz setzen.', 'Du kannst statt „sagte“ ein genaueres Verb verwenden.'] },
-      3: { ichkann: ['Du kannst Begleitsatz und Redesatz benennen.', 'Du kannst Satzzeichen auch bei eingeschobenem Begleitsatz setzen.', 'Du kannst ein Gespräch mit direkter Rede schreiben.'] }
+      3: { ichkann: ['Du kannst Begleitsatz und Redesatz benennen.', 'Du kannst Satzzeichen auch bei eingeschobenem Begleitsatz setzen.', 'Du kannst ein Gespräch mit direkter Rede schreiben.'] },
+      4: { ichkann: ['Du setzt alle Satzzeichen der direkten Rede sicher, auch bei eingeschobenem Begleitsatz.', 'Du stellst den Begleitsatz um.', 'Du schreibst ein Gespräch mit allen drei Stellungen des Begleitsatzes.'] }
     },
     build(level, rng) {
       if (level === 1) return [taskSetzen(1, rng), taskTeile(1, rng)];
       if (level === 2) return [taskSetzen(2, rng), taskVerben(2, rng)];
+      if (level === 4) return [taskSetzen(4, rng), taskUmstellen(rng), taskDialog4(rng)];
       return [taskSetzen(3, rng), taskTeile(3, rng), taskDialog(3, rng)];
     },
     pool() {

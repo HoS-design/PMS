@@ -67,6 +67,60 @@
     ['ein Heft', 'eines Heftes', 'einem Heft', 'ein Heft']
   ];
 
+  // Stufe 4: Präpositionen, Wechselpräpositionen, Begleiter + Adjektiv
+  const SENT4 = [
+    { s: 'Wegen [des starken Regens] fällt der Ausflug aus.', c: 2, nom: 'der starke Regen' },
+    { s: 'Trotz [der großen Hitze] spielen die Kinder Fußball.', c: 2, nom: 'die große Hitze' },
+    { s: 'Wir gehen mit [unserem kleinen Bruder] ins Kino.', c: 3, nom: 'unser kleiner Bruder' },
+    { s: 'Lena läuft durch [den dunklen Wald].', c: 4, nom: 'der dunkle Wald' },
+    { s: 'Die Katze springt auf [den hohen Schrank].', c: 4, nom: 'der hohe Schrank' },
+    { s: 'Die Katze schläft auf [dem hohen Schrank].', c: 3, nom: 'der hohe Schrank' },
+    { s: 'Das ist das Fahrrad [meiner älteren Schwester].', c: 2, nom: 'meine ältere Schwester' },
+    { s: 'Der Lehrer erklärt [den neuen Schülern] die Hausordnung.', c: 3, nom: 'die neuen Schüler' },
+    { s: '[Der freundliche Busfahrer] wartet auf uns.', c: 1, nom: 'der freundliche Busfahrer' },
+    { s: 'Wir bedanken uns bei [der netten Nachbarin].', c: 3, nom: 'die nette Nachbarin' },
+    { s: 'Ohne [einen warmen Mantel] frierst du.', c: 4, nom: 'ein warmer Mantel' },
+    { s: 'Während [des langen Winters] bleibt der Bär in seiner Höhle.', c: 2, nom: 'der lange Winter' },
+    { s: 'Max stellt die Vase auf [den runden Tisch].', c: 4, nom: 'der runde Tisch' },
+    { s: 'Die Vase steht auf [dem runden Tisch].', c: 3, nom: 'der runde Tisch' },
+    { s: 'Mia schreibt [ihrer besten Freundin] eine Karte.', c: 3, nom: 'ihre beste Freundin' },
+    { s: 'Ich kenne [den neuen Trainer] noch nicht.', c: 4, nom: 'der neue Trainer' },
+    { s: '[Die kleinen Kinder] bauen eine Sandburg.', c: 1, nom: 'die kleinen Kinder' },
+    { s: 'Statt [eines teuren Geschenks] bastelt Ben eine Karte.', c: 2, nom: 'ein teures Geschenk' },
+    { s: 'Die Kinder laufen um [das alte Haus].', c: 4, nom: 'das alte Haus' },
+    { s: 'Gegen [den starken Wind] kommt der Radfahrer kaum an.', c: 4, nom: 'der starke Wind' },
+    { s: 'Nach [dem spannenden Spiel] feiern die Fans.', c: 3, nom: 'das spannende Spiel' },
+    { s: 'Die Ergebnisse [der letzten Schularbeit] sind gut.', c: 2, nom: 'die letzte Schularbeit' },
+    { s: 'Das Bild hängt an [der weißen Wand].', c: 3, nom: 'die weiße Wand' },
+    { s: 'Paul hängt das Bild an [die weiße Wand].', c: 4, nom: 'die weiße Wand' },
+    { s: '[Ein großer Hund] bellt am Gartenzaun.', c: 1, nom: 'ein großer Hund' },
+    { s: 'Wir fahren mit [dem neuen Zug] nach Wien.', c: 3, nom: 'der neue Zug' }
+  ];
+  const FEHLER4 = [
+    ['Wegen dem Regen bleiben wir zu Hause.', 'Wegen des Regens bleiben wir zu Hause.'],
+    ['Trotz dem Lärm kann ich schlafen.', 'Trotz des Lärms kann ich schlafen.'],
+    ['Ich helfe den Mann beim Tragen.', 'Ich helfe dem Mann beim Tragen.'],
+    ['Ich frage dem Lehrer um Rat.', 'Ich frage den Lehrer um Rat.'],
+    ['Der Pullover gehört meinen Bruder.', 'Der Pullover gehört meinem Bruder.'],
+    ['Ich gratuliere dich zum Geburtstag.', 'Ich gratuliere dir zum Geburtstag.'],
+    ['Lena ruft ihrem Hund.', 'Lena ruft ihren Hund.'],
+    ['Während dem Unterricht ist das Handy aus.', 'Während des Unterrichts ist das Handy aus.'],
+    ['Mit meinen besten Freund fahre ich ans Meer.', 'Mit meinem besten Freund fahre ich ans Meer.'],
+    ['Ich lege das Buch auf dem Tisch.', 'Ich lege das Buch auf den Tisch.'],
+    ['Das Bild hängt an die Wand.', 'Das Bild hängt an der Wand.'],
+    ['Wir danken den Busfahrer.', 'Wir danken dem Busfahrer.']
+  ];
+  const ADJ4 = [
+    ['der kleine Hund', 'des kleinen Hundes', 'dem kleinen Hund', 'den kleinen Hund'],
+    ['die alte Frau', 'der alten Frau', 'der alten Frau', 'die alte Frau'],
+    ['das neue Buch', 'des neuen Buches', 'dem neuen Buch', 'das neue Buch'],
+    ['ein großer Baum', 'eines großen Baumes', 'einem großen Baum', 'einen großen Baum'],
+    ['eine rote Jacke', 'einer roten Jacke', 'einer roten Jacke', 'eine rote Jacke'],
+    ['ein kleines Kind', 'eines kleinen Kindes', 'einem kleinen Kind', 'ein kleines Kind'],
+    ['die netten Kinder', 'der netten Kinder', 'den netten Kindern', 'die netten Kinder'],
+    ['mein bester Freund', 'meines besten Freundes', 'meinem besten Freund', 'meinen besten Freund']
+  ];
+
   const parse = (s) => {
     const m = s.match(/^(.*)\[(.+?)\](.*)$/);
     return { before: m[1], mark: m[2], after: m[3] };
@@ -87,7 +141,7 @@
 
   function taskBestimmen(level, rng) {
     const cases = [1, 2, 3, 4];
-    const its = pickSentences(rng, 8, cases);
+    const its = level === 4 ? pick4(rng, 6) : pickSentences(rng, 8, cases);
     const head = level === 1 ? 'Frage' : (level === 2 ? 'Fall und Frage' : 'Fall');
     return {
       title: level === 1 ? 'Wie fragst du nach dem markierten Satzteil?' : 'Bestimme den Fall.',
@@ -95,6 +149,45 @@
         (level === 2 ? 'Frage nach dem markierten Satzteil. Schreibe den Fall und die Frage auf.' : 'Schreibe den Fachbegriff auf: Nominativ, Genitiv, Dativ oder Akkusativ.'),
       body: table(['Satz', head], its.map(x => [marked(x.s), blank(9)])),
       sol: table(['Satz', head], its.map(x => [marked(x.s), sol(level === 2 ? CASES[x.c].de + ' – ' + CASES[x.c].frage : esc(cname(x.c, level)))]))
+    };
+  }
+
+  function pick4(rng, n) {
+    const pool = SENT4.filter(x => !rng.used.has(x.s));
+    const first = [1, 2, 3, 4].map(c => rng.pick(pool.filter(x => x.c === c)));
+    const all = rng.shuffle(first.concat(rng.sample(pool.filter(x => !first.includes(x)), n - 4)));
+    all.forEach(x => rng.used.add(x.s));
+    return all;
+  }
+
+  function taskEinsetzen4(rng) {
+    const its = pick4(rng, 5);
+    return {
+      title: 'Setze im richtigen Fall ein.',
+      instr: 'Begleiter, Adjektiv und Nomen müssen zusammenpassen. Achte auf die Präposition!',
+      body: its.map(x => '<div class="item">' + gapped(x.s, 11) + ' <span class="hint">(' + esc(x.nom) + ')</span></div>').join(''),
+      sol: its.map(x => '<div class="item">' + esc(parse(x.s).before) + sol(esc(parse(x.s).mark)) + esc(parse(x.s).after) + ' <span class="hint">(' + esc(CASES[x.c].fach) + ')</span></div>').join('')
+    };
+  }
+
+  function taskFehler4(rng) {
+    const its = rng.fresh(FEHLER4, 4, x => x[0]);
+    return {
+      title: 'Finde den Fehler.',
+      instr: 'In jedem Satz steht ein Satzteil im falschen Fall. Schreibe den Satz richtig.',
+      body: its.map(x => '<div class="item">' + esc(x[0]) + '</div>' + lines(1)).join(''),
+      sol: its.map(x => '<div class="item">' + esc(x[0]) + '<br>' + sol(esc(x[1])) + '</div>').join('')
+    };
+  }
+
+  function taskTabelle4(rng) {
+    const ns = rng.sample(ADJ4, 3);
+    const head = [''].concat(ns.map(n => '<b>' + esc(n[0]) + '</b>'));
+    return {
+      title: 'Begleiter, Adjektiv und Nomen',
+      instr: 'Setze die Wortgruppen in alle vier Fälle.',
+      body: table(head, [1, 2, 3, 4].map(c => [CASES[c].fach].concat(ns.map(n => c === 1 ? esc(n[0]) : '')))),
+      sol: table(head, [1, 2, 3, 4].map(c => [CASES[c].fach].concat(ns.map(n => c === 1 ? esc(n[0]) : sol(esc(n[c - 1]))))))
     };
   }
 
@@ -152,11 +245,13 @@
     levels: {
       1: { ichkann: ['Du kannst mit den Fragen Wer oder was?, Wessen?, Wem? und Wen oder was? nach Satzteilen fragen.', 'Du kannst die richtige Form eines Nomens auswählen.'] },
       2: { ichkann: ['Du kannst den 1. bis 4. Fall bestimmen.', 'Du kannst Nomen in den 3. und 4. Fall setzen.', 'Du kannst Nomen in allen vier Fällen aufschreiben.'] },
-      3: { ichkann: ['Du kennst die Fachbegriffe Nominativ, Genitiv, Dativ und Akkusativ.', 'Du kannst Nomen in jeden Fall setzen.', 'Du kannst eine Deklinationstabelle ausfüllen.'] }
+      3: { ichkann: ['Du kennst die Fachbegriffe Nominativ, Genitiv, Dativ und Akkusativ.', 'Du kannst Nomen in jeden Fall setzen.', 'Du kannst eine Deklinationstabelle ausfüllen.'] },
+      4: { ichkann: ['Du bestimmst den Fall auch nach Präpositionen (wegen, trotz, mit, durch, auf …).', 'Du setzt Wortgruppen mit Adjektiv richtig in jeden Fall.', 'Du findest und verbesserst typische Fallfehler.'] }
     },
     build(level, rng) {
       if (level === 1) return [taskBestimmen(1, rng), taskAuswahl(rng)];
       if (level === 2) return [taskBestimmen(2, rng), taskEinsetzen(2, rng), taskTabelle(2, rng)];
+      if (level === 4) return [taskBestimmen(4, rng), taskEinsetzen4(rng), rng.next() < 0.5 ? taskFehler4(rng) : taskTabelle4(rng)];
       return [taskBestimmen(3, rng), taskEinsetzen(3, rng), taskTabelle(3, rng)];
     },
     pool() {
