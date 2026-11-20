@@ -168,5 +168,9 @@
   // n verschiedene Elemente erzeugen (key bestimmt, was als gleich gilt)
   const uniq = (n, gen, key) => { const out = []; for (let t = 0; out.length < n && t < 300; t++) { const x = gen(); if (!out.some(o => key(o) === key(x))) out.push(x); } return out; };
 
-  UB.M = { uniq, R, round, gcd, lcm, fmt, frac, fracR, mixed, karo, grid, task, info, rect, cuboid, angle, rtri, numberLine, NB, MINUS };
+  // Stufe 4: Textvorlagen ohne Wiederholung auf einem Blatt; Stufe 4 nachträglich setzen
+  const pickT = (rng, list, pre) => { const k = rng.int(list.length); return Object.assign(list[k](rng), { key: pre + k }); };
+  const L4 = (id, ichkann, tasks) => { const t = UB.topics.find(x => x.id === id); if (t) t.levels[4] = { ichkann, tasks }; };
+  const text = (title, instr, list, pre, n, lines) => task({ title, instr, n, mode: 'lines', lines: lines || 2, gen: (rng) => pickT(rng, list, pre) });
+  UB.M = { uniq, R, round, gcd, lcm, fmt, frac, fracR, mixed, karo, grid, task, info, rect, cuboid, angle, rtri, numberLine, NB, MINUS, pickT, L4, text };
 })();

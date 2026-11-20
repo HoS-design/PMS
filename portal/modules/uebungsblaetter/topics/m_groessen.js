@@ -152,4 +152,54 @@
       3: { ichkann: ['Du kannst Sachaufgaben zu Quader und Würfel lösen.'], tasks: [textK(3), quader(2, true), raumUmw(4)] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text } = M;
+  const mehr = (n) => task({
+    title: 'Mehrere Einheiten', instr: 'Wandle alle Größen in die angegebene Einheit um und rechne.', n, cols: 1, w: 6,
+    gen: (rng) => {
+      const k = rng.int(3);
+      if (k === 0) { const a = round(R(rng, 12, 95) / 10, 1), b = R(rng, 2, 95), c = R(rng, 1, 9); return { q: F(a) + ' kg + ' + b + ' dag + ' + c + ' g = {?} g', a: F(a * 1000 + b * 10 + c) }; }
+      if (k === 1) { const a = round(R(rng, 102, 995) / 100, 2), b = R(rng, 2, 95), c = R(rng, 1, 9); return { q: F(a) + ' m + ' + b + ' cm + ' + c + ' mm = {?} mm', a: F(Math.round(a * 1000) + b * 10 + c) }; }
+      const a = round(R(rng, 12, 95) / 10, 1), b = R(rng, 1, 9), c = R(rng, 5, 95); return { q: F(a) + ' l − ' + b + ' dl − ' + c + ' ml = {?} ml', a: F(Math.round(a * 1000) - b * 100 - c) };
+    }
+  });
+  const nacht = (n) => task({
+    title: 'Zeitspannen über Mitternacht', instr: 'Wie lange dauert es?', n, cols: 1, w: 6,
+    gen: (rng) => {
+      const s = R(rng, 18 * 12, 23 * 12 + 11) * 5, d = R(rng, 40, 130) * 5, e = (s + d) % 1440;
+      const t = (m) => Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+      return { q: 'Abfahrt ' + t(s) + ' Uhr, Ankunft am nächsten Tag ' + t(e) + ' Uhr: {?}', a: Math.floor(d / 60) + ' h' + (d % 60 ? ' ' + d % 60 + ' min' : '') };
+    }
+  });
+  const ordnen = (n) => task({
+    title: 'Ordne der Größe nach.', instr: 'Beginne mit der kleinsten Größe. Wandle dazu in dieselbe Einheit um.', n, cols: 1, w: 16,
+    gen: (rng) => {
+      const fam = rng.pick(['laenge', 'masse', 'hohl']); const us = FAM[fam].slice(0, fam === 'laenge' ? 4 : 3);
+      const vals = []; while (vals.length < 4) { const u = rng.pick(us), base = R(rng, 300, 4000), v = base / u[1]; if (!vals.some(x => x.b === base)) vals.push({ b: base, s: F(round(v, 3)) + ' ' + u[0] }); }
+      return { q: vals.map(v => v.s).join(' ; ') + ' <br>{?}', a: vals.slice().sort((a, b) => a.b - b.b).map(v => v.s).join(' &lt; '), key: vals.map(v => v.s).join() };
+    }
+  });
+  L4('m-masse', ['Du rechnest mit Größen in mehreren Einheiten.', 'Du vergleichst und ordnest Größen.', 'Du berechnest Zeitspannen auch über Mitternacht.'],
+    [mehr(4), ordnen(3), nacht(3), groessenRechnen(4)]);
+
+  const TX_FL4 = [
+    (r) => { const a = R(r, 8, 16), b = R(r, 6, 12), c = R(r, 2, a - 3), d = R(r, 2, b - 3); return { q: 'Aus einem rechteckigen Grundstück (' + a + ' m × ' + b + ' m) wird an einer Ecke ein rechteckiges Stück (' + c + ' m × ' + d + ' m) für eine Garage abgetrennt. Wie groß ist die Restfläche? Wie lang ist ihr Umfang?', a: 'A = ' + a + ' · ' + b + ' − ' + c + ' · ' + d + ' = ' + (a * b - c * d) + ' m²; u = 2 · (' + a + ' + ' + b + ') = ' + 2 * (a + b) + ' m (der Umfang ändert sich nicht).' }; },
+    (r) => { const a = R(r, 3, 6), b = R(r, 2, 5); return { q: 'Ein Badezimmer ist ' + a + ' m lang und ' + b + ' m breit. Der Boden wird mit quadratischen Fliesen (25 cm Seitenlänge) belegt. Wie viele Fliesen braucht man?', a: 'A = ' + a * b + ' m² = ' + F(a * b * 10000) + ' cm²; eine Fliese: 625 cm²; ' + F(a * b * 10000) + ' : 625 = ' + a * b * 16 + ' Fliesen.' }; },
+    (r) => { const s = r.pick([6, 8, 10, 12]); const ds = [...Array(s - 1).keys()].map(i => i + 1).filter(d => (s * s) % d === 0 && s * s / d <= 4 * s); const a = r.pick(ds), b = s * s / a; return { q: 'Ein Rechteck ist ' + a + ' m lang und ' + b + ' m breit. Ein Quadrat hat denselben Flächeninhalt. Wie lang ist seine Seite? Welche Figur hat den kleineren Umfang?', a: 'A = ' + s * s + ' m², Seite ' + s + ' m; u(Rechteck) = ' + 2 * (a + b) + ' m, u(Quadrat) = ' + 4 * s + ' m – das Quadrat hat den kleineren Umfang.' }; },
+    (r) => { const a = R(r, 3, 9), b = R(r, 2, 8); return { q: 'Ein Rechteck ist ' + a + ' cm lang und ' + b + ' cm breit. Beide Seiten werden verdoppelt. Wie verändern sich Umfang und Flächeninhalt?', a: 'u: ' + 2 * (a + b) + ' cm → ' + 4 * (a + b) + ' cm (doppelt so groß); A: ' + a * b + ' cm² → ' + 4 * a * b + ' cm² (viermal so groß).' }; },
+    (r) => { const b = R(r, 8, 20), u = 2 * (b + R(r, 10, 30)); const a = u / 2 - b; return { q: 'Ein Zaun um einen rechteckigen Garten ist ' + u + ' m lang. Der Garten ist ' + b + ' m breit. Wie lang ist er? Wie groß ist seine Fläche?', a: 'a = ' + u + ' : 2 − ' + b + ' = ' + a + ' m; A = ' + a + ' · ' + b + ' = ' + a * b + ' m²' }; }
+  ];
+  L4('m-flaechen', ['Du berechnest zusammengesetzte Flächen.', 'Du löst Sachaufgaben mit Umwandlungen.', 'Du erklärst, wie sich Umfang und Fläche verändern.'],
+    [text('Sachaufgaben mit mehreren Schritten', 'Schreibe die Rechnung und einen Antwortsatz.', TX_FL4, 'fl4', 4), flUmw(6)]);
+
+  const TX_K4 = [
+    (r) => { const a = R(r, 4, 8) * 10, b = R(r, 3, 5) * 10, h = R(r, 1, 4); return { q: 'In ein Aquarium (' + a + ' cm lang, ' + b + ' cm breit) wird ein Stein gelegt. Der Wasserstand steigt um ' + h + ' cm. Wie groß ist das Volumen des Steins?', a: 'V = ' + a + ' · ' + b + ' · ' + h + ' = ' + F(a * b * h) + ' cm³ = ' + F(a * b * h / 1000) + ' l' }; },
+    (r) => { const k = R(r, 2, 5), x = R(r, 2, 6), y = R(r, 2, 5), z = R(r, 2, 4); return { q: 'Ein Quader (' + k * x + ' cm × ' + k * y + ' cm × ' + k * z + ' cm) wird aus Würfeln mit ' + k + ' cm Kantenlänge gebaut. Wie viele Würfel braucht man?', a: x + ' · ' + y + ' · ' + z + ' = ' + x * y * z + ' Würfel' }; },
+    (r) => { const b = R(r, 10, 15), t = round(R(r, 12, 20) / 10, 1); return { q: 'Ein Schwimmbecken ist 25 m lang, ' + b + ' m breit und ' + F(t) + ' m tief. Wie viele Liter Wasser fasst es?', a: 'V = 25 · ' + b + ' · ' + F(t) + ' = ' + F(25 * b * t) + ' m³ = ' + F(Math.round(25 * b * t * 1000)) + ' l' }; },
+    (r) => { const a = R(r, 2, 6); return { q: 'Ein Würfel hat ein Volumen von ' + a ** 3 + ' dm³. Wie groß ist seine Oberfläche?', a: 'a = ' + a + ' dm (' + a + ' · ' + a + ' · ' + a + ' = ' + a ** 3 + '); O = 6 · ' + a + ' · ' + a + ' = ' + 6 * a * a + ' dm²' }; },
+    (r) => { const a = R(r, 10, 30), b = R(r, 8, 20), c = R(r, 5, 15); return { q: 'Für ein Kantenmodell eines Quaders (' + a + ' cm × ' + b + ' cm × ' + c + ' cm) braucht man Draht. Wie viel Draht ist nötig?', a: '4 · (' + a + ' + ' + b + ' + ' + c + ') = ' + 4 * (a + b + c) + ' cm' }; }
+  ];
+  L4('m-koerper', ['Du löst Sachaufgaben zu Volumen und Oberfläche mit mehreren Schritten.', 'Du schließt vom Volumen auf die Kantenlänge.'],
+    [text('Sachaufgaben mit mehreren Schritten', 'Schreibe die Rechnung und das Ergebnis mit Einheit.', TX_K4, 'k4', 4), quader(2, true)]);
+
 })();

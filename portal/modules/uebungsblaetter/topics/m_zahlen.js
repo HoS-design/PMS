@@ -282,4 +282,111 @@
       3: { ichkann: ['Du kannst Zahlen in Primfaktoren zerlegen.', 'Du kannst ggT und kgV bestimmen.'], tasks: [primfaktor(6), ggt(4), primzahlen()] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const pickT = (rng, list, pre) => { const k = rng.int(list.length); return Object.assign(list[k](rng), { key: pre + k }); };
+  const L4 = (id, ichkann, tasks) => { const t = UB.topics.find(x => x.id === id); if (t) t.levels[4] = { ichkann, tasks }; };
+
+  const bereich = (n) => task({
+    title: 'Gerundete Zahlen', instr: 'Die Zahl wurde gerundet. Welche ist die kleinste, welche die größte natürliche Zahl, die so gerundet wird?', n, cols: 1, w: 6,
+    gen: (rng) => {
+      const p = rng.pick([100, 1000, 10000]), r = R(rng, 11, 999) * p;
+      return { q: '≈ ' + F(r) + ' <span class="hint">(auf ' + PLACE_NAME[p] + ' gerundet)</span>: &nbsp; kleinste {?} &nbsp; größte {?}', a: [F(r - p / 2), F(r + p / 2 - 1)], key: r + '/' + p };
+    }
+  });
+  const ziffern = (n) => task({
+    title: 'Zahlenrätsel', instr: 'Bilde aus den Ziffern (jede genau einmal) die größte und die kleinste Zahl.', n, cols: 1, w: 7,
+    gen: (rng) => {
+      const ds = rng.sample([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], R(rng, 6, 7));
+      if (!ds.includes(0) && rng.int(2)) ds[0] = 0;
+      const big = ds.slice().sort((a, b) => b - a).join('');
+      const s = ds.slice().sort((a, b) => a - b); if (s[0] === 0) { const i = s.findIndex(d => d > 0); [s[0], s[i]] = [s[i], s[0]]; }
+      return { q: 'Ziffern ' + ds.join(', ') + ': &nbsp; größte {?} &nbsp; kleinste {?}', a: [F(+big), F(+s.join(''))], key: ds.join('') };
+    }
+  });
+  L4('m-zahlen', ['Du bestimmst, welche Zahlen zu einer gerundeten Zahl gehören.', 'Du löst Zahlenrätsel mit Stellenwerten.', 'Du liest und schreibst große Zahlen sicher.'],
+    [bereich(4), ziffern(3), wortZahl(2), zahlWort(2)]);
+
+  const umkehrAS = (n) => task({
+    title: 'Ergänze die fehlende Zahl.', instr: 'Rechne mit der Umkehraufgabe.', n, cols: 2, w: 5,
+    gen: (rng) => {
+      const a = R(rng, 1200, 48000), b = R(rng, 1200, 48000), k = rng.int(4);
+      if (k === 0) return { q: '{?} + ' + F(b) + ' = ' + F(a + b), a: F(a) };
+      if (k === 1) return { q: F(a) + ' + {?} = ' + F(a + b), a: F(b) };
+      if (k === 2) return { q: '{?} − ' + F(b) + ' = ' + F(a), a: F(a + b) };
+      return { q: F(a + b) + ' − {?} = ' + F(a), a: F(b) };
+    }
+  });
+  const TEXT_AS4 = [
+    (r) => { const k = R(r, 180, 260), e = R(r, 35, 60), s = R(r, 20, 40); return { q: 'Ein Zug fährt mit ' + k + ' Fahrgästen los. In Leoben steigen ' + e + ' aus und ' + s + ' ein, in Bruck steigen ' + (e + 7) + ' aus und ' + (s - 9) + ' ein. Wie viele Fahrgäste sind jetzt im Zug?', a: k + ' − ' + e + ' + ' + s + ' − ' + (e + 7) + ' + ' + (s - 9) + ' = ' + (k - e + s - (e + 7) + s - 9) + ' – Es sind ' + (k - e + s - (e + 7) + s - 9) + ' Fahrgäste im Zug.' }; },
+    (r) => { const g = R(r, 2400, 4800), m = R(r, 300, 900); const h = (g + m) / 1; return { q: 'Lena und Tom sammeln zusammen ' + F(2 * g + m) + ' Kronkorken. Tom hat ' + m + ' mehr als Lena. Wie viele hat jeder?', a: '(' + F(2 * g + m) + ' − ' + m + ') : 2 = ' + F(g) + ' – Lena hat ' + F(g) + ', Tom hat ' + F(g + m) + ' Kronkorken.' }; },
+    (r) => { const a = R(r, 12000, 18000), b = R(r, 2000, 6000), c = R(r, 1500, 4000); return { q: 'Ein Verein hat ' + F(a) + ' € auf dem Konto. Er zahlt ' + F(b) + ' € für neue Trikots und ' + F(c) + ' € für einen Ausflug. Dann kommen ' + F(b + 350) + ' € Spenden dazu. Wie viel Geld ist jetzt auf dem Konto?', a: F(a) + ' − ' + F(b) + ' − ' + F(c) + ' + ' + F(b + 350) + ' = ' + F(a - c + 350) + ' – Es sind ' + F(a - c + 350) + ' €.' }; },
+    (r) => { const y = R(r, 1955, 1975), d = R(r, 24, 32); return { q: 'Opa ist ' + y + ' geboren. Seine Tochter kam ' + d + ' Jahre später zur Welt, ihr Sohn ' + (d - 3) + ' Jahre nach ihr. In welchem Jahr wird der Enkel 18?', a: y + ' + ' + d + ' + ' + (d - 3) + ' + 18 = ' + (y + 2 * d - 3 + 18) + ' – Im Jahr ' + (y + 2 * d - 3 + 18) + '.' }; }
+  ];
+  const textAS4 = (n) => task({ title: 'Textaufgaben mit mehreren Schritten', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => pickT(rng, TEXT_AS4, 'as4') });
+  L4('m-addsub', ['Du rechnest mit großen Zahlen schriftlich.', 'Du findest fehlende Zahlen mit der Umkehraufgabe.', 'Du löst Textaufgaben mit mehreren Rechenschritten.'],
+    [schriftlich(3, false, 3), umkehrAS(6), textAS4(3)]);
+
+  const umkehrMD = (n) => task({
+    title: 'Ergänze die fehlende Zahl.', instr: 'Rechne mit der Umkehraufgabe.', n, cols: 2, w: 4,
+    gen: (rng) => {
+      const a = R(rng, 13, 98), b = R(rng, 12, 64), k = rng.int(3);
+      if (k === 0) return { q: '{?} · ' + b + ' = ' + F(a * b), a: F(a) };
+      if (k === 1) return { q: '{?} : ' + b + ' = ' + a, a: F(a * b) };
+      const r = R(rng, 1, b - 1); return { q: '{?} : ' + b + ' = ' + a + ' Rest ' + r, a: F(a * b + r) };
+    }
+  });
+  const TEXT_MD4 = [
+    (r) => { const k = R(r, 22, 28), b = R(r, 3, 6), e = R(r, 8, 14), g = R(r, 2, 4); return { q: 'Eine Klasse (' + k + ' Kinder, ' + g + ' Lehrpersonen) fährt auf Skikurs. Der Bus kostet ' + b * 100 + ' €, der Eintritt ins Hallenbad ' + e + ' € pro Person. Der Bus wird nur auf die Kinder aufgeteilt. Wie viel zahlt ein Kind insgesamt (auf ganze Euro gerundet)?', a: b * 100 + ' : ' + k + ' ≈ ' + Math.round(b * 100 / k) + '; ' + Math.round(b * 100 / k) + ' + ' + e + ' = ' + (Math.round(b * 100 / k) + e) + ' – Ein Kind zahlt etwa ' + (Math.round(b * 100 / k) + e) + ' €.' }; },
+    (r) => { const p = R(r, 12, 24), s = R(r, 6, 12), w = R(r, 4, 6); return { q: 'Ein Bauer füllt ' + p * s * w + ' Eier in Schachteln zu je ' + s + ' Stück. Immer ' + p + ' Schachteln passen in eine Kiste. Wie viele Kisten braucht er?', a: F(p * s * w) + ' : ' + s + ' = ' + p * w + ' Schachteln; ' + p * w + ' : ' + p + ' = ' + w + ' – Er braucht ' + w + ' Kisten.' }; },
+    (r) => { const m = R(r, 12, 24), z = R(r, 25, 60), a = R(r, 80, 200); return { q: 'Ein Handy kostet ' + (m * z + a) + ' €. Man zahlt ' + a + ' € an und den Rest in ' + m + ' gleichen Monatsraten. Wie hoch ist eine Rate?', a: '(' + (m * z + a) + ' − ' + a + ') : ' + m + ' = ' + z + ' – Eine Rate beträgt ' + z + ' €.' }; },
+    (r) => { const s = R(r, 18, 32), q = R(r, 12, 30), rest = R(r, 1, s - 1); const x = s * q + rest; return { q: x + ' Kinder fahren mit Bussen zum Sportfest. In einen Bus passen ' + s + ' Kinder. Wie viele Busse braucht man mindestens?', a: x + ' : ' + s + ' = ' + q + ' Rest ' + rest + ' – Man braucht ' + (q + 1) + ' Busse.' }; }
+  ];
+  const textMD4 = (n) => task({ title: 'Textaufgaben mit mehreren Schritten', instr: 'Schreibe die Rechnung und einen Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => pickT(rng, TEXT_MD4, 'md4') });
+  L4('m-multdiv', ['Du multiplizierst und dividierst mit mehrstelligen Zahlen.', 'Du findest fehlende Zahlen mit der Umkehraufgabe.', 'Du löst Textaufgaben mit mehreren Rechenschritten.'],
+    [schriftMul(2), umkehrMD(6), textMD4(3)]);
+
+  const regeln4 = (n) => task({
+    title: 'Rechne nach den Regeln.', instr: 'Klammern von innen nach außen, dann Punkt vor Strich, dann von links nach rechts.', n, cols: 1, w: 4,
+    gen: (rng) => {
+      const n2 = () => R(rng, 2, 12);
+      const k = rng.int(4);
+      if (k === 0) { const e = R(rng, 2, 9), a = n2(), b = n2(), c = R(rng, 3, 9), X = (a + b) * c, q = R(rng, 1, Math.floor((X - 1) / e)), d = X - e * q; return { q: '[(' + a + ' + ' + b + ') · ' + c + ' − ' + d + '] : ' + e, a: F(q) }; }
+      if (k === 1) { let a, b, c, d, e, f, v; do { a = n2(); b = n2(); c = R(rng, 2, 20); d = R(rng, 2, 6); e = R(rng, 5, 12); f = R(rng, 1, e - 1); v = a * b - (c + d * (e - f)); } while (v < 0); return { q: a + ' · ' + b + ' − [' + c + ' + ' + d + ' · (' + e + ' − ' + f + ')]', a: F(v) }; }
+      if (k === 2) { const d = R(rng, 3, 9), a = n2(), b = n2(), kk = Math.floor(a * b / d) + R(rng, 2, 6), c = d * kk - a * b, e = R(rng, 1, kk - 1); return { q: '(' + a + ' · ' + b + ' + ' + c + ') : ' + d + ' − ' + e, a: F(kk - e) }; }
+      const a = n2(), b = n2(), c = R(rng, 8, 15), d = R(rng, 1, 7), e = R(rng, 2, 5), f = R(rng, 1, 20); return { q: a + ' · [' + b + ' + (' + c + ' − ' + d + ') · ' + e + '] − ' + f, a: F(a * (b + (c - d) * e) - f) };
+    }
+  });
+  const klammern = (n) => task({
+    title: 'Setze Klammern.', instr: 'Setze Klammern so, dass das Ergebnis stimmt. Schreibe die Rechnung mit Klammern auf.', n, cols: 2, w: 9,
+    gen: (rng) => {
+      const a = R(rng, 2, 12), b = R(rng, 2, 12), c = R(rng, 2, 9), k = rng.int(3);
+      if (k === 0) return { q: a + ' + ' + b + ' · ' + c + ' = ' + (a + b) * c + ' &nbsp;→ {?}', a: '(' + a + ' + ' + b + ') · ' + c, key: 'a' + a + b + c };
+      if (k === 1) return { q: c + ' · ' + a + ' + ' + b + ' = ' + c * (a + b) + ' &nbsp;→ {?}', a: c + ' · (' + a + ' + ' + b + ')', key: 'b' + a + b + c };
+      const x = R(rng, 30, 60), y = R(rng, 12, 20), z = R(rng, 2, 9); return { q: x + ' − ' + y + ' − ' + z + ' = ' + (x - y + z) + ' &nbsp;→ {?}', a: x + ' − (' + y + ' − ' + z + ')', key: 'c' + x + y + z };
+    }
+  });
+  L4('m-rechenregeln', ['Du löst lange Rechnungen mit runden und eckigen Klammern.', 'Du setzt Klammern so, dass ein vorgegebenes Ergebnis stimmt.'], [regeln4(6), klammern(6)]);
+
+  const ggt3 = (n) => task({
+    title: 'ggT und kgV von drei Zahlen', instr: 'Zerlege in Primfaktoren oder verwende die Teilermengen.', n, cols: 1, w: 4,
+    gen: (rng) => { const g = rng.pick([2, 3, 4, 6]); const xs = rng.sample([2, 3, 4, 5, 6, 7, 9], 3).map(f => f * g); return { q: 'ggT(' + xs.join(', ') + ') = {?} &nbsp;&nbsp;&nbsp; kgV(' + xs.join(', ') + ') = {?}', a: [gcd(gcd(xs[0], xs[1]), xs[2]), lcm(lcm(xs[0], xs[1]), xs[2])], key: xs.join(',') }; }
+  });
+  const ziffer = (n) => task({
+    title: 'Fehlende Ziffer', instr: 'Welche Ziffern kannst du für * einsetzen? Gib alle an.', n, cols: 1, w: 7,
+    gen: (rng) => {
+      const d = rng.pick([3, 4, 6, 9]); let s, opts;
+      do { s = String(R(rng, 1000, 99999)).split(''); s[R(rng, 1, s.length - 1)] = '*'; opts = [...Array(10).keys()].filter(x => +s.join('').replace('*', x) % d === 0); } while (!opts.length);
+      return { q: s.join('').replace('*', '<b>*</b>') + ' ist durch ' + d + ' teilbar. &nbsp; * = {?}', a: opts.join(', '), key: s.join('') + d };
+    }
+  });
+  const TEXT_T4 = [
+    (r) => { const a = rng4(r, [10, 12, 15, 20]), b = rng4(r, [8, 18, 25, 30].filter(x => x !== a)); const h = R(r, 6, 8); const m = lcm(a, b); return { q: 'Bus A fährt alle ' + a + ' Minuten, Bus B alle ' + b + ' Minuten ab. Um ' + h + ':00 Uhr fahren beide gleichzeitig ab. Wann fahren sie das nächste Mal gemeinsam ab?', a: 'kgV(' + a + ', ' + b + ') = ' + m + ' – nach ' + m + ' Minuten, also um ' + (h + Math.floor(m / 60)) + ':' + String(m % 60).padStart(2, '0') + ' Uhr.' }; },
+    (r) => { const g = rng4(r, [6, 8, 9, 12, 15]); const a = g * R(r, 3, 7); let b = g * R(r, 3, 7); if (b === a) b += g; const G = gcd(a, b); return { q: 'Zwei Bänder sind ' + a + ' cm und ' + b + ' cm lang. Sie sollen ohne Rest in möglichst lange, gleich lange Stücke geschnitten werden. Wie lang ist ein Stück? Wie viele Stücke gibt es?', a: 'ggT(' + a + ', ' + b + ') = ' + G + ' – Ein Stück ist ' + G + ' cm lang, es gibt ' + (a / G + b / G) + ' Stücke.' }; },
+    (r) => { const a = rng4(r, [4, 6, 8]), b = rng4(r, [10, 12, 15]); const m = lcm(a, b); return { q: 'Lena trainiert jeden ' + a + '. Tag, Max jeden ' + b + '. Tag. Heute trainieren beide. In wie vielen Tagen trainieren sie wieder am selben Tag?', a: 'kgV(' + a + ', ' + b + ') = ' + m + ' – in ' + m + ' Tagen.' }; }
+  ];
+  function rng4(r, arr) { return r.pick(arr); }
+  const textT4 = (n) => task({ title: 'Textaufgaben', instr: 'Entscheide: ggT oder kgV? Schreibe Rechnung und Antwortsatz.', n, mode: 'lines', lines: 2, gen: (rng) => pickT(rng, TEXT_T4, 't4') });
+  L4('m-teilbarkeit', ['Du bestimmst ggT und kgV von drei Zahlen.', 'Du wendest Teilbarkeitsregeln beim Ergänzen von Ziffern an.', 'Du erkennst, ob eine Textaufgabe ggT oder kgV verlangt.'],
+    [ggt3(3), ziffer(4), textT4(3)]);
+
 })();

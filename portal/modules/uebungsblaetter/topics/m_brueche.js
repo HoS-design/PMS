@@ -177,4 +177,81 @@
       3: { ichkann: ['Du kannst fehlende Winkel berechnen.', 'Du kennst die Winkelsumme im Dreieck.'], tasks: [winkelRechnen(8), winkelBilder('art')] }
     }
   });
+  // ================================================================ Stufe 4 · Profi
+  const { L4, text, mixed } = M;
+  const F2 = (x) => fmt(round(x, 2), 2);
+  const mulDec = (n) => task({
+    title: 'Dezimalzahlen multiplizieren und dividieren', instr: 'Rechne am Rand. Achte auf die Anzahl der Nachkommastellen.', n, cols: 2, w: 5,
+    gen: (rng) => {
+      if (rng.int(2)) { const a = dec(rng, 1, 20), b = dec(rng, R(rng, 1, 2), 9); return { q: F(a) + ' · ' + F(b), a: F(round(a * b, 4)) }; }
+      const d = rng.pick([0.2, 0.4, 0.5, 0.6, 0.8, 1.2, 1.5, 2.5, 0.25, 0.05]), q = R(rng, 3, 60) + rng.pick([0, 0.5]);
+      return { q: F(round(q * d, 4)) + ' : ' + F(d), a: F(q) };
+    }
+  });
+  const kette = (n) => task({
+    title: 'Rechenketten mit Dezimalzahlen', instr: 'Klammer zuerst, dann Punkt vor Strich.', n, cols: 2, w: 4,
+    gen: (rng) => {
+      const a = dec(rng, 1, 20), b = dec(rng, 1, 20), c = R(rng, 2, 9), k = rng.int(3);
+      if (k === 0) return { q: '(' + F(a) + ' + ' + F(b) + ') · ' + c, a: F(round((a + b) * c, 4)) };
+      if (k === 1) return { q: F(a) + ' + ' + F(b) + ' · ' + c, a: F(round(a + b * c, 4)) };
+      const x = round(a * c, 2); return { q: F(x) + ' : ' + c + ' − ' + F(Math.min(a, b) / 2), a: F(round(a - Math.min(a, b) / 2, 4)) };
+    }
+  });
+  const TX_D4 = [
+    (r) => { const p1 = R(r, 89, 349) / 100, n1 = R(r, 2, 4), p2 = R(r, 109, 599) / 100, n2 = R(r, 2, 3), p3 = R(r, 49, 299) / 100; const s = round(p1 * n1 + p2 * n2 + p3, 2); return { q: 'Mia kauft ' + n1 + ' Packungen Nudeln zu je ' + F2(p1) + ' €, ' + n2 + ' Gläser Sugo zu je ' + F2(p2) + ' € und einen Parmesan um ' + F2(p3) + ' €. Sie zahlt mit einem 50-€-Schein. Wie viel bekommt sie zurück?', a: n1 + ' · ' + F2(p1) + ' + ' + n2 + ' · ' + F2(p2) + ' + ' + F2(p3) + ' = ' + F2(s) + ' €; 50 − ' + F2(s) + ' = ' + F2(round(50 - s, 2)) + ' €' }; },
+    (r) => { const l = round(R(r, 250, 550) / 10, 1), p = R(r, 1459, 1799) / 1000; return { q: 'Herr Kern tankt ' + F(l) + ' l Benzin. Ein Liter kostet ' + fmt(p, 3) + ' €. Wie viel muss er zahlen (auf Cent gerundet)?', a: F(l) + ' · ' + fmt(p, 3) + ' = ' + F(round(l * p, 4)) + ' ≈ ' + F2(round(l * p, 2)) + ' €' }; },
+    (r) => { const m = R(r, 2, 6) * 0.5 + 0.5, p = R(r, 590, 1490) / 100; return { q: 'Ein Meter Stoff kostet ' + F2(p) + ' €. Wie viel kosten ' + F(m) + ' m?', a: F(m) + ' · ' + F2(p) + ' = ' + F(round(m * p, 3)) + ' ≈ ' + F2(round(m * p, 2)) + ' €' }; },
+    (r) => { const g = rng4(r, [0.25, 0.5, 0.75, 1.5]), k = R(r, 6, 24); const t = round(g * k, 2); return { q: 'Für einen Ausflug werden ' + F(t) + ' l Saft in Flaschen zu ' + F(g) + ' l abgefüllt. Wie viele Flaschen werden voll?', a: F(t) + ' : ' + F(g) + ' = ' + k + ' Flaschen' }; }
+  ];
+  function rng4(r, arr) { return r.pick(arr); }
+  L4('m-dezimal', ['Du multiplizierst und dividierst Dezimalzahlen.', 'Du löst Rechenketten mit Dezimalzahlen.', 'Du löst Sachaufgaben mit Geld und Maßen.'],
+    [mulDec(8), kette(6), text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz.', TX_D4, 'd4', 2)]);
+
+  const mulBr = (n) => task({
+    title: 'Brüche multiplizieren und dividieren', instr: 'Kürze vor dem Ausrechnen, wenn möglich. Gib das Ergebnis vollständig gekürzt an.', n, cols: 3, w: 3,
+    gen: (rng) => {
+      let n1, n2, a, b; do { n1 = R(rng, 2, 9); n2 = R(rng, 2, 9); a = R(rng, 1, n1 - 1); b = R(rng, 1, n2 - 1); } while (gcd(a, n1) > 1 || gcd(b, n2) > 1);
+      if (rng.int(2)) return { q: frac(a, n1) + ' · ' + frac(b, n2), a: mixed(a * b, n1 * n2) };
+      return { q: frac(a, n1) + ' : ' + frac(b, n2), a: mixed(a * n2, n1 * b) };
+    }
+  });
+  const gemRech = (n) => task({
+    title: 'Mit gemischten Zahlen rechnen', instr: 'Rechne. Gib das Ergebnis als gemischte Zahl an.', n, cols: 2, w: 3.5,
+    gen: (rng) => {
+      let n1, n2; do { n1 = R(rng, 2, 6); n2 = R(rng, 2, 8); } while (n1 === n2);
+      const w1 = R(rng, 1, 5), w2 = R(rng, 1, 4), a = R(rng, 1, n1 - 1), b = R(rng, 1, n2 - 1), L = lcm(n1, n2);
+      const z1 = (w1 * n1 + a) * L / n1, z2 = (w2 * n2 + b) * L / n2;
+      if (rng.int(2) || z1 <= z2) return { q: w1 + '&#8239;' + frac(a, n1) + ' + ' + w2 + '&#8239;' + frac(b, n2), a: mixed(z1 + z2, L) };
+      return { q: w1 + '&#8239;' + frac(a, n1) + ' − ' + w2 + '&#8239;' + frac(b, n2), a: mixed(z1 - z2, L) };
+    }
+  });
+  const TX_B4 = [
+    (r) => { const t = rng4(r, [24, 30, 36, 48, 60]); return { q: 'Eine Klasse hat ' + t + ' € in der Klassenkasse. Ein Drittel wird für den Wandertag ausgegeben, ein Viertel des Rests für Bastelmaterial. Wie viel Geld bleibt übrig?', a: t + ' : 3 = ' + t / 3 + ' €; Rest ' + (t - t / 3) + ' €; ' + (t - t / 3) + ' : 4 = ' + (t - t / 3) / 4 + ' €; übrig: ' + (t - t / 3 - (t - t / 3) / 4) + ' €' }; },
+    (r) => { const k = rng4(r, [16, 24, 32]); return { q: 'In einer Klasse sind ' + k + ' Kinder. Drei Viertel fahren mit dem Bus, ein Achtel kommt zu Fuß, der Rest mit dem Rad. Wie viele Kinder fahren mit dem Rad?', a: 'Bus: ' + k * 3 / 4 + ', zu Fuß: ' + k / 8 + '; Rad: ' + k + ' − ' + k * 3 / 4 + ' − ' + k / 8 + ' = ' + k / 8 + ' Kinder' }; },
+    (r) => { const n = rng4(r, [3, 4, 5, 6]), z = R(r, 1, n - 1), x = R(r, 2, 9) * n; return { q: frac(z, n) + ' einer Strecke sind ' + z * x / n + ' km. Wie lang ist die ganze Strecke?', a: z * x / n + ' : ' + z + ' · ' + n + ' = ' + x + ' km' }; },
+    (r) => { const g = rng4(r, [2, 3, 4]); return { q: 'Ein Rezept braucht ' + frac(3, 4) + ' l Milch für 4 Personen. Wie viel Milch braucht man für ' + 4 * g + ' Personen?', a: frac(3, 4) + ' · ' + g + ' = ' + mixed(3 * g, 4) + ' l' }; }
+  ];
+  L4('m-brueche', ['Du multiplizierst und dividierst Brüche.', 'Du rechnest mit gemischten Zahlen.', 'Du löst Sachaufgaben mit Bruchteilen.'],
+    [mulBr(9), gemRech(4), text('Sachaufgaben', 'Schreibe die Rechnung und einen Antwortsatz.', TX_B4, 'b4', 2)]);
+
+  const winkel4 = (n) => task({
+    title: 'Winkel berechnen', instr: 'Berechne die gesuchten Winkel.', n, cols: 1, w: 4,
+    gen: (rng) => {
+      const k = rng.int(4);
+      if (k === 0) { const b = R(rng, 15, 55); return { q: 'Im Dreieck ist α doppelt so groß wie β, γ = ' + (180 - 3 * b) + '°. &nbsp; α = {?} &nbsp; β = {?}', a: [2 * b + '°', b + '°'] }; }
+      if (k === 1) { const a = R(rng, 50, 120), b = R(rng, 50, 120), c = R(rng, 50, Math.min(140, 330 - a - b)); return { q: 'Viereck: α = ' + a + '°, β = ' + b + '°, γ = ' + c + '°, δ = {?}', a: (360 - a - b - c) + '°' }; }
+      if (k === 2) { const a = R(rng, 20, 160); return { q: 'Zwei Geraden schneiden einander, ein Winkel ist ' + a + '°. Nebenwinkel {?} &nbsp; Scheitelwinkel {?}', a: [(180 - a) + '°', a + '°'] }; }
+      const a = R(rng, 30, 75); return { q: 'Gleichschenkeliges Dreieck: Die beiden Basiswinkel sind je ' + a + '° groß. Spitze γ = {?}', a: (180 - 2 * a) + '°' };
+    }
+  });
+  const uhr = (n) => task({
+    title: 'Winkel auf der Uhr', instr: 'Welchen Winkel schließen Stunden- und Minutenzeiger ein? Gib den kleineren Winkel an. Tipp: Der Stundenzeiger wandert in 1 Minute um 0,5°.', n, cols: 2, w: 3,
+    gen: (rng) => {
+      const h = R(rng, 1, 12), m = rng.pick([0, 0, 15, 30, 30, 45, 10, 20, 40]); let d = Math.abs(30 * (h % 12) - 5.5 * m); if (d > 180) d = 360 - d;
+      return { q: h + ':' + String(m).padStart(2, '0') + ' Uhr → {?}', a: F(d) + '°' };
+    }
+  });
+  L4('m-winkel', ['Du berechnest Winkel in Dreieck und Viereck.', 'Du kennst Neben- und Scheitelwinkel.', 'Du berechnest Winkel zwischen Uhrzeigern.'],
+    [winkel4(6), uhr(6), winkelBilder('art')]);
+
 })();
