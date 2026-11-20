@@ -189,7 +189,7 @@
     }
     const av = UB.cards.available(t, state.level);
     if (state.format !== 'blatt' && !av[state.format]) state.format = 'blatt';
-    document.querySelectorAll('#formatSeg button').forEach(b => { const f = b.dataset.format; b.disabled = f !== 'blatt' && !av[f]; b.classList.toggle('active', f === state.format); b.title = b.disabled ? 'Für dieses Thema/diese Stufe nicht möglich (zu wenige passende Aufgaben)' : ''; });
+    document.querySelectorAll('#formatSeg button').forEach(b => { const f = b.dataset.format, off = f !== 'blatt' && !av[f]; b.classList.toggle('off', off); b.setAttribute('aria-disabled', off ? 'true' : 'false'); b.classList.toggle('active', f === state.format); b.title = off ? 'Für dieses Thema und diese Stufe nicht möglich' : ''; });
     const cardsMode = state.format !== 'blatt';
     document.querySelector('[data-view="blatt"]').textContent = cardsMode ? 'Karten' : 'Übungsblatt';
     $('printBtn').textContent = cardsMode ? 'Karten drucken' : 'Blatt drucken';
@@ -264,7 +264,16 @@
   }));
   document.querySelectorAll('#levelSeg button').forEach(b => b.addEventListener('click', () => { state.level = +b.dataset.level; state.merkheft = false; render(); }));
   document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => { state.view = b.dataset.view; render(); }));
-  document.querySelectorAll('#formatSeg button').forEach(b => b.addEventListener('click', () => { if (b.disabled) return; state.format = b.dataset.format; render(); }));
+  document.querySelectorAll('#formatSeg button').forEach(b => b.addEventListener('click', () => {
+    const t = UB.topics.find(x => x.id === state.topic);
+    if (!t || state.merkheft) { setMsg('Wähle zuerst links ein Thema, dann das Format.', 'warn'); return; }
+    if (b.classList.contains('off')) {
+      const name = UB.cards.FORMATS[b.dataset.format].label;
+      setMsg(name + ' gibt es für „' + t.title + '“ auf ' + UB.LEVEL_NAMES[state.level] + ' nicht: Die Aufgaben sind dafür zu lang oder haben zu wenige verschiedene Antworten.' + (b.dataset.format === 'trimino' ? ' Probiere eine andere Stufe oder Domino/Memory.' : ''), 'warn');
+      return;
+    }
+    state.format = b.dataset.format; render();
+  }));
   $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 900000)); state.blatt = null; state.view = 'blatt'; render(); });
   window.addEventListener('hashchange', () => { readHash(); render(); });
 

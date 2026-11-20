@@ -163,7 +163,7 @@ svg.mfig.koord, .mi svg.mfig { max-width: 100%; }
 .dom-q, .mem { font-variant-numeric: tabular-nums; }
 .fach-mathe .dom-q { font-size: 12pt; } .fach-mathe .dom-a { font-size: 12.5pt; } .fach-mathe .mem { font-size: 12pt; }
 .cards-grid .fr { font-size: 1em; }
-#formatSeg button:disabled { opacity: .4; cursor: not-allowed; }
+#formatSeg button.off { opacity: .4; cursor: help; }
 
 .cards-hint { font-size: 9pt; color: #444; }
 .mem svg.mfig { max-height: 22mm; max-width: 38mm; }
