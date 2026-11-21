@@ -67,7 +67,7 @@
     'Der Fahrer|S / öffnet|P / den Fahrgästen|O3 / die Tür|O4',
     'Am Nachmittag|ZE / spielt|P / Lena|S / Klavier|O4',
     'Vor dem Haus|OE / parkt|P / ein rotes Auto|S',
-    'Schnell|AE / lief|P / der Hase|S / über die Wiese|OE',
+    'Schnell|AE / lief|P / der Hase|S / über die Wiese|OE|Wohin?',
     'Wegen der Hitze|BE / schließen|P / wir|S / die Fenster|O4',
     'Jeden Morgen|ZE / trinkt|P / Opa|S / einen Kaffee|O4',
     'In der Pause|ZE / essen|P / die Kinder|S / ihre Jause|O4',
@@ -78,7 +78,7 @@
     'Auf dem Dach|OE / sitzt|P / eine Taube|S',
     'Am Freitag|ZE / bekommt|P / Max|S / sein Zeugnis|O4'
   ].filter(s => !s.includes('zu|P')) // zweiteilige Prädikate erst später
-    .map(s => s.split(' / ').map(p => { const [text, role] = p.split('|'); return { text, role }; }));
+    .map(s => s.split(' / ').map(p => { const [text, role, frage] = p.split('|'); return { text, role, frage }; }));
 
   const sentence = (parts) => { const t = parts.map(p => p.text).join(' '); return t + '.'; };
   const withBars = (parts) => parts.map(p => esc(p.text)).join(' <b class="bar">|</b> ') + '.';
@@ -97,8 +97,8 @@
 
   function taskBestimmen(level, rng) {
     const its = rng.fresh(pickPool(level), 4, sentence);
-    const label = (r) => level === 1 ? (r === 'S' || r === 'P' ? ROLES[r].de : '–') : (level === 2 ? ROLES[r].kurz : ROLES[r].fach);
-    const instr = level === 1 ? 'Die Satzglieder sind schon getrennt. Schreibe S (Subjekt) oder P (Prädikat) darunter. Frage: Wer oder was? – Was tut …?' :
+    const label = (r) => level === 1 ? (r === 'S' || r === 'P' ? ROLES[r].kurz : '–') : (level === 2 ? ROLES[r].kurz : ROLES[r].fach);
+    const instr = level === 1 ? 'Die Satzglieder sind schon getrennt. Schreibe S (Subjekt) und P (Prädikat) unter die richtigen Satzglieder. Frage: Wer oder was? – Was tut …?' :
       (level === 2 ? 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3 oder O4.' : 'Schreibe den Fachbegriff unter jedes Satzglied (z. B. Subjekt, Dativobjekt, Temporaladverbial).');
     const row = (parts, filled) => '<div class="sg-row">' + parts.map(p => '<span class="sg"><span class="sg-t">' + esc(p.text) + '</span><span class="sg-l">' +
       (filled ? ((level === 1 && !['S', 'P'].includes(p.role)) ? '' : sol(esc(label(p.role)))) : '&nbsp;') + '</span></span>').join('') + '<span class="sg-dot">.</span></div>';
@@ -111,10 +111,10 @@
   }
 
   function taskUmstellen(level, rng) {
-    const its = rng.fresh(pickPool(level).filter(p => p.length >= 3), 2, sentence).map(p => {
-      const start = rng.pick(p.filter(x => x.role !== 'P' && x !== p[0]));
-      return { p, start };
-    });
+    // Kein Akkusativobjekt an den Anfang, wenn es wie das Subjekt aussieht („Die Katze rettet die Feuerwehr.“ wäre missverständlich)
+    const starts = (p) => { const s0 = p.find(x => x.role === 'S'); const ambig = (x) => x.role === 'O4' && s0 && /^(die|das) /i.test(s0.text) && /^(die|das|ein|eine) /i.test(x.text);
+      return p.filter(x => x.role !== 'P' && x !== p[0] && !ambig(x)); };
+    const its = rng.fresh(pickPool(level).filter(p => p.length >= 3 && starts(p).length), 2, sentence).map(p => ({ p, start: rng.pick(starts(p)) }));
     const capFirst = (s) => s.charAt(0).toUpperCase() + s.slice(1);
     return {
       title: 'Stelle die Sätze um.',
@@ -123,20 +123,23 @@
       sol: its.map(x => {
         const subj = x.p.find(q => q.role === 'S');
         // Nach dem Prädikat folgt zuerst das Subjekt, dann die übrigen Satzglieder in alter Reihenfolge
-        const parts = [x.start, x.p.find(q => q.role === 'P')].concat(subj && subj !== x.start ? [subj] : [], x.p.filter(q => q !== x.start && q.role !== 'P' && q !== subj));
+        // Unbetonte Pronomen („uns“, „mir“) stehen gleich nach dem Prädikat: „Ein Eis kauft uns Mama.“
+        const pron = x.p.filter(q => q !== x.start && PRON.includes(q.text));
+        const parts = [x.start, x.p.find(q => q.role === 'P')].concat(pron, subj && subj !== x.start ? [subj] : [], x.p.filter(q => q !== x.start && q.role !== 'P' && q !== subj && !pron.includes(q)));
         const txt = parts.map((q, i) => i === 0 ? capFirst(q.text) : (q === x.p[0] && isLowerable(q.text) ? lower(q.text) : q.text)).join(' ') + '.';
         return '<div class="item">' + sol(esc(txt)) + '</div>';
       }).join('')
     };
   }
   // Satzanfänge wie „Am Montag“, „Leise“, „Gestern“ werden mitten im Satz klein; Nomen/Namen/Artikel+Nomen bleiben
+  const PRON = ['uns', 'mir', 'dir', 'ihm', 'ihr', 'euch', 'ihnen', 'mich', 'dich'];
   const LOWER_START = ['Am', 'Im', 'Nach', 'Wegen', 'Gestern', 'Morgen', 'Leise', 'Sorgfältig', 'Die', 'Der', 'Das', 'Mein', 'Meine', 'Unsere', 'Ein', 'Eine', 'Vor', 'Schnell', 'Jeden', 'In', 'Laut', 'Geduldig', 'Auf', 'Aufmerksam'];
   function isLowerable(t) { return LOWER_START.includes(t.split(' ')[0]); }
   function lower(t) { return t.charAt(0).toLowerCase() + t.slice(1); }
 
   function taskBauplan(rng) {
     const p = rng.pick(POOL.filter(x => x.length >= 4));
-    const plan = p.map(x => ROLES[x.role].kurz === 'P' ? 'P' : ROLES[x.role].frage).join(' – ');
+    const plan = p.map(x => ROLES[x.role].kurz === 'P' ? 'P' : (x.frage || ROLES[x.role].frage)).join(' – ');
     return {
       title: 'Satzbauplan',
       instr: 'Schreibe einen eigenen Satz nach diesem Bauplan.',
