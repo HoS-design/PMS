@@ -126,20 +126,21 @@
   }
   function buildMerkheft() {
     const list = visibleTopics().filter(t => t.merk);
-    const blocks = [];
-    Object.keys(UB.AREAS).forEach(area => {
-      const ts = list.filter(t => t.area === area);
-      if (!ts.length) return;
-      ts.forEach((t, i) => blocks.push((i === 0 ? '<div class="mh-area">' + esc(UB.AREAS[area]) + '</div>' : '') +
-        '<section class="mh-box"><h3><img src="' + IMG(t.img) + '" alt="">' + esc(t.title) + '<span class="mh-ok">☐ verstanden</span></h3><div>' + t.merk + '</div></section>'));
-    });
+    const box = (t) => '<section class="mh-box"><h3><img src="' + IMG(t.img) + '" alt="">' + esc(t.title) + '<span class="mh-ok">☐ verstanden</span></h3><div class="mh-in">' + (UB.merkBody ? UB.merkBody(t) : t.merk) + '</div></section>';
     const meas = document.createElement('div');
     meas.style.cssText = 'position:absolute;left:-10000px;top:0;visibility:hidden';
     document.body.appendChild(meas);
+    const fits = (blocks) => { meas.innerHTML = merkPage(1, blocks.join('')); return meas.firstChild.offsetHeight <= 1123; };
+    // Seiten möglichst voll machen: Passt das nächste Thema nicht mehr, darf ein späteres Thema desselben Bereichs nachrücken.
     const pages = []; let cur = [];
-    blocks.forEach(b => {
-      meas.innerHTML = merkPage(1, cur.concat([b]).join(''));
-      if (cur.length && meas.firstChild.offsetHeight > 1123) { pages.push(cur); cur = [b]; } else cur.push(b);
+    Object.keys(UB.AREAS).forEach(area => {
+      const queue = list.filter(t => t.area === area).map(box);
+      let head = '<div class="mh-area">' + esc(UB.AREAS[area]) + '</div>';
+      while (queue.length) {
+        const k = queue.findIndex(b => fits(cur.concat([head + b])));
+        if (k < 0) { if (cur.length) { pages.push(cur); cur = []; continue; } cur.push(head + queue.shift()); head = ''; continue; }
+        cur.push(head + queue.splice(k, 1)[0]); head = '';
+      }
     });
     if (cur.length) pages.push(cur);
     meas.remove();
