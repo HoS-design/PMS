@@ -1,4 +1,4 @@
-/* Satzglieder – 1. und 2. Klasse (ENTWURF: vor der Freigabe Pool prüfen lassen)
+/* Satzglieder – 1. und 2. Klasse
    Begriffe nach „Deutschstunde 1“: Subjekt (S), Prädikat (P), Objekt im 3. Fall (O3),
    Objekt im 4. Fall (O4), Zeit-/Orts-/Art-/Begründungsergänzung (ZE, OE, AE, BE).
    Nur eindeutige Sätze: keine Präpositionalobjekte, kein „sein“, keine Attribute
@@ -13,7 +13,7 @@
     O4: { frage: 'Wen oder was?', de: 'Objekt im 4. Fall', kurz: 'O4', fach: 'Akkusativobjekt' },
     ZE: { frage: 'Wann?', de: 'Zeitergänzung', kurz: 'ZE', fach: 'Temporaladverbial' },
     OE: { frage: 'Wo?', de: 'Ortsergänzung', kurz: 'OE', fach: 'Lokaladverbial' },
-    AE: { frage: 'Wie?', de: 'Artergänzung', kurz: 'AE', fach: 'Modaladverbial' },
+    AE: { frage: 'Wie?', de: 'Art-und-Weise-Ergänzung', kurz: 'AE', fach: 'Modaladverbial' },
     BE: { frage: 'Warum?', de: 'Begründungsergänzung', kurz: 'BE', fach: 'Kausaladverbial' }
   };
 
@@ -21,7 +21,7 @@
     'Lena|S / schenkt|P / ihrer Oma|O3 / einen Blumenstrauß|O4',
     'Am Montag|ZE / schreibt|P / die Klasse|S / einen Test|O4',
     'Der Hund|S / bringt|P / seinem Besitzer|O3 / den Ball|O4',
-    'Im Garten|OE / spielen|P / die Kinder|S / Fußball|O4',
+    'Im Garten|OE / pflücken|P / die Kinder|S / Äpfel|O4',
     'Max|S / hilft|P / seinem Bruder|O3',
     'Die Lehrerin|S / erklärt|P / den Schülern|O3 / die Aufgabe|O4',
     'Gestern|ZE / kaufte|P / Mia|S / ein neues Fahrrad|O4',
@@ -65,7 +65,7 @@
     'Die Polizistin|S / hilft|P / dem alten Mann|O3',
     'Die Klasse|S / singt|P / ein Lied|O4',
     'Der Fahrer|S / öffnet|P / den Fahrgästen|O3 / die Tür|O4',
-    'Am Nachmittag|ZE / spielt|P / Lena|S / Klavier|O4',
+    'Am Nachmittag|ZE / füttert|P / Lena|S / ihre Hasen|O4',
     'Vor dem Haus|OE / parkt|P / ein rotes Auto|S',
     'Schnell|AE / lief|P / der Hase|S / über die Wiese|OE|Wohin?',
     'Wegen der Hitze|BE / schließen|P / wir|S / die Fenster|O4',
@@ -96,10 +96,10 @@
   }
 
   function taskBestimmen(level, rng) {
-    const its = rng.fresh(pickPool(level), 4, sentence);
-    const label = (r) => level === 1 ? (r === 'S' || r === 'P' ? ROLES[r].kurz : '–') : (level === 2 ? ROLES[r].kurz : ROLES[r].fach);
+    const its = rng.fresh(level === 4 ? POOL.filter(p => p.length >= 4) : pickPool(level), level === 4 ? 4 : 4, sentence);
+    const label = (r) => ROLES[r].kurz;
     const instr = level === 1 ? 'Die Satzglieder sind schon getrennt. Schreibe S (Subjekt) und P (Prädikat) unter die richtigen Satzglieder. Frage: Wer oder was? – Was tut …?' :
-      (level === 2 ? 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3 oder O4.' : 'Schreibe den Fachbegriff unter jedes Satzglied (z. B. Subjekt, Dativobjekt, Temporaladverbial).');
+      (level === 2 ? 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3 oder O4.' : 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3, O4, ZE, OE, AE oder BE.');
     const row = (parts, filled) => '<div class="sg-row">' + parts.map(p => '<span class="sg"><span class="sg-t">' + esc(p.text) + '</span><span class="sg-l">' +
       (filled ? ((level === 1 && !['S', 'P'].includes(p.role)) ? '' : sol(esc(label(p.role)))) : '&nbsp;') + '</span></span>').join('') + '<span class="sg-dot">.</span></div>';
     return {
@@ -137,6 +137,42 @@
   function isLowerable(t) { return LOWER_START.includes(t.split(' ')[0]); }
   function lower(t) { return t.charAt(0).toLowerCase() + t.slice(1); }
 
+  // ---------------------------------------------------------------- Stufe 4 (Profi)
+  const QW = { O3: 'Wem', O4: 'Wen oder was', ZE: 'Wann', OE: 'Wo', AE: 'Wie', BE: 'Warum' };
+  function taskFragen(rng) {
+    const its = rng.fresh(POOL.filter(p => p.length >= 3 && p.some(x => QW[x.role])), 3, sentence).map(p => ({ p, z: rng.pick(p.filter(x => QW[x.role])) }));
+    const frage = ({ p, z }) => {
+      const subj = p.find(q => q.role === 'S'), pr = p.find(q => q.role === 'P');
+      const pron = p.filter(q => q !== z && PRON.includes(q.text));
+      const rest = [subj].concat(p.filter(q => q !== z && q !== pr && q !== subj && !pron.includes(q)));
+      const w = z.frage ? z.frage.replace('?', '') : QW[z.role];
+      return w + ' ' + [pr].concat(pron, rest).map(q => (q === p[0] && isLowerable(q.text) ? lower(q.text) : q.text)).join(' ') + '?';
+    };
+    return {
+      title: 'Frage nach dem Satzglied.',
+      instr: 'Schreibe die Frage zum unterstrichenen Satzglied und benenne es.',
+      body: its.map(x => '<div class="item">' + x.p.map(q => q === x.z ? '<u><b>' + esc(q.text) + '</b></u>' : esc(q.text)).join(' ') + '.</div>' + lines(1)).join(''),
+      sol: its.map(x => '<div class="item">' + sol(esc(frage(x))) + ' <span class="hint">→ ' + esc(ROLES[x.z.role].de) + '</span></div>').join('')
+    };
+  }
+  // Eine falsche Bestimmung finden: zwei Abkürzungen sind vertauscht
+  const SWAP = [['O3', 'O4'], ['S', 'O4'], ['ZE', 'OE'], ['AE', 'BE'], ['S', 'O3'], ['OE', 'O4']];
+  function taskPruefen(rng) {
+    const cand = POOL.filter(p => SWAP.some(([a, b]) => p.some(x => x.role === a) && p.some(x => x.role === b)));
+    const its = rng.fresh(cand, 2, sentence).map(p => {
+      const sw = rng.pick(SWAP.filter(([a, b]) => p.some(x => x.role === a) && p.some(x => x.role === b)));
+      return { p, wrong: p.map(x => x.role === sw[0] ? sw[1] : x.role === sw[1] ? sw[0] : x.role) };
+    });
+    const row = (x, solved) => '<div class="sg-row">' + x.p.map((q, i) => '<span class="sg"><span class="sg-t">' + esc(q.text) + '</span><span class="sg-l">' +
+      (solved && x.wrong[i] !== q.role ? '<s>' + esc(x.wrong[i]) + '</s> ' + sol(esc(q.role)) : esc(x.wrong[i])) + '</span></span>').join('') + '<span class="sg-dot">.</span></div>';
+    return {
+      title: 'Prüfe die Bestimmung.',
+      instr: 'Je zwei Abkürzungen sind vertauscht. Streiche sie durch und verbessere.',
+      body: its.map(x => row(x, false)).join(''),
+      sol: its.map(x => row(x, true)).join('')
+    };
+  }
+
   function taskBauplan(rng) {
     const p = rng.pick(POOL.filter(x => x.length >= 4));
     const plan = p.map(x => ROLES[x.role].kurz === 'P' ? 'P' : (x.frage || ROLES[x.role].frage)).join(' – ');
@@ -150,20 +186,21 @@
 
   UB.register({
     id: 'satzglieder',
-    merk: '<b>Satzglieder</b> findest du mit der Verschiebeprobe: Was beim Umstellen zusammenbleibt, ist ein Satzglied. <b>Subjekt</b>: Wer oder was? <b>Prädikat</b>: Was tut …? (steht im Aussagesatz an 2. Stelle). <b>Objekt im 3. Fall</b> (Dativobjekt): Wem? <b>Objekt im 4. Fall</b> (Akkusativobjekt): Wen oder was? <b>Zeitergänzung</b>: Wann? Wie lange? <b>Ortsergänzung</b>: Wo? Wohin? Woher? <b>Art-und-Weise-Ergänzung</b>: Wie? <b>Begründungsergänzung</b>: Warum?',
+    merk: '<b>Satzglieder</b> findest du mit der Verschiebeprobe: Was beim Umstellen zusammenbleibt, ist ein Satzglied. <b>Subjekt (S)</b>: Wer oder was? <b>Prädikat (P)</b>: Was tut …? (steht im Aussagesatz an 2. Stelle). <b>Objekt im 3. Fall (O3)</b>: Wem? <b>Objekt im 4. Fall (O4)</b>: Wen oder was? <b>Zeitergänzung (ZE)</b>: Wann? Wie lange? <b>Ortsergänzung (OE)</b>: Wo? Wohin? Woher? <b>Art-und-Weise-Ergänzung (AE)</b>: Wie? <b>Begründungsergänzung (BE)</b>: Warum?',
     title: 'Satzglieder',
     area: 'sprache',
     klassen: [1, 2],
     img: 'MiniHoS_Forschen_Lupe',
-    review: true,
     levels: {
       1: { ichkann: ['Du kannst Satzglieder mit der Verschiebeprobe abgrenzen.', 'Du kannst Subjekt und Prädikat bestimmen.'] },
       2: { ichkann: ['Du kannst Subjekt, Prädikat, Objekt im 3. Fall und Objekt im 4. Fall bestimmen.', 'Du kannst Sätze umstellen.'] },
-      3: { ichkann: ['Du kannst alle Satzglieder mit Fachbegriffen bestimmen.', 'Du kannst Sätze nach einem Satzbauplan bilden.'] }
+      3: { ichkann: ['Du kannst alle Satzglieder bestimmen (S, P, O3, O4, ZE, OE, AE, BE).', 'Du kannst Sätze nach einem Satzbauplan bilden.'] },
+      4: { ichkann: ['Du kannst auch in längeren Sätzen alle Satzglieder bestimmen.', 'Du kannst nach jedem Satzglied richtig fragen.', 'Du findest Fehler in einer Satzglied-Bestimmung.'] }
     },
     build(level, rng) {
       if (level === 1) return [taskAbgrenzen(1, rng), taskBestimmen(1, rng)];
       if (level === 2) return [taskAbgrenzen(2, rng), taskBestimmen(2, rng), taskUmstellen(2, rng)];
+      if (level === 4) return [taskBestimmen(4, rng), taskFragen(rng), taskPruefen(rng)];
       return [taskBestimmen(3, rng), taskUmstellen(3, rng), taskBauplan(rng)];
     },
     pool() {
