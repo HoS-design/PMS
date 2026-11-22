@@ -3,7 +3,7 @@
   'use strict';
   const { esc } = UB;
   const $ = (id) => document.getElementById(id);
-  const IMG = (name) => '/assets/minihos/' + name + '.webp';
+  const IMG = (name) => '/assets/minihos/' + name + '.webp?v=2';
   const BLATT_COUNT = 6;
   const params = new URLSearchParams(location.search);
   const showDrafts = params.has('entwurf') || params.has('lehrer');
