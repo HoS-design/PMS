@@ -46,7 +46,12 @@
   // Katalog
   // ------------------------------------------------------------------
   function visibleTopics() {
-    return UB.topics.filter(t => fachOf(t) === state.fach && t.klassen.includes(state.klasse) && (!t.review || showDrafts));
+    const list = UB.topics.filter(t => fachOf(t) === state.fach && t.klassen.includes(state.klasse) && (!t.review || showDrafts));
+    // Eigene Reihenfolge für eine Klasse (z. B. wie im Schulbuch); nicht aufgeführte Themen bleiben dahinter
+    const ord = UB.ORDER && UB.ORDER[state.fach + '-' + state.klasse];
+    if (!ord) return list;
+    const pos = (t) => { const i = ord.indexOf(t.id); return i < 0 ? ord.length + list.indexOf(t) : i; };
+    return list.slice().sort((x, y) => pos(x) - pos(y));
   }
   function renderCatalog() {
     const list = visibleTopics();

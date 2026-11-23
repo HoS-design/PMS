@@ -297,6 +297,25 @@
   M['e-linking'] = { html: Th(['wozu?', 'linking words'], [['verbinden', 'and, but, or'], ['Grund / Folge', 'because (weil) · so (deshalb)'], ['Zeit', 'when, before, after, while'], ['Bedingung / Gegensatz', 'if (falls) · although (obwohl) · however (jedoch)'],
     ['Reihenfolge', 'first, then, after that, finally'], ['Meinung, Schluss', 'for example · on the one hand … on the other hand · in my opinion · in conclusion']], 'compact') + N('<b>However</b> steht oft am Satzanfang, danach ein Beistrich.') };
 
+
+  // ---------------------------------------------------------------- Englisch 3. Klasse (Buch)
+  M['e-revision3'] = { html: T(['', 'present simple', 'past simple'], [['wann?', 'Gewohnheit, Tatsache', 'abgeschlossen in der Vergangenheit'], ['Signalwörter', 'every day, usually, often, never', 'yesterday, last week, ago, in 2020'],
+    ['bejaht', 'I play – she play<b>s</b>', 'I play<b>ed</b> – I <b>went</b>'], ['verneint', 'I <b>don\'t</b> play – she <b>doesn\'t</b> play', 'I <b>didn\'t</b> play / go'], ['Frage', '<b>Do</b> you play? <b>Does</b> she play?', '<b>Did</b> you play / go?']], 'compact') +
+    N('Nach <b>does</b> und <b>did</b> steht immer die Grundform: Did you <u>go</u>? – nicht: Did you went?') };
+  M['e-cond12'] = { html: Th(['', 'if-Satz', 'Hauptsatz', 'Beispiel'], [['Typ 1 <small>gut möglich</small>', 'present simple', 'will + Grundform', 'If it rains, we will stay at home.'], ['Typ 2 <small>nur vorgestellt</small>', 'past simple', 'would + Grundform', 'If I had a dog, I would walk it every day.']], 'compact') +
+    G([K('unless = if … not', 'Unless you hurry, you will miss the bus.<br><small>= If you don\'t hurry, …</small>'), K('If I were you …', 'An deiner Stelle …<br>If I were you, I would say sorry.')]) +
+    N('Im if-Satz steht <b>nie will oder would</b>! Steht der if-Satz vorne, kommt ein Beistrich.') };
+  M['e-permission'] = { html: Th(['', 'dürfen', 'können'], [['jetzt', 'I <b>am allowed to</b> … / My parents <b>let</b> me …', 'I <b>can</b> …'], ['früher', 'I <b>was allowed to</b> …', 'I <b>could</b> … / I <b>was able to</b> …'],
+    ['Zukunft', 'I <b>will be allowed to</b> …', 'I <b>will be able to</b> …'], ['present perfect', 'I <b>have been allowed to</b> …', 'I <b>have been able to</b> …']], 'compact') +
+    N('<b>could</b> = konnte (allgemein), <b>was able to</b> = hat es in einer bestimmten Situation geschafft.') + N('Nach can, could und let steht die Grundform ohne to: My mum lets me <u>go</u>.') };
+  M['e-ppcont'] = { html: L('<b>have / has been + -ing</b>: Etwas hat früher begonnen und dauert noch an.') +
+    S(120, '0 0 240 40', '<path d="M6 22 L232 22" class="ln"/><path d="M232 22 l-5 -3 v6 z" class="dotf"/><circle cx="50" cy="22" r="3.5" class="dotf"/><rect x="50" y="15" width="140" height="14" class="fill"/><path d="M190 8 L190 36" class="ln acc"/>' +
+      tx(50, 10, 'since 9 o\'clock', 'xs') + tx(120, 25, 'I have been waiting …', 'xs') + tx(190, 6, 'now', 'xs b') + tx(120, 39, 'for three hours', 'xs')) +
+    G([K('present perfect continuous', 'Wie lange schon? Dauer:<br>I have been reading for two hours.'), K('present perfect', 'Ergebnis, wie viele:<br>I have read three books.')]) +
+    N('<b>for</b> + Zeitdauer, <b>since</b> + Zeitpunkt. Frage: <b>How long</b> have you been …?') };
+  M['e-passive3'] = { html: L('Im Passiv ist wichtig, <b>was passiert</b>. Bildung: <b>be + 3. Form</b> (past participle).') + Th(['', 'Passiv', 'Beispiel'], [['present', 'am / is / are + 3. Form', 'Cheese <b>is made</b> from milk.'], ['past', 'was / were + 3. Form', 'The bridge <b>was built</b> in 1900.']], 'compact') +
+    '<div class="mh-fx col"><div>Aktiv: <span>Shakespeare</span> wrote <b>Romeo and Juliet</b>.</div><div>Passiv: <b>Romeo and Juliet</b> was written <span>by Shakespeare</span>.</div></div>' + N('Verneinung: isn\'t / wasn\'t made. Frage: Is it made …? Was it built …?') };
+
   // ---------------------------------------------------------------- Zusammenbau
   UB.MERK = M;
   UB.merkBody = function (t) {
