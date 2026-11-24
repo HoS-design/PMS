@@ -234,7 +234,10 @@
     </div>
   </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
+    const R = HoSResults.init({ app: 'argumentewaage', title: 'Argumente-Waage' });
+    let rightCount = 0, wrongList = [];
     // --- DATEN ---
     const data = [
         { 
@@ -296,6 +299,8 @@
 
     function loadCard() {
         if (currentIndex >= data.length) {
+            R.round({ score: rightCount, total: data.length, label: 'Alle Argumente', wrong: wrongList });
+            rightCount = 0; wrongList = [];
             cardElement.style.display = 'none';
             feedbackArea.innerHTML = "<b>Super! Alle Argumente sortiert. 🎉</b>";
             feedbackArea.className = "feedback-correct";
@@ -376,6 +381,8 @@
     function checkAnswer(userChoice) {
         const item = data[currentIndex];
         const isCorrect = item.type === userChoice;
+        R.answer(isCorrect, item.topic);
+        if (isCorrect) rightCount++; else wrongList.push(item.text.replace(/<[^>]+>/g, '') + ' → ' + (item.type === 'strong' ? 'stark' : 'schwach'));
 
         let endX = userChoice === 'strong' ? -500 : 500;
         cardElement.style.transition = 'transform 0.4s ease-in, opacity 0.3s';

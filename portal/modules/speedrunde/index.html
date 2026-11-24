@@ -211,7 +211,10 @@ main{
   </div>
 </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
+const R = HoSResults.init({ app: 'speedrunde', title: 'Speedrunde Zeitformen' });
+let answeredCount = 0, wrongList = [];
 /* ================== DOM / STATE ================== */
 const startBtn = document.getElementById("startBtn");
 const questionEl = document.getElementById("question");
@@ -396,6 +399,9 @@ function choose(val, btn){
     ? (current.correct ? "Richtig" : "Falsch")
     : current.answer;
 
+  answeredCount++;
+  R.answer(val === correctVal, 'Zeitformen');
+  if(val !== correctVal) wrongList.push(current.text + ' → ' + correctVal);
   if(val === correctVal){
     score++;
     scoreEl.textContent = score;
@@ -412,7 +418,7 @@ function choose(val, btn){
 }
 
 function start(){
-  score = 0;
+  score = 0; answeredCount = 0; wrongList = [];
   time = 60;
   scoreEl.textContent = "0";
   timeEl.textContent = "60";
@@ -434,6 +440,7 @@ function start(){
 function finish(){
   running = false;
   clearInterval(timer);
+  R.round({ score, total: answeredCount, label: '60-Sekunden-Runde', wrong: wrongList });
 
   questionEl.textContent = "";
   answersEl.innerHTML = "";

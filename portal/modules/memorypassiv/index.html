@@ -100,7 +100,9 @@
   </div>
 </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
+const R = HoSResults.init({ app: 'memorypassiv', title: 'Memory Aktiv/Passiv' });
     // ====== Daten: Aktiv/Passiv-Paare ======
     // Hinweis: Diese Paare sind bewusst "klassisch" und schulgeeignet.
     const PAIRS = [
@@ -214,6 +216,9 @@ function onPick(idx) {
     updateOpenClasses();
     if (pairs === LEVELS[level].count) {
       stopTimer();
+      const lvName = (document.querySelector('#levelSeg button[data-level="' + level + '"]') || {}).textContent || level;
+      R.round({ score: moves + ' Züge · ' + fmtTime(seconds), label: 'Alle ' + pairs + ' Paare · ' + lvName.trim() });
+      R.done(lvName.trim());
       setFeedback("Fertig! Alle Paare gefunden: " + moves + " Züge in " + fmtTime(seconds) + ". Schaffst du es mit weniger Zügen?", "good");
     } else {
       setFeedback("Treffer! Das ist die passende Passivform.", "good");

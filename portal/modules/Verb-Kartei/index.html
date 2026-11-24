@@ -41,6 +41,8 @@
   </header>
     <div id="root"></div>
 
+    <script src="/js/hos-results.js"></script>
+    <script>window.R = HoSResults.init({ app: 'verb-kartei', title: 'Verb-Kartei' });</script>
     <script type="text/babel">
         // Zugriff auf die globalen Bibliotheken
         const { useState, useEffect } = React;
@@ -80,7 +82,7 @@
         // --- HIER BEGINNT DEIN APP CODE ---
 
         const VerbLearningApp = () => {
-            const [activeTab, setActiveTab] = useState('basics');
+            const [activeTab, setActiveTab] = useState(() => R.load('kapitel', 'basics'));
             const [viewMode, setViewMode] = useState('theory'); // 'theory' or 'worksheet'
 
             // HoS-Style Color Palette & Design Tokens
@@ -955,6 +957,12 @@
             ];
 
             // Helper function to reset view when changing tabs
+            useEffect(() => {
+                R.save('kapitel', activeTab);
+                const item = navItems.find(n => n.id === activeTab);
+                if (item) R.done('Kapitel: ' + item.label);
+            }, [activeTab]);
+
             const handleTabChange = (tabId) => {
                 setActiveTab(tabId);
                 setViewMode('theory'); // Reset to theory view on tab change

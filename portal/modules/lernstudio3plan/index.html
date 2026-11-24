@@ -297,7 +297,9 @@
     </main>
   </div>
 
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R = HoSResults.init({ app: 'lernstudio3plan', title: 'Lernstudio Deutsch 3' });
     // ---------- Utilities ----------
     const $ = (sel, el=document) => el.querySelector(sel);
     const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
@@ -319,6 +321,12 @@
           opt.addEventListener("click", () => {
             const val = normalize(opt.getAttribute("data-val") || opt.textContent);
             const isGood = good.has(val);
+            const mod = modulesById.get(state.openId);
+            const label = mod ? mod.title : 'Mini-Checks';
+            if(!q.dataset.counted){ q.dataset.counted = '1'; R.answer(isGood, label); }
+            if(isGood) q.dataset.solved = '1';
+            const items = $$(".quiz-item", root);
+            if(isGood && mod && items.every(x => x.dataset.solved)) R.done('Mini-Check: ' + mod.title);
             opt.classList.add("checked");
             opt.classList.toggle("good", isGood);
             opt.classList.toggle("bad", !isGood);
@@ -1119,6 +1127,7 @@
       if(!m) return openOverview();
       state.openId = id;
       setHash(id);
+      R.save('modul', id);
       renderList(); 
       $("#crumb").innerHTML = `<span>Start</span><span>›</span><span>${m.area==='S'?'Schreiben':m.area==='G'?'Grammatik':'Rechtschr.'}</span><span>›</span><b>${m.id}</b>`;
       elView.innerHTML = typeof m.content==="function" ? m.content.call(m) : m.content;
@@ -1128,6 +1137,7 @@
 
     function openOverview(){
       state.openId = "";
+      R.save('modul', '');
       setHash("");
       renderList();
       $("#crumb").innerHTML = `<span>Start</span><span>›</span><b>Übersicht</b>`;
@@ -1148,7 +1158,7 @@
     $("#copyLinkBtn").addEventListener("click", ()=> { copyToClipboard(location.href); alert("Link kopiert!"); });
     window.addEventListener("hashchange", () => { const h = currentHash(); if(h && modulesById.has(h)) openModule(h); else openOverview(); });
 
-    const h = currentHash();
+    const h = currentHash() || R.load('modul', '');
     if(h && modulesById.has(h)) openModule(h); else openOverview();
     
     window.setFilter = setFilter;

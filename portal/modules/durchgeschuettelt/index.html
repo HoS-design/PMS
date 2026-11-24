@@ -206,7 +206,9 @@ footer{
 
 </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
+const R = HoSResults.init({ app: 'durchgeschuettelt', title: 'Durchgeschüttelt – Fremdwörter' });
 const stages = [
   {
     name:"Stufe 1",
@@ -255,7 +257,9 @@ const stages = [
   }
 ];
 
-let stage=0, index=0, solved=0;
+const stand = R.load('stand', null);
+let stage = stand ? stand.stage : 0, index = stand ? stand.index : 0, solved = stand ? stand.solved : 0;
+const saveStand = () => R.save('stand', { stage, index, solved });
 const game=document.getElementById("game");
 
 // -------- Timer (nur Stufe 2) --------
@@ -397,6 +401,7 @@ function check(word){
   }).join("");
 
   const fb=document.getElementById("fb");
+  R.answer(guess===word, stages[stage].name);
   if(guess===word){
     fb.textContent="Sicher erkannt.";
     fb.className="feedback ok";
@@ -414,17 +419,22 @@ function next(){
 
   index++;
   if(index>=10){
+    R.done(stages[stage].name);
     stage++;
     index=0;
     if(stage>=stages.length){
+      R.round({ score: solved, total: 30, label: 'Alle drei Stufen' });
+      R.save('stand', null);
       game.innerHTML=`<h2>Fertig 🎓</h2>
       <p>Du hast ${solved} von 30 Fremdwörtern sicher erkannt.</p>`;
       return;
     }
   }
+  saveStand();
   render();
 }
 
+if (stage >= stages.length) { stage = 0; index = 0; solved = 0; }
 render();
 </script>
 </body>

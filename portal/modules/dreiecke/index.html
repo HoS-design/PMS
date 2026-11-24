@@ -277,8 +277,10 @@
     </div>
   </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
 (() => {
+  const R = HoSResults.init({ app: 'dreiecke', title: 'Dreiecke' });
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
 
@@ -309,7 +311,8 @@
   let mode = 'recognize';
   let showGrid = true;
   let level = 'medium';
-  let score = 0, streak = 0, done = 0;
+  const saved = R.load('punkte', null) || {};
+  let score = saved.score || 0, streak = 0, done = saved.done || 0;
 
   let teacherMode = false; // toggled by "L"
   const EPS_RIGHT = 2.0;   // degrees tolerance for right angle
@@ -456,6 +459,7 @@
 
   function addResult(ok, msgOK, msgBad){
     done++; doneEl.textContent = done;
+    R.answer(ok, mode === 'build' ? 'Dreiecke bauen' : 'Dreiecke erkennen');
     if(ok){
       score += 10 + Math.min(10, streak*2);
       streak++;
@@ -466,6 +470,7 @@
     }
     scoreEl.textContent = score;
     streakEl.textContent = streak;
+    R.save('punkte', { score, done });
   }
 
   // Drawing
@@ -616,6 +621,7 @@
     });
   });
 
+  scoreEl.textContent = score; doneEl.textContent = done;
   nextBtn.addEventListener('click', () => {
     if(mode !== 'recognize') return;
     newRecognizeTask();

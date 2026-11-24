@@ -757,7 +757,9 @@
     </section>
   </main>
 
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R = HoSResults.init({ app: 'zahlbilder-bis-100', title: 'Zahlbilder bis 100' });
     const state = {
       writeAnswer: 37,
       writeHelpVisible: false,
@@ -840,6 +842,7 @@
 
     function newWriteTask() {
       state.writeAnswer = randomInt(1, 100);
+      state.writeCounted = false;
       state.writeHelpVisible = false;
       $('#writeInput').value = '';
       $('#writeHelp').innerHTML = '';
@@ -856,6 +859,7 @@
         setFeedback($('#writeFeedback'), 'Zahl fehlt.', 'try');
         return;
       }
+      if (!state.writeCounted) { state.writeCounted = true; R.answer(value === state.writeAnswer, 'Zahlen schreiben'); }
       if (value === state.writeAnswer) {
         setFeedback($('#writeFeedback'), 'Super!', 'good');
         celebrate($('#writeFeedback'));
@@ -939,6 +943,7 @@
 
     function newCalcTask() {
       state.calc = makeCalcTask();
+      state.calcCounted = false;
       $('#calcA').textContent = state.calc.a;
       $('#calcB').textContent = state.calc.b;
       $('#calcSign').textContent = state.calc.op === 'plus' ? '+' : '−';
@@ -981,6 +986,7 @@
         setFeedback($('#calcFeedback'), 'Ergebnis fehlt.', 'try');
         return;
       }
+      if (!state.calcCounted) { state.calcCounted = true; R.answer(value === state.calc.answer, state.calc.op === 'plus' ? 'Plus rechnen' : 'Minus rechnen'); }
       if (value === state.calc.answer) {
         setFeedback($('#calcFeedback'), 'Super!', 'good');
         celebrate($('#calcFeedback'));
