@@ -26,6 +26,7 @@ Alle bisherigen Root-Links bleiben aktiv. Die alten Dateien leiten auf die neuen
 | `/suchmaschinen.html` | `/portal/modules/suchmaschinen/` |
 | `/zahlbilder-bis-100.html` | `/portal/modules/zahlbilder-bis-100/` |
 | `/terme-werkstatt.html` | `/portal/modules/terme-werkstatt/` |
+| `/potenzterme.html` | `/portal/modules/potenzterme/` |
 
 | `/personenbeschreibung.html` | `/portal/modules/personenbeschreibung/` |
 

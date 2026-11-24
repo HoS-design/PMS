@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Potenzterme-Trainer | HoS Lern-App</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
+  <!-- Version erhöhen, wenn sich CSS oder JS ändern -->
+  <link rel="stylesheet" href="style.css?v=20261124-1">
+  <script src="generator.js?v=20261124-1" defer></script>
+  <script src="app.js?v=20261124-1" defer></script>
+</head>
+<body class="hos-app subject-mathe">
+  <header class="app-header">
+    <div class="brand-row">
+      <img src="/chatisthisreal.png" alt="HoS Logo" class="logo-img" onerror="this.style.display='none'">
+      <div class="brand-title"><div class="badge-main is-mathe">Mathe</div><h1>Potenzterme-Trainer</h1></div>
+    </div>
+    <div class="header-actions"><a href="/index.html" class="header-link">Startseite</a></div>
+  </header>
+
+  <main class="hos-main">
+    <div class="hos-topbar">
+      <div class="hos-seg" role="group" aria-label="Modus">
+        <button id="mode-learn" class="active" type="button">📘 Üben</button>
+        <button id="mode-test" type="button">📝 Selbsttest</button>
+      </div>
+      <nav id="areas" class="hos-steps" aria-label="Bereiche"></nav>
+      <span class="hos-spacer"></span>
+      <span id="stat-a" class="hos-pill"></span>
+      <span id="stat-b" class="hos-pill"></span>
+      <div class="hos-progress" id="progress" title="Fortschritt"><span></span></div>
+    </div>
+
+    <div class="hos-stage pt-stage">
+      <aside class="hos-panel scroll pt-side">
+        <div id="side"></div>
+        <div class="pt-hos">
+          <img id="hos-img" src="/assets/minihos/MiniHoS_Mathe_Taschenrechner.webp" alt="Mini HoS">
+          <div id="hos-say" class="pt-bubble"></div>
+        </div>
+      </aside>
+
+      <section class="hos-panel pt-task" aria-live="polite">
+        <div id="task"></div>
+      </section>
+    </div>
+
+    <div class="hos-bottombar">
+      <div id="feedback" class="hos-feedback" role="status">Wähle einen Bereich und los geht's!</div>
+      <button id="btn-hint" class="hos-btn soft" type="button">💡 Tipp</button>
+      <button id="btn-check" class="hos-btn primary" type="button">Prüfen <span class="hos-kbd">Enter</span></button>
+      <button id="btn-next" class="hos-btn primary" type="button" hidden>Weiter →</button>
+    </div>
+  </main>
+</body>
+</html>
