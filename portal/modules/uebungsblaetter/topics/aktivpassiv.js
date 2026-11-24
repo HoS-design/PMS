@@ -140,4 +140,42 @@
       return table(['Aktiv', 'Passiv', 'Zeitform'], PAIRS.map(x => [esc(x.a), esc(x.p), T[x.t] + (x.man ? ' (man)' : '')]));
     }
   });
+
+  // ---------------------------------------------------------------- mehr Varianten für die sechs Blätter
+  PAIRS.push(
+    { a: 'Der Briefträger bringt die Pakete.', p: 'Die Pakete werden vom Briefträger gebracht.', t: 'pr' },
+    { a: 'Die Mutter wäscht die Wäsche.', p: 'Die Wäsche wird von der Mutter gewaschen.', t: 'pr' },
+    { a: 'Der Hausmeister repariert die Tür.', p: 'Die Tür wird vom Hausmeister repariert.', t: 'pr' },
+    { a: 'Die Kinder malen ein Bild.', p: 'Ein Bild wird von den Kindern gemalt.', t: 'pr' },
+    { a: 'Der Bauer erntet die Kartoffeln.', p: 'Die Kartoffeln werden vom Bauern geerntet.', t: 'pr' },
+    { a: 'Die Trainerin lobt die Spielerinnen.', p: 'Die Spielerinnen werden von der Trainerin gelobt.', t: 'pr' },
+    { a: 'Der Dieb stahl die Tasche.', p: 'Die Tasche wurde vom Dieb gestohlen.', t: 'pt' },
+    { a: 'Die Lehrerin korrigierte die Tests.', p: 'Die Tests wurden von der Lehrerin korrigiert.', t: 'pt' },
+    { a: 'Ein Blitz traf den Baum.', p: 'Der Baum wurde von einem Blitz getroffen.', t: 'pt' },
+    { a: 'Die Schüler sammelten das Altpapier.', p: 'Das Altpapier wurde von den Schülern gesammelt.', t: 'pt' },
+    { a: 'Oma strickte den Schal.', p: 'Der Schal wurde von Oma gestrickt.', t: 'pt' },
+    { a: 'Die Katze hat die Maus gefangen.', p: 'Die Maus ist von der Katze gefangen worden.', t: 'pf' },
+    { a: 'Der Maler hat die Wand gestrichen.', p: 'Die Wand ist vom Maler gestrichen worden.', t: 'pf' },
+    { a: 'Die Polizei hat den Täter verhaftet.', p: 'Der Täter ist von der Polizei verhaftet worden.', t: 'pf' },
+    { a: 'Man räumt die Klasse auf.', p: 'Die Klasse wird aufgeräumt.', t: 'pr', man: true },
+    { a: 'Man verschob das Spiel.', p: 'Das Spiel wurde verschoben.', t: 'pt', man: true },
+    { a: 'Man hat das Fenster geputzt.', p: 'Das Fenster ist geputzt worden.', t: 'pf', man: true }
+  );
+  PAIRS4.push(
+    { a: 'Der Koch hatte das Essen schon vorbereitet.', p: 'Das Essen war vom Koch schon vorbereitet worden.', t: 'pq' },
+    { a: 'Die Klasse hatte das Plakat gestaltet.', p: 'Das Plakat war von der Klasse gestaltet worden.', t: 'pq' },
+    { a: 'Die Firma wird das neue Handy vorstellen.', p: 'Das neue Handy wird von der Firma vorgestellt werden.', t: 'f1' },
+    { a: 'Die Gemeinde wird einen Spielplatz bauen.', p: 'Ein Spielplatz wird von der Gemeinde gebaut werden.', t: 'f1' },
+    { a: 'Der Tierarzt muss den Hund impfen.', p: 'Der Hund muss vom Tierarzt geimpft werden.', t: 'mod' },
+    { a: 'Die Kinder sollen das Zimmer aufräumen.', p: 'Das Zimmer soll von den Kindern aufgeräumt werden.', t: 'mod' },
+    { a: 'Man muss die Rechnung bis Freitag bezahlen.', p: 'Die Rechnung muss bis Freitag bezahlt werden.', t: 'mod', man: true },
+    { a: 'Man hatte die Gäste herzlich begrüßt.', p: 'Die Gäste waren herzlich begrüßt worden.', t: 'pq', man: true },
+    { a: 'Man wird das Ergebnis bald bekannt geben.', p: 'Das Ergebnis wird bald bekannt gegeben werden.', t: 'f1', man: true },
+    { a: 'Man widerspricht dem Trainer nicht.', p: 'Dem Trainer wird nicht widersprochen.', t: 'pr', man: true }
+  );
+  ZUSTAND.push(
+    ['Die Tür ist abgesperrt.', 'Z'], ['Die Tür wird jeden Abend abgesperrt.', 'V'],
+    ['Das Essen ist schon gekocht.', 'Z'], ['Das Essen wird gerade gekocht.', 'V'],
+    ['Der Rasen ist gemäht.', 'Z'], ['Der Rasen wird jeden Samstag gemäht.', 'V']
+  );
 })();

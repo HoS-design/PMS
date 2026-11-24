@@ -50,7 +50,7 @@ My dad [cooked:cook] spaghetti yesterday.`,
 Last Monday we {had|have} a maths test.
 I {saw|see} a great film on Saturday.
 My brother usually {gets|got} up at 6.
-{Does|Did} your sister go to the party last night?
+{Did|Does} your sister go to the party last night?
 We never {eat|ate} meat on Fridays.
 Yesterday it {rained|rains} all day.
 My parents {met|meet} in 2005.

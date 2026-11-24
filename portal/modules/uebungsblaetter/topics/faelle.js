@@ -259,4 +259,70 @@
         table(['1. Fall', '2. Fall', '3. Fall', '4. Fall'], NOUNS.map(n => n.map(esc)));
     }
   });
+
+  // ---------------------------------------------------------------- mehr Varianten für die sechs Blätter
+  SENTENCES.push(
+    { s: '[Der Briefträger] bringt die Post.', c: 1, nom: 'der Briefträger' },
+    { s: 'Ich rufe [meine Freundin] an.', c: 4, nom: 'meine Freundin' },
+    { s: 'Das Fell [der Katze] ist weich.', c: 2, nom: 'die Katze' },
+    { s: 'Wir helfen [dem alten Mann].', c: 3, nom: 'der alte Mann' },
+    { s: '[Die Kinder] spielen im Hof.', c: 1, nom: 'die Kinder' },
+    { s: 'Papa wäscht [das Auto].', c: 4, nom: 'das Auto' },
+    { s: 'Der Schwanz [des Pferdes] ist lang.', c: 2, nom: 'das Pferd' },
+    { s: 'Lisa schreibt [ihrer Oma] einen Brief.', c: 3, nom: 'ihre Oma' },
+    { s: '[Mein Onkel] wohnt in Linz.', c: 1, nom: 'mein Onkel' },
+    { s: 'Tom trägt [eine Brille].', c: 4, nom: 'eine Brille' },
+    { s: 'Die Tür [des Klassenzimmers] steht offen.', c: 2, nom: 'das Klassenzimmer' },
+    { s: 'Die Jacke passt [meinem Bruder] nicht.', c: 3, nom: 'mein Bruder' },
+    { s: '[Der Zug] hat Verspätung.', c: 1, nom: 'der Zug' },
+    { s: 'Wir pflanzen [einen Baum].', c: 4, nom: 'ein Baum' },
+    { s: 'Der Ball [des Jungen] liegt im Teich.', c: 2, nom: 'der Junge' },
+    { s: 'Ich gebe [der Lehrerin] das Heft.', c: 3, nom: 'die Lehrerin' },
+    { s: '[Die Katze] fängt eine Maus.', c: 1, nom: 'die Katze' },
+    { s: 'Mama backt [einen Kuchen].', c: 4, nom: 'ein Kuchen' },
+    { s: 'Das Spielzeug [des Babys] ist bunt.', c: 2, nom: 'das Baby' },
+    { s: 'Wir winken [dem Kapitän].', c: 3, nom: 'der Kapitän' },
+    { s: '[Ein Eichhörnchen] klettert auf den Baum.', c: 1, nom: 'ein Eichhörnchen' },
+    { s: 'Ich verliere [meinen Handschuh].', c: 4, nom: 'mein Handschuh' },
+    { s: 'Die Blätter [des Baumes] werden gelb.', c: 2, nom: 'der Baum' },
+    { s: 'Ben leiht [seiner Freundin] ein Buch.', c: 3, nom: 'seine Freundin' }
+  );
+  NOUNS.push(
+    ['der Vogel', 'des Vogels', 'dem Vogel', 'den Vogel'],
+    ['die Lampe', 'der Lampe', 'der Lampe', 'die Lampe'],
+    ['das Pferd', 'des Pferdes', 'dem Pferd', 'das Pferd'],
+    ['der Tisch', 'des Tisches', 'dem Tisch', 'den Tisch'],
+    ['die Straße', 'der Straße', 'der Straße', 'die Straße'],
+    ['das Fenster', 'des Fensters', 'dem Fenster', 'das Fenster'],
+    ['ein Bleistift', 'eines Bleistifts', 'einem Bleistift', 'einen Bleistift'],
+    ['eine Freundin', 'einer Freundin', 'einer Freundin', 'eine Freundin']
+  );
+  SENT4.push(
+    { s: 'Wir gehen durch [den dunklen Wald].', c: 4, nom: 'der dunkle Wald' },
+    { s: 'Der Hund schläft unter [dem großen Tisch].', c: 3, nom: 'der große Tisch' },
+    { s: 'Trotz [des starken Regens] spielten wir weiter.', c: 2, nom: 'der starke Regen' },
+    { s: 'Ich kaufe ein Geschenk für [meine kleine Schwester].', c: 4, nom: 'meine kleine Schwester' },
+    { s: 'Wir wohnen neben [einem alten Bauernhof].', c: 3, nom: 'ein alter Bauernhof' },
+    { s: 'Die Katze springt auf [das weiche Sofa].', c: 4, nom: 'das weiche Sofa' },
+    { s: 'Während [der langen Fahrt] schlief ich ein.', c: 2, nom: 'die lange Fahrt' },
+    { s: '[Der freundliche Busfahrer] wartet auf uns.', c: 1, nom: 'der freundliche Busfahrer' },
+    { s: 'Ich gehe mit [meinem besten Freund] ins Kino.', c: 3, nom: 'mein bester Freund' },
+    { s: 'Wir sitzen auf [der warmen Bank].', c: 3, nom: 'die warme Bank' },
+    { s: 'Ohne [meinen neuen Schal] friere ich.', c: 4, nom: 'mein neuer Schal' },
+    { s: 'Wegen [eines kaputten Reifens] kamen wir zu spät.', c: 2, nom: 'ein kaputter Reifen' }
+  );
+  FEHLER4.push(
+    ['Ich warte auf meinem Freund.', 'Ich warte auf meinen Freund.'],
+    ['Mit den neuen Fahrrad fahre ich schnell.', 'Mit dem neuen Fahrrad fahre ich schnell.'],
+    ['Das Auto von meinen Vater ist rot.', 'Das Auto meines Vaters ist rot.'],
+    ['Ich bedanke mich bei die Lehrerin.', 'Ich bedanke mich bei der Lehrerin.'],
+    ['Wir gehen in den Garten und spielen in den Garten.', 'Wir gehen in den Garten und spielen im Garten.'],
+    ['Sie schenkt ihren Bruder ein Buch.', 'Sie schenkt ihrem Bruder ein Buch.']
+  );
+  ADJ4.push(
+    ['der alte Mann', 'des alten Mannes', 'dem alten Mann', 'den alten Mann'],
+    ['das bunte Bild', 'des bunten Bildes', 'dem bunten Bild', 'das bunte Bild'],
+    ['eine nette Lehrerin', 'einer netten Lehrerin', 'einer netten Lehrerin', 'eine nette Lehrerin'],
+    ['unser neues Auto', 'unseres neuen Autos', 'unserem neuen Auto', 'unser neues Auto']
+  );
 })();

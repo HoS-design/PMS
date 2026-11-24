@@ -220,4 +220,37 @@
         table(['Satz 1', 'Satz 2', 'Lösung'], JOIN.map(x => [esc(x.a), esc(x.b), esc(x.s)]));
     }
   });
+
+  // ---------------------------------------------------------------- mehr Varianten für die sechs Blätter
+  ITEMS.push(
+    { s: '___ Brot ist frisch.', t: 'A' },
+    { s: 'Ich putze ___ Fahrrad.', t: 'A' },
+    { s: '___ Wasser im See ist warm.', t: 'A' },
+    { s: 'Kennst du ___ Märchen vom Froschkönig?', t: 'A' },
+    { s: 'Das Pferd, ___ auf der Weide steht, heißt Blitz.', t: 'R' },
+    { s: 'Das Handy, ___ ich verloren habe, ist wieder da.', t: 'R' },
+    { s: 'Das Zelt, ___ wir aufgebaut haben, ist undicht.', t: 'R' },
+    { s: 'Das Eis, ___ ich gekauft habe, schmilzt schon.', t: 'R' },
+    { s: '___ weiß ich schon lange.', t: 'D' },
+    { s: '___ habe ich dir doch gesagt!', t: 'D' },
+    { s: 'Ich hoffe, ___ du gewinnst.', t: 'K' },
+    { s: 'Mama sagt, ___ das Essen fertig ist.', t: 'K' },
+    { s: 'Es ist schön, ___ du da bist.', t: 'K' },
+    { s: 'Ich habe gehört, ___ es morgen schneit.', t: 'K' },
+    { s: 'Er rennt so schnell, ___ ihn niemand einholt.', t: 'K' }
+  );
+  MULTI.push(
+    { s: 'Ich weiß, ___ ___ Spiel um drei beginnt.', t: 'KA' },
+    { s: '___ Bild, ___ du gemalt hast, gefällt mir.', t: 'AR' },
+    { s: '___ glaube ich nicht, ___ er ___ gesagt hat.', t: 'DKD' },
+    { s: 'Sie hofft, ___ ___ Paket morgen ankommt.', t: 'KA' },
+    { s: '___ Kind, ___ dort spielt, ist mein Cousin.', t: 'AR' },
+    { s: 'Wusstest du, ___ ___ Museum heute geschlossen ist?', t: 'KA' }
+  );
+  JOIN4.push(
+    { a: 'Es regnet schon wieder.', b: 'Es stört mich.', s: 'Dass es schon wieder regnet, stört mich.' },
+    { a: 'Du kommst zu meiner Party.', b: 'Es freut mich.', s: 'Dass du zu meiner Party kommst, freut mich.' },
+    { a: 'Der Film ist so spannend.', b: 'Ich hätte es nicht gedacht.', s: 'Dass der Film so spannend ist, hätte ich nicht gedacht.' },
+    { a: 'Wir haben gewonnen.', b: 'Es ist toll.', s: 'Dass wir gewonnen haben, ist toll.' }
+  );
 })();
