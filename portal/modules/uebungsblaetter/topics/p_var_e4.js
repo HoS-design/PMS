@@ -48,7 +48,7 @@ It's [impossible:possible] to sleep here. The neighbours are so [noisy:noise]!`
 21st => twenty-first
 5th => fifth
 9th => ninth`,
-    ask: `What's the time? – It's [twenty to] nine. (8:40)
+    ask: `What's the time? – It's [twenty to] eight. (7:40)
 What's the time? – It's [five past] eleven. (11:05)
 What's the time? – It's [a quarter past] two. (2:15)
 What's the time? – It's twelve [o'clock]. (12:00)

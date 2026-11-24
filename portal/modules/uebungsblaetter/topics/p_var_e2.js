@@ -333,7 +333,6 @@ They play football yesterday. => They played football yesterday.`
 While Dad [was cooking:cook], Mum was reading.
 What [were you doing:you / do] at 6 o'clock?
 The sun [was shining:shine] all afternoon.
-We [weren't listening:not listen] to the teacher.
 Lisa [was riding:ride] her bike when she fell.
 At midnight my parents [were watching:watch] a film.
 The dogs [were barking:bark] all night.

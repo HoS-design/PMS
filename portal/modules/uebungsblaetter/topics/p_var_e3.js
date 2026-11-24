@@ -296,7 +296,7 @@ If you [don't wear:not wear] a jacket, you will be cold.
 We will be late if the bus [doesn't come:not come] soon.
 If I [have:have] time, I will call you.
 She [will be:be] happy if you visit her.
-If they [win:win] the match, they will get a cup.
+If you [leave:leave] now, you will be on time.
 If you eat too much, you [will feel:feel] ill.`,
     t2: `If I [lived:live] by the sea, I would swim every day.
 If he had more time, he [would learn:learn] the guitar.

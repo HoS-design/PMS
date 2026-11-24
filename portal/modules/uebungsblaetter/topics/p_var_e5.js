@@ -137,7 +137,6 @@ I [would go:go] to the party if I weren't ill.`,
 If it {snows|would snow} tomorrow, we'll build a snowman.
 She {would|will} travel the world if she had time.
 If you {don't|won't} hurry, we'll be late.
-If I {were|was being} a teacher, I would never give homework.
 {Unless|If} you study, you'll fail the test.
 If he {called|calls} me now, I would answer.
 If we {leave|left} now, we'll catch the bus.`,
@@ -336,7 +335,7 @@ The Harry Potter books [were translated:translate] into many languages.`,
 Our teacher {gave|was given} us a lot of homework.
 The letters {are delivered|deliver} by the postman.
 My sister {made|was made} a cake yesterday.
-Coffee {is grown|grows} in Brazil.
+These cars {are made|make} in Germany.
 The thief {was caught|caught} by the police.
 Millions of people {watch|are watched} the World Cup.
 The rooms {are cleaned|clean} every day.`,

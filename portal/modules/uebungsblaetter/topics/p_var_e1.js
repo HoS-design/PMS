@@ -47,7 +47,7 @@ Our cat [is] black and white. It [isn't] very old. Its name [is] Mimi.`,
     trans: `Wir sind in der Schule. => We're at school.
 Ist das dein Hund? => Is that your dog?`,
     err: `She are my sister. => She is my sister.
-We is in the garden. => We are in the garden.`
+The children is in the park. => The children are in the park.`
   } });
 
   ext('e-havegot', { more: {

@@ -114,7 +114,6 @@ der Zu{g|k} → die Züge
 der Win{d|t} → die Winde
 das Lo{b|p} → loben`,
     umlaut: `die B{äu|eu}me (Baum)
-die R{äu|eu}ber (Raub)
 die Fr{eu|äu}de
 die Tr{äu|eu}me (Traum)
 das F{eu|äu}er

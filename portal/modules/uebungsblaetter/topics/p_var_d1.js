@@ -171,7 +171,6 @@ gegen|A
 ohne|A
 um|A
 bis|A
-entlang|A
 bei|D
 mit|D
 für|A`,
