@@ -20,14 +20,26 @@ for (const s of skills) for (let i = 0; i < 3000; i++) {
     assert.equal(PT.check(t, sol).status, 'correct', s + ': ' + t.expr + ' -> ' + sol);
     assert(t.solution.every(m => m.c !== 0), s);
     // unabhängige Kontrolle: Ausdruck numerisch auswerten an Zufallswerten
-    const vals = { x: 1.3, y: 0.7, a: 1.9, b: 1.1, z: 2.3, m: 0.6 };
+    const vals = { x: 1.3, y: 0.7, a: 1.9, b: 1.1, z: 2.3, m: 0.6, c: 1.7, n: 0.9 };
     const evalExpr = e => Function('"use strict";return (' + e.split(' ').map(tok => /^[+\-*:]$/.test(tok) ? tok : '(' + tok + ')').join(' ').replace(/(\d)([a-z(])/g, '$1*$2').replace(/([a-z])(?=[a-z(])/g, '$1*').replace(/\^/g, '**').replace(/:/g, '/').replace(/([a-z])/g, v => '(' + vals[v] + ')') + ')')();
     const lhs = evalExpr(t.expr), rhs = evalExpr(sol);
     assert(Math.abs(lhs - rhs) < 1e-6 * Math.max(1, Math.abs(lhs)), s + ': ' + t.expr + ' = ' + sol + ' (' + lhs + ' vs ' + rhs + ')');
   }
 }
-// Termarten: Antwort stimmt mit Skill überein
-for (const art of ['summe','differenz','produkt','quotient','potenz']) { const t = PT.gen('art-'+art, rnd); assert.equal(t.options[t.answer].toLowerCase(), art); }
+// Monom/Binom/Polynom: Anzahl der Glieder unabhängig zählen
+for (let k = 0; k < 3000; k++) {
+  const t = PT.gen('glieder', rnd);
+  const n = t.expr.split(/ [+-] /).length;
+  assert.equal(t.options[t.answer], ['Monom','Binom','Polynom'][Math.min(n,3)-1], t.expr);
+  const p = PT.gen('potenzterm', rnd);
+  assert.equal(p.answer === 0, /\^\d/.test(p.expr), p.expr);
+}
+// Alphabetische Reihenfolge wird eingefordert
+{ const t = PT.gen('alpha', rnd); const sol = PT.sumText(t.solution);
+  const rev = sol.replace(/^(-?\d*)((?:[a-z](?:\^\d+)?))((?:[a-z](?:\^\d+)?))$/, '$1$3$2');
+  assert.equal(PT.check(t, sol).status, 'correct'); assert.equal(PT.check(t, rev).status, 'order', rev); }
+// Vorzeichenfehler wird erkannt
+assert.match(PT.check({ kind: 'mul', solution: [{ c: -8, v: { b: 5 } }] }, '8b^5').message, /Vorzeichen/);
 // Choice mit Polynomen: richtige Option numerisch korrekt
 for (let i = 0; i < 2000; i++) for (const s of ['addmc', 'mulmc']) {
   const t = PT.gen(s, rnd); const right = t.options[t.answer];
@@ -41,7 +53,7 @@ for (let i = 0; i < 2000; i++) for (const s of ['addmc', 'mulmc']) {
 }
 // Diagnosen
 let t = { kind: 'add', solution: [{ c: 7, v: { x: 2 } }] };
-assert.match(PT.check(t, '7x^4').message, /bleibt der Exponent/);
+assert.match(PT.check(t, '7x^4').message, /bleibt die Hochzahl/);
 t = { kind: 'mul', solution: [{ c: 6, v: { x: 5 } }], parts: { ca: 2, cb: 3, n: 2, m: 3 } };
 assert.match(PT.check(t, '6x^6').message, /addiert, nicht multipliziert/);
 assert.match(PT.check(t, '5x^5').message, /multipliziert, nicht addiert/);
