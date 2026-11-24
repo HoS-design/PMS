@@ -703,7 +703,21 @@
         /* -------------------------------------------------------------------------- */
         /* MODULE: TEST                                                               */
         /* -------------------------------------------------------------------------- */
-        const TestModule = ({ items, onRecord }) => {
+        /* Ergebnisse lokal speichern (nur dieses Gerät / dieser Browser) */
+        const STORE_KEY = 'hos-dassdas-v1';
+        const EMPTY_STATS = { correct: 0, total: 0, streak: 0, bestStreak: 0 };
+        const loadStore = () => {
+          try {
+            const d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+            return { stats: { ...EMPTY_STATS, ...(d.stats || {}) }, tests: Array.isArray(d.tests) ? d.tests : [], name: d.name || '' };
+          } catch (e) { return { stats: { ...EMPTY_STATS }, tests: [], name: '' }; }
+        };
+        const saveStore = (patch) => {
+          try { localStorage.setItem(STORE_KEY, JSON.stringify({ ...loadStore(), ...patch })); } catch (e) { /* Speicher nicht verfügbar */ }
+        };
+        const fmtDate = (ms) => { const d = new Date(ms); return d.toLocaleDateString('de-AT') + ', ' + d.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' }); };
+
+        const TestModule = ({ items, onRecord, onFinish }) => {
           const [active, setActive] = useState(false);
           const [currentIndex, setCurrentIndex] = useState(0);
           const [testSet, setTestSet] = useState([]);
@@ -723,6 +737,7 @@
           }, [active, finished, startTime]);
 
           const [level, setLevel] = useState('basis');
+          const [name, setName] = useState(() => loadStore().name);
 
           const startTest = () => {
             const pool = level === 'basis' ? items.filter(i => i.level <= 2) : items;
@@ -737,12 +752,19 @@
           };
 
           const handleAnswer = (val) => {
-            setAnswers(prev => ({ ...prev, [testSet[currentIndex].id]: val }));
+            const newAnswers = { ...answers, [testSet[currentIndex].id]: val };
+            setAnswers(newAnswers);
             onRecord(val === testSet[currentIndex].correct);
             if (currentIndex < testSet.length - 1) {
               setCurrentIndex(currentIndex + 1);
             } else {
               setFinished(true);
+              const score = testSet.filter(i => newAnswers[i.id] === i.correct).length;
+              onFinish && onFinish({
+                d: Date.now(), name: name.trim(), level, score, n: testSet.length,
+                seconds: Math.floor((Date.now() - startTime) / 1000),
+                wrong: testSet.filter(i => newAnswers[i.id] !== i.correct).map(i => i.text.replace('___', '[' + i.correct + ']'))
+              });
             }
           };
 
@@ -754,6 +776,10 @@
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-2">Selbsttest</h2>
                 <p className="text-slate-500 mb-6 max-w-md mx-auto">10 zufällige Fragen. Die Zeit läuft mit. Am Ende bekommst du eine Auswertung.</p>
+                <div className="flex justify-center items-center gap-2 mb-4">
+                  <label className="font-bold text-slate-600" htmlFor="dd-name">Dein Name:</label>
+                  <input id="dd-name" value={name} maxLength={40} onChange={e => { setName(e.target.value); saveStore({ name: e.target.value }); }} className="border-2 border-slate-200 rounded-xl px-3 py-2" />
+                </div>
                 <div className="flex justify-center gap-3 mb-5">
                   {[{ id: 'basis', label: 'Basis (kürzere Sätze)' }, { id: 'profi', label: 'Profi (alle Sätze)' }].map(l => (
                     <button key={l.id} onClick={() => setLevel(l.id)} className={`px-4 py-2 rounded-xl border-2 font-bold text-sm ${level === l.id ? 'border-red-600 bg-red-50 text-red-700' : 'border-slate-200 text-slate-500'}`}>{l.label}</button>
@@ -773,6 +799,7 @@
                 <div className="text-center mb-5">
                   <h2 className="text-2xl font-bold text-slate-800">Auswertung</h2>
                   <p className="text-slate-500">Zeit: {duration} Sekunden</p>
+                  <p className="text-green-700 text-sm font-bold">✓ Ergebnis gespeichert – siehe „Ergebnisse“</p>
                 </div>
                 <div className="flex justify-center mb-5">
                   <div className="relative w-32 h-32 flex items-center justify-center">
@@ -849,12 +876,47 @@
           </div>
         );
 
+        const ResultsModule = ({ stats, tests, onClear }) => {
+          const [sure, setSure] = useState(false);
+          const list = [...tests].reverse();
+          return (
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 fade-in">
+              <h2 className="text-2xl font-bold text-slate-800 mb-1">Meine Ergebnisse</h2>
+              <p className="text-slate-500 text-sm mb-4">Gespeichert nur auf diesem Gerät in diesem Browser.</p>
+              <div className="flex flex-wrap gap-3 mb-5 text-sm">
+                <span className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">Geübt: <b>{stats.total}</b> Aufgaben</span>
+                <span className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">Richtig: <b>{stats.total ? Math.round(stats.correct / stats.total * 100) : 0}%</b></span>
+                <span className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">Beste Serie: <b>{stats.bestStreak}</b></span>
+              </div>
+              <h3 className="font-bold text-slate-700 mb-2">Selbsttests</h3>
+              {list.length === 0 ? <p className="text-slate-500">Noch kein Test gemacht.</p> : (
+                <div className="space-y-2 mb-4 max-h-72 overflow-auto">
+                  {list.map((t, i) => {
+                    const pct = Math.round(t.score / t.n * 100);
+                    return (
+                      <details key={i} className={`p-3 rounded-lg border ${pct >= 80 ? 'bg-green-50 border-green-200' : pct >= 50 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}`}>
+                        <summary className="cursor-pointer"><b>{t.score} / {t.n}</b> ({pct}%) · {t.level === 'basis' ? 'Basis' : 'Profi'} · {fmtDate(t.d)}{t.name ? ' · ' + t.name : ''} · {t.seconds}s</summary>
+                        {t.wrong && t.wrong.length > 0 && <ul className="mt-2 text-sm list-disc pl-6">{t.wrong.map((w, j) => <li key={j}>{w}</li>)}</ul>}
+                      </details>
+                    );
+                  })}
+                </div>
+              )}
+              <button onClick={() => { if (sure) { onClear(); setSure(false); } else setSure(true); }} className="text-sm px-4 py-2 rounded-lg border border-amber-300 bg-amber-50 text-amber-800 font-bold">{sure ? 'Wirklich alles löschen?' : 'Ergebnisse löschen'}</button>
+            </div>
+          );
+        };
+
         /* -------------------------------------------------------------------------- */
         /* MAIN APP                                                                   */
         /* -------------------------------------------------------------------------- */
         const DassDasApp = () => {
           const [activeTab, setActiveTab] = useState('learn');
-          const [stats, setStats] = useState({ correct: 0, total: 0, streak: 0, bestStreak: 0 });
+          const [stats, setStats] = useState(() => loadStore().stats);
+          const [tests, setTests] = useState(() => loadStore().tests);
+          useEffect(() => { saveStore({ stats }); }, [stats]);
+          const addTest = (t) => setTests(prev => { const next = [...prev, t].slice(-50); saveStore({ tests: next }); return next; });
+          const clearAll = () => { setStats({ ...EMPTY_STATS }); setTests([]); saveStore({ stats: { ...EMPTY_STATS }, tests: [] }); };
 
           const recordResult = (isCorrect) => {
             setStats(prev => {
@@ -868,7 +930,7 @@
             });
           };
 
-          const resetStats = () => setStats({ correct: 0, total: 0, streak: 0, bestStreak: 0 });
+          const resetStats = () => setStats({ ...EMPTY_STATS });
 
           return (
             <div className="bg-slate-50 text-slate-800 font-sans p-3 md:p-4 flex flex-col items-center">
@@ -891,6 +953,7 @@
                   { id: 'learn', icon: BookOpen, label: 'Lernen' },
                   { id: 'practice', icon: PenTool, label: 'Üben' },
                   { id: 'test', icon: CheckCircle, label: 'Test' },
+                  { id: 'results', icon: Trophy, label: 'Ergebnisse' },
                   { id: 'help', icon: HelpCircle, label: 'Hilfe' },
                 ].map(tab => (
                   <button
@@ -911,7 +974,8 @@
               <main className="w-full max-w-4xl">
                 {activeTab === 'learn' && <LearnModule data={DATA.lessons} onComplete={() => setActiveTab('practice')} onRecord={recordResult} />}
                 {activeTab === 'practice' && <PracticeModule data={DATA} onRecord={recordResult} />}
-                {activeTab === 'test' && <TestModule items={DATA.items} onRecord={recordResult} />}
+                {activeTab === 'test' && <TestModule items={DATA.items} onRecord={recordResult} onFinish={addTest} />}
+                {activeTab === 'results' && <ResultsModule stats={stats} tests={tests} onClear={clearAll} />}
                 {activeTab === 'help' && <HelpModule />}
               </main>
 

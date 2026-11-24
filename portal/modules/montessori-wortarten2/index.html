@@ -126,6 +126,7 @@
     <span class="counter">Satz <span id="idx">1</span> von <span id="total">30</span></span>
     <div class="hos-progress" style="width: 220px" title="Erledigte Sätze"><span id="progressBar"></span></div>
     <span class="hos-pill">Erledigt: <b id="done">0</b></span>
+    <button type="button" class="hos-btn small soft" id="resultsBtn">📋 Meine Ergebnisse</button>
     <span class="hos-spacer"></span>
     <span class="hos-label">Niveau:</span>
     <div class="hos-seg" role="group" aria-label="Niveau">
@@ -161,6 +162,29 @@
     <button type="button" class="hos-btn" id="nextBtn" title="Nächster Satz (Pfeil rechts)">Weiter →</button>
   </div>
 </main>
+
+<div id="results" class="wa-results" hidden>
+  <div class="hos-panel wa-results-card" role="dialog" aria-label="Meine Ergebnisse">
+    <h2 class="hos-panel-title">📋 Meine Ergebnisse <span class="hos-muted" id="resLevel"></span></h2>
+    <div id="resBody"></div>
+    <div class="wa-results-actions">
+      <button type="button" class="hos-btn warn small" id="resReset">Ergebnisse löschen</button>
+      <span class="hos-spacer"></span>
+      <button type="button" class="hos-btn primary" id="resClose">Schließen</button>
+    </div>
+    <p class="hos-muted wa-note">Gespeichert nur auf diesem Gerät in diesem Browser.</p>
+  </div>
+</div>
+<style>
+  .wa-results { position: fixed; inset: 0; background: rgba(15,23,42,.35); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .wa-results-card { width: min(640px, 100%); max-height: 92vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  .wa-results-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .wa-kpis { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .wa-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .wa-table td { padding: 5px 8px; border-bottom: 1px solid var(--hos-line); }
+  .wa-table td:last-child { text-align: right; font-weight: 800; white-space: nowrap; }
+  .wa-note { margin: 8px 0 0; font-size: .85rem; }
+</style>
 
 <script>
 /* =========================================================
@@ -262,6 +286,16 @@ const EXERCISES = [
 ========================================================= */
 const BASIS_KEYS = ["N", "ART", "V", "ADJ"];
 const PROGRESS_KEY = "hosWortartenProgress";
+const STATS_KEY = "hosWortartenStats";
+let checksThisSentence = 0;
+function loadStats() {
+  try { const d = JSON.parse(localStorage.getItem(STATS_KEY) || "{}"); return (d && typeof d === "object") ? d : {}; } catch (e) { return {}; }
+}
+function levelStats(all) {
+  all[mode] = all[mode] || { sentences: {}, errors: {}, checks: 0, last: 0 };
+  return all[mode];
+}
+function saveStats(all) { try { localStorage.setItem(STATS_KEY, JSON.stringify(all)); } catch (e) { /* Speicher nicht verfügbar */ } }
 
 let current = 0;
 let selectedSymbolKey = null;
@@ -411,6 +445,7 @@ function applySymbol(wrap, key) {
 function loadExercise(i) {
   current = (i + EXERCISES.length) % EXERCISES.length;
   usedSolution = false;
+  checksThisSentence = 0;
   updateProgress();
   selectedWordEl = null;
   setSelectedSymbol(null);
@@ -476,13 +511,25 @@ function loadExercise(i) {
 ========================================================= */
 function check() {
   let right = 0, wrong = 0, missing = 0;
+  const all = loadStats(), st = levelStats(all), wrongTypes = [];
   document.querySelectorAll(".tok.word:not(.given)").forEach(w => {
     const slot = w.querySelector(".slot");
     slot.classList.remove("ok", "bad");
     if (!w.dataset.assigned) { missing++; return; }
     if (w.dataset.assigned === w.dataset.correct) { right++; slot.classList.add("ok"); }
-    else { wrong++; slot.classList.add("bad"); }
+    else { wrong++; slot.classList.add("bad"); wrongTypes.push(w.dataset.correct); }
   });
+  if (missing === 0 && !usedSolution) {
+    checksThisSentence++;
+    st.checks++;
+    st.last = Date.now();
+    wrongTypes.forEach(t => { st.errors[t] = (st.errors[t] || 0) + 1; });
+    if (wrong === 0) {
+      const prev = st.sentences[current] || {};
+      st.sentences[current] = { firstTry: prev.firstTry || checksThisSentence === 1, d: Date.now() };
+    }
+    saveStats(all);
+  }
 
   if (missing === 0 && wrong === 0 && usedSolution) {
     $("nextBtn").classList.add("primary");
@@ -526,6 +573,7 @@ $("modeProfi").addEventListener("click", () => setMode("profi"));
 
 window.addEventListener("keydown", e => {
   if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+  if (!$("results").hidden) { if (e.key === "Escape") $("results").hidden = true; return; }
   if (e.key === "Escape") { selectWord(null); setSelectedSymbol(null); }
   const n = parseInt(e.key, 10);
   const syms = activeSymbols();
@@ -535,6 +583,40 @@ window.addEventListener("keydown", e => {
   }
   if (e.key === "ArrowRight") loadExercise(current + 1);
   if (e.key === "ArrowLeft") loadExercise(current - 1);
+});
+
+function fmtDate(ms) { const d = new Date(ms); return d.toLocaleDateString("de-AT") + ", " + d.toLocaleTimeString("de-AT", { hour: "2-digit", minute: "2-digit" }); }
+function showResults() {
+  const all = loadStats();
+  $("resLevel").textContent = "· Niveau " + (mode === "basis" ? "Basis" : "Profi");
+  const st = levelStats(all);
+  const solved = Object.keys(st.sentences).length;
+  const first = Object.values(st.sentences).filter(x => x.firstTry).length;
+  const syms = activeSymbols();
+  const rows = syms.map(sym => {
+    const n = st.errors[sym.key] || 0;
+    const cls = n === 0 ? "ok" : n <= 2 ? "mid" : "no";
+    return "<tr><td>" + svgFor(sym, 18) + " " + sym.name + "</td><td style=\"color:var(--hos-" + (cls === "ok" ? "good" : cls === "mid" ? "warn" : "bad") + ")\">" + (n === 0 ? "✓ keine Fehler" : n + " Fehler") + "</td></tr>";
+  }).join("");
+  $("resBody").innerHTML =
+    "<div class=\"wa-kpis\">" +
+    "<span class=\"hos-pill good\">Gelöst: <b>" + solved + " / " + EXERCISES.length + "</b></span>" +
+    "<span class=\"hos-pill\">Beim 1. Versuch richtig: <b>" + first + "</b></span>" +
+    "<span class=\"hos-pill\">Prüfungen: <b>" + st.checks + "</b></span>" +
+    (st.last ? "<span class=\"hos-pill\">Zuletzt: <b>" + fmtDate(st.last) + "</b></span>" : "") +
+    "</div><b>Fehler nach Wortart</b><table class=\"wa-table\">" + rows + "</table>";
+  $("resReset").textContent = "Ergebnisse löschen";
+  delete $("resReset").dataset.sure;
+  $("results").hidden = false;
+}
+$("resultsBtn").addEventListener("click", showResults);
+$("resClose").addEventListener("click", () => { $("results").hidden = true; });
+$("resReset").addEventListener("click", () => {
+  const b = $("resReset");
+  if (!b.dataset.sure) { b.dataset.sure = "1"; b.textContent = "Wirklich löschen?"; return; }
+  const all = loadStats(); delete all[mode]; saveStats(all);
+  doneSet = new Set(); saveProgress(); updateProgress();
+  showResults();
 });
 
 setMode(mode);
