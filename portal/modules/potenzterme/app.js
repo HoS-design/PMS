@@ -16,17 +16,17 @@
 
   /* ---------- Inhalte ---------- */
   var MERKE = {
-    termarten: '<h2>Merke: Termarten</h2><div class="hos-merke"><p>Die <b>Termart</b> richtet sich nach der Rechnung, die du <b>zuletzt</b> machst.</p><p>Reihenfolge: <b>Klammer → Potenz → Punkt (· :) → Strich (+ −)</b></p></div>' +
-      '<div class="pt-ex"><div>a + b<small>Summe</small></div><div>a − b<small>Differenz</small></div><div>a · b<small>Produkt</small></div><div>a : b<small>Quotient</small></div><div>a<sup>n</sup><small>Potenz</small></div></div>',
-    addsub: '<h2>Merke: Plus und Minus</h2><div class="hos-merke"><p>Nur <b>gleichartige</b> Terme zusammenfassen: gleiche Variable <b>und</b> gleicher Exponent.</p><p>Rechne mit den Zahlen davor. <b>Der Exponent bleibt gleich!</b></p></div>' +
+    termarten: '<h2>Merke: Termarten</h2><div class="hos-merke"><p><b>Monom</b> = 1 Glied, <b>Binom</b> = 2 Glieder, <b>Polynom</b> = 3 oder mehr Glieder.</p><p>Glieder werden durch <b>+</b> oder <b>−</b> getrennt. Ein Malpunkt trennt nicht!</p><p>Ein <b>Potenzterm</b> enthält <b>mindestens eine Potenz</b>.</p></div>' +
+      '<div class="pt-ex"><div>7a<small>Monom</small></div><div>2x + 9<small>Binom</small></div><div>4x + 3y − 2<small>Polynom</small></div></div>',
+    addsub: '<h2>Merke: Plus und Minus</h2><div class="hos-merke"><p>Nur Potenzen mit <b>gleicher Basis</b> und <b>gleicher Hochzahl</b> dürfen addiert und subtrahiert werden.</p><p>Rechne mit den Zahlen davor. <b>Die Hochzahl bleibt gleich!</b></p></div>' +
       '<div class="pt-ex"><div>3x<sup>2</sup> + 5x<sup>2</sup> = 8x<sup>2</sup><small>✓ gleichartig</small></div><div>3x<sup>2</sup> + 5x<sup>3</sup><small>✗ bleibt so</small></div><div>x<sup>2</sup> = 1x<sup>2</sup><small>unsichtbare 1</small></div></div>',
-    muldiv: '<h2>Merke: Mal und Durch</h2><div class="hos-merke"><p><b>Mal:</b> Zahlen multiplizieren, Exponenten <b>addieren</b>.</p><p><b>Durch:</b> Zahlen dividieren, Exponenten <b>subtrahieren</b>.</p></div>' +
-      '<div class="pt-ex"><div>x<sup>2</sup> · x<sup>3</sup> = x<sup>5</sup><small>2 + 3</small></div><div>3a<sup>2</sup> · 4a<sup>3</sup> = 12a<sup>5</sup></div><div>12a<sup>5</sup> : 4a<sup>2</sup> = 3a<sup>3</sup><small>5 − 2</small></div><div>x = x<sup>1</sup><small>unsichtbare 1</small></div></div>',
-    mix: '<h2>Merke: Alles im Überblick</h2><div class="hos-merke"><p><b>+ und −:</b> nur Gleichartiges, Exponent bleibt.</p><p><b>· :</b> Zahlen rechnen, Exponenten <b>+</b> bzw. <b>−</b>.</p><p><b>Termart:</b> die letzte Rechnung zählt.</p></div>' +
+    muldiv: '<h2>Merke: Mal und Durch</h2><div class="hos-merke"><p><b>Mal:</b> Die Zahlen werden multipliziert, Hochzahlen <b>addieren</b>.</p><p><b>Durch:</b> Die Zahlen werden dividiert, Hochzahlen <b>subtrahieren</b>.</p><p>Variablen in <b>alphabetischer Reihenfolge</b> anschreiben. Minus · Minus = Plus.</p></div>' +
+      '<div class="pt-ex"><div>x<sup>2</sup> · x<sup>3</sup> = x<sup>5</sup><small>2 + 3</small></div><div>3b · 2a<sup>2</sup> = 6a<sup>2</sup>b<small>alphabetisch</small></div><div>12a<sup>5</sup> : (−4a<sup>2</sup>) = −3a<sup>3</sup><small>5 − 2</small></div><div>x = x<sup>1</sup><small>unsichtbare 1</small></div></div>',
+    mix: '<h2>Merke: Alles im Überblick</h2><div class="hos-merke"><p><b>+ und −:</b> nur Gleichartiges, Hochzahl bleibt.</p><p><b>· :</b> Zahlen rechnen, Hochzahlen <b>+</b> bzw. <b>−</b>.</p><p><b>Termart:</b> Glieder zählen (Monom, Binom, Polynom).</p></div>' +
       '<div class="pt-ex"><div>2x<sup>3</sup> + 6x<sup>3</sup> = 8x<sup>3</sup></div><div>2x<sup>3</sup> · 6x<sup>3</sup> = 12x<sup>6</sup></div></div>'
   };
   var CAN = {
-    termarten: 'Du kannst Termarten (Summe, Differenz, Produkt, Quotient, Potenz) erkennen.',
+    termarten: 'Du kannst Monome, Binome und Polynome unterscheiden und Potenzterme erkennen.',
     addsub: 'Du kannst Potenzterme addieren und subtrahieren.',
     muldiv: 'Du kannst Potenzterme multiplizieren und dividieren.'
   };
@@ -158,7 +158,7 @@
       ok = state.choice === t.answer;
     } else {
       var r = PT.check(t, $('answer').value);
-      if (r.status === 'invalid' || r.status === 'unsimplified') { feedback(r.message, 'warn'); return; }
+      if (r.status === 'invalid' || r.status === 'unsimplified' || r.status === 'order') { feedback(r.message, 'warn'); return; }
       ok = r.status === 'correct'; msg = r.message || '';
     }
     if (state.mode === 'test') return testAnswer(ok);
@@ -210,7 +210,7 @@
     setImg('Lob_Checkliste'); say('Zeig, was du kannst!');
     $('task').innerHTML = '<div class="pt-setup"><p class="pt-prompt">Selbsttest starten</p>' +
       '<label>Dein Name: <input id="t-name" type="text" maxlength="40" value="' + (data.name || '').replace(/"/g, '&quot;') + '" style="flex:1"></label>' +
-      '<label><input type="checkbox" class="t-area" value="termarten" checked> Termarten</label>' +
+      '<label><input type="checkbox" class="t-area" value="termarten" checked> Termarten (Monom, Binom, Polynom) & Potenzterme</label>' +
       '<label><input type="checkbox" class="t-area" value="addsub" checked> Potenzterme addieren / subtrahieren</label>' +
       '<label><input type="checkbox" class="t-area" value="muldiv" checked> Potenzterme multiplizieren / dividieren</label>' +
       '<button id="t-start" type="button" class="hos-btn primary">Test starten →</button></div>';

@@ -93,9 +93,9 @@
       else if (i > 0) return { ok: false, error: 'Das kann ich nicht lesen.' };
       var num = '';
       while (i < s.length && /\d/.test(s[i])) num += s[i++];
-      var v = {}, any = false;
+      var v = {}, any = false, ord = '';
       while (i < s.length && /[a-z]/.test(s[i])) {
-        var name = s[i++], exp = 1;
+        var name = s[i++], exp = 1; ord += name;
         if (s[i] === '^') {
           i++; var e = '';
           while (i < s.length && /\d/.test(s[i])) e += s[i++];
@@ -109,7 +109,8 @@
       if (s[i] === '^') return { ok: false, error: 'Eine Hochzahl gehört direkt hinter einen Buchstaben.' };
       var c = sign * (num ? Number(num) : 1);
       Object.keys(v).forEach(function (k) { if (v[k] === 0) delete v[k]; });
-      list.push(mono(c, v));
+      var mm = mono(c, v); mm.ord = ord;
+      list.push(mm);
     }
     var seen = {};
     list.forEach(function (m) { var k = key(m.v); if (seen[k] || m.c === 0) simplified = false; seen[k] = true; });
@@ -118,55 +119,59 @@
 
   /* ---------- Bereiche & Fertigkeiten ---------- */
   var AREAS = [
-    { id: 'termarten', title: 'Termarten', short: '1 Termarten', skills: ['art-summe', 'art-differenz', 'art-produkt', 'art-quotient', 'art-potenz'] },
+    { id: 'termarten', title: 'Termarten & Potenzterme', short: '1 Termarten', skills: ['glieder', 'glieder', 'potenzterm', 'potenzschreiben'] },
     { id: 'addsub', title: 'Addieren & Subtrahieren', short: '2 Plus & Minus', skills: ['gleichartig', 'add2', 'add3', 'addmix', 'addmc'] },
-    { id: 'muldiv', title: 'Multiplizieren & Dividieren', short: '3 Mal & Durch', skills: ['pow1', 'mul', 'div', 'mul2var', 'mulmc'] },
-    { id: 'mix', title: 'Alles gemischt', short: '4 Gemischt', skills: ['art-summe', 'art-produkt', 'art-potenz', 'add2', 'addmix', 'mul', 'div', 'vergleich'] }
+    { id: 'muldiv', title: 'Multiplizieren & Dividieren', short: '3 Mal & Durch', skills: ['pow1', 'mul', 'div', 'mul2var', 'alpha', 'mulmc', 'kombi'] },
+    { id: 'mix', title: 'Alles gemischt', short: '4 Gemischt', skills: ['glieder', 'potenzterm', 'potenzschreiben', 'add2', 'addmix', 'mul', 'div', 'alpha', 'kombi', 'vergleich'] }
   ];
 
-  var ARTEN = ['Summe', 'Differenz', 'Produkt', 'Quotient', 'Potenz'];
+  var GLIEDER = ['Monom', 'Binom', 'Polynom'];
 
-  /* Termarten: Vorlagen mit zuletzt ausgeführter Rechnung */
-  function genArt(rnd, art) {
-    var x = pick(rnd, ['x', 'y', 'a', 'b']), p = ri(rnd, 2, 9), q = ri(rnd, 2, 9), r = ri(rnd, 2, 6);
-    var T = {
-      Summe: [
-        [p + x + ' + ' + q, 'Es gibt nur ein Plus. Das ist die letzte Rechnung.'],
-        [p + ' * ' + x + ' + ' + q, 'Punkt vor Strich: zuerst ·, zuletzt +.'],
-        [p + x + '^2 + ' + q + x, 'Erst die Potenz und das Mal, zuletzt +.'],
-        [r + ' * (' + x + ' - ' + p + ') + ' + q, 'Klammer, dann ·, zuletzt +.']
-      ],
-      Differenz: [
-        [p + x + ' - ' + q, 'Es gibt nur ein Minus. Das ist die letzte Rechnung.'],
-        [p * r + x + ' : ' + r + ' - ' + q, 'Punkt vor Strich: zuerst :, zuletzt −.'],
-        [x + '^' + r + ' - ' + q, 'Zuerst die Potenz, zuletzt −.'],
-        [p + ' * ' + x + ' - ' + q + ' * ' + x, 'Beide Mal zuerst, zuletzt −.']
-      ],
-      Produkt: [
-        [p + ' * (' + x + ' + ' + q + ')', 'Zuerst die Klammer, zuletzt ·.'],
-        ['(' + x + ' - ' + q + ') * ' + p, 'Zuerst die Klammer, zuletzt ·.'],
-        [p + ' * ' + x + '^' + r, 'Potenz vor Punkt: zuerst hoch, zuletzt ·.'],
-        ['(' + x + ' + ' + p + ') * (' + x + ' - ' + q + ')', 'Beide Klammern zuerst, zuletzt ·.']
-      ],
-      Quotient: [
-        ['(' + x + ' + ' + q + ') : ' + p, 'Zuerst die Klammer, zuletzt :.'],
-        [p * r + x + ' : ' + r, p * r + x + ' bedeutet ' + p * r + ' · ' + x + '. Das Ergebnis wird zuletzt durch ' + r + ' dividiert.'],
-        ['(' + p + x + ' - ' + q + ') : ' + r, 'Zuerst die Klammer, zuletzt :.'],
-        [x + '^' + r + ' : ' + p, 'Zuerst die Potenz, zuletzt :.']
-      ],
-      Potenz: [
-        ['(' + x + ' + ' + q + ')^2', 'Zuerst die Klammer, zuletzt hoch 2.'],
-        ['(' + p + x + ')^' + r, 'Zuerst die Klammer, zuletzt hoch ' + r + '.'],
-        [x + '^' + (r + 1), 'Basis ' + x + ', Exponent ' + (r + 1) + '. Nur eine Rechnung: die Potenz.'],
-        ['(' + x + ' - ' + p + ')^' + r, 'Zuerst die Klammer, zuletzt hoch ' + r + '.']
-      ]
-    };
-    var t = pick(rnd, T[art]);
+  /* ein zufälliges Glied (ohne Vorzeichen) */
+  function glied(rnd) {
+    var x = pick(rnd, ['x', 'y', 'a', 'b', 'z']), y = pick(rnd, ['a', 'b', 'c', 'x', 'y']);
+    switch (ri(rnd, 0, 4)) {
+      case 0: return String(ri(rnd, 1, 12));
+      case 1: return ri(rnd, 2, 9) + x;
+      case 2: return (rnd() < 0.3 ? '' : ri(rnd, 2, 9)) + x + '^' + ri(rnd, 2, 4);
+      case 3: return ri(rnd, 2, 9) + ' * ' + x + (y !== x ? ' * ' + y : '');
+      default: return ri(rnd, 2, 9) + (x < y ? x + y : y + x).replace(/(.)\1/, '$1^2');
+    }
+  }
+  function gliederTerm(rnd, n) {
+    var parts = [], s = '';
+    for (var i = 0; i < n; i++) parts.push(glied(rnd));
+    parts.forEach(function (p, i) {
+      if (i === 0) s = (rnd() < 0.2 ? '-' : '') + p;
+      else s += (rnd() < 0.5 ? ' + ' : ' - ') + p;
+    });
+    return { expr: s, parts: parts };
+  }
+
+  /* Monom / Binom / Polynom */
+  function genGlieder(rnd) {
+    var n = pick(rnd, [1, 1, 2, 2, 3, 4]);
+    var g = gliederTerm(rnd, n), art = GLIEDER[Math.min(n, 3) - 1];
+    var malHinweis = /\*/.test(g.expr) ? ' Der Malpunkt trennt keine Glieder.' : '';
     return {
-      type: 'choice', prompt: 'Welche Termart ist es?', expr: t[0],
-      options: ARTEN.slice(), answer: ARTEN.indexOf(art), fixedOrder: true,
-      hint: 'Welche Rechnung machst du ganz zuletzt? Klammer → Potenz → Punkt (· :) → Strich (+ −).',
-      explain: t[1] + ' → ' + art + '.'
+      type: 'choice', prompt: 'Um welchen Term handelt es sich?', expr: g.expr,
+      options: GLIEDER.slice(), answer: GLIEDER.indexOf(art), fixedOrder: true,
+      hint: 'Zähle die Glieder: Sie werden durch + oder − getrennt. 1 Glied = Monom, 2 = Binom, 3 oder mehr = Polynom.',
+      explain: n + (n === 1 ? ' Glied' : ' Glieder') + ' → ' + art + '.' + malHinweis
+    };
+  }
+
+  /* Ist es ein Potenzterm? (mindestens eine Potenz) */
+  function genPotenzterm(rnd) {
+    var want = rnd() < 0.5, g, tries = 0;
+    do { g = gliederTerm(rnd, ri(rnd, 1, 3)); tries++; } while (/\^/.test(g.expr) !== want && tries < 50);
+    var has = /\^/.test(g.expr);
+    var pot = (g.expr.match(/[a-z]\^\d+/g) || [])[0];
+    return {
+      type: 'choice', prompt: 'Ist das ein Potenzterm?', expr: g.expr,
+      options: ['Ja, Potenzterm', 'Nein, kein Potenzterm'], answer: has ? 0 : 1, fixedOrder: true,
+      hint: 'Ein Potenzterm enthält mindestens eine Potenz (eine Hochzahl).',
+      explain: has ? 'Er enthält die Potenz ' + pot + '.' : 'Es kommt keine Potenz (keine Hochzahl) vor.'
     };
   }
 
@@ -187,20 +192,29 @@
   function gen(skill, rnd) {
     var x = pick(rnd, VARS), y, n, m, a, b, c, v;
     switch (skill) {
-      case 'art-summe': return genArt(rnd, 'Summe');
-      case 'art-differenz': return genArt(rnd, 'Differenz');
-      case 'art-produkt': return genArt(rnd, 'Produkt');
-      case 'art-quotient': return genArt(rnd, 'Quotient');
-      case 'art-potenz': return genArt(rnd, 'Potenz');
-
+      case 'glieder': return genGlieder(rnd);
+      case 'potenzterm': return genPotenzterm(rnd);
+      case 'potenzschreiben': {
+        c = pick(rnd, [1, 1, 2, 2, 3, 4, 5]); n = c >= 3 ? ri(rnd, 2, 3) : ri(rnd, 2, 5);
+        var f = (c === 1 ? '' : c) + x, arr = [];
+        for (var q = 0; q < n; q++) arr.push(f);
+        v = {}; v[x] = n;
+        var cn = Math.pow(c, n);
+        return {
+          type: 'input', prompt: 'Schreibe als Potenz.', expr: arr.join(' * '),
+          solution: [mono(cn, v)], kind: 'mul',
+          hint: 'Zähle, wie oft ' + x + ' vorkommt' + (c > 1 ? ', und rechne die Zahlen: ' + arr.map(function () { return c; }).join(' · ') : '') + '.',
+          explain: (c > 1 ? arr.map(function () { return c; }).join(' · ') + ' = ' + cn + ', ' : '') + x + ' kommt ' + n + '-mal vor → ' + monoText(mono(cn, v)) + '.'
+        };
+      }
       case 'gleichartig': {
         n = exps(rnd); a = ri(rnd, 2, 9); b = ri(rnd, 1, 9);
         y = pick(rnd, VARS.filter(function (k) { return k !== x; }));
         var kinds = [
-          [mono(a, { [x]: n }), mono(b, { [x]: n }), true, 'Gleiche Variable ' + x + ' und gleicher Exponent ' + n + '.'],
-          [mono(a, { [x]: n }), mono(a, { [x]: n + 1 }), false, 'Die Exponenten sind verschieden (' + n + ' und ' + (n + 1) + ').'],
+          [mono(a, { [x]: n }), mono(b, { [x]: n }), true, 'Gleiche Variable ' + x + ' und gleiche Hochzahl ' + n + '.'],
+          [mono(a, { [x]: n }), mono(a, { [x]: n + 1 }), false, 'Die Hochzahlen sind verschieden (' + n + ' und ' + (n + 1) + ').'],
           [mono(a, { [x]: n }), mono(b, { [y]: n }), false, 'Verschiedene Variablen (' + x + ' und ' + y + ').'],
-          [mono(a, { [x]: 1 }), mono(b, { [x]: 1 }), true, 'Beide haben ' + x + ' mit Exponent 1.'],
+          [mono(a, { [x]: 1 }), mono(b, { [x]: 1 }), true, 'Beide haben ' + x + ' mit Hochzahl 1.'],
           [mono(a, { [x]: 1 }), mono(a, { [x]: n }), false, x + ' ist ' + x + '¹, das andere ist ' + x + '^' + n + '.']
         ];
         var k = pick(rnd, kinds);
@@ -208,7 +222,7 @@
           type: 'choice', prompt: 'Darfst du diese beiden Terme zusammenfassen?',
           expr: monoText(k[0]) + '   und   ' + monoText(k[1]),
           options: ['Ja, gleichartig', 'Nein, nicht gleichartig'], answer: k[2] ? 0 : 1, fixedOrder: true,
-          hint: 'Gleichartig heißt: gleiche Variable UND gleicher Exponent.',
+          hint: 'Gleichartig heißt: gleiche Variable UND gleiche Hochzahl.',
           explain: k[3]
         };
       }
@@ -220,7 +234,7 @@
         return {
           type: 'input', prompt: 'Fasse zusammen.', expr: monoText(mono(a, v)) + (minus ? ' - ' : ' + ') + monoText(mono(b, v)),
           solution: [mono(c, v)], kind: 'add',
-          hint: 'Rechne nur mit den Zahlen davor: ' + a + (minus ? ' − ' : ' + ') + b + '. Der Exponent bleibt ' + n + '.',
+          hint: 'Rechne nur mit den Zahlen davor: ' + a + (minus ? ' − ' : ' + ') + b + '. Die Hochzahl bleibt ' + n + '.',
           explain: a + (minus ? ' − ' : ' + ') + b + ' = ' + c + ', ' + varText(v) + ' bleibt gleich.'
         };
       }
@@ -237,7 +251,7 @@
           expr: monoText(mono(a, v)) + ' ' + ops[0] + ' ' + monoText(mono(b, v)) + ' ' + ops[1] + ' ' + monoText(mono(c, v)),
           solution: [mono(res, v)], kind: 'add',
           hint: 'Alle drei sind gleichartig. Rechne ' + a + ' ' + ops[0] + ' ' + b + ' ' + ops[1] + ' ' + c + '.',
-          explain: a + ' ' + ops[0] + ' ' + b + ' ' + ops[1] + ' ' + c + ' = ' + res + '. Der Exponent bleibt ' + n + '.'
+          explain: a + ' ' + ops[0] + ' ' + b + ' ' + ops[1] + ' ' + c + ' = ' + res + '. Die Hochzahl bleibt ' + n + '.'
         };
       }
       case 'addmix': {
@@ -257,7 +271,7 @@
           type: 'input', prompt: 'Ordne gleichartige Terme und fasse zusammen.', expr: sumText(parts),
           solution: sol, kind: 'add',
           hint: 'Suche zuerst alle Terme mit ' + varText(hi) + ', dann alle mit ' + (varText(lo) || 'ohne Variable') + '.',
-          explain: 'Zusammen: ' + sumText(sol) + '. Verschiedene Exponenten bleiben getrennt.'
+          explain: 'Zusammen: ' + sumText(sol) + '. Verschiedene Hochzahlen bleiben getrennt.'
         };
       }
       case 'addmc': {
@@ -265,8 +279,8 @@
         var w1 = {}; w1[x] = 2 * n; var w2 = {}; w2[x] = n;
         return choicePoly(rnd, 'Was ist richtig?', monoText(mono(a, v)) + ' + ' + monoText(mono(b, v)) + ' = ?',
           [mono(a + b, v)], [[mono(a + b, w1)], [mono(a * b, w1)], [mono(a * b, w2)]],
-          'Beim Addieren ändert sich der Exponent nicht.',
-          a + ' + ' + b + ' = ' + (a + b) + ', der Exponent bleibt ' + n + '.');
+          'Beim Addieren ändert sich die Hochzahl nicht.',
+          a + ' + ' + b + ' = ' + (a + b) + ', die Hochzahl bleibt ' + n + '.');
       }
       case 'pow1': {
         n = ri(rnd, 2, 6); m = ri(rnd, 1, 5);
@@ -277,30 +291,32 @@
         return {
           type: 'input', prompt: 'Schreibe als eine Potenz.', expr: varText(A) + (mul ? ' * ' : ' : ') + varText(B),
           solution: [mono(1, R)], kind: mul ? 'mul' : 'div',
-          hint: (m === 1 ? x + ' bedeutet ' + x + '¹. ' : '') + (mul ? 'Mal: Exponenten addieren.' : 'Durch: Exponenten subtrahieren.'),
+          hint: (m === 1 ? x + ' bedeutet ' + x + '¹. ' : '') + (mul ? 'Mal: Hochzahlen addieren.' : 'Durch: Hochzahlen subtrahieren.'),
           explain: (mul ? n + ' + ' + m : n + ' − ' + m) + ' = ' + r + ' → ' + varText(R) + '.'
         };
       }
       case 'mul': {
         n = ri(rnd, 1, 5); m = ri(rnd, 1, 4); a = ri(rnd, 2, 7); b = ri(rnd, 2, 6);
-        var neg = rnd() < 0.2;
         var A2 = {}; A2[x] = n; var B2 = {}; B2[x] = m; var R2 = {}; R2[x] = n + m;
-        var ca = neg ? -a : a;
-        var left = neg ? '(' + monoText(mono(ca, A2)) + ')' : monoText(mono(a, A2));
+        var ca = rnd() < 0.35 ? -a : a, cb = rnd() < 0.3 ? -b : b;
+        var neg = function (mm) { var tx = monoText(mm); return mm.c < 0 ? '(' + tx + ')' : tx; };
         return {
-          type: 'input', prompt: 'Multipliziere.', expr: left + ' * ' + monoText(mono(b, B2)),
-          solution: [mono(ca * b, R2)], kind: 'mul', parts: { ca: ca, cb: b, n: n, m: m },
-          hint: 'Zahlen mal Zahlen: ' + ca + ' · ' + b + '. Exponenten addieren: ' + n + ' + ' + m + '.',
-          explain: ca + ' · ' + b + ' = ' + ca * b + ' und ' + n + ' + ' + m + ' = ' + (n + m) + '.'
+          type: 'input', prompt: 'Multipliziere.', expr: neg(mono(ca, A2)) + ' * ' + neg(mono(cb, B2)),
+          solution: [mono(ca * cb, R2)], kind: 'mul', parts: { ca: ca, cb: cb, n: n, m: m },
+          hint: 'Zahlen mal Zahlen: ' + ca + ' · ' + cb + (ca < 0 || cb < 0 ? ' (Vorzeichen beachten!)' : '') + '. Hochzahlen addieren: ' + n + ' + ' + m + '.',
+          explain: ca + ' · ' + cb + ' = ' + ca * cb + ' und ' + n + ' + ' + m + ' = ' + (n + m) + '.'
         };
       }
       case 'div': {
         m = ri(rnd, 1, 4); var rr = ri(rnd, 0, 4); n = m + rr; b = ri(rnd, 2, 6); c = ri(rnd, 2, 6); a = b * c;
+        var sg = rnd() < 0.3 ? pick(rnd, [[-1, 1], [1, -1], [-1, -1]]) : [1, 1];
+        a *= sg[0]; b *= sg[1]; c = a / b;
         var A3 = {}; A3[x] = n; var B3 = {}; B3[x] = m; var R3 = {}; if (rr) R3[x] = rr;
+        var par = function (mm) { var tx = monoText(mm); return mm.c < 0 ? '(' + tx + ')' : tx; };
         return {
-          type: 'input', prompt: 'Dividiere.', expr: monoText(mono(a, A3)) + ' : ' + monoText(mono(b, B3)),
+          type: 'input', prompt: 'Dividiere.', expr: par(mono(a, A3)) + ' : ' + par(mono(b, B3)),
           solution: [mono(c, R3)], kind: 'div', parts: { ca: a, cb: b, n: n, m: m },
-          hint: 'Zahlen dividieren: ' + a + ' : ' + b + '. Exponenten subtrahieren: ' + n + ' − ' + m + '.',
+          hint: 'Zahlen dividieren: ' + a + ' : ' + b + '. Hochzahlen subtrahieren: ' + n + ' − ' + m + '.',
           explain: a + ' : ' + b + ' = ' + c + ' und ' + n + ' − ' + m + ' = ' + rr + (rr ? '.' : ' → ' + x + ' fällt weg (' + varText(A3) + ' : ' + varText(B3) + ' = 1).')
         };
       }
@@ -313,10 +329,33 @@
         if (e[2]) M[p[0]] = e[2]; M[p[1]] = e[3];
         P[p[0]] = e[0] + e[2]; P[p[1]] = e[1] + e[3];
         return {
-          type: 'input', prompt: 'Multipliziere.', expr: monoText(mono(a, L)) + ' * ' + monoText(mono(b, M)),
+          type: 'input', prompt: 'Multipliziere.', expr: rnd() < 0.5 ? monoText(mono(a, L)) + ' * ' + monoText(mono(b, M)) : monoText(mono(b, M)) + ' * ' + monoText(mono(a, L)),
           solution: [mono(a * b, P)], kind: 'mul',
-          hint: 'Zahlen multiplizieren. Dann ' + p[0] + ' mit ' + p[0] + ' und ' + p[1] + ' mit ' + p[1] + ' – Exponenten addieren.',
+          hint: 'Zahlen multiplizieren. Dann ' + p[0] + ' mit ' + p[0] + ' und ' + p[1] + ' mit ' + p[1] + ' – Hochzahlen addieren.',
           explain: a + ' · ' + b + ' = ' + a * b + ', ' + p[0] + ': ' + e[0] + ' + ' + e[2] + ' = ' + P[p[0]] + ', ' + p[1] + ': ' + e[1] + ' + ' + e[3] + ' = ' + P[p[1]] + '.'
+        };
+      }
+      case 'alpha': {
+        var pr = pick(rnd, [['a', 'b'], ['a', 'x'], ['b', 'c'], ['x', 'y'], ['m', 'n']]);
+        a = ri(rnd, 2, 6); b = ri(rnd, 2, 6); n = ri(rnd, 1, 3); m = ri(rnd, 1, 3);
+        var V1 = {}; V1[pr[1]] = n; var V2 = {}; V2[pr[0]] = m; var VR = {}; VR[pr[0]] = m; VR[pr[1]] = n;
+        return {
+          type: 'input', prompt: 'Multipliziere. Variablen alphabetisch anschreiben!', expr: monoText(mono(a, V1)) + ' * ' + monoText(mono(b, V2)),
+          solution: [mono(a * b, VR)], kind: 'mul',
+          hint: 'Zahlen multiplizieren: ' + a + ' · ' + b + '. Dann zuerst ' + pr[0] + ', danach ' + pr[1] + ' (Alphabet).',
+          explain: a + ' · ' + b + ' = ' + a * b + ', Variablen alphabetisch: ' + monoText(mono(a * b, VR)) + '.'
+        };
+      }
+      case 'kombi': {
+        n = ri(rnd, 1, 4); m = ri(rnd, 1, 4); var k = ri(rnd, 1, n + m - 1);
+        a = ri(rnd, 2, 6); b = ri(rnd, 2, 5); var prod = a * b;
+        var divs = [2, 3, 4, 5, 6].filter(function (d) { return prod % d === 0; }); c = divs.length ? pick(rnd, divs) : a;
+        var K1 = {}; K1[x] = n; var K2 = {}; K2[x] = m; var K3 = {}; K3[x] = k; var KR = {}; KR[x] = n + m - k;
+        return {
+          type: 'input', prompt: 'Rechne zuerst die Klammer.', expr: '(' + monoText(mono(a, K1)) + ' * ' + monoText(mono(b, K2)) + ') : ' + monoText(mono(c, K3)),
+          solution: [mono(prod / c, KR)], kind: 'div',
+          hint: 'Klammer zuerst: ' + a + ' · ' + b + ' = ' + prod + ', Hochzahlen ' + n + ' + ' + m + ' = ' + (n + m) + '. Dann dividieren.',
+          explain: 'Klammer: ' + monoText(mono(prod, (function () { var o = {}; o[x] = n + m; return o; })())) + ', dann : ' + monoText(mono(c, K3)) + ' → ' + monoText(mono(prod / c, KR)) + '.'
         };
       }
       case 'mulmc': {
@@ -325,7 +364,7 @@
         var R4 = {}; R4[x] = n + m; var W4 = {}; W4[x] = n * m; var W5 = {}; W5[x] = Math.max(n, m);
         return choicePoly(rnd, 'Was ist richtig?', monoText(mono(a, A4)) + ' * ' + monoText(mono(b, B4)) + ' = ?',
           [mono(a * b, R4)], [[mono(a * b, W4)], [mono(a + b, R4)], [mono(a * b, W5)], [mono(a + b, W4)]],
-          'Zahlen multiplizieren, Exponenten addieren.',
+          'Zahlen multiplizieren, Hochzahlen addieren.',
           a + ' · ' + b + ' = ' + a * b + ' und ' + n + ' + ' + m + ' = ' + (n + m) + '.');
       }
       case 'vergleich': {
@@ -333,12 +372,12 @@
         var op = pick(rnd, ['+', '*']);
         var ans = op === '+' ? [mono(a + b, v)] : [mono(a * b, (function () { var o = {}; o[x] = 2 * n; return o; })())];
         var expl = op === '+'
-          ? 'Plus: ' + a + ' + ' + b + ' = ' + (a + b) + ', der Exponent bleibt ' + n + '.'
-          : 'Mal: ' + a + ' · ' + b + ' = ' + a * b + ', Exponenten ' + n + ' + ' + n + ' = ' + 2 * n + '.';
+          ? 'Plus: ' + a + ' + ' + b + ' = ' + (a + b) + ', die Hochzahl bleibt ' + n + '.'
+          : 'Mal: ' + a + ' · ' + b + ' = ' + a * b + ', Hochzahlen ' + n + ' + ' + n + ' = ' + 2 * n + '.';
         return {
           type: 'input', prompt: 'Achtung, genau schauen: Plus oder Mal?', expr: monoText(mono(a, v)) + ' ' + op + ' ' + monoText(mono(b, v)),
           solution: ans, kind: op === '+' ? 'add' : 'mul',
-          hint: op === '+' ? 'Plus: Exponent bleibt gleich.' : 'Mal: Exponenten addieren.', explain: expl
+          hint: op === '+' ? 'Plus: Hochzahl bleibt gleich.' : 'Mal: Hochzahlen addieren.', explain: expl
         };
       }
     }
@@ -352,6 +391,8 @@
     var want = polyOf(task.solution), got = polyOf(p.list);
     if (polyEqual(want, got)) {
       if (!p.simplified) return { status: 'unsimplified', message: 'Der Wert stimmt – aber fasse noch ganz zusammen.' };
+      var unsorted = p.list.some(function (m) { return m.ord && m.ord !== m.ord.split('').sort().join(''); });
+      if (unsorted) return { status: 'order', message: 'Richtig gerechnet! Schreib die Variablen noch in alphabetischer Reihenfolge.' };
       return { status: 'correct' };
     }
     return { status: 'wrong', message: diagnose(task, p.list) };
@@ -360,24 +401,25 @@
   function diagnose(task, list) {
     var sol = task.solution;
     if (sol.length !== 1 || list.length !== 1) {
-      if (task.kind === 'add' && list.length < sol.length) return 'Verschiedene Exponenten darfst du nicht zusammenfassen.';
+      if (task.kind === 'add' && list.length < sol.length) return 'Verschiedene Hochzahlen darfst du nicht zusammenfassen.';
       return 'Noch nicht richtig. Ordne die gleichartigen Terme.';
     }
     var s = sol[0], g = list[0];
     var sv = key(s.v), gv = key(g.v);
+    if (sv === gv && g.c === -s.c) return 'Fast! Achte auf das Vorzeichen: Minus · Plus = Minus, Minus · Minus = Plus.';
     if (task.kind === 'add') {
-      if (g.c === s.c && sv !== gv) return 'Die Zahl stimmt. Aber beim Addieren und Subtrahieren bleibt der Exponent gleich!';
+      if (g.c === s.c && sv !== gv) return 'Die Zahl stimmt. Aber beim Addieren und Subtrahieren bleibt die Hochzahl gleich!';
       if (sv === gv) return 'Die Potenz stimmt. Rechne die Zahlen davor noch einmal.';
     }
     if ((task.kind === 'mul' || task.kind === 'div') && task.parts) {
       var pp = task.parts, xv = Object.keys(s.v)[0] || Object.keys(g.v)[0];
       var gExp = g.v[xv] || 0;
-      if (task.kind === 'mul' && gExp === pp.n * pp.m && pp.n * pp.m !== pp.n + pp.m) return 'Achtung: Exponenten werden addiert, nicht multipliziert.';
+      if (task.kind === 'mul' && gExp === pp.n * pp.m && pp.n * pp.m !== pp.n + pp.m) return 'Achtung: Hochzahlen werden addiert, nicht multipliziert.';
       if (task.kind === 'mul' && g.c === pp.ca + pp.cb) return 'Die Zahlen davor werden multipliziert, nicht addiert.';
-      if (task.kind === 'div' && gExp === pp.n / pp.m && pp.n % pp.m === 0 && pp.m > 1) return 'Achtung: Exponenten werden subtrahiert, nicht dividiert.';
+      if (task.kind === 'div' && gExp === pp.n / pp.m && pp.n % pp.m === 0 && pp.m > 1) return 'Achtung: Hochzahlen werden subtrahiert, nicht dividiert.';
       if (task.kind === 'div' && g.c === pp.ca - pp.cb) return 'Die Zahlen davor werden dividiert, nicht subtrahiert.';
     }
-    if (g.c === s.c && sv !== gv) return 'Die Zahl stimmt. Schau dir die Exponenten noch einmal an.';
+    if (g.c === s.c && sv !== gv) return 'Die Zahl stimmt. Schau dir die Hochzahlen noch einmal an.';
     if (sv === gv) return 'Die Potenz stimmt. Rechne die Zahl davor noch einmal.';
     return 'Noch nicht richtig. Hol dir einen Tipp!';
   }
