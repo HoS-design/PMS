@@ -44,10 +44,34 @@
       }
     };
     rng.sample = (arr, n) => rng.shuffle(arr).slice(0, Math.min(n, arr.length));
-    // Jeder Baustein nur einmal pro Blatt: fresh() wählt nur noch Unbenutztes aus
+    // Jeder Baustein nur einmal pro Blatt: fresh() wählt nur noch Unbenutztes aus.
+    // Blatt 1–6 eines Themas teilen sich einen gemeinsam gemischten Stapel: jedes Blatt bekommt einen eigenen Abschnitt,
+    // damit sich die sechs Blätter so wenig wie möglich überschneiden. (Seed „thema|stufe|b3“ bzw. „…|v123456“.)
     rng.used = new Set();
+    const sm = /^(.*)\|(b|v)(\d+)$/.exec(seedText);
+    const deal = sm ? (sm[2] === 'b' ? { deck: sm[1] + '|b', slot: +sm[3] - 1 } : { deck: sm[1] + '|v' + Math.floor(+sm[3] / 6), slot: +sm[3] % 6 }) : null;
+    const taken = {};
     rng.fresh = (arr, n, key) => {
       const k = key || ((x) => typeof x === 'string' ? x : JSON.stringify(x));
+      if (deal && arr.length > n) {
+        // Stapel: eindeutige Schlüssel, für alle sechs Blätter gleich gemischt
+        const keys = []; const byKey = {};
+        arr.forEach(x => { const kk = k(x); if (!byKey[kk]) { byKey[kk] = []; keys.push(kk); } byKey[kk].push(x); });
+        const lk = hashString(keys.join('\u0001'));
+        const deck = makeRng(deal.deck + '|' + lk + '|deck').shuffle(keys);
+        const N = deck.length, seg = Math.ceil(N / 6);
+        const start = (deal.slot * seg + (taken[lk] || 0)) % N;
+        const out = []; let i = 0;
+        while (out.length < n && i < N) {
+          const kk = deck[(start + i) % N]; i++;
+          if (rng.used.has(kk)) continue;
+          out.push(rng.pick(byKey[kk]));
+        }
+        taken[lk] = (taken[lk] || 0) + i;
+        if (out.length < n) rng.shuffle(arr).forEach(x => { if (out.length < n && !out.includes(x)) out.push(x); });
+        out.forEach(x => rng.used.add(k(x)));
+        return rng.shuffle(out);
+      }
       const free = arr.filter(x => !rng.used.has(k(x)));
       const out = [];
       // gleiche Schlüssel (z. B. derselbe Satz mit anderer Markierung) nur einmal nehmen

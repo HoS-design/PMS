@@ -297,7 +297,7 @@
     }
     state.format = b.dataset.format; render();
   }));
-  $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 899990)); state.blatt = 0; state.view = 'blatt'; render(); });
+  $('variantBtn').addEventListener('click', () => { state.variant = String(6 * (16667 + Math.floor(Math.random() * 149990))); state.blatt = 0; state.view = 'blatt'; render(); });
   window.addEventListener('hashchange', () => { readHash(); render(); });
 
   readHash();
