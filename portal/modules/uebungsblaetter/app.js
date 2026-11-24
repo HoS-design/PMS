@@ -8,7 +8,7 @@
   const params = new URLSearchParams(location.search);
   const showDrafts = params.has('entwurf') || params.has('lehrer');
 
-  const state = { fach: 'deutsch', klasse: 1, topic: null, level: 1, blatt: 1, variant: null, view: 'blatt', merkheft: false, format: 'blatt' };
+  const state = { fach: 'deutsch', klasse: 1, topic: null, level: 1, blatt: 0, variant: null, view: 'blatt', merkheft: false, format: 'blatt' };
   const fachOf = (t) => t.fach || 'deutsch';
 
   // ------------------------------------------------------------------
@@ -27,9 +27,10 @@
     state.fach = fachOf(t);
     if (m[2] && +m[2] >= 1 && +m[2] <= 4) state.level = +m[2];
     state.format = m[4] || 'blatt';
+    state.blatt = 0; state.variant = null;
     if (m[3]) {
-      if (m[3].startsWith('v')) { state.variant = m[3].slice(1); state.blatt = null; }
-      else if (+m[3] >= 1 && +m[3] <= BLATT_COUNT) { state.blatt = +m[3]; state.variant = null; }
+      if (m[3].startsWith('v')) state.variant = m[3].slice(1);
+      else if (+m[3] >= 1 && +m[3] <= BLATT_COUNT) state.blatt = +m[3];
     }
     const k = +(params.get('klasse') || 0);
     state.klasse = t.klassen.includes(k) ? k : t.klassen[0];
@@ -37,7 +38,8 @@
   function writeHash() {
     if (state.merkheft) { history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + '#merkheft-' + (state.fach !== 'deutsch' ? state.fach + '-' : '') + state.klasse); return; }
     if (!state.topic) return;
-    const h = '#' + state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt) + (state.format !== 'blatt' ? '-' + state.format : '');
+    const nr = state.variant ? '-v' + state.variant : state.blatt ? '-' + state.blatt : '';
+    const h = '#' + state.topic + '-' + state.level + nr + (state.format !== 'blatt' ? '-' + state.format : '');
     history.replaceState(null, '', location.pathname + (showDrafts ? '?entwurf=1' : '') + h);
   }
   const shareUrl = () => location.origin + '/uebungsblaetter/' + (showDrafts ? '?entwurf=1' : '') + location.hash;
@@ -84,7 +86,7 @@
     inp.addEventListener('input', filter);
     if (q) filter();
     $('catalog').querySelectorAll('[data-topic]').forEach(b => b.addEventListener('click', () => {
-      state.topic = b.dataset.topic; state.blatt = 1; state.variant = null; state.merkheft = false; render();
+      state.topic = b.dataset.topic; state.blatt = 0; state.variant = null; state.merkheft = false; render();
     }));
     const mb = $('catalog').querySelector('[data-merkheft]');
     if (mb) mb.addEventListener('click', () => { state.merkheft = true; render(); });
@@ -93,14 +95,23 @@
   // ------------------------------------------------------------------
   // Blatt bauen
   // ------------------------------------------------------------------
-  function seedText() {
-    return state.topic + '|' + state.level + '|' + (state.variant ? 'v' + state.variant : 'b' + state.blatt);
+  // Welche Blätter werden gezeigt und gedruckt? Standard: alle sechs Blätter eines Themas.
+  // Ein Link mit Nummer (#thema-2-3) zeigt nur dieses eine Blatt; „Neue Blätter“ erzeugt sechs neue Varianten.
+  function sheetList() {
+    if (state.format !== 'blatt') return [state.variant ? { variant: state.variant } : { blatt: state.blatt || 1 }];
+    if (state.variant) { const base = +state.variant; return Array.from({ length: BLATT_COUNT }, (_, i) => ({ variant: String(base + i) })); }
+    if (state.blatt) return [{ blatt: state.blatt }];
+    return Array.from({ length: BLATT_COUNT }, (_, i) => ({ blatt: i + 1 }));
   }
-  function buildSheet(t, solution) {
-    const code = state.topic + '-' + state.level + '-' + (state.variant ? 'v' + state.variant : state.blatt) + (state.format !== 'blatt' ? '-' + state.format : '');
-    const blattLabel = state.variant ? 'Zusatzblatt ' + state.variant : 'Blatt ' + state.blatt;
-    if (state.format !== 'blatt') return UB.cards.build(t, { format: state.format, level: state.level, klasse: state.klasse, fach: fachOf(t), seed: seedText(), solution, code, meta: (state.variant ? 'Zusatzset ' + state.variant : 'Set ' + state.blatt) });
-    const rng = UB.makeRng(seedText());
+  function seedText(b) {
+    return state.topic + '|' + state.level + '|' + (b.variant ? 'v' + b.variant : 'b' + b.blatt);
+  }
+  function buildAll(t, solution) { return sheetList().map(b => buildSheet(t, solution, b)).join(''); }
+  function buildSheet(t, solution, b) {
+    const code = state.topic + '-' + state.level + '-' + (b.variant ? 'v' + b.variant : b.blatt) + (state.format !== 'blatt' ? '-' + state.format : '');
+    const blattLabel = b.variant ? 'Zusatzblatt ' + b.variant : 'Blatt ' + b.blatt;
+    if (state.format !== 'blatt') return UB.cards.build(t, { format: state.format, level: state.level, klasse: state.klasse, fach: fachOf(t), seed: seedText(b), solution, code, meta: (b.variant ? 'Zusatzset ' + b.variant : 'Set ' + b.blatt) });
+    const rng = UB.makeRng(seedText(b));
     const tasks = t.build(state.level, rng);
     const img = solution ? 'MiniHoS_Lob_Pokal' : t.img;
     let html = '<article class="sheet fach-' + fachOf(t) + (solution ? ' solution' : '') + '">' +
@@ -161,13 +172,16 @@
     ['deutsch', 'mathe', 'englisch'].forEach(f => document.body.classList.toggle('subject-' + f, state.fach === f));
     const fb = $('fachBadge'); if (fb) { fb.textContent = UB.FACH[state.fach]; fb.className = 'badge-main is-' + state.fach; }
     document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view));
-    $('blattBtns').innerHTML = Array.from({ length: BLATT_COUNT }, (_, i) => '<button type="button" data-blatt="' + (i + 1) + '" class="' + (!state.variant && state.blatt === i + 1 ? 'active' : '') + '">' + (i + 1) + '</button>').join('');
-    $('blattBtns').querySelectorAll('[data-blatt]').forEach(b => b.addEventListener('click', () => { state.blatt = +b.dataset.blatt; state.variant = null; state.merkheft = false; render(); }));
+    // Einzelblatt (aus einem Link) oder neue Varianten: zurück zu den sechs Standardblättern
+    const single = state.format === 'blatt' && (state.blatt || state.variant);
+    $('blattBtns').innerHTML = single ? '<button type="button" class="hos-btn small soft" id="allBtn">alle ' + BLATT_COUNT + ' Blätter</button>' : '';
+    if (single) $('allBtn').addEventListener('click', () => { state.blatt = 0; state.variant = null; render(); });
     renderCatalog();
 
     if (state.merkheft) {
       ['printSolBtn', 'poolBtn', 'variantBtn'].forEach(id => { $(id).disabled = true; });
       ['printBtn', 'linkBtn'].forEach(id => { $(id).disabled = false; });
+      $('printBtn').textContent = 'Merkheft drucken'; $('printSolBtn').textContent = 'Lösung drucken';
       $('previewScale').innerHTML = buildMerkheft();
       const n = $('previewScale').querySelectorAll('.sheet').length;
       $('sheetInfo').textContent = 'Merkheft · ' + state.klasse + '. Klasse · ' + n + (n === 1 ? ' Seite' : ' Seiten');
@@ -193,12 +207,14 @@
     document.querySelectorAll('#formatSeg button').forEach(b => { const f = b.dataset.format, off = f !== 'blatt' && !av[f]; b.classList.toggle('off', off); b.setAttribute('aria-disabled', off ? 'true' : 'false'); b.classList.toggle('active', f === state.format); b.title = off ? 'Für dieses Thema und diese Stufe nicht möglich' : ''; });
     const cardsMode = state.format !== 'blatt';
     document.querySelector('[data-view="blatt"]').textContent = cardsMode ? 'Karten' : 'Übungsblatt';
-    $('printBtn').textContent = cardsMode ? 'Karten drucken' : 'Blatt drucken';
-    $('previewScale').innerHTML = buildSheet(t, state.view === 'loesung');
+    const n = sheetList().length;
+    $('printBtn').textContent = cardsMode ? 'Karten drucken' : n > 1 ? n + ' Blätter drucken' : 'Blatt drucken';
+    $('printSolBtn').textContent = !cardsMode && n > 1 ? n + ' Lösungen drucken' : 'Lösung drucken';
+    $('previewScale').innerHTML = buildAll(t, state.view === 'loesung');
     if (cardsMode) UB.cards.fit($('previewScale'));
-    $('sheetInfo').textContent = t.title + ' · ' + UB.LEVEL_NAMES[state.level] + ' · ' + (cardsMode ? UB.cards.FORMATS[state.format].label + ' · ' : '') + (state.variant ? 'Zusatz ' + state.variant : (cardsMode ? 'Set ' : 'Blatt ') + state.blatt);
+    $('sheetInfo').textContent = t.title + ' · ' + UB.LEVEL_NAMES[state.level] + ' · ' + (cardsMode ? UB.cards.FORMATS[state.format].label + ' · ' : '') + (cardsMode ? (state.variant ? 'Zusatzset ' + state.variant : 'Set ' + (state.blatt || 1)) : state.variant ? n + ' neue Blätter' : state.blatt ? 'Blatt ' + state.blatt : 'Blatt 1–' + n);
     setMsg(t.review ? 'Entwurf: Dieses Thema ist noch nicht freigegeben. Bitte in der Lehrer-Ansicht prüfen.' : cardsMode ? 'In 100 % drucken (am besten auf dickeres Papier) und entlang der Strichlinien ausschneiden. Die Lösung dient zur Selbstkontrolle.' :
-      (state.variant ? 'Zusatzblatt zum Weiterüben. Über „Link kopieren“ kommst du später wieder genau zu diesem Blatt.' : 'Tipp: Erst selbst lösen, dann mit der Lösung vergleichen.'), t.review ? 'warn' : '');
+      (n > 1 ? n + ' verschiedene Blätter zum selben Thema – alle werden zusammen gedruckt. Jedes hat unten einen eigenen Code.' : 'Tipp: Erst selbst lösen, dann mit der Lösung vergleichen.'), t.review ? 'warn' : '');
     writeHash();
     fitPreview();
   }
@@ -229,9 +245,9 @@
     else if (state.format !== 'blatt') {
       // Karten erst sichtbar (außerhalb des Bildschirms) setzen, Schrift anpassen, dann drucken
       const tmp = document.createElement('div'); tmp.style.cssText = 'position:absolute;left:-10000px;top:0';
-      tmp.innerHTML = buildSheet(t, solution); document.body.appendChild(tmp); UB.cards.fit(tmp);
+      tmp.innerHTML = buildAll(t, solution); document.body.appendChild(tmp); UB.cards.fit(tmp);
       $('printArea').innerHTML = tmp.innerHTML; tmp.remove();
-    } else $('printArea').innerHTML = buildSheet(t, solution);
+    } else $('printArea').innerHTML = buildAll(t, solution);
     const imgs = Array.from($('printArea').querySelectorAll('img'));
     Promise.all(imgs.map(im => im.complete ? 0 : new Promise(r => { im.onload = im.onerror = r; }))).then(() => window.print());
   }
@@ -281,7 +297,7 @@
     }
     state.format = b.dataset.format; render();
   }));
-  $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 900000)); state.blatt = null; state.view = 'blatt'; render(); });
+  $('variantBtn').addEventListener('click', () => { state.variant = String(100000 + Math.floor(Math.random() * 899990)); state.blatt = 0; state.view = 'blatt'; render(); });
   window.addEventListener('hashchange', () => { readHash(); render(); });
 
   readHash();
