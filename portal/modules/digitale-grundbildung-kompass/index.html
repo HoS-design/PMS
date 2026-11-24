@@ -67,7 +67,9 @@
     <section class="panel hide" id="game"></section>
     <section class="panel hide" id="finish"></section>
   </main>
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R=HoSResults.init({app:'digitale-grundbildung-kompass',title:'Klick & Klar – Digitale Grundbildung'});
     const D=[
       {id:"g",n:"Geraete finden",d:"Handy, Laptop, Maus und Kamera erkennen.",b:"4 Aufgaben",lead:"Wir suchen digitale Geraete.",q:[
         ["Tippe auf das Handy.","Suche ein digitales Geraet.","Handy","Schuh",0,"Super. Das ist ein Handy.","Das ist ein Schuh. Wir probieren es noch einmal."],
@@ -88,7 +90,7 @@
         ["Sollst du einfach alles anklicken?","Wenn du unsicher bist, frag zuerst.","Nein, erst fragen","Ja, alles klicken",0,"Genau. Erst fragen ist sicher.","Nicht alles anklicken. Lieber erst fragen."]
       ]}
     ];
-    const st={id:"g",i:0,speech:true,stars:0,round:0,sel:null,msg:"Tippe auf die passende Karte.",type:"",timer:null};
+    const st={id:"g",i:0,speech:true,stars:R.load('stars',0),wrongQ:[],round:0,sel:null,msg:"Tippe auf die passende Karte.",type:"",timer:null};
     const $=s=>document.querySelector(s),menu=$("#menu"),game=$("#game"),finish=$("#finish"),wall=$("#wall"),toggle=$("#toggle");
     const M=()=>D.find(x=>x.id===st.id),Q=()=>M().q[st.i];
     const stop=()=>{"speechSynthesis"in window&&speechSynthesis.cancel()};
@@ -96,12 +98,12 @@
     const clearT=()=>{if(st.timer){clearTimeout(st.timer);st.timer=null}};
     function wallHtml(){wall.innerHTML=st.stars?Array.from({length:Math.min(st.stars,12)},()=>"<span>&#9733;</span>").join(""):'<span style="width:auto;padding:0 12px">Noch keine Sterne</span>'}
     function menuView(){menu.innerHTML=D.map((m,k)=>`<article class="card"><div class="num">${k+1}</div><h3>${m.n}</h3><p>${m.d}</p><span class="chip">${m.b}</span><button class="btn main" data-id="${m.id}">Los geht's</button></article>`).join("");menu.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>start(b.dataset.id));wallHtml()}
-    function start(id){clearT();stop();st.id=id;st.i=0;st.round=0;st.sel=null;st.msg="Tippe auf die passende Karte.";st.type="";menu.classList.add("hide");finish.classList.add("hide");render();say(M().lead+" "+Q()[0])}
+    function start(id){clearT();stop();st.id=id;st.i=0;st.round=0;st.first=0;st.wrongQ=[];st.sel=null;st.msg="Tippe auf die passende Karte.";st.type="";menu.classList.add("hide");finish.classList.add("hide");render();say(M().lead+" "+Q()[0])}
     function answers(){const q=Q(),a=[[q[2],0],[q[3],1]];return st.i%2?a.reverse():a}
     function render(){const m=M(),q=Q(),p=((st.i+1)/m.q.length*100).toFixed(0),a=answers();game.classList.remove("hide");game.innerHTML=`<div class="top"><div><span class="chip">${m.n}</span><h3>${q[0]}</h3><p>${q[1]}</p></div><div class="row" style="margin-top:0"><button class="btn" id="read">Vorlesen</button><button class="btn" id="back">Zur Uebersicht</button></div></div><div class="prog"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong>Aufgabe ${st.i+1} von ${m.q.length}</strong><span class="chip">${st.round} Sterne in dieser Runde</span></div><div class="bar"><div class="fill" style="width:${p}%"></div></div></div><div class="feedback ${st.type}"><strong>${st.type==="ok"?"Super.":st.type==="retry"?"Wir probieren es noch einmal.":"Kiki ist bereit."}</strong><p>${st.msg}</p></div><div class="choices">${a.map((x,n)=>`<button class="choice ${st.sel===n&&st.type||""}" data-a="${x[1]}" ${st.sel!==null?"disabled":""}>${x[0]}<small>Tippe hier</small></button>`).join("")}</div><div class="foot"><button class="btn" id="hint">Hinweis</button><span class="chip">Immer nur eine Frage pro Seite</span></div>`;$("#read").onclick=()=>say(q[0]+" "+q[1]);$("#back").onclick=home;$("#hint").onclick=()=>{st.msg=q[1];st.type="";st.sel=null;render();say(q[1])};game.querySelectorAll("[data-a]").forEach((b,n)=>b.onclick=()=>pick(Number(b.dataset.a),n))}
-    function pick(v,n){if(st.sel!==null)return;const q=Q();st.sel=n;if(v===q[4]){st.type="ok";st.msg=q[5];st.stars++;st.round++;render();wallHtml();say(q[5]);clearT();st.timer=setTimeout(next,1100)}else{st.type="retry";st.msg=q[6];render();say(q[6]);clearT();st.timer=setTimeout(()=>{st.sel=null;st.type="";st.msg=q[1];render();say(q[0]+" "+q[1])},1300)}}
+    function pick(v,n){if(st.sel!==null)return;const q=Q();st.sel=n;R.answer(v===q[4],M().n);if(v!==q[4]&&!st.wrongQ.includes(q[0]))st.wrongQ.push(q[0]);if(v===q[4]){st.type="ok";st.msg=q[5];st.stars++;R.save('stars',st.stars);st.round++;if(!st.wrongQ.includes(q[0]))st.first++;render();wallHtml();say(q[5]);clearT();st.timer=setTimeout(next,1100)}else{st.type="retry";st.msg=q[6];render();say(q[6]);clearT();st.timer=setTimeout(()=>{st.sel=null;st.type="";st.msg=q[1];render();say(q[0]+" "+q[1])},1300)}}
     function next(){if(st.i+1>=M().q.length){done();return}st.i++;st.sel=null;st.type="";st.msg="Tippe auf die passende Karte.";render();say(Q()[0]+" "+Q()[1])}
-    function done(){game.classList.add("hide");finish.classList.remove("hide");finish.innerHTML=`<h3>Klasse gemacht.</h3><p>Du hast <strong>${M().n}</strong> geschafft. Kleine, klare Schritte helfen beim sicheren Umgang mit Tablet, Handy und Computer.</p><div class="stars">${Array.from({length:Math.max(st.round,1)},()=>"<span>&#9733;</span>").join("")}</div><div class="row"><button class="btn main" id="again">Noch einmal</button><button class="btn" id="home">Anderes Spiel</button></div>`;$("#again").onclick=()=>start(st.id);$("#home").onclick=home;say("Klasse gemacht. Du hast die Runde geschafft.")}
+    function done(){R.round({score:st.first,total:M().q.length,label:M().n,wrong:st.wrongQ});R.done(M().n);game.classList.add("hide");finish.classList.remove("hide");finish.innerHTML=`<h3>Klasse gemacht.</h3><p>Du hast <strong>${M().n}</strong> geschafft. Kleine, klare Schritte helfen beim sicheren Umgang mit Tablet, Handy und Computer.</p><div class="stars">${Array.from({length:Math.max(st.round,1)},()=>"<span>&#9733;</span>").join("")}</div><div class="row"><button class="btn main" id="again">Noch einmal</button><button class="btn" id="home">Anderes Spiel</button></div>`;$("#again").onclick=()=>start(st.id);$("#home").onclick=home;say("Klasse gemacht. Du hast die Runde geschafft.")}
     function home(){clearT();stop();menu.classList.remove("hide");game.classList.add("hide");finish.classList.add("hide")}
     $("#start").onclick=()=>start("g");toggle.onclick=()=>{st.speech=!st.speech;toggle.textContent=st.speech?"Sprache an":"Sprache aus";stop();if(st.speech)say("Die Sprache ist jetzt an.")};
     menuView();wallHtml();

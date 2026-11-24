@@ -32,8 +32,11 @@ const banks = [
  q('Fasse die a-Terme zusammen.','2a + b + a',['3a + b','4a','2a + 2b'],0,'2a + a = 3a. Das b bleibt stehen: 3a + b.','Suche zuerst alle a-Plättchen.',['aa','b','a']),
  q('Fasse beide Sorten getrennt zusammen.','a + 2b + 2a + b',['5a + b','3a + 3b','6b'],1,'a + 2a = 3a und 2b + b = 3b. Zusammen: 3a + 3b.','Zähle zuerst a. Zähle danach b.',['a','bb','aa','b'])]
 ];
-let active = 0;
+const R = HoSResults.init({ app: 'terme-werkstatt', title: 'Terme-Werkstatt' });
+let active = R.load('active', 0);
 const state = lessons.map(() => ({index:0, solved:false, complete:false}));
+(R.load('state', []) || []).forEach((s, i) => { if (state[i] && s) state[i] = {index:s.index||0, solved:!!s.solved, complete:!!s.complete}; });
+const saveStand = () => { R.save('state', state); R.save('active', active); };
 let endless=false;
 const practice=lessons.map(()=>({index:0,solved:false,complete:false,task:null}));
 function currentState() { return (endless?practice:state)[active]; }
@@ -101,11 +104,15 @@ function answer(choice,button) {
   const s=currentState(),task=currentTask();
   if(s.solved) return;
   if(choice!==task.answer) {
+    R.answer(false, lessons[active].title);
     button.classList.add('incorrect');
     $('feedback').textContent='Noch nicht. '+task.hint+' Versuch es noch einmal.';
     return;
   }
-  s.solved=true; s.complete=!endless && s.index===5;
+  s.solved=true; s.complete=s.complete || (!endless && s.index===5);
+  R.answer(true, lessons[active].title);
+  if(s.complete && !endless) R.done(lessons[active].title);
+  if(!endless) saveStand();
   render(); $('next').focus();
 }
 $('hint').onclick=()=>{$('hint-text').hidden=false;};
@@ -123,9 +130,9 @@ $('next').onclick=()=>{
     $('next').hidden=true; $('hint').hidden=true; $('hint-text').hidden=true;
     $('question').focus(); return;
   }
-  render(); $('question').focus();
+  saveStand(); render(); $('question').focus();
 };
-$('restart').onclick=()=>{(endless?practice:state)[active]={index:0,solved:false,complete:false,task:null};render();$('question').focus();};
+$('restart').onclick=()=>{(endless?practice:state)[active]={index:0,solved:false,complete:false,task:null};if(!endless)saveStand();render();$('question').focus();};
 $('guided-mode').onclick=()=>{endless=false;render();$('question').focus();};
 $('endless-mode').onclick=()=>{endless=true;render();$('question').focus();};
 render();

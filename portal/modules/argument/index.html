@@ -262,7 +262,9 @@
     </div>
   </main>
 
+<script src="/js/hos-results.js"></script>
 <script>
+  const R = HoSResults.init({ app: 'argument', title: 'Argumente bauen' });
   // 12 Aufgaben (im gewünschten Bereich 10–15), jede mit 3 korrekten Bausteinen + 1 Störbaustein
   const TASKS = [
     {
@@ -403,7 +405,7 @@
   const slots = [document.getElementById("s0"),document.getElementById("s1"),document.getElementById("s2")];
   const msg = document.getElementById("msg");
 
-  let i = 0;
+  let i = R.load('aufgabe', 0) || 0;
 
   const shuffle = (arr) => arr
     .map(v => ({v, r: Math.random()}))
@@ -501,7 +503,9 @@
     const okOrder = sel.every((v, idx) => v === correct[idx]);
     const noDistractor = sel.every(v => correct.includes(v));
 
+    R.answer(okOrder && noDistractor, 'Argumente bauen');
     if(okOrder && noDistractor){
+      R.done(TASKS[i].title);
       setMsg("ok", "✔ Richtig! Du hast die passenden Bausteine logisch geordnet.");
     }else if(noDistractor && !okOrder){
       setMsg("bad", "✖ Die Bausteine passen, aber die Reihenfolge stimmt noch nicht. (Behauptung → Begründung → Beispiel/Erklärung)");
@@ -514,6 +518,7 @@
   document.getElementById("reset").addEventListener("click", load);
   document.getElementById("next").addEventListener("click", ()=>{
     i = (i + 1) % TASKS.length;
+    R.save('aufgabe', i);
     load();
   });
 
@@ -521,9 +526,10 @@
     const k = e.key.toLowerCase();
     if(k === "c") check();
     if(k === "r") load();
-    if(k === "n"){ i = (i + 1) % TASKS.length; load(); }
+    if(k === "n"){ i = (i + 1) % TASKS.length; R.save('aufgabe', i); load(); }
   });
 
+  if (i >= TASKS.length) i = 0;
   load();
 </script>
 </body>

@@ -73,7 +73,9 @@
     </div>
   </main>
 
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R = HoSResults.init({ app: 'zeitformenquiz', title: 'Zeitformen-Quiz' });
     const questions = [
       { text: "Ich gehe morgen spazieren.", answer: "Präsens", tip: "Mit Zeitangabe kann das Präsens auch Zukunft meinen." },
       { text: "Ich ging nach Hause.", answer: "Präteritum", tip: "Das Präteritum ist die Erzählzeit, oft in Geschichten." },
@@ -88,6 +90,7 @@
     let i = 0;
     let score = 0;
     let locked = false;
+    let wrongList = [];
 
     const $ = (id) => document.getElementById(id);
     const answersEl = $("answers");
@@ -142,18 +145,24 @@
         $("score").textContent = String(score);
         btn.classList.add("ok");
         setFeedback("Richtig! " + q.tip, "good");
+        R.answer(true, q.answer);
       } else {
+        R.answer(false, q.answer);
+        wrongList.push(q.text + ' → ' + q.answer + ' (du: ' + opt + ')');
         btn.classList.add("no");
         const correctBtn = buttons.find(b => b.textContent === q.answer);
         if (correctBtn) correctBtn.classList.add("ok");
         setFeedback("Leider falsch. Richtig ist: " + q.answer + ". " + q.tip, "bad");
       }
+      R.save('stand', { i, score, wrongList, answered: true });
     }
 
     function finish() {
       $("bar").style.width = "100%";
       const max = questions.length;
       const pct = Math.round(score / max * 100);
+      R.round({ score, total: max, label: 'Quiz', wrong: wrongList });
+      R.save('stand', null);
       let mood;
       if (pct >= 90) mood = "Zeitformen-Profi!";
       else if (pct >= 70) mood = "Richtig stark!";
@@ -169,16 +178,23 @@
     }
 
     function advance() {
-      if (i < questions.length - 1) { i++; render(); } else { finish(); }
+      if (i < questions.length - 1) { i++; R.save('stand', { i, score, wrongList }); render(); } else { finish(); }
     }
 
     $("nextBtn").addEventListener("click", advance);
     $("skipBtn").addEventListener("click", advance);
     $("restartBtn").addEventListener("click", () => {
-      i = 0; score = 0; $("score").textContent = "0"; render();
+      i = 0; score = 0; wrongList = []; R.save('stand', null); $("score").textContent = "0"; render();
     });
 
-    render();
+    // Zwischenstand wiederherstellen
+    const stand = R.load('stand');
+    if (stand && stand.i < questions.length) {
+      i = stand.answered ? Math.min(stand.i + 1, questions.length - 1) : stand.i;
+      score = stand.score || 0; wrongList = stand.wrongList || [];
+      $("score").textContent = String(score);
+      if (stand.answered && stand.i === questions.length - 1) { render(); finish(); } else render();
+    } else render();
   </script>
 </body>
 </html>

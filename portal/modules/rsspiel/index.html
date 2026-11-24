@@ -232,6 +232,8 @@
         <span style="font-size: 1.2em;">✨</span> Sauber!
     </div>
 
+    <script src="/js/hos-results.js"></script>
+    <script>HoSResults.init({ app: 'rsspiel', title: 'Campus: Rechtschreib-Profi' });</script>
     <script type="importmap">
         {
             "imports": {
@@ -731,6 +733,7 @@
 
         function endGame(won) {
             gameActive = false; clearInterval(timerInterval); controls.unlock();
+            if (window.HoSResults) { HoSResults.round({ score, total: tasks.length, label: won ? 'Alle gefunden' : 'Zeit abgelaufen' }); if (won) HoSResults.done('Alle Fehler gefunden'); }
             const go = document.getElementById('game-over');
             const goTitle = document.getElementById('go-title');
             const goMsg = document.getElementById('go-msg');

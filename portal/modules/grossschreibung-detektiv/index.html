@@ -121,7 +121,11 @@
     </section>
   </main>
 
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R = HoSResults.init({ app: 'grossschreibung-detektiv', title: 'Großschreibung-Detektiv' });
+    let wrongList = [];
+    const sentenceText = (tokens) => tokens.map(t => t.punct ? t.punct : ' ' + (t.upper ? t.word[0].toUpperCase() + t.word.slice(1) : t.lower)).join('').trim();
     /* Sätze in richtiger Schreibung.
        ^Wort = Nominalisierung (Signalwort davor), @Wort = Name. Alles andere Großgeschriebene ist Nomen oder Satzanfang. */
     const LEVELS = {
@@ -192,7 +196,7 @@
       level = l;
       document.querySelectorAll('[data-level]').forEach(b => b.classList.toggle('active', +b.dataset.level === l));
       round = shuffle(LEVELS[l].sentences).slice(0, ROUND).map(parse);
-      pos = 0; points = 0;
+      pos = 0; points = 0; wrongList = [];
       $('levelName').textContent = LEVELS[l].name;
       $('total').textContent = round.length;
       $('result').classList.add('hide');
@@ -245,6 +249,8 @@
         else if (!t.upper && t.cap) { errors++; t.el.classList.remove('cap'); t.el.classList.add('bad'); notes.push('<b>' + t.lower + '</b>: klein – kein Nomen, kein Satzanfang. Probe: der/die/das ' + t.lower + '? Passt nicht.'); }
       });
       const fb = $('feedback');
+      R.answer(errors === 0, LEVELS[level].name);
+      if (errors) wrongList.push(sentenceText(round[pos]));
       if (errors === 0) {
         points++;
         fb.className = 'feedback good';
@@ -268,6 +274,8 @@
       $('hero').classList.remove('hide');
       $('result').classList.remove('hide');
       $('score').textContent = points + ' / ' + round.length;
+      R.round({ score: points, total: round.length, label: LEVELS[level].name, wrong: wrongList });
+      if (points >= 8) R.done(LEVELS[level].name);
       $('scoreText').textContent = (points >= 8 ? 'Stark! ' : points >= 5 ? 'Gut gemacht! ' : 'Übe noch ein bisschen – du schaffst das! ') + 'Schreibe deine Punkte (' + LEVELS[level].name + ') auf deinen Freiarbeitsplan.';
     }
 

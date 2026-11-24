@@ -927,9 +927,12 @@
     </footer>
   </main>
 
+  <script src="/js/hos-results.js"></script>
   <script>
+    const R = HoSResults.init({ app: '1weltkrieg', title: 'Geschichte Masterclass – Zeitalter der Extreme' });
     // --- APP STATE ---
     let state = { intro:true, glossar:true, ch1:true, ch2:false, ch3:false, ch4:false, quiz:false };
+    const CH_NAMES = { ch1: 'Kapitel I', ch2: 'Kapitel II', ch3: 'Kapitel III', ch4: 'Kapitel IV' };
 
     function go(id){
       if(!state[id]) return;
@@ -1008,6 +1011,7 @@
       document.getElementById(cfg.errorId).style.display = "none";
 
       const isOk = cfg.ok.some(x => norm(x) === v);
+      R.answer(isOk, 'Kapitel-Checkpoints');
       if(!isOk){
         flashInput(inp, false);
         document.getElementById(cfg.errorId).style.display = "block";
@@ -1019,6 +1023,8 @@
       inp.disabled = true;
 
       unlockNav(cfg.unlock);
+      R.done(CH_NAMES[key] + ' abgeschlossen');
+      R.save('freigeschaltet', Object.keys(state).filter(k => state[k]));
       document.getElementById(cfg.successId).style.display = "block";
       // optional: auto-scroll a bit
       document.getElementById(cfg.successId).scrollIntoView({behavior:"smooth", block:"center"});
@@ -1393,11 +1399,25 @@
       }
     }
 
+    // Zwischenstand: freigeschaltete Kapitel wiederherstellen
+    (R.load('freigeschaltet', []) || []).forEach(id => {
+      if (state[id] === false && document.getElementById('li-' + id)) {
+        unlockNav(id);
+        const prev = Object.keys(checkpoints).find(k => checkpoints[k].unlock === id);
+        if (prev) {
+          const c = checkpoints[prev], inp = document.getElementById(c.inputId), suc = document.getElementById(c.successId);
+          if (inp) { inp.value = c.ok[0].toUpperCase(); inp.disabled = true; }
+          if (suc) suc.style.display = 'block';
+        }
+      }
+    });
+
     function showResult(){
       document.getElementById('exam-active').classList.add('hidden');
       document.getElementById('exam-result').classList.remove('hidden');
 
       const percent = Math.round((points / maxPoints) * 100);
+      R.round({ score: points, total: maxPoints, label: 'Abschlussprüfung' });
       document.getElementById('res-score').textContent = percent + "%";
 
       const m = document.getElementById('meme');

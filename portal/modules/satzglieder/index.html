@@ -74,6 +74,8 @@
   </header>
     <div id="root"></div>
 
+    <script src="/js/hos-results.js"></script>
+    <script>window.R = HoSResults.init({ app: 'satzglieder', title: 'Satzglieder' });</script>
     <script type="text/babel">
         // --- GLOBALS & ICONS ---
         const { useState, useEffect } = React;
@@ -403,8 +405,10 @@
         function App() {
             const [mode, setMode] = useState('start');
             const [ahsMode, setAhsMode] = useState(false);
-            const [currentSentenceIdx, setCurrentSentenceIdx] = useState(0);
-            const [score, setScore] = useState(0);
+            const saved = R.load('stand', null) || {};
+            const [currentSentenceIdx, setCurrentSentenceIdx] = useState(Math.min(saved.idx || 0, SENTENCES.length - 1));
+            const [score, setScore] = useState(saved.score || 0);
+            useEffect(() => { R.save('stand', { idx: currentSentenceIdx, score }); }, [currentSentenceIdx, score]);
             
             // Split Game
             const [userSplits, setUserSplits] = useState([]); 
@@ -446,6 +450,8 @@
                 if (currentSentenceIdx < SENTENCES.length - 1) {
                     setCurrentSentenceIdx(prev => prev + 1); setMode('split'); resetLevelState();
                 } else {
+                    R.round({ score: score + ' Punkte', label: 'Alle ' + SENTENCES.length + ' Sätze' });
+                    R.done('Alle Sätze geschafft');
                     setMode('summary');
                 }
             };
@@ -463,6 +469,7 @@
                 const { breaks } = flattenSentence(currentSentence.segments);
                 const sortedUser = [...userSplits].sort((a, b) => a - b);
                 const sortedCorrect = [...breaks].sort((a, b) => a - b);
+                R.answer(JSON.stringify(sortedUser) === JSON.stringify(sortedCorrect), 'Satzglieder abgrenzen');
                 if (JSON.stringify(sortedUser) === JSON.stringify(sortedCorrect)) {
                     setSplitFeedback('correct'); setScore(s => s + 10);
                 } else {
@@ -517,6 +524,7 @@
                 const sentenceString = builtSentence.map(s => s.text).join(' ');
                 if (foundPermutations.includes(sentenceString)) { setMoveFeedback('duplicate'); return; }
 
+                R.answer(isGrammaticallyCorrect, 'Umstellprobe');
                 if (isGrammaticallyCorrect) {
                     const newFound = [...foundPermutations, sentenceString];
                     setFoundPermutations(newFound); setScore(s => s + 15);
@@ -542,6 +550,7 @@
 
             const checkIdentify = () => {
                 const correct = currentSentence.segments.every((seg, idx) => identifiedSegments[idx] === seg.type);
+                R.answer(correct, 'Satzglieder bestimmen');
                 if (correct) {
                     setIdentifyFeedback('correct');
                     setIdentifySolutionShown(false);
