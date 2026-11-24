@@ -333,7 +333,7 @@ If she had asked me, I would helped her. => If she had asked me, I would have he
 These T-shirts [are made:make] in Portugal.
 The post [is delivered:deliver] every morning.
 Our car [is washed:wash] every Saturday.
-Tea [is grown:grow] in India.
+Bananas [are grown:grow] in Ecuador.
 The museum [is visited:visit] by thousands of people.`,
     past: `The window [was broken:break] by a ball.
 America [was discovered:discover] in 1492.

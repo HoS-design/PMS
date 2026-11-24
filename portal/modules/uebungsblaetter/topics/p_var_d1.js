@@ -305,7 +305,7 @@ Wenn ich mehr Geld [gehabt hätte:haben], [hätte:haben] ich das Rad gekauft.`,
     konj4: `[Bevor] du gehst, mach bitte das Licht aus.
 Ich warte, [bis] du fertig bist.
 [Damit] wir pünktlich sind, fahren wir früher los.
-[Falls] es regnet, nehmen wir den Bus.
+[Falls] du Hilfe brauchst, ruf mich an.
 Er lachte, [obwohl] er traurig war.
 [Seitdem] wir umgezogen sind, gehe ich zu Fuß zur Schule.`,
     zurueck: `Bevor wir abfuhren, aßen wir noch etwas. :: Satzglied => Vor der Abfahrt aßen wir noch etwas.

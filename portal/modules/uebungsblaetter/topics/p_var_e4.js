@@ -23,10 +23,9 @@ It was a very [dangerous:danger] journey.
 Thank you for your [help:helpful]. You were very [helpful:help].
 He is a famous football [player:play].
 The weather was [sunny:sun] all week.
-We had a [wonderful:wonder] time in London.
 Please be [careful:care] with the glass.`,
     text: `Our trip was [wonderful:wonder]. The weather was [sunny:sun] and the people were very [friendly:friend].
-The [driver:drive] was very [unfriendly:friendly], but he drove [safely:safe].
+The [waiter:wait] was very [unfriendly:friendly], but he served us [quickly:quick].
 It's [impossible:possible] to sleep here. The neighbours are so [noisy:noise]!`
   } });
 
