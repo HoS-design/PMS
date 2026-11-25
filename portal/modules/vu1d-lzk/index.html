@@ -9,30 +9,34 @@
   <title>HoS · VU 1d – LZK-Training: Unsere Erde & Die Schöpfung</title>
   <style>
     .hos-stage { grid-template-columns: minmax(0, 1fr) 290px; }
-    .qpanel { display: flex; flex-direction: column; gap: 8px; overflow: auto; }
-    .qhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .qprompt { font-size: 1.12rem; font-weight: 800; line-height: 1.35; margin: 0; }
-    .qarea { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
-    .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
-    .opt { text-align: left; border: 2px solid var(--hos-line); background: #fff; border-radius: 12px; padding: 10px 12px; font-weight: 700; cursor: pointer; font-size: 1rem; }
-    .opt:hover { border-color: var(--subject-line); }
+    .qpanel { display: flex; flex-direction: column; gap: 10px; overflow: auto; padding: 16px 22px; }
+    .qhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .qlabel { color: var(--subject-strong); font-size: .78rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+    .qcount { color: var(--hos-muted); font-weight: 700; font-size: .9rem; }
+    .qprompt { font-size: clamp(1.3rem, 2.1vw, 1.7rem); font-weight: 800; line-height: 1.25; margin: 0; letter-spacing: -.01em; }
+    .qprompt i { font-weight: 700; }
+    .qarea { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
+    .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+    .opts.short { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .opt { text-align: left; border: 2px solid var(--hos-line); background: #fff; color: var(--hos-ink); border-radius: 14px; padding: 13px 16px; font-weight: 700; cursor: pointer; font-size: 1.05rem; transition: transform 120ms ease, border-color 120ms ease, background 120ms ease; }
+    .opt:hover { transform: translateY(-1px); border-color: var(--subject-line); background: var(--subject-soft); }
     .opt.sel { border-color: var(--subject); background: var(--subject-soft); }
     .opt.right { border-color: var(--hos-good); background: var(--hos-good-soft); color: var(--hos-good); }
     .opt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); }
-    .statement { font-size: 1.15rem; font-weight: 700; background: var(--subject-soft); border-left: 5px solid var(--subject); padding: 12px 14px; border-radius: 10px; }
+    .statement { font-size: clamp(1.15rem, 1.8vw, 1.4rem); font-weight: 700; background: #f8fafc; border: 1px solid var(--hos-line); padding: 16px 18px; border-radius: 14px; }
     .txt { font-size: 1.05rem; padding: 9px 12px; border-radius: 10px; border: 2px solid var(--hos-line); width: min(420px, 100%); }
     .txt.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .txt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
     /* Reihenfolge */
     .ord-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .ord-col h4 { margin: 0 0 6px; font-size: .9rem; color: var(--hos-muted); }
-    .ord-list { display: flex; flex-direction: column; gap: 6px; min-height: 60px; border: 2px dashed var(--hos-line); border-radius: 12px; padding: 6px; }
-    .chip { border: 2px solid var(--hos-line); background: #fff; border-radius: 10px; padding: 7px 10px; font-weight: 700; cursor: pointer; text-align: left; font-size: .95rem; }
+    .ord-col h4 { margin: 0 0 4px; font-size: .85rem; color: var(--hos-muted); }
+    .ord-list { display: flex; flex-direction: column; gap: 6px; min-height: 56px; border: 2px dashed var(--hos-line); border-radius: 12px; padding: 5px; }
+    .chip { border: 2px solid var(--hos-line); background: #fff; border-radius: 12px; padding: 6px 12px; font-weight: 700; cursor: pointer; text-align: left; font-size: .95rem; }
     .chip:hover { border-color: var(--subject-line); }
     .chip .n { display: inline-block; min-width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; background: var(--subject); color: #fff; font-size: .8rem; margin-right: 6px; }
     .chip.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .chip.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
     /* Zuordnen / Sortieren */
     .rows { display: flex; flex-direction: column; gap: 6px; }
-    .row { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr); gap: 10px; align-items: center; border: 1px solid var(--hos-line); border-radius: 10px; padding: 5px 8px; background: #fff; }
+    .row { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr); gap: 10px; align-items: center; border: 1px solid var(--hos-line); border-radius: 12px; padding: 4px 10px; background: #fff; }
     .row.right { background: var(--hos-good-soft); border-color: var(--hos-good-line); } .row.wrong { background: var(--hos-bad-soft); border-color: var(--hos-bad-line); }
     .row select { width: 100%; font-size: .95rem; }
     .row .lab { font-weight: 700; }
@@ -66,10 +70,25 @@
     .reslist div { padding: 4px 0; border-bottom: 1px solid #f0efed; }
     .reslist div:last-child { border: 0; }
     .reslist b { color: var(--hos-good); }
-    .welcome { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .welcome .hos-panel { display: flex; flex-direction: column; gap: 8px; }
-    .welcome h3 { margin: 0; }
-    .welcome ul { margin: 0; padding-left: 18px; }
+    .qpanel.start { justify-content: center; }
+    .hero { display: grid; grid-template-columns: 1.35fr .65fr; gap: 28px; align-items: center; max-width: 1120px; margin: 0 auto; width: 100%; }
+    .hero-main { display: flex; flex-direction: column; gap: 12px; }
+    .over { align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: var(--subject-soft); color: var(--subject-strong); font-size: 12.5px; font-weight: 800; letter-spacing: .02em; }
+    .hero h2 { margin: 0; font-size: clamp(28px, 3.6vw, 40px); line-height: 1.05; letter-spacing: -.02em; }
+    .hero p { margin: 0; color: var(--hos-muted); line-height: 1.5; }
+    .levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 4px; }
+    .lvl { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--hos-line); background: #fff; font: inherit; font-weight: 800; color: var(--hos-ink); cursor: pointer; transition: transform 120ms ease, border-color 120ms ease; }
+    .lvl:hover { transform: translateY(-1px); border-color: var(--subject); }
+    .lvl small { display: block; color: var(--hos-muted); font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; }
+    .lvl em { font-style: normal; font-size: .8rem; color: var(--subject-strong); background: var(--subject-soft); border-radius: 999px; padding: 2px 8px; }
+    .rules { position: relative; background: #f8fafc; border: 1px solid var(--hos-line); border-radius: 16px; padding: 14px 16px 70px; font-size: .9rem; line-height: 1.45; }
+    .rules > b { color: var(--subject-strong); }
+    .rules ul { margin: 6px 0 0; padding-left: 18px; }
+    .rules li { margin-bottom: 3px; }
+    .rules img { position: absolute; right: 14px; bottom: 8px; width: 56px; }
+    .rules ul { padding-right: 0; }
+    .hos-stage.full { grid-template-columns: 1fr; }
+    .hos-stage.full .side { display: none; }
     .badge-vu { background: var(--subject) !important; }
     .tag { font-size: .78rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--subject-soft); color: var(--subject-strong); border: 1px solid var(--subject-line); }
   </style>
@@ -80,8 +99,8 @@
   <div class="brand-row">
     <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
     <div class="brand-title">
-      <div class="badge-main badge-vu">VU 1d</div>
-      <h1>LZK-Training: Unsere Erde & Die Schöpfung</h1>
+      <div class="badge-main badge-vu">VU</div>
+      <h1>LZK-Training 1d</h1>
     </div>
   </div>
   <div class="header-actions">
@@ -92,8 +111,8 @@
 <main class="hos-main">
   <div class="hos-topbar">
     <div class="hos-seg" id="themeSeg">
-      <button type="button" data-theme="erde">🌍 Unsere Erde</button>
-      <button type="button" data-theme="schoepfung">✨ Die Schöpfung</button>
+      <button type="button" data-theme="erde" title="Unsere Erde">ZuB</button>
+      <button type="button" data-theme="schoepfung" title="Die Schöpfung">HoS</button>
     </div>
     <div class="hos-steps" id="partSteps"></div>
     <span class="hos-spacer"></span>
@@ -107,7 +126,7 @@
 
   <div class="hos-bottombar">
     <div class="hos-feedback" id="feedback">Wähle oben ein Thema und einen Teil.</div>
-    <button type="button" class="hos-btn soft" id="tipBtn">💡 Tipp</button>
+    <button type="button" class="hos-btn soft" id="tipBtn">Tipp</button>
     <button type="button" class="hos-btn primary" id="mainBtn">Prüfen</button>
   </div>
 </main>
@@ -138,11 +157,11 @@
     e3: { name: 'Teil 3 · Mit Karten und Atlas arbeiten', short: 'Karten & Atlas', img: 'MiniHoS_Forschen_Lupe',
       merke: ['Landkarten zeigen <b>kleinere</b> und <b>vereinfachte</b> Ausschnitte der Erdoberfläche.', '<b>Titel</b>: was die Karte zeigt · <b>Legende</b>: erklärt die Symbole · <b>Maßstab</b>: wie stark verkleinert · <b>Gradnetz</b>: Koordinaten · <b>Suchgitter</b>: Felder mit Buchstaben und Zahlen', '<b>Namensregister</b>: ganz hinten im Atlas, alphabetisch. Traunsee 27 E3 = Seite 27, Feld E3.', '<b>Maßstab:</b> 1 : 1000 = Verkleinerung · 2 : 1 = Vergrößerung · 1 : 1 = gleich groß', '<b>Höhenstufen:</b> Tiefland grün, Hügelland gelb, Bergland hellbraun, Hochgebirge dunkelbraun, Gletscher weiß, Meer blau. Je höher, desto dunkler braun; je tiefer, desto dunkler blau.', '<b>Physische Karten</b> zeigen Höhen, Gewässer, Orte, Grenzen → Orientierung. <b>Thematische Karten</b> zeigen ein Thema (Wirtschaft, Religion, Staaten) → nicht zur Orientierung.'] },
     s1: { name: 'Teil 1 · Vom Urknall zur Erde', short: 'Urknall & Sonnensystem', img: 'MiniHoS_Forschen_Fernrohr',
-      merke: ['<b>Urknall</b> vor ca. <b>13,8 Milliarden</b> Jahren. Das Universum war extrem heiß und dicht, seitdem dehnt es sich aus und kühlt ab.', 'Der Urknall war <b>keine Explosion</b> an einem Ort – der Raum selbst dehnte sich aus.', 'Danach: erste Sterne aus Gaswolken, viele Sterne bilden Galaxien.', 'Vor <b>4,6 Mrd.</b> Jahren: Sonne (in der Milchstraße) und Planeten, auch die Erde. Vor 3,5 Mrd. J.: erstes Leben im Wasser. Vor 230 Mio. J.: erste Dinosaurier. Vor 300 000 J.: Homo sapiens.', 'Größe: Universum ➜ Milchstraße ➜ Sonnensystem ➜ Erde', 'Sonnensystem: Sonne + Erde + 7 weitere Planeten, Monde, Zwergplaneten, Asteroiden, Kometen. Die Sonne ist ein <b>Stern</b>.', 'Woher wir das wissen: Licht ferner Sterne, Alter von Gesteinen, Fossilien → wissenschaftliche Modelle.'] },
+      merke: ['<b>Urknall</b> vor ca. <b>13,8 Milliarden</b> Jahren. Das Universum war extrem heiß und dicht, seitdem dehnt es sich aus und kühlt ab.', 'Der Urknall war <b>keine Explosion</b> an einem Ort – der Raum selbst dehnte sich aus.', 'Danach: erste Sterne aus Gaswolken, viele Sterne bilden Galaxien.', 'Vor <b>4,6 Mrd.</b> Jahren: Sonne (in der Milchstraße) und Planeten, auch die Erde. Vor 3,5 Mrd. J.: erstes Leben im Wasser. Vor 230 Mio. J.: erste Dinosaurier. Vor 300 000 J.: Homo sapiens.', 'Größe: Universum → Milchstraße → Sonnensystem → Erde', 'Sonnensystem: Sonne + Erde + 7 weitere Planeten, Monde, Zwergplaneten, Asteroiden, Kometen. Die Sonne ist ein <b>Stern</b>.', 'Woher wir das wissen: Licht ferner Sterne, Alter von Gesteinen, Fossilien → wissenschaftliche Modelle.'] },
     s2: { name: 'Teil 2 · Die vier Erdzeitalter', short: 'Erdzeitalter', img: 'MiniHoS_Forschen_Lupe-Blatt',
-      merke: ['Die Erde ist ca. <b>4,6 Mrd.</b> Jahre alt.', '<b>1 Erdurzeit</b> (ab 4,6 Mrd.): glühend heiß, Vulkane, Meteoriten, Erdkruste, Meere, erste Einzeller → Sauerstoff', '<b>2 Erdaltertum</b> (ab 540 Mio.): Trilobiten, Fische, Muscheln; Leben geht an Land (Fisch ➜ Amphibie ➜ Reptil); Farnwälder → Steinkohle; Pangäa; Massenaussterben', '<b>3 Erdmittelalter</b> (ab 252 Mio.): Dinosaurier, Flugsaurier, Meeresreptilien, erste Säugetiere und Vögel; vor 66 Mio. Asteroid → Dinosaurier sterben aus (außer Vögeln)', '<b>4 Erdneuzeit</b> (ab 66 Mio. bis heute): Säugetiere (Mammut, Wal, Fledermaus), Kontinente wandern, Eiszeiten, Vorfahren des Menschen in Afrika, Homo sapiens seit ca. 300 000 Jahren', 'Steinkohle: Farnwälder ➜ sterben ab, Schlamm deckt zu ➜ nach Millionen Jahren Steinkohle', 'Erdgeschichte als ein Tag: Erdurzeit bis fast 21 Uhr, Dinosaurier sterben ca. 23:39 Uhr aus, Mensch 6 Sekunden vor Mitternacht.'] },
+      merke: ['Die Erde ist ca. <b>4,6 Mrd.</b> Jahre alt.', '<b>1 Erdurzeit</b> (ab 4,6 Mrd.): glühend heiß, Vulkane, Meteoriten, Erdkruste, Meere, erste Einzeller → Sauerstoff', '<b>2 Erdaltertum</b> (ab 540 Mio.): Trilobiten, Fische, Muscheln; Leben geht an Land (Fisch → Amphibie → Reptil); Farnwälder → Steinkohle; Pangäa; Massenaussterben', '<b>3 Erdmittelalter</b> (ab 252 Mio.): Dinosaurier, Flugsaurier, Meeresreptilien, erste Säugetiere und Vögel; vor 66 Mio. Asteroid → Dinosaurier sterben aus (außer Vögeln)', '<b>4 Erdneuzeit</b> (ab 66 Mio. bis heute): Säugetiere (Mammut, Wal, Fledermaus), Kontinente wandern, Eiszeiten, Vorfahren des Menschen in Afrika, Homo sapiens seit ca. 300 000 Jahren', 'Steinkohle: Farnwälder → sterben ab, Schlamm deckt zu → nach Millionen Jahren Steinkohle', 'Erdgeschichte als ein Tag: Erdurzeit bis fast 21 Uhr, Dinosaurier sterben ca. 23:39 Uhr aus, Mensch 6 Sekunden vor Mitternacht.'] },
     s3: { name: 'Teil 3 · Quellenkunde', short: 'Quellenkunde', img: 'MiniHoS_Lesen_Buch-Burg',
-      merke: ['<b>Quellen</b> sind Überreste aus der Vergangenheit. Forscher arbeiten wie Detektive.', '<b>Sachquelle</b> – anfassen (Steinbeil, Münze, Tonkrug)', '<b>Schriftquelle</b> – lesen (Brief, Tagebuch, Urkunde)', '<b>Bildquelle</b> – anschauen (Höhlenmalerei, Foto, Gemälde)', '<b>Mündliche Quelle</b> – hören (Interview mit Opa, Sage)', 'Ausgrabung: Ort suchen ➜ Schicht für Schicht abtragen ➜ mit Pinsel freilegen ➜ vermessen, fotografieren, beschriften ➜ im Labor untersuchen', 'Je <b>tiefer</b>, desto <b>älter</b> (meistens). Langsam graben, nicht mit dem Bagger!', '<b>Fossilien</b> = versteinerte Reste von Pflanzen und Tieren (Paläontologen). Zeitzeugen irren sich manchmal → mehrere Quellen vergleichen.'] }
+      merke: ['<b>Quellen</b> sind Überreste aus der Vergangenheit. Forscher arbeiten wie Detektive.', '<b>Sachquelle</b> – anfassen (Steinbeil, Münze, Tonkrug)', '<b>Schriftquelle</b> – lesen (Brief, Tagebuch, Urkunde)', '<b>Bildquelle</b> – anschauen (Höhlenmalerei, Foto, Gemälde)', '<b>Mündliche Quelle</b> – hören (Interview mit Opa, Sage)', 'Ausgrabung: Ort suchen → Schicht für Schicht abtragen → mit Pinsel freilegen → vermessen, fotografieren, beschriften → im Labor untersuchen', 'Je <b>tiefer</b>, desto <b>älter</b> (meistens). Langsam graben, nicht mit dem Bagger!', '<b>Fossilien</b> = versteinerte Reste von Pflanzen und Tieren (Paläontologen). Zeitzeugen irren sich manchmal → mehrere Quellen vergleichen.'] }
   };
 
   // =====================================================================================
@@ -273,7 +292,23 @@
   }
 
   // Suchgitter
-  const SYMS = [['🏰', 'die Burg'], ['✈️', 'der Flughafen'], ['⛰️', 'der Berg'], ['⛪', 'die Kirche'], ['🌲', 'der Wald'], ['🏠', 'das Haus'], ['⚓', 'der Hafen'], ['🏞️', 'der See']];
+  const SYMS = [['burg', 'die Burg'], ['flug', 'der Flughafen'], ['berg', 'der Berg'], ['kirche', 'die Kirche'], ['wald', 'der Wald'], ['haus', 'das Haus'], ['hafen', 'der Hafen'], ['see', 'der See']];
+  // einfache Kartensymbole wie in einer Legende (Mittelpunkt x/y)
+  function sym(k, x, y) {
+    const t = 'translate(' + x + ' ' + y + ')';
+    const ink = '#334155';
+    switch (k) {
+      case 'burg': return '<g transform="' + t + '" fill="' + ink + '"><path d="M-14 16 V-6 H-10 V-12 H-6 V-6 H-2 V-12 H2 V-6 H6 V-12 H10 V-6 H14 V16 Z"/><rect x="-4" y="6" width="8" height="10" fill="#fff"/></g>';
+      case 'flug': return '<g transform="' + t + '" fill="' + ink + '"><path d="M-2 -16 Q0 -19 2 -16 L2 -4 L16 4 L16 8 L2 3 L2 11 L7 15 L7 18 L0 16 L-7 18 L-7 15 L-2 11 L-2 3 L-16 8 L-16 4 L-2 -4 Z"/></g>';
+      case 'berg': return '<g transform="' + t + '"><path d="M-17 15 L0 -15 L17 15 Z" fill="#8a5a2b"/><path d="M-6 -4 L0 -15 L6 -4 L2 -6 L0 -2 L-2 -6 Z" fill="#fff"/></g>';
+      case 'kirche': return '<g transform="' + t + '" fill="' + ink + '"><rect x="-11" y="-2" width="22" height="17"/><path d="M-13 -1 L0 -11 L13 -1 Z"/><rect x="-1.5" y="-19" width="3" height="10"/><rect x="-5" y="-16" width="10" height="3"/></g>';
+      case 'wald': return '<g transform="' + t + '"><path d="M-14 12 L-6 -10 L2 12 Z M-2 14 L7 -14 L16 14 Z" fill="#2f7d32"/><rect x="-7" y="12" width="2" height="4" fill="#5b3a1e"/><rect x="6" y="14" width="2" height="3" fill="#5b3a1e"/></g>';
+      case 'haus': return '<g transform="' + t + '" fill="' + ink + '"><path d="M-13 0 L0 -13 L13 0 Z"/><rect x="-10" y="0" width="20" height="15"/><rect x="-3" y="6" width="6" height="9" fill="#fff"/></g>';
+      case 'hafen': return '<g transform="' + t + '" fill="none" stroke="' + ink + '" stroke-width="3.2" stroke-linecap="round"><circle cx="0" cy="-12" r="3.5"/><path d="M0 -8 V15 M-7 -3 H7 M-13 6 Q-11 15 0 15 Q11 15 13 6"/></g>';
+      case 'see': return '<g transform="' + t + '"><ellipse cx="0" cy="0" rx="18" ry="11" fill="#5aa6dc" stroke="#2b6ea3" stroke-width="1.5"/></g>';
+    }
+    return '';
+  }
   const COLS = 'ABCDEF', ROWS = 4;
   function gridSVG(items) {
     const cw = 80, ch = 62, ox = 30, oy = 26;
@@ -285,21 +320,32 @@
     }
     items.forEach(it => {
       const c = COLS.indexOf(it.f[0]), r = +it.f.slice(1) - 1;
-      s += '<text x="' + (ox + c * cw + cw / 2) + '" y="' + (oy + r * ch + ch / 2 + 11) + '" text-anchor="middle" font-size="30" pointer-events="none">' + it.sym + '</text>';
+      s += '<g pointer-events="none">' + sym(it.sym, ox + c * cw + cw / 2, oy + r * ch + ch / 2) + '</g>';
     });
     s += '<g id="marks"></g></svg>';
     return s;
   }
 
   // Erdschichten (Ausgrabung)
-  const FINDS = [['🪙', 'Münze'], ['🏺', 'Tonkrug'], ['🪓', 'Steinbeil'], ['🦴', 'Knochen'], ['🐚', 'Muschel-Fossil']];
+  const FINDS = [['muenze', 'Münze'], ['krug', 'Tonkrug'], ['beil', 'Steinbeil'], ['knochen', 'Knochen'], ['muschel', 'Muschel-Fossil']];
+  function findSVG(k, x, y) {
+    const t = 'translate(' + x + ' ' + y + ')';
+    switch (k) {
+      case 'muenze': return '<g transform="' + t + '"><circle r="12" fill="#e7b416" stroke="#8a6a00" stroke-width="2"/><circle r="7" fill="none" stroke="#8a6a00" stroke-width="1.5"/></g>';
+      case 'krug': return '<g transform="' + t + '"><path d="M-6 -14 H6 V-10 Q14 -4 12 6 Q10 14 0 15 Q-10 14 -12 6 Q-14 -4 -6 -10 Z" fill="#c2602f" stroke="#6b2e12" stroke-width="2"/><path d="M-11 0 H11" stroke="#6b2e12" stroke-width="1.5"/></g>';
+      case 'beil': return '<g transform="' + t + '"><path d="M-14 13 L8 -9" stroke="#6b4a2b" stroke-width="4" stroke-linecap="round"/><path d="M2 -16 Q16 -16 15 -3 L6 -6 Z" fill="#94a3b8" stroke="#334155" stroke-width="1.5"/></g>';
+      case 'knochen': return '<g transform="' + t + '" fill="#f5f0e1" stroke="#6b5d3e" stroke-width="1.5"><path d="M-10 -3 L10 -3 L10 3 L-10 3 Z"/><circle cx="-13" cy="-4" r="4"/><circle cx="-13" cy="4" r="4"/><circle cx="13" cy="-4" r="4"/><circle cx="13" cy="4" r="4"/></g>';
+      case 'muschel': return '<g transform="' + t + '"><path d="M0 12 L-14 -4 Q0 -18 14 -4 Z" fill="#d9cfb8" stroke="#6b5d3e" stroke-width="1.5"/><path d="M0 12 L-7 -11 M0 12 L0 -13 M0 12 L7 -11" stroke="#6b5d3e" stroke-width="1.2"/></g>';
+    }
+    return '';
+  }
   function layersSVG(finds) {
     const cols = ['#c8a477', '#a88458', '#86663f', '#634a2c'];
     let s = '<svg viewBox="0 0 520 300" style="max-width:560px">';
     s += '<rect x="0" y="0" width="520" height="40" fill="#bfe3f5"/><text x="12" y="27" font-size="15" font-weight="800" fill="#1e3a5f">Oberfläche</text>';
     for (let i = 0; i < 4; i++) {
       s += '<path class="clickable" data-l="' + i + '" d="M0 ' + (40 + i * 65) + ' Q130 ' + (32 + i * 65) + ' 260 ' + (44 + i * 65) + ' T520 ' + (40 + i * 65) + ' L520 ' + (105 + i * 65) + ' Q390 ' + (113 + i * 65) + ' 260 ' + (101 + i * 65) + ' T0 ' + (105 + i * 65) + ' Z" fill="' + cols[i] + '" stroke="#5b4630"/>';
-      s += '<text x="' + (110 + (i % 2) * 260) + '" y="' + (84 + i * 65) + '" font-size="30" pointer-events="none">' + finds[i][0] + '</text>';
+      s += '<g pointer-events="none">' + findSVG(finds[i][0], 125 + (i % 2) * 260, 73 + i * 65) + '</g>';
       s += '<text x="' + (150 + (i % 2) * 260) + '" y="' + (80 + i * 65) + '" font-size="14" font-weight="800" fill="#fff" pointer-events="none">' + finds[i][1] + '</text>';
     }
     s += '<g id="marks"></g></svg>';
@@ -472,7 +518,7 @@
   const ERA = ['Erdurzeit', 'Erdaltertum', 'Erdmittelalter', 'Erdneuzeit'];
   const ERAFACTS = [
     ['Die Erde ist glühend heiß, Vulkane brechen aus.', 0], ['Meteoriten schlagen ein.', 0], ['Eine feste Erdkruste bildet sich.', 0], ['Es regnet sehr lange, die ersten Meere entstehen.', 0], ['Die ersten Einzeller leben im Wasser.', 0], ['Einzeller erzeugen mit Sonnenlicht Sauerstoff.', 0],
-    ['Im Meer leben Trilobiten, Fische und Muscheln.', 1], ['Das Leben geht an Land: Fisch ➜ Amphibie ➜ Reptil.', 1], ['Riesige Farnwälder wachsen.', 1], ['Alle Kontinente bilden den Urkontinent Pangäa.', 1], ['Am Ende gibt es ein großes Massenaussterben.', 1],
+    ['Im Meer leben Trilobiten, Fische und Muscheln.', 1], ['Das Leben geht an Land: Fisch → Amphibie → Reptil.', 1], ['Riesige Farnwälder wachsen.', 1], ['Alle Kontinente bilden den Urkontinent Pangäa.', 1], ['Am Ende gibt es ein großes Massenaussterben.', 1],
     ['Zeit der Dinosaurier', 2], ['Flugsaurier und Meeresreptilien', 2], ['Erste kleine Säugetiere und erste Vögel', 2], ['Ein riesiger Asteroid schlägt ein.', 2],
     ['Säugetiere breiten sich überall aus (Mammut, Wal, Fledermaus).', 3], ['Die Kontinente wandern in ihre heutige Lage.', 3], ['Es gibt mehrere Eiszeiten.', 3], ['Die Vorfahren des Menschen entwickeln sich in Afrika.', 3], ['Den Homo sapiens gibt es seit ca. 300 000 Jahren.', 3]
   ];
@@ -574,7 +620,7 @@
   }
 
   function optButtons(opts) {
-    return '<div class="opts">' + opts.map((o, i) => '<button type="button" class="opt" data-i="' + i + '">' + esc(o) + '</button>').join('') + '</div>';
+    return '<div class="opts' + (opts.every(o => String(o).length <= 22) ? ' short' : '') + '">' + opts.map((o, i) => '<button type="button" class="opt" data-i="' + i + '">' + esc(o) + '</button>').join('') + '</div>';
   }
   function bindOpts(it) {
     qa().querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
@@ -595,13 +641,13 @@
       case 'tf': prompt = 'Stimmt das?'; it.opts = ['stimmt', 'stimmt nicht']; html = '<div class="statement">' + q.s + '</div>' + optButtons(it.opts); break;
       case 'input': html = '<input class="txt" id="txtIn" type="text" autocomplete="off" placeholder="Antwort eingeben …"><div class="hos-muted" style="font-size:.85rem">Mit Enter bestätigen.</div>'; break;
       case 'mapclick': html = '<div class="fig">' + mapSVG({ colors: q.kind === 'cont', clickLand: true, clickWater: true }) + '</div>'; break;
-      case 'mapname': html = '<div class="fig" style="max-height:240px">' + mapSVG({ highlight: q.target }) + '</div>' + optButtons(it.opts.map(c => CNAME[c] || c)); it.opts = it.opts.map(c => CNAME[c] || c); break;
-      case 'coord': html = '<div class="fig" style="max-height:250px">' + mapSVG({ grid: true, gridLabels: true, points: [Object.assign({ label: '' }, it.p)] }) + '</div>' + optButtons(it.opts); break;
+      case 'mapname': html = '<div class="fig" style="max-height:290px">' + mapSVG({ highlight: q.target }) + '</div>' + optButtons(it.opts.map(c => CNAME[c] || c)); it.opts = it.opts.map(c => CNAME[c] || c); break;
+      case 'coord': html = '<div class="fig" style="max-height:300px">' + mapSVG({ grid: true, gridLabels: true, points: [Object.assign({ label: '' }, it.p)] }) + '</div>' + optButtons(it.opts); break;
       case 'coordclick': prompt = q.q + ' <b>' + it.correct + '</b>'; html = '<div class="fig">' + mapSVG({ grid: true, gridLabels: true, points: it.pts, clickPoints: true }) + '</div>'; break;
       case 'lineclick': html = '<div class="fig">' + mapSVG({ grid: true, clickLand: true, clickWater: true }) + '</div><div class="hos-muted" style="font-size:.85rem">Die gestrichelten Linien sind Breiten- und Längenkreise.</div>'; break;
       case 'hemi': html = '<div class="fig">' + mapSVG({ grid: true, strong: true, gridLabels: true, clickLand: true, clickWater: true }) + '</div>'; break;
       case 'rose': html = '<div class="fig">' + roseSVG(false) + '</div>'; break;
-      case 'gridfind': prompt = 'In welchem Feld liegt <b>' + it.target.name + '</b> ' + it.target.sym + '?'; html = '<div class="fig">' + gridSVG(it.items) + '</div>' + optButtons(it.opts); break;
+      case 'gridfind': prompt = 'In welchem Feld liegt <b>' + it.target.name + '</b>?'; html = '<div class="fig">' + gridSVG(it.items) + '</div>' + optButtons(it.opts); break;
       case 'gridclick': prompt = q.q + ' <b>' + it.field + '</b>'; html = '<div class="fig">' + gridSVG(it.items) + '</div>'; break;
       case 'swatch': html = '<div style="display:flex;gap:14px;align-items:center"><div style="width:120px;height:70px;border-radius:12px;border:2px solid #94a3b8;background:' + q.col + '"></div></div>' + optButtons(it.opts); break;
       case 'layers': prompt = 'Archäologen haben in vier Erdschichten gegraben. Klicke auf die Schicht mit dem <b>' + (it.ask === 'alt' ? 'ältesten' : 'jüngsten') + '</b> Fund.'; html = '<div class="fig">' + layersSVG(it.finds) + '</div>'; break;
@@ -619,7 +665,7 @@
     $('qprompt').innerHTML = prompt;
     qa().innerHTML = html;
     // Interaktion
-    if (q.type === 'input') { const t = $('txtIn'); t.focus(); t.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); mainAction(); } }); t.addEventListener('input', () => { it.user = t.value; }); }
+    if (q.type === 'input') { const t = $('txtIn'); t.focus(); t.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); mainAction(); } }); t.addEventListener('input', () => { it.user = t.value; updateMain(); }); }
     if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind'].includes(q.type)) bindOpts(it);
     const svg = qa().querySelector('svg');
     if (q.type === 'mapclick' || q.type === 'lineclick' || q.type === 'hemi') {
@@ -803,7 +849,7 @@
     }
     R.save('mastered', mastered); R.save('tries', tries);
     const pp = partProgress(q.part);
-    if (pp.done === pp.total && !R.isDone(PARTS[q.part].name)) { R.done(PARTS[q.part].name); setFeedback('good', '🎉 ' + PARTS[q.part].name + ' geschafft – du hast jede Aufgabe einmal richtig gelöst! Übe weiter oder mach den Probetest.'); }
+    if (pp.done === pp.total && !R.isDone(PARTS[q.part].name)) { R.done(PARTS[q.part].name); setFeedback('good', PARTS[q.part].name + ' geschafft – du hast jede Aufgabe einmal richtig gelöst! Übe weiter oder mach den Probetest.'); }
     drawSide();
     updateMain();
   }
@@ -853,13 +899,13 @@
     const wrong = res.filter(r => !r.g.ok);
     R.round({ score: pts, total: max, label: 'Probetest ' + THEMES[state.theme].name, wrong: wrong.map(r => promptText(r.it) + ' → ' + r.g.sol) });
     $('testProg').style.width = '100%';
-    const msg = pc >= 90 ? 'Ausgezeichnet – du bist bestens vorbereitet! 🏆' : pc >= 75 ? 'Sehr gut! Schau dir die Fehler unten noch einmal an.' : pc >= 50 ? 'Gut gemacht – aber übe die schwächeren Teile noch.' : 'Da geht noch mehr. Übe die Teile mit wenig Punkten noch einmal.';
+    const msg = pc >= 90 ? 'Ausgezeichnet – du bist bestens vorbereitet!' : pc >= 75 ? 'Sehr gut! Schau dir die Fehler unten noch einmal an.' : pc >= 50 ? 'Gut gemacht – aber übe die schwächeren Teile noch.' : 'Da geht noch mehr. Übe die Teile mit wenig Punkten noch einmal.';
     $('qprompt').innerHTML = 'Probetest beendet: ' + esc(THEMES[state.theme].name);
     qa().innerHTML = '<div class="result"><div><span class="bigscore">' + pts + ' / ' + max + '</span> <span class="hos-pill">' + pc + ' %</span></div><div class="hos-merke">' + msg + '</div>' +
       '<div class="partlist">' + THEMES[state.theme].parts.filter(p => byPart[p]).map(p => { const [a, b] = byPart[p]; return '<div class="pl"><span>' + PARTS[p].name + '</span><span>' + a + ' / ' + b + '</span><div class="hos-progress"><span style="width:' + (a / b * 100) + '%"></span></div></div>'; }).join('') + '</div>' +
-      (wrong.length ? '<h4 style="margin:4px 0 0">Das solltest du noch üben:</h4><div class="reslist">' + wrong.map(r => '<div>' + esc(promptText(r.it)) + '<br>→ <b>' + esc(r.g.sol) + '</b></div>').join('') + '</div>' : '<div class="hos-pill good">Alles richtig! 🎉</div>') + '</div>';
+      (wrong.length ? '<h4 style="margin:4px 0 0">Das solltest du noch üben:</h4><div class="reslist">' + wrong.map(r => '<div>' + esc(promptText(r.it)) + '<br>→ <b>' + esc(r.g.sol) + '</b></div>').join('') + '</div>' : '<div class="hos-pill good">Alles richtig!</div>') + '</div>';
     state.mode = 'result';
-    setFeedback(pc >= 75 ? 'good' : 'warn', 'Dein Ergebnis ist unter „📋 Meine Ergebnisse“ gespeichert.');
+    setFeedback(pc >= 75 ? 'good' : 'warn', 'Dein Ergebnis ist unter „Meine Ergebnisse“ gespeichert.');
     updateMain();
   }
 
@@ -870,8 +916,8 @@
     tip.hidden = state.mode !== 'ueben';
     if (state.mode === 'start') { b.textContent = 'Los geht\'s'; b.disabled = false; return; }
     if (state.mode === 'result') { b.textContent = 'Neuer Probetest'; b.disabled = false; return; }
-    if (state.mode === 'test') { b.textContent = state.test.i + 1 >= state.test.items.length ? 'Abgeben ✓' : 'Weiter ➜'; b.disabled = !(cur && hasAnswer(cur)); return; }
-    if (answered) { b.textContent = 'Weiter ➜'; b.disabled = false; }
+    if (state.mode === 'test') { b.textContent = state.test.i + 1 >= state.test.items.length ? 'Abgeben' : 'Weiter →'; b.disabled = !(cur && hasAnswer(cur)); return; }
+    if (answered) { b.textContent = 'Weiter →'; b.disabled = false; }
     else { b.textContent = 'Prüfen'; b.disabled = !(cur && hasAnswer(cur)); }
   }
   function mainAction() {
@@ -885,7 +931,7 @@
   $('tipBtn').addEventListener('click', () => {
     if (!cur || state.mode !== 'ueben') return;
     const box = $('merkeBox'); if (box) { box.open = true; box.scrollIntoView({ block: 'nearest' }); }
-    setFeedback('warn', '💡 Schau rechts in den Merkkasten – dort steht alles, was du für diese Aufgabe brauchst.');
+    setFeedback('warn', 'Schau rechts in den Merkkasten – dort steht alles, was du für diese Aufgabe brauchst.');
   });
 
   function buildChrome() {
@@ -894,12 +940,15 @@
     $('partSteps').innerHTML = parts.map(p => {
       const pp = partProgress(p);
       return '<button type="button" class="hos-step' + (state.part === p && state.mode === 'ueben' ? ' current' : '') + (pp.done === pp.total ? ' done' : '') + '" data-p="' + p + '">' + PARTS[p].short + '</button>';
-    }).join('') + '<button type="button" class="hos-step' + (state.mode === 'test' || state.mode === 'result' ? ' current' : '') + '" data-test="1">📝 Probetest</button>';
+    }).join('') + '<button type="button" class="hos-step' + (state.mode === 'test' || state.mode === 'result' ? ' current' : '') + '" data-test="1">Probetest</button>';
     $('partSteps').querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => startPractice(b.dataset.p)));
     $('partSteps').querySelector('[data-test]').addEventListener('click', startTest);
-    $('modePill').innerHTML = state.mode === 'ueben' ? '🔁 Üben – Falsches kommt öfter' : state.mode === 'test' || state.mode === 'result' ? '📝 Probetest – wie bei der LZK' : '👋 Start';
+    $('modePill').textContent = state.mode === 'ueben' ? 'Übungsmodus' : 'Probetest';
+    $('modePill').hidden = state.mode === 'start';
+    document.querySelector('.hos-stage').classList.toggle('full', state.mode === 'start');
+    $('qpanel').classList.toggle('start', state.mode === 'start');
     if (state.mode !== 'start') {
-      $('qpanel').innerHTML = '<div class="qhead"><span class="tag" id="qpart"></span><span class="hos-muted" id="qcount"></span>' + (state.mode === 'test' ? '<span class="hos-spacer"></span><div class="hos-progress" style="width:200px"><span id="testProg"></span></div>' : '') + '</div><p class="qprompt" id="qprompt"></p><div class="qarea" id="qarea"></div>';
+      $('qpanel').innerHTML = '<div class="qhead"><span class="qlabel" id="qpart"></span><span class="qcount" id="qcount"></span>' + (state.mode === 'test' ? '<span class="hos-spacer"></span><div class="hos-progress" style="width:200px"><span id="testProg"></span></div>' : '') + '</div><p class="qprompt" id="qprompt"></p><div class="qarea" id="qarea"></div>';
       $('qpart').textContent = state.mode === 'ueben' ? PARTS[state.part].name : 'Probetest: ' + THEMES[state.theme].name;
     }
     drawSide();
@@ -916,7 +965,6 @@
       const P2 = PARTS[state.part];
       h += '<details class="hos-merke merke" id="merkeBox"><summary><b>MERKE</b> – zum Nachschauen</summary><ul>' + P2.merke.map(m => '<li>' + m + '</li>').join('') + '</ul></details>';
       h += '<div class="hoshint"><img src="/assets/minihos/' + P2.img + '.webp?v=2" alt="" onerror="this.remove()"><span>Jede Aufgabe einmal richtig = Balken voll. Was du falsch hast, kommt bald wieder.</span></div>';
-      h += '<img class="deco" src="assets/' + state.part + '.webp" alt="" onerror="this.remove()">';
     } else if (state.mode === 'test') {
       h += '<div class="hos-merke">Im Probetest gibt es keine Tipps und keine Auflösung zwischendurch – wie bei der echten LZK. Am Ende siehst du deine Punkte und deine Fehler.</div>';
     }
@@ -927,14 +975,20 @@
     state.mode = 'start'; state.part = null;
     buildChrome();
     const t = THEMES[state.theme];
-    $('qpanel').innerHTML = '<div class="welcome"><div class="hos-panel"><h3>👋 So lernst du für die LZK</h3><ul>' +
-      '<li><b>Üben:</b> Wähle oben einen Teil. Jede Aufgabe zeigt dir sofort, ob du richtig liegst – mit Erklärung.</li>' +
-      '<li>Was du falsch hast, kommt bald noch einmal. Der Balken ist voll, wenn du alles einmal richtig gelöst hast.</li>' +
-      '<li><b>💡 Tipp</b> öffnet den Merkkasten.</li><li><b>📝 Probetest:</b> 18 gemischte Fragen wie bei der LZK, Auflösung am Ende.</li>' +
-      '<li>Unter <b>📋 Meine Ergebnisse</b> siehst du, was du schon geschafft hast.</li></ul></div>' +
-      '<div class="hos-panel"><h3>' + (state.theme === 'erde' ? '🌍' : '✨') + ' ' + t.name + '</h3><ul>' + t.parts.map(p => '<li>' + PARTS[p].name + '</li>').join('') + '</ul>' +
-      '<p class="hos-muted" style="margin:0">Gefragt wird nur, was in deiner Lernunterlage steht.</p>' +
-      '<img class="deco" src="assets/' + state.theme + '.webp" alt="" onerror="this.remove()" style="max-height:170px;object-fit:cover"></div></div>';
+    const who = state.theme === 'erde' ? 'ZuB' : 'HoS';
+    $('qpanel').innerHTML = '<div class="hero"><div class="hero-main"><span class="over">LZK-Vorbereitung · ' + who + '</span>' +
+      '<h2>' + t.name + '</h2><p>Übe alle drei Teile deiner Lernunterlage. Gefragt wird nur, was in der Unterlage steht.</p>' +
+      '<div class="levels">' + t.parts.map(p => { const pp = partProgress(p); return '<button type="button" class="lvl" data-p="' + p + '"><span>' + PARTS[p].name.replace(/^Teil (\d) · /, '<small>Teil $1</small>') + '</span><em>' + pp.done + ' / ' + pp.total + '</em></button>'; }).join('') + '</div>' +
+      '<div><button type="button" class="hos-btn primary" id="heroTest">Probetest starten →</button></div></div>' +
+      '<div class="rules"><b>So lernst du</b><ul>' +
+      '<li><b>Üben:</b> Nach jeder Antwort siehst du sofort, ob sie stimmt – mit Erklärung.</li>' +
+      '<li>Was du falsch hast, kommt bald noch einmal.</li>' +
+      '<li>Der Balken ist voll, wenn du jede Aufgabe einmal richtig gelöst hast.</li>' +
+      '<li><b>Tipp</b> öffnet den Merkkasten.</li>' +
+      '<li><b>Probetest:</b> 18 gemischte Fragen wie bei der LZK, die Auflösung gibt es am Ende.</li></ul>' +
+      '<img src="/assets/minihos/MiniHoS_Forschen_Globus.webp?v=2" alt="" onerror="this.remove()"></div></div>';
+    $('qpanel').querySelectorAll('.lvl').forEach(b => b.addEventListener('click', () => startPractice(b.dataset.p)));
+    $('heroTest').addEventListener('click', startTest);
     setFeedback('', 'Wähle oben einen Teil zum Üben oder starte den Probetest.');
     updateMain();
   }
