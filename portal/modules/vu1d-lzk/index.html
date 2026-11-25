@@ -24,7 +24,8 @@
     .opt.right { border-color: var(--hos-good); background: var(--hos-good-soft); color: var(--hos-good); }
     .opt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); }
     .statement { font-size: clamp(1.15rem, 1.8vw, 1.4rem); font-weight: 700; background: #f8fafc; border: 1px solid var(--hos-line); padding: 16px 18px; border-radius: 14px; }
-    .txt { font-size: 1.05rem; padding: 9px 12px; border-radius: 10px; border: 2px solid var(--hos-line); width: min(420px, 100%); }
+    .txt { font-size: 1.25rem; font-weight: 700; padding: 12px 16px; border-radius: 14px; border: 2px solid var(--hos-line); width: min(480px, 100%); outline: none; }
+    .txt:focus { border-color: var(--subject); box-shadow: 0 0 0 4px var(--subject-soft); }
     .txt.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .txt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
     /* Reihenfolge */
     .ord-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -564,6 +565,100 @@
   tf('s3', 'Erinnerungen von Zeitzeugen stimmen immer ganz genau.', false, 'Falsch: Sie stimmen nicht immer ganz genau. Deshalb vergleicht man mehrere Quellen.');
   add('s3', 'match', { q: 'Auch dein Leben hat Quellen! Ordne zu.', pairs: [['Babyschuh', 'Sachquelle'], ['Zeugnis', 'Schriftquelle'], ['Babyfoto', 'Bildquelle'], ['Erzählung deiner Eltern', 'mündliche Quelle']] });
 
+
+  // -------------------------------------------------------------------------------------
+  // Einige Fragen werden zu Eintipp-Aufgaben (kleine Rechtschreibfehler sind erlaubt)
+  // -------------------------------------------------------------------------------------
+  const TO_INPUT = {
+    'Wie viele Kontinente gibt es?': ['7', 'sieben'],
+    'Wie viele Weltmeere gibt es?': ['5', 'fünf'],
+    'Welcher Kontinent ist der größte?': ['Asien'],
+    'Welcher Kontinent ist der kleinste?': ['Australien', 'Ozeanien', 'Australien (Ozeanien)'],
+    'Welcher Kontinent ist der zweitgrößte?': ['Afrika'],
+    'Auf welchem Kontinent liegt Österreich?': ['Europa'],
+    'Welcher Kontinent hat keine ständigen Einwohner?': ['Antarktis'],
+    'Wo liegt der Amazonas-Regenwald?': ['Südamerika'],
+    'Auf welchem Kontinent liegt die Sahara?': ['Afrika'],
+    'Welches Weltmeer ist das größte und tiefste?': ['Pazifischer Ozean', 'Pazifik', 'Stiller Ozean'],
+    'Welches Weltmeer ist das kleinste und flachste?': ['Arktischer Ozean', 'Nordpolarmeer'],
+    'Welches Weltmeer umgibt die Antarktis?': ['Südlicher Ozean', 'Antarktischer Ozean'],
+    'Wie heißt der Pazifische Ozean noch?': ['Stiller Ozean'],
+    'Wie heißt der Arktische Ozean noch?': ['Nordpolarmeer'],
+    'Wie viele Breitengrade gibt es vom Äquator bis zum Nordpol?': ['90', 'neunzig'],
+    'Wie viele Längengrade gibt es vom Nullmeridian nach Osten?': ['180'],
+    'Durch welchen Ort verläuft der Nullmeridian?': ['Greenwich', 'London'],
+    'Wie heißen die beiden Angaben Breitengrad und Längengrad zusammen?': ['geographische Koordinaten', 'Koordinaten', 'geografische Koordinaten'],
+    'Was bedeutet das Zeichen ° ?': ['Grad'],
+    'Wie heißt die Zeichnung mit allen Himmelsrichtungen?': ['Windrose'],
+    'Welche Himmelsrichtung liegt zwischen Norden und Osten?': ['Nordosten', 'NO'],
+    'Welche Himmelsrichtung liegt zwischen Süden und Westen?': ['Südwesten', 'SW'],
+    'Welche Richtung liegt genau gegenüber von Osten?': ['Westen', 'W'],
+    'Welcher Teil der Karte erklärt die Symbole?': ['Legende'],
+    'Welcher Teil der Karte sagt, was die Karte zeigt?': ['Titel'],
+    'Was bedeutet der Maßstab 1 : 1000?': ['Verkleinerung'],
+    'Was bedeutet der Maßstab 2 : 1?': ['Vergrößerung'],
+    'Welche Farbe hat das Tiefland?': ['grün'],
+    'Welche Farbe hat ein Gletscher auf der Karte?': ['weiß'],
+    'Welche Karte zeigt die Erdoberfläche mit ihren Höhen in verschiedenen Farben?': ['physische Karte', 'physische', 'physisch'],
+    'Welche Karte gibt Auskunft über ein bestimmtes Thema, z. B. Wirtschaft oder Religion?': ['thematische Karte', 'thematische', 'thematisch'],
+    'Woraus entstanden die ersten Sterne?': ['Gaswolken', 'Gaswolke', 'Gas'],
+    'Was bilden viele Sterne zusammen?': ['Galaxien', 'Galaxie', 'eine Galaxie'],
+    'In welcher Galaxie ist unsere Sonne entstanden?': ['Milchstraße'],
+    'Was ist die Sonne?': ['ein Stern', 'Stern'],
+    'Wie viele Planeten gibt es im Sonnensystem (mit der Erde)?': ['8', 'acht'],
+    'Wie heißt der Urkontinent, den alle Kontinente im Erdaltertum bildeten?': ['Pangäa', 'Pangaea', 'Pangea'],
+    'Welche Dinosaurier haben überlebt?': ['die Vögel', 'Vögel'],
+    'Wo entwickelten sich die Vorfahren des Menschen?': ['Afrika'],
+    'Woraus ist Steinkohle entstanden?': ['aus riesigen Farnwäldern', 'Farnwälder', 'Farnwäldern', 'Farnwald', 'Farne', 'Farnen', 'Farnpflanzen'],
+    'Womit legen Archäologen einen Fund vorsichtig frei?': ['mit dem Pinsel', 'Pinsel'],
+    'Wer erforscht Fossilien?': ['Paläontologinnen und Paläontologen', 'Paläontologen', 'Paläontologinnen', 'Paläontologe', 'Paläontologin'],
+    'Wovon erzählen uns Fossilien?': ['von den Erdzeitaltern', 'Erdzeitalter', 'Erdzeitaltern']
+  };
+  const usedInput = {};
+  BANK.forEach(q => {
+    if (q.type !== 'mc') return;
+    let a = TO_INPUT[q.q];
+    if (!a && /^In welchem Erdzeitalter/.test(q.q) && ERAFACTS.findIndex(f => q.q.includes(f[0])) % 3 === 0) a = [q.a];
+    if (!a && /^Welche Quellenart ist das/.test(q.q) && QEX.findIndex(f => q.q.includes('<b>' + f[0] + '</b>')) % 3 === 1) a = [q.a, q.a.replace(/quelle$/i, ''), q.a.replace(/^Mündliche Quelle$/, 'mündlich')];
+    if (!a) return;
+    usedInput[q.q] = true;
+    q.type = 'input'; q.a = a; delete q.opts;
+  });
+  const missingInput = Object.keys(TO_INPUT).filter(k => !usedInput[k]);
+
+  // Vergleich mit Toleranz für kleine Tippfehler
+  const ARTIKEL = /^(der|die|das|den|dem|ein|eine|einen|im|in|aus|mit|von|vom|am|auf|durch)\s+/;
+  function clean(s) { let t = String(s).toLowerCase().trim(); let prev; do { prev = t; t = t.replace(ARTIKEL, ''); } while (t !== prev); return norm(t); }
+  function lev(a, b) {
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return d[a.length][b.length];
+  }
+  // 'exact' | 'typo' | false
+  // Fachbegriffe, die eine andere (falsche) Antwort sein können – ein Tippfehler darf nie einen davon „treffen“
+  const KNOWN = [...new Set([].concat(
+    BANK.filter(q => q.type === 'input').flatMap(q => q.a), DIRS.map(d => d[1]), CONTS, OCEANS, ERA, QA,
+    ['Tiefland', 'Hügelland', 'Bergland', 'Hochgebirge', 'Gletscher', 'Meer', 'gelb', 'hellbraun', 'dunkelbraun', 'blau', 'Vergrößerung', 'Verkleinerung', 'Legende', 'Titel', 'Maßstab', 'Gradnetz', 'Suchgitter', 'Äquator', 'Nullmeridian']
+  ).map(clean))];
+  function matchInput(user, answers) {
+    const u = clean(user || '');
+    if (!u) return false;
+    const ok = answers.map(clean);
+    if (ok.includes(u)) return 'exact';
+    const wrong = KNOWN.filter(k => !ok.includes(k));
+    if (wrong.includes(u)) return false;
+    const dWrong = Math.min(99, ...wrong.map(k => lev(u, k)));
+    for (const c of ok) {
+      if (/^\d+$/.test(c)) continue;
+      const tol = c.length <= 4 ? 0 : c.length <= 9 ? 1 : 2;
+      const d = lev(u, c);
+      if (d <= tol && d < dWrong) return 'typo';
+    }
+    return false;
+  }
+
   // =====================================================================================
   // Aufgaben darstellen und prüfen
   // =====================================================================================
@@ -719,7 +814,7 @@
       case 'mc': case 'swatch': ok = it.user === q.a; sol = q.a; break;
       case 'tf': ok = (it.user === 'stimmt') === q.a; sol = q.a ? 'stimmt' : 'stimmt nicht'; break;
       case 'mapname': ok = it.user === (CNAME[q.target] || q.target); sol = CNAME[q.target] || q.target; break;
-      case 'input': ok = q.a.some(a => norm(a) === norm(it.user || '')); sol = q.a[0]; break;
+      case 'input': { const m = matchInput(it.user, q.a); ok = !!m; it.typo = m === 'typo'; const u = clean(it.user || ''); it.near = q.a.slice().sort((x, y) => lev(u, clean(x)) - lev(u, clean(y)))[0]; sol = q.a[0]; break; }
       case 'coord': ok = it.user === it.correct; sol = it.correct; break;
       case 'coordclick': ok = it.user === it.answerLabel; sol = 'Punkt ' + it.answerLabel + ' (' + it.correct + ')'; break;
       case 'mapclick': {
@@ -837,7 +932,7 @@
     R.answer(g.ok, PARTS[q.part].short);
     if (g.ok) {
       if (!tries[q.id]) mastered[q.id] = true; else { tries[q.id] = Math.max(0, tries[q.id] - 1); if (!tries[q.id]) mastered[q.id] = true; }
-      setFeedback('good', pick(['Richtig!', 'Super!', 'Genau!', 'Stark!']) + ' ' + (q.why || ''));
+      setFeedback('good', pick(['Richtig!', 'Super!', 'Genau!', 'Stark!']) + (cur.typo ? ' Achte noch auf die Schreibweise: <b>' + esc(cur.near) + '</b>.' : '') + ' ' + (q.why || ''));
     } else {
       tries[q.id] = (tries[q.id] || 0) + 1; delete mastered[q.id];
       // Falsches kommt bald wieder – und später noch einmal
@@ -996,7 +1091,7 @@
   document.querySelectorAll('#themeSeg button').forEach(b => b.addEventListener('click', () => { state.theme = b.dataset.theme; R.save('theme', state.theme); welcome(); }));
   state.theme = R.load('theme', 'erde');
   welcome();
-  window.__VU = { BANK, oceanAt, grade, instance, render, state, startPractice, check: () => check(), hasAnswer: () => hasAnswer(cur), cur: () => cur };
+  window.__VU = { missingInput, matchInput, BANK, oceanAt, grade, instance, render, state, startPractice, check: () => check(), hasAnswer: () => hasAnswer(cur), cur: () => cur };
 })();
 </script>
 </body>
