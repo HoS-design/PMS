@@ -1,0 +1,949 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app-layout.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HoS · VU 1d – LZK-Training: Unsere Erde & Die Schöpfung</title>
+  <style>
+    .hos-stage { grid-template-columns: minmax(0, 1fr) 290px; }
+    .qpanel { display: flex; flex-direction: column; gap: 8px; overflow: auto; }
+    .qhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .qprompt { font-size: 1.12rem; font-weight: 800; line-height: 1.35; margin: 0; }
+    .qarea { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; }
+    .opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+    .opt { text-align: left; border: 2px solid var(--hos-line); background: #fff; border-radius: 12px; padding: 10px 12px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+    .opt:hover { border-color: var(--subject-line); }
+    .opt.sel { border-color: var(--subject); background: var(--subject-soft); }
+    .opt.right { border-color: var(--hos-good); background: var(--hos-good-soft); color: var(--hos-good); }
+    .opt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); }
+    .statement { font-size: 1.15rem; font-weight: 700; background: var(--subject-soft); border-left: 5px solid var(--subject); padding: 12px 14px; border-radius: 10px; }
+    .txt { font-size: 1.05rem; padding: 9px 12px; border-radius: 10px; border: 2px solid var(--hos-line); width: min(420px, 100%); }
+    .txt.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .txt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
+    /* Reihenfolge */
+    .ord-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ord-col h4 { margin: 0 0 6px; font-size: .9rem; color: var(--hos-muted); }
+    .ord-list { display: flex; flex-direction: column; gap: 6px; min-height: 60px; border: 2px dashed var(--hos-line); border-radius: 12px; padding: 6px; }
+    .chip { border: 2px solid var(--hos-line); background: #fff; border-radius: 10px; padding: 7px 10px; font-weight: 700; cursor: pointer; text-align: left; font-size: .95rem; }
+    .chip:hover { border-color: var(--subject-line); }
+    .chip .n { display: inline-block; min-width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; background: var(--subject); color: #fff; font-size: .8rem; margin-right: 6px; }
+    .chip.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .chip.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
+    /* Zuordnen / Sortieren */
+    .rows { display: flex; flex-direction: column; gap: 6px; }
+    .row { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr); gap: 10px; align-items: center; border: 1px solid var(--hos-line); border-radius: 10px; padding: 5px 8px; background: #fff; }
+    .row.right { background: var(--hos-good-soft); border-color: var(--hos-good-line); } .row.wrong { background: var(--hos-bad-soft); border-color: var(--hos-bad-line); }
+    .row select { width: 100%; font-size: .95rem; }
+    .row .lab { font-weight: 700; }
+    .row .sol { font-size: .85rem; color: var(--hos-bad); font-weight: 700; }
+    .catbtns { display: flex; flex-wrap: wrap; gap: 4px; }
+    .catbtns button { border: 1px solid var(--hos-line); background: #fafaf9; border-radius: 8px; padding: 4px 8px; font-weight: 700; font-size: .85rem; cursor: pointer; }
+    .catbtns button.sel { background: var(--subject); border-color: var(--subject); color: #fff; }
+    /* Karten und Skizzen */
+    .fig { display: flex; justify-content: center; align-items: flex-start; min-height: 0; }
+    .fig svg { width: 100%; max-width: 760px; height: auto; max-height: 100%; user-select: none; }
+    svg .land { stroke: #475569; stroke-width: .6; }
+    svg .clickable { cursor: pointer; }
+    svg .clickable:hover { filter: brightness(.93); }
+    svg text { font-family: system-ui, sans-serif; }
+    .mark { pointer-events: none; }
+    /* Seitenleiste */
+    .side { display: flex; flex-direction: column; gap: 8px; overflow: auto; }
+    .partlist { display: flex; flex-direction: column; gap: 6px; }
+    .pl { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: .88rem; font-weight: 700; }
+    .pl .hos-progress { grid-column: 1 / -1; min-width: 0; }
+    .pl.cur { color: var(--subject-strong); }
+    .merke ul { margin: 4px 0 0; padding-left: 18px; font-size: .86rem; line-height: 1.35; }
+    .merke li { margin-bottom: 3px; }
+    .hoshint { display: flex; gap: 8px; align-items: center; font-size: .85rem; color: var(--hos-muted); }
+    .hoshint img { width: 54px; height: auto; }
+    .deco { width: 100%; border-radius: 10px; display: block; }
+    /* Ergebnis */
+    .result { display: flex; flex-direction: column; gap: 10px; }
+    .bigscore { font-size: 2rem; font-weight: 900; color: var(--subject-strong); }
+    .reslist { border: 1px solid var(--hos-line); border-radius: 12px; padding: 6px 10px; max-height: 260px; overflow: auto; font-size: .92rem; }
+    .reslist div { padding: 4px 0; border-bottom: 1px solid #f0efed; }
+    .reslist div:last-child { border: 0; }
+    .reslist b { color: var(--hos-good); }
+    .welcome { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .welcome .hos-panel { display: flex; flex-direction: column; gap: 8px; }
+    .welcome h3 { margin: 0; }
+    .welcome ul { margin: 0; padding-left: 18px; }
+    .badge-vu { background: var(--subject) !important; }
+    .tag { font-size: .78rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; background: var(--subject-soft); color: var(--subject-strong); border: 1px solid var(--subject-line); }
+  </style>
+</head>
+<body class="hos-app subject-andere">
+
+<header class="app-header">
+  <div class="brand-row">
+    <img src="/chatisthisreal.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+    <div class="brand-title">
+      <div class="badge-main badge-vu">VU 1d</div>
+      <h1>LZK-Training: Unsere Erde & Die Schöpfung</h1>
+    </div>
+  </div>
+  <div class="header-actions">
+    <a href="/index.html" class="header-link">Startseite</a>
+  </div>
+</header>
+
+<main class="hos-main">
+  <div class="hos-topbar">
+    <div class="hos-seg" id="themeSeg">
+      <button type="button" data-theme="erde">🌍 Unsere Erde</button>
+      <button type="button" data-theme="schoepfung">✨ Die Schöpfung</button>
+    </div>
+    <div class="hos-steps" id="partSteps"></div>
+    <span class="hos-spacer"></span>
+    <span class="hos-pill" id="modePill"></span>
+  </div>
+
+  <div class="hos-stage">
+    <section class="hos-panel qpanel" id="qpanel"></section>
+    <aside class="hos-panel side" id="side"></aside>
+  </div>
+
+  <div class="hos-bottombar">
+    <div class="hos-feedback" id="feedback">Wähle oben ein Thema und einen Teil.</div>
+    <button type="button" class="hos-btn soft" id="tipBtn">💡 Tipp</button>
+    <button type="button" class="hos-btn primary" id="mainBtn">Prüfen</button>
+  </div>
+</main>
+
+<script src="/js/hos-results.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const norm = (s) => String(s).toLowerCase().trim().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]/g, '');
+  const R = HoSResults.init({ app: 'vu1d-lzk', title: 'VU 1d – LZK-Training: Unsere Erde & Die Schöpfung' });
+
+  // =====================================================================================
+  // Themen und Teile (Inhalte nur aus den Lernunterlagen)
+  // =====================================================================================
+  const THEMES = {
+    erde: { name: 'Unsere Erde', parts: ['e1', 'e2', 'e3'] },
+    schoepfung: { name: 'Die Schöpfung', parts: ['s1', 's2', 's3'] }
+  };
+  const PARTS = {
+    e1: { name: 'Teil 1 · Kontinente und Weltmeere', short: 'Kontinente & Weltmeere', img: 'MiniHoS_Forschen_Globus',
+      merke: ['<b>7 Kontinente:</b> Europa, Asien, Nordamerika, Südamerika, Afrika, Australien (Ozeanien), Antarktis', '<b>Asien</b> = größter Kontinent (48 Länder, höchste Berge der Erde)', '<b>Afrika</b> = zweitgrößter Kontinent, 54 Länder, viele Wüsten (Sahara)', '<b>Australien</b> = kleinster Kontinent, 14 Länder', '<b>Europa:</b> 44 Länder, gemäßigte Klimazone, Österreich liegt in Europa', '<b>Nordamerika:</b> 23 Länder (USA, Kanada, Mexiko) · <b>Südamerika:</b> 12 Länder, Amazonas-Regenwald, Anden', '<b>Antarktis:</b> keine ständigen Einwohner, von Eis bedeckt, nur Forschung', '<b>5 Weltmeere:</b> Pazifik (größtes, tiefstes, Marianengraben) · Atlantik (zweitgrößtes, Handelsroute) · Indischer Ozean (drittgrößtes, warm) · Arktischer Ozean (kleinstes, flachstes, Nordpol) · Südlicher Ozean (umgibt die Antarktis)'] },
+    e2: { name: 'Teil 2 · Das Gradnetz der Erde', short: 'Gradnetz', img: 'MiniHoS_Forschen_Fernglas',
+      merke: ['Das <b>Gradnetz</b> ist ein gedachtes Gitternetz aus <b>Breitenkreisen</b> und <b>Längenkreisen</b>.', '<b>Äquator</b> = längster Breitengrad, rund 40 000 km. 90 Breitengrade bis zum Nordpol, 90 bis zum Südpol. Je näher an den Polen, desto kürzer.', '<b>Längengrade</b> (Meridiane) verlaufen von Pol zu Pol, alle gleich lang: ca. 20 000 km.', '<b>Nullmeridian</b> durch Greenwich (London). 180 Längengrade nach Osten, 180 nach Westen.', '<b>Koordinaten:</b> zuerst Breite (N/S), dann Länge (O/W). Paris: 49° N / 2° O. ° = Grad.', '<b>Himmelsrichtungen:</b> N, O, S, W – dazwischen NO, SO, SW, NW (Windrose).'] },
+    e3: { name: 'Teil 3 · Mit Karten und Atlas arbeiten', short: 'Karten & Atlas', img: 'MiniHoS_Forschen_Lupe',
+      merke: ['Landkarten zeigen <b>kleinere</b> und <b>vereinfachte</b> Ausschnitte der Erdoberfläche.', '<b>Titel</b>: was die Karte zeigt · <b>Legende</b>: erklärt die Symbole · <b>Maßstab</b>: wie stark verkleinert · <b>Gradnetz</b>: Koordinaten · <b>Suchgitter</b>: Felder mit Buchstaben und Zahlen', '<b>Namensregister</b>: ganz hinten im Atlas, alphabetisch. Traunsee 27 E3 = Seite 27, Feld E3.', '<b>Maßstab:</b> 1 : 1000 = Verkleinerung · 2 : 1 = Vergrößerung · 1 : 1 = gleich groß', '<b>Höhenstufen:</b> Tiefland grün, Hügelland gelb, Bergland hellbraun, Hochgebirge dunkelbraun, Gletscher weiß, Meer blau. Je höher, desto dunkler braun; je tiefer, desto dunkler blau.', '<b>Physische Karten</b> zeigen Höhen, Gewässer, Orte, Grenzen → Orientierung. <b>Thematische Karten</b> zeigen ein Thema (Wirtschaft, Religion, Staaten) → nicht zur Orientierung.'] },
+    s1: { name: 'Teil 1 · Vom Urknall zur Erde', short: 'Urknall & Sonnensystem', img: 'MiniHoS_Forschen_Fernrohr',
+      merke: ['<b>Urknall</b> vor ca. <b>13,8 Milliarden</b> Jahren. Das Universum war extrem heiß und dicht, seitdem dehnt es sich aus und kühlt ab.', 'Der Urknall war <b>keine Explosion</b> an einem Ort – der Raum selbst dehnte sich aus.', 'Danach: erste Sterne aus Gaswolken, viele Sterne bilden Galaxien.', 'Vor <b>4,6 Mrd.</b> Jahren: Sonne (in der Milchstraße) und Planeten, auch die Erde. Vor 3,5 Mrd. J.: erstes Leben im Wasser. Vor 230 Mio. J.: erste Dinosaurier. Vor 300 000 J.: Homo sapiens.', 'Größe: Universum ➜ Milchstraße ➜ Sonnensystem ➜ Erde', 'Sonnensystem: Sonne + Erde + 7 weitere Planeten, Monde, Zwergplaneten, Asteroiden, Kometen. Die Sonne ist ein <b>Stern</b>.', 'Woher wir das wissen: Licht ferner Sterne, Alter von Gesteinen, Fossilien → wissenschaftliche Modelle.'] },
+    s2: { name: 'Teil 2 · Die vier Erdzeitalter', short: 'Erdzeitalter', img: 'MiniHoS_Forschen_Lupe-Blatt',
+      merke: ['Die Erde ist ca. <b>4,6 Mrd.</b> Jahre alt.', '<b>1 Erdurzeit</b> (ab 4,6 Mrd.): glühend heiß, Vulkane, Meteoriten, Erdkruste, Meere, erste Einzeller → Sauerstoff', '<b>2 Erdaltertum</b> (ab 540 Mio.): Trilobiten, Fische, Muscheln; Leben geht an Land (Fisch ➜ Amphibie ➜ Reptil); Farnwälder → Steinkohle; Pangäa; Massenaussterben', '<b>3 Erdmittelalter</b> (ab 252 Mio.): Dinosaurier, Flugsaurier, Meeresreptilien, erste Säugetiere und Vögel; vor 66 Mio. Asteroid → Dinosaurier sterben aus (außer Vögeln)', '<b>4 Erdneuzeit</b> (ab 66 Mio. bis heute): Säugetiere (Mammut, Wal, Fledermaus), Kontinente wandern, Eiszeiten, Vorfahren des Menschen in Afrika, Homo sapiens seit ca. 300 000 Jahren', 'Steinkohle: Farnwälder ➜ sterben ab, Schlamm deckt zu ➜ nach Millionen Jahren Steinkohle', 'Erdgeschichte als ein Tag: Erdurzeit bis fast 21 Uhr, Dinosaurier sterben ca. 23:39 Uhr aus, Mensch 6 Sekunden vor Mitternacht.'] },
+    s3: { name: 'Teil 3 · Quellenkunde', short: 'Quellenkunde', img: 'MiniHoS_Lesen_Buch-Burg',
+      merke: ['<b>Quellen</b> sind Überreste aus der Vergangenheit. Forscher arbeiten wie Detektive.', '<b>Sachquelle</b> – anfassen (Steinbeil, Münze, Tonkrug)', '<b>Schriftquelle</b> – lesen (Brief, Tagebuch, Urkunde)', '<b>Bildquelle</b> – anschauen (Höhlenmalerei, Foto, Gemälde)', '<b>Mündliche Quelle</b> – hören (Interview mit Opa, Sage)', 'Ausgrabung: Ort suchen ➜ Schicht für Schicht abtragen ➜ mit Pinsel freilegen ➜ vermessen, fotografieren, beschriften ➜ im Labor untersuchen', 'Je <b>tiefer</b>, desto <b>älter</b> (meistens). Langsam graben, nicht mit dem Bagger!', '<b>Fossilien</b> = versteinerte Reste von Pflanzen und Tieren (Paläontologen). Zeitzeugen irren sich manchmal → mehrere Quellen vergleichen.'] }
+  };
+
+  // =====================================================================================
+  // Weltkarte (vereinfacht, eigene Zeichnung) – Länge/Breite → Bildpunkte
+  // =====================================================================================
+  const MW = 720, MH = 336;
+  const px = (lon) => (lon + 180) * 2, py = (lat) => (84 - lat) * 2;
+  const P = (pts) => 'M' + pts.map(([lo, la]) => px(lo).toFixed(1) + ' ' + py(la).toFixed(1)).join(' L') + ' Z';
+  const LAND = {
+    'Nordamerika': [
+      [[-168, 66], [-160, 71], [-145, 70], [-130, 70], [-118, 69], [-105, 68], [-95, 70], [-88, 68], [-82, 69], [-85, 64], [-95, 62], [-92, 57], [-85, 55], [-80, 52], [-78, 58], [-77, 62], [-70, 61], [-64, 60], [-60, 55], [-56, 52], [-60, 47], [-66, 44], [-70, 42], [-74, 40], [-76, 35], [-80, 32], [-81, 28], [-80, 25], [-82, 27], [-84, 30], [-89, 30], [-94, 29], [-97, 26], [-97, 22], [-95, 19], [-91, 18], [-88, 21], [-87, 16], [-84, 15], [-83, 11], [-80, 9], [-77, 8], [-80, 7.5], [-82, 8], [-86, 11], [-88, 13], [-92, 15], [-96, 16], [-101, 17], [-105, 20], [-106, 23], [-110, 24], [-112, 29], [-115, 30], [-117, 33], [-121, 35], [-124, 40], [-124, 46], [-125, 49], [-130, 54], [-135, 58], [-140, 60], [-147, 61], [-152, 59], [-158, 57], [-163, 55], [-158, 58], [-162, 60], [-165, 63]],
+      [[-73, 78], [-60, 82], [-30, 83], [-20, 78], [-22, 70], [-32, 68], [-42, 60], [-50, 63], [-55, 70], [-60, 76]],
+      [[-80, 73], [-68, 70], [-62, 66], [-66, 62], [-75, 64], [-80, 68]],
+      [[-120, 76], [-105, 78], [-90, 80], [-75, 82], [-90, 76], [-110, 74]],
+      [[-84, 22], [-78, 22.5], [-74, 20], [-80, 21]]
+    ],
+    'Südamerika': [
+      [[-77, 8], [-72, 12], [-63, 11], [-60, 9], [-52, 5], [-50, 0], [-44, -2], [-35, -5], [-35, -9], [-39, -14], [-40, -22], [-45, -24], [-48, -28], [-53, -34], [-58, -38], [-62, -39], [-65, -42], [-68, -50], [-69, -55], [-72, -54], [-74, -50], [-75, -45], [-73, -38], [-71, -30], [-70, -18], [-76, -14], [-81, -6], [-80, -1], [-78, 2]]
+    ],
+    'Europa': [
+      [[-5, 36], [-1, 37], [0, 40], [3, 42], [4, 43], [8, 44], [10, 44], [12, 42], [15, 40], [16, 38], [18, 40], [16, 41], [13, 44], [12, 45], [14, 45], [19, 41], [21, 38], [23, 37], [24, 40], [26, 41], [29, 41], [28, 43], [30, 45], [33, 46], [38, 47], [40, 46], [38, 45], [42, 43], [48, 44], [47, 47], [51, 47], [55, 50], [58, 55], [60, 60], [60, 69], [55, 69], [45, 68], [40, 66], [35, 69], [31, 70], [28, 71], [20, 70], [15, 68], [12, 65], [10, 63], [5, 62], [5, 59], [7, 58], [11, 59], [12, 56], [13, 55.5], [16, 57], [18, 60], [17, 62], [21, 65], [24, 66], [25, 64], [22, 61], [25, 60], [29, 60], [24, 59], [21, 57], [21, 55], [14, 54], [10, 54.5], [10, 57], [8, 57], [8, 54], [5, 53], [2, 51], [-2, 49], [-5, 48], [-1, 46], [-2, 43.5], [-9, 43], [-9, 37]],
+      [[-5, 50], [1, 51], [2, 53], [-2, 56], [-2, 58], [-5, 58.5], [-6, 56], [-3, 54], [-5, 52]],
+      [[-10, 52], [-6, 52], [-6, 55], [-8, 55], [-10, 54]],
+      [[-24, 64], [-14, 65], [-15, 66.5], [-22, 66.5]]
+    ],
+    'Asien': [
+      [[60, 69], [70, 73], [80, 73], [90, 76], [100, 78], [110, 74], [130, 72], [140, 72], [150, 71], [160, 70], [170, 70], [180, 68], [180, 65], [178, 63], [170, 60], [163, 60], [162, 56], [156, 51], [155, 57], [150, 59], [143, 59], [140, 54], [137, 54], [141, 48], [135, 43], [130, 42], [129, 35], [126, 35], [126, 38], [125, 40], [122, 40], [119, 39], [121, 37], [122, 31], [120, 28], [117, 24], [113, 22], [109, 21], [106, 19], [106, 16], [109, 12], [105, 9], [103, 10], [100, 13], [99, 9], [103, 1], [101, 3], [98, 8], [98, 16], [94, 17], [92, 22], [88, 22], [86, 20], [80, 15], [80, 10], [77, 8], [73, 16], [72, 21], [68, 23], [62, 25], [57, 26], [56, 24], [58, 23], [59, 21], [55, 17], [52, 16], [44, 12], [42, 16], [39, 21], [35, 28], [34, 31], [36, 35], [36, 36], [30, 36], [27, 37], [26, 40], [29, 41], [30, 41.5], [36, 41.5], [41, 41], [42, 43], [48, 44], [47, 47], [51, 47], [55, 50], [58, 55], [60, 60]],
+      [[130, 31], [135, 34], [140, 35], [142, 40], [141, 45], [144, 44], [140, 41], [136, 37], [131, 34]],
+      [[95, 6], [106, -6], [104, -6], [98, 1]],
+      [[109, 1], [117, 7], [119, 1], [116, -4], [110, -3]],
+      [[105, -6], [114, -8], [106, -7.5]],
+      [[120, 18], [122, 13], [126, 7], [124, 10], [121, 14]],
+      [[80, 9.5], [82, 7], [80, 6]]
+    ],
+    'Afrika': [
+      [[-17, 21], [-16, 28], [-10, 30], [-6, 36], [10, 37], [11, 33], [20, 31], [25, 32], [32, 31], [33, 27], [36, 22], [39, 15], [43, 12], [51, 12], [51, 10], [48, 5], [42, -1], [40, -5], [40, -11], [35, -20], [35, -24], [32, -28], [28, -33], [20, -35], [18, -33], [15, -27], [12, -17], [13, -12], [12, -6], [9, -1], [10, 3], [8, 4], [4, 6], [-2, 5], [-8, 4], [-13, 8], [-17, 13]],
+      [[44, -13], [50, -15], [47, -25], [44, -24], [43, -17]]
+    ],
+    'Australien': [
+      [[114, -22], [114, -34], [118, -35], [124, -34], [132, -31], [138, -35], [141, -38], [146, -39], [150, -37], [153, -31], [153, -25], [146, -19], [142, -11], [141, -17], [136, -15], [136, -12], [130, -11], [126, -14], [122, -18]],
+      [[145, -41], [148, -41], [147, -43.5]],
+      [[172, -34], [178, -38], [174, -41], [167, -46], [171, -44], [174, -39]],
+      [[131, -1], [141, -2], [150, -6], [147, -10], [141, -9], [137, -5], [132, -4]]
+    ],
+    'Antarktis': [
+      [[-180, -84], [180, -84], [180, -78], [160, -77], [150, -68], [120, -66], [90, -66], [60, -67], [30, -69], [0, -70], [-30, -75], [-55, -73], [-58, -64], [-62, -63], [-66, -67], [-75, -72], [-100, -73], [-130, -75], [-160, -77], [-180, -78]]
+    ]
+  };
+  const CONTS = Object.keys(LAND);
+  const CCOL = { 'Nordamerika': '#a3d977', 'Südamerika': '#d77aa4', 'Europa': '#d79be0', 'Asien': '#ef8a6f', 'Afrika': '#f3dc61', 'Australien': '#f5ad5b', 'Antarktis': '#eef6fa' };
+  const CNAME = { 'Australien': 'Australien (Ozeanien)' };
+
+  // Welches Meer liegt an dieser Stelle? (nur für Klicks aufs Wasser)
+  function westCoast(lat) {
+    const T = [[66, -165], [60, -150], [50, -127], [40, -124], [30, -116], [20, -105], [15, -94], [10, -85], [8, -79], [0, -80], [-10, -78], [-20, -71], [-30, -72], [-40, -74], [-55, -72], [-60, -66]];
+    for (let i = 0; i < T.length - 1; i++) {
+      const [a, x] = T[i], [b, y] = T[i + 1];
+      if (lat <= a && lat >= b) return x + (y - x) * (a - lat) / (a - b);
+    }
+    return -70;
+  }
+  function oceanAt(lon, lat) {
+    if (lat >= 67) return 'Arktischer Ozean';
+    if (lat <= -58) return 'Südlicher Ozean';
+    if (lon > -6 && lon < 42 && lat > 30 && lat < 47) return 'Nebenmeer';      // Mittelmeer, Schwarzes Meer
+    if (lon > 46 && lon < 56 && lat > 36 && lat < 47) return 'Nebenmeer';      // Kaspisches Meer
+    if (lon > -96 && lon < -76 && lat > 50) return 'Nebenmeer';                // Hudsonbucht
+    if (lon > 9 && lon < 31 && lat > 53) return 'Nebenmeer';                   // Ostsee
+    if (lon > 32 && lon < 44 && lat > 12 && lat < 30) return 'Nebenmeer';      // Rotes Meer
+    if (lon >= 147 || lon <= -170) return 'Pazifischer Ozean';
+    if (lon >= 100 && lat >= -8) return 'Pazifischer Ozean';
+    if (lon < westCoast(lat)) return 'Pazifischer Ozean';
+    if (lon >= 20 && lon < 147 && lat < 30) return 'Indischer Ozean';
+    if (lon < 20) return 'Atlantischer Ozean';
+    return 'Nebenmeer';
+  }
+  const OCEANS = ['Pazifischer Ozean', 'Atlantischer Ozean', 'Indischer Ozean', 'Arktischer Ozean', 'Südlicher Ozean'];
+  const ONAME = { 'Pazifischer Ozean': 'Pazifischer Ozean (Stiller Ozean)', 'Arktischer Ozean': 'Arktischer Ozean (Nordpolarmeer)', 'Südlicher Ozean': 'Südlicher Ozean (Antarktischer Ozean)' };
+
+  function mapSVG(opt) {
+    // opt: { colors: bool, highlight: name, clickLand, clickWater, grid: bool, gridLabels, points:[{lat,lon,label}], marks }
+    let s = '<svg viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg">';
+    s += '<rect id="water" x="0" y="0" width="' + MW + '" height="' + MH + '" fill="#a9dcf2" class="' + (opt.clickWater ? 'clickable' : '') + '"/>';
+    for (const c of CONTS) {
+      const fill = opt.highlight ? (c === opt.highlight ? 'var(--subject)' : '#d6d3d1') : opt.colors ? CCOL[c] : '#e7e2d6';
+      LAND[c].forEach(poly => { s += '<path d="' + P(poly) + '" fill="' + fill + '" class="land' + (opt.clickLand ? ' clickable' : '') + '" data-c="' + c + '"/>'; });
+    }
+    if (opt.grid) {
+      for (let lo = -150; lo <= 150; lo += 30) s += '<line x1="' + px(lo) + '" y1="0" x2="' + px(lo) + '" y2="' + MH + '" stroke="#5b8fb3" stroke-width="' + (opt.strong && lo === 0 ? 2.2 : .6) + '" stroke-dasharray="' + (lo === 0 && opt.strong ? '' : '3 3') + '" pointer-events="none"/>';
+      for (let la = -60; la <= 60; la += 30) s += '<line x1="0" y1="' + py(la) + '" x2="' + MW + '" y2="' + py(la) + '" stroke="#5b8fb3" stroke-width="' + (opt.strong && la === 0 ? 2.2 : .6) + '" stroke-dasharray="' + (la === 0 && opt.strong ? '' : '3 3') + '" pointer-events="none"/>';
+    }
+    if (opt.grid && opt.gridLabels) {
+      for (let la = -60; la <= 60; la += 30) s += '<text x="4" y="' + (py(la) - 3) + '" font-size="11" font-weight="700" fill="#1e3a5f" pointer-events="none">' + (la === 0 ? '0°' : Math.abs(la) + '° ' + (la > 0 ? 'N' : 'S')) + '</text>';
+      for (let lo = -150; lo <= 150; lo += 30) s += '<text x="' + (px(lo) + 3) + '" y="12" font-size="11" font-weight="700" fill="#1e3a5f" pointer-events="none">' + (lo === 0 ? '0°' : Math.abs(lo) + '° ' + (lo > 0 ? 'O' : 'W')) + '</text>';
+    }
+    (opt.points || []).forEach(p => {
+      s += '<g class="' + (opt.clickPoints ? 'clickable' : '') + '" data-p="' + p.label + '"><circle cx="' + px(p.lon) + '" cy="' + py(p.lat) + '" r="7" fill="#dc2626" stroke="#fff" stroke-width="2"/>' +
+        '<text x="' + (px(p.lon) + 9) + '" y="' + (py(p.lat) + 5) + '" font-size="15" font-weight="900" fill="#7f1d1d" stroke="#fff" stroke-width="3" paint-order="stroke">' + p.label + '</text></g>';
+    });
+    s += '<g id="marks"></g></svg>';
+    return s;
+  }
+  function svgPoint(svg, ev) {
+    const r = svg.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) / r.width * MW, y: (ev.clientY - r.top) / r.height * MH };
+  }
+  function dropMark(svg, x, y, ok) {
+    svg.querySelector('#marks').innerHTML = '<circle class="mark" cx="' + x + '" cy="' + y + '" r="8" fill="' + (ok ? '#16a34a' : '#dc2626') + '" stroke="#fff" stroke-width="2.5"/>';
+  }
+
+  // Windrose
+  const DIRS = [['N', 'Norden', 0], ['NO', 'Nordosten', 45], ['O', 'Osten', 90], ['SO', 'Südosten', 135], ['S', 'Süden', 180], ['SW', 'Südwesten', 225], ['W', 'Westen', 270], ['NW', 'Nordwesten', 315]];
+  function roseSVG(showLabels) {
+    let s = '<svg viewBox="0 0 300 300" style="max-width:330px">';
+    s += '<circle cx="150" cy="150" r="118" fill="#f8fafc" stroke="#cbd5e1"/>';
+    DIRS.forEach(([k, , a]) => {
+      const main = k.length === 1, len = main ? 112 : 80, w = main ? 20 : 14;
+      const rad = a * Math.PI / 180;
+      const tx = 150 + len * Math.sin(rad), ty = 150 - len * Math.cos(rad);
+      const lx = 150 + w * Math.sin(rad + Math.PI / 2), ly = 150 - w * Math.cos(rad + Math.PI / 2);
+      const rx = 150 + w * Math.sin(rad - Math.PI / 2), ry = 150 - w * Math.cos(rad - Math.PI / 2);
+      s += '<path class="clickable" data-d="' + k + '" d="M' + lx + ' ' + ly + ' L' + tx + ' ' + ty + ' L' + rx + ' ' + ry + ' Z" fill="' + (main ? '#3b6fa8' : '#9cc3e6') + '" stroke="#1e3a5f" stroke-width="1"/>';
+      const ox = 150 + (len + 16) * Math.sin(rad), oy = 150 - (len + 16) * Math.cos(rad) + 5;
+      if (showLabels || k === 'N') s += '<text x="' + ox + '" y="' + oy + '" text-anchor="middle" font-size="16" font-weight="900" fill="#1e3a5f">' + k + '</text>';
+    });
+    s += '<circle cx="150" cy="150" r="6" fill="#1e3a5f"/><g id="marks"></g></svg>';
+    return s;
+  }
+
+  // Suchgitter
+  const SYMS = [['🏰', 'die Burg'], ['✈️', 'der Flughafen'], ['⛰️', 'der Berg'], ['⛪', 'die Kirche'], ['🌲', 'der Wald'], ['🏠', 'das Haus'], ['⚓', 'der Hafen'], ['🏞️', 'der See']];
+  const COLS = 'ABCDEF', ROWS = 4;
+  function gridSVG(items) {
+    const cw = 80, ch = 62, ox = 30, oy = 26;
+    let s = '<svg viewBox="0 0 ' + (ox + cw * COLS.length + 6) + ' ' + (oy + ch * ROWS + 6) + '" style="max-width:560px">';
+    for (let c = 0; c < COLS.length; c++) s += '<text x="' + (ox + c * cw + cw / 2) + '" y="18" text-anchor="middle" font-size="16" font-weight="900" fill="#475569">' + COLS[c] + '</text>';
+    for (let r = 0; r < ROWS; r++) s += '<text x="14" y="' + (oy + r * ch + ch / 2 + 6) + '" text-anchor="middle" font-size="16" font-weight="900" fill="#475569">' + (r + 1) + '</text>';
+    for (let c = 0; c < COLS.length; c++) for (let r = 0; r < ROWS; r++) {
+      s += '<rect class="clickable" data-f="' + COLS[c] + (r + 1) + '" x="' + (ox + c * cw) + '" y="' + (oy + r * ch) + '" width="' + cw + '" height="' + ch + '" fill="' + ((c + r) % 2 ? '#eef7e8' : '#e4f1dc') + '" stroke="#94a3b8"/>';
+    }
+    items.forEach(it => {
+      const c = COLS.indexOf(it.f[0]), r = +it.f.slice(1) - 1;
+      s += '<text x="' + (ox + c * cw + cw / 2) + '" y="' + (oy + r * ch + ch / 2 + 11) + '" text-anchor="middle" font-size="30" pointer-events="none">' + it.sym + '</text>';
+    });
+    s += '<g id="marks"></g></svg>';
+    return s;
+  }
+
+  // Erdschichten (Ausgrabung)
+  const FINDS = [['🪙', 'Münze'], ['🏺', 'Tonkrug'], ['🪓', 'Steinbeil'], ['🦴', 'Knochen'], ['🐚', 'Muschel-Fossil']];
+  function layersSVG(finds) {
+    const cols = ['#c8a477', '#a88458', '#86663f', '#634a2c'];
+    let s = '<svg viewBox="0 0 520 300" style="max-width:560px">';
+    s += '<rect x="0" y="0" width="520" height="40" fill="#bfe3f5"/><text x="12" y="27" font-size="15" font-weight="800" fill="#1e3a5f">Oberfläche</text>';
+    for (let i = 0; i < 4; i++) {
+      s += '<path class="clickable" data-l="' + i + '" d="M0 ' + (40 + i * 65) + ' Q130 ' + (32 + i * 65) + ' 260 ' + (44 + i * 65) + ' T520 ' + (40 + i * 65) + ' L520 ' + (105 + i * 65) + ' Q390 ' + (113 + i * 65) + ' 260 ' + (101 + i * 65) + ' T0 ' + (105 + i * 65) + ' Z" fill="' + cols[i] + '" stroke="#5b4630"/>';
+      s += '<text x="' + (110 + (i % 2) * 260) + '" y="' + (84 + i * 65) + '" font-size="30" pointer-events="none">' + finds[i][0] + '</text>';
+      s += '<text x="' + (150 + (i % 2) * 260) + '" y="' + (80 + i * 65) + '" font-size="14" font-weight="800" fill="#fff" pointer-events="none">' + finds[i][1] + '</text>';
+    }
+    s += '<g id="marks"></g></svg>';
+    return s;
+  }
+
+  // =====================================================================================
+  // Aufgabensammlung
+  // =====================================================================================
+  const BANK = [];
+  let nid = 0;
+  const add = (part, type, o) => BANK.push(Object.assign({ id: part + '-' + (nid++), part, type }, o));
+  const mc = (part, q, a, wrong, why) => add(part, 'mc', { q, a, opts: [a].concat(wrong), why });
+  const tf = (part, s, a, why) => add(part, 'tf', { s, a, why });
+  const inp = (part, q, a, why) => add(part, 'input', { q, a: [].concat(a), why });
+
+  // ---------------- Unsere Erde · Teil 1 ----------------
+  CONTS.forEach(c => add('e1', 'mapclick', { kind: 'cont', target: c, q: 'Klicke auf der Weltkarte auf: <b>' + (CNAME[c] || c) + '</b>' }));
+  CONTS.forEach(c => add('e1', 'mapname', { target: c, q: 'Welcher Kontinent ist auf der Karte markiert?' }));
+  OCEANS.forEach(o => add('e1', 'mapclick', { kind: 'ocean', target: o, q: 'Klicke auf der Weltkarte auf den <b>' + (ONAME[o] || o) + '</b>.' }));
+  mc('e1', 'Wie viele Kontinente gibt es?', '7', ['5', '6', '8'], 'Es gibt 7 Kontinente.');
+  mc('e1', 'Wie viele Weltmeere gibt es?', '5', ['3', '4', '7'], 'Es gibt 5 Weltmeere.');
+  mc('e1', 'Welcher Kontinent ist der größte?', 'Asien', ['Afrika', 'Nordamerika', 'Europa'], 'Asien ist der größte Kontinent.');
+  mc('e1', 'Welcher Kontinent ist der kleinste?', 'Australien (Ozeanien)', ['Europa', 'Antarktis', 'Südamerika'], 'Australien (Ozeanien) ist der kleinste Kontinent.');
+  mc('e1', 'Welcher Kontinent ist der zweitgrößte?', 'Afrika', ['Asien', 'Europa', 'Südamerika'], 'Afrika ist der zweitgrößte Kontinent.');
+  mc('e1', 'Auf welchem Kontinent liegt Österreich?', 'Europa', ['Asien', 'Afrika', 'Nordamerika'], 'Österreich liegt in Europa.');
+  mc('e1', 'Welcher Kontinent hat keine ständigen Einwohner?', 'Antarktis', ['Australien', 'Asien', 'Afrika'], 'In der Antarktis leben keine Menschen ständig – sie wird nur für die Forschung genutzt.');
+  mc('e1', 'Welcher Kontinent hat die meisten Länder (54)?', 'Afrika', ['Asien', 'Europa', 'Nordamerika'], 'Afrika hat 54 Länder.');
+  mc('e1', 'Wo liegt der Amazonas-Regenwald?', 'Südamerika', ['Afrika', 'Asien', 'Australien'], 'Der Amazonas-Regenwald liegt in Südamerika – dort sind auch die hohen Anden.');
+  mc('e1', 'Auf welchem Kontinent liegt die Sahara?', 'Afrika', ['Asien', 'Australien', 'Südamerika'], 'Afrika hat viele Wüsten, z. B. die Sahara.');
+  mc('e1', 'Wo stehen die höchsten Berge der Erde?', 'in Asien', ['in Europa', 'in Südamerika', 'in Nordamerika'], 'Asien hat die höchsten Berge der Erde.');
+  mc('e1', 'Zu welchem Kontinent gehören die USA, Kanada und Mexiko?', 'Nordamerika', ['Südamerika', 'Europa', 'Asien'], 'USA, Kanada und Mexiko liegen in Nordamerika.');
+  mc('e1', 'Welcher Kontinent ist von Eis bedeckt und sehr kalt?', 'Antarktis', ['Europa', 'Nordamerika', 'Asien'], 'Die Antarktis ist von Eis bedeckt.');
+  mc('e1', 'Auf welchem Kontinent ist Australien das größte Land?', 'Australien (Ozeanien)', ['Asien', 'Afrika', 'Antarktis'], 'Australien ist das größte Land auf dem Kontinent Australien (Ozeanien), dazu kommen viele Inseln im Pazifik.');
+  mc('e1', 'Welches Weltmeer ist das größte und tiefste?', 'Pazifischer Ozean', ['Atlantischer Ozean', 'Indischer Ozean', 'Südlicher Ozean'], 'Der Pazifik (Stiller Ozean) ist das größte und tiefste Weltmeer.');
+  mc('e1', 'Welches Weltmeer ist das kleinste und flachste?', 'Arktischer Ozean', ['Indischer Ozean', 'Südlicher Ozean', 'Atlantischer Ozean'], 'Der Arktische Ozean (Nordpolarmeer) ist das kleinste und flachste Weltmeer.');
+  mc('e1', 'Welches Weltmeer ist das zweitgrößte?', 'Atlantischer Ozean', ['Indischer Ozean', 'Pazifischer Ozean', 'Arktischer Ozean'], 'Der Atlantik ist das zweitgrößte Weltmeer.');
+  mc('e1', 'Welches Weltmeer ist das drittgrößte?', 'Indischer Ozean', ['Atlantischer Ozean', 'Arktischer Ozean', 'Südlicher Ozean'], 'Der Indische Ozean ist das drittgrößte Weltmeer.');
+  mc('e1', 'Wo liegt der Marianengraben, die tiefste Stelle der Meere?', 'im Pazifischen Ozean', ['im Atlantischen Ozean', 'im Indischen Ozean', 'im Arktischen Ozean'], 'Der Marianengraben liegt im Pazifik.');
+  mc('e1', 'Welches Weltmeer liegt rund um den Nordpol?', 'Arktischer Ozean', ['Südlicher Ozean', 'Pazifischer Ozean', 'Atlantischer Ozean'], 'Der Arktische Ozean liegt rund um den Nordpol und ist meist von Eis bedeckt.');
+  mc('e1', 'Welches Weltmeer umgibt die Antarktis?', 'Südlicher Ozean', ['Arktischer Ozean', 'Indischer Ozean', 'Atlantischer Ozean'], 'Der Südliche (Antarktische) Ozean umgibt die Antarktis.');
+  mc('e1', 'Welches Weltmeer liegt zwischen Europa/Afrika und Amerika?', 'Atlantischer Ozean', ['Pazifischer Ozean', 'Indischer Ozean', 'Arktischer Ozean'], 'Der Atlantik liegt zwischen Europa/Afrika und Amerika – eine wichtige Handelsroute.');
+  mc('e1', 'Welches Weltmeer liegt zwischen Afrika, Asien und Australien?', 'Indischer Ozean', ['Pazifischer Ozean', 'Atlantischer Ozean', 'Südlicher Ozean'], 'Der Indische Ozean liegt zwischen Afrika, Asien und Australien.');
+  mc('e1', 'Wie heißt der Pazifische Ozean noch?', 'Stiller Ozean', ['Nordpolarmeer', 'Antarktischer Ozean', 'Großer Atlantik'], 'Der Pazifik heißt auch Stiller Ozean.');
+  mc('e1', 'Wie heißt der Arktische Ozean noch?', 'Nordpolarmeer', ['Stiller Ozean', 'Antarktischer Ozean', 'Eismeer des Südens'], 'Arktischer Ozean = Nordpolarmeer.');
+  tf('e1', 'Der Indische Ozean hat warmes Wasser und viele Inseln.', true, 'Stimmt: warmes Wasser, viele Inseln.');
+  tf('e1', 'Der Südliche Ozean ist wichtig für das Klima und hat starke Meeresströmungen.', true, 'Stimmt.');
+  tf('e1', 'Europa hat mehr Länder als Afrika.', false, 'Falsch: Europa hat 44, Afrika 54 Länder.');
+  tf('e1', 'Südamerika hat 12 Länder.', true, 'Stimmt: Südamerika hat 12 Länder.');
+  tf('e1', 'Nordamerika hat 23 Länder.', true, 'Stimmt.');
+  tf('e1', 'Europa liegt in der gemäßigten Klimazone.', true, 'Stimmt.');
+  tf('e1', 'Der Atlantik ist das größte Weltmeer.', false, 'Falsch: Der Pazifik ist das größte Weltmeer, der Atlantik das zweitgrößte.');
+  tf('e1', 'In der Antarktis wohnen viele Menschen.', false, 'Falsch: Die Antarktis hat keine ständigen Einwohner.');
+  add('e1', 'match', { q: 'Wie viele Länder hat der Kontinent? Ordne zu.', pairs: [['Afrika', '54 Länder'], ['Asien', '48 Länder'], ['Europa', '44 Länder'], ['Nordamerika', '23 Länder'], ['Australien (Ozeanien)', '14 Länder'], ['Südamerika', '12 Länder']] });
+  add('e1', 'match', { q: 'Was passt zu welchem Kontinent?', pairs: [['Amazonas-Regenwald, Anden', 'Südamerika'], ['höchste Berge der Erde', 'Asien'], ['Sahara, große Tierwelt', 'Afrika'], ['nur für die Forschung genutzt', 'Antarktis'], ['Österreich, gemäßigte Klimazone', 'Europa'], ['USA, Kanada, Mexiko', 'Nordamerika']] });
+  add('e1', 'match', { q: 'Was passt zu welchem Weltmeer?', pairs: [['größtes und tiefstes Weltmeer', 'Pazifischer Ozean'], ['zweitgrößtes Weltmeer, wichtige Handelsroute', 'Atlantischer Ozean'], ['drittgrößtes Weltmeer, warmes Wasser', 'Indischer Ozean'], ['kleinstes und flachstes Weltmeer', 'Arktischer Ozean'], ['umgibt die Antarktis', 'Südlicher Ozean']] });
+  add('e1', 'order', { q: 'Ordne die Weltmeere nach der Größe – das größte zuerst.', items: ['Pazifischer Ozean', 'Atlantischer Ozean', 'Indischer Ozean'] });
+  add('e1', 'sort', { q: 'Kontinent oder Weltmeer?', cats: ['Kontinent', 'Weltmeer'], items: [['Antarktis', 'Kontinent'], ['Arktischer Ozean', 'Weltmeer'], ['Südamerika', 'Kontinent'], ['Südlicher Ozean', 'Weltmeer'], ['Australien', 'Kontinent'], ['Indischer Ozean', 'Weltmeer']] });
+
+  // ---------------- Unsere Erde · Teil 2 ----------------
+  mc('e2', 'Was ist das Gradnetz?', 'ein gedachtes Gitternetz um die Erde', ['ein Netz aus Kabeln um die Erde', 'die Grenzen zwischen den Ländern', 'ein Netz aus Straßen auf der Karte'], 'Das Gradnetz ist ein gedachtes Gitternetz aus Breitenkreisen und Längenkreisen.');
+  mc('e2', 'Woraus besteht das Gradnetz?', 'aus Breitenkreisen und Längenkreisen', ['aus Ländergrenzen und Flüssen', 'aus Kontinenten und Weltmeeren', 'aus Nordpol und Südpol'], 'Das Gradnetz besteht aus Breitenkreisen und Längenkreisen.');
+  mc('e2', 'Wofür braucht man das Gradnetz?', 'um genau zu bestimmen, wo ein Ort liegt', ['um das Wetter vorherzusagen', 'um die Höhe der Berge zu messen', 'um die Zeit zu messen'], 'Mit dem Gradnetz kann man sich orientieren und genau bestimmen, wo ein Ort liegt.');
+  inp('e2', 'Wie heißt der längste Breitengrad?', ['Äquator', 'der Äquator'], 'Der Äquator ist der längste Breitengrad.');
+  mc('e2', 'Wie lang ist der Äquator ungefähr?', 'rund 40 000 km', ['rund 20 000 km', 'rund 4 000 km', 'rund 400 000 km'], 'Der Äquator ist rund 40 000 km lang.');
+  mc('e2', 'Wie lang ist ein Längengrad ungefähr?', 'ca. 20 000 km', ['ca. 40 000 km', 'ca. 2 000 km', 'jeder ist verschieden lang'], 'Alle Längengrade sind gleich lang: ca. 20 000 km.');
+  mc('e2', 'Wie viele Breitengrade gibt es vom Äquator bis zum Nordpol?', '90', ['180', '360', '45'], '90 Breitengrade bis zum Nordpol und 90 bis zum Südpol.');
+  mc('e2', 'Wie viele Längengrade gibt es vom Nullmeridian nach Osten?', '180', ['90', '360', '100'], '180 Längengrade nach Osten und 180 nach Westen.');
+  inp('e2', 'Wie heißt der wichtigste Längengrad?', ['Nullmeridian', 'der Nullmeridian'], 'Der wichtigste Längengrad ist der Nullmeridian.');
+  mc('e2', 'Durch welchen Ort verläuft der Nullmeridian?', 'durch Greenwich, einen Stadtteil von London', ['durch Paris', 'durch Wien', 'durch den Nordpol und Graz'], 'Der Nullmeridian verläuft durch Greenwich, einen Stadtteil von London.');
+  inp('e2', 'Wie sagt man noch zu einem Längengrad?', ['Meridian', 'der Meridian'], 'Ein anderes Wort für Längengrad ist Meridian.');
+  mc('e2', 'Wie verlaufen die Längengrade?', 'vom Nordpol zum Südpol', ['rund um die Erde wie Gürtel', 'nur auf der Nordhalbkugel', 'parallel zum Äquator'], 'Längengrade verlaufen vom Nordpol zum Südpol.');
+  mc('e2', 'Was passiert mit den Breitenkreisen, je näher sie an den Polen sind?', 'Sie werden kürzer.', ['Sie werden länger.', 'Sie bleiben gleich lang.', 'Sie werden dicker.'], 'Je näher an den Polen, desto kürzer. Am Pol ist nur noch ein Punkt.');
+  mc('e2', 'Was ist am Nordpol vom Breitenkreis übrig?', 'nur noch ein Punkt', ['ein großer Kreis', 'der Äquator', 'ein Längengrad'], 'Am Pol ist nur noch ein Punkt.');
+  mc('e2', 'Wie heißen die beiden Angaben Breitengrad und Längengrad zusammen?', 'geographische Koordinaten', ['Himmelsrichtungen', 'Maßstab', 'Suchgitter'], 'Breitengrad + Längengrad = geographische Koordinaten.');
+  mc('e2', 'Was kommt bei Koordinaten immer zuerst?', 'die Breite (N/S)', ['die Länge (O/W)', 'die Höhe', 'das Land'], 'Zuerst kommt immer die Breite (N/S), dann die Länge (O/W).');
+  mc('e2', 'Was bedeutet das Zeichen ° ?', 'Grad', ['Kilometer', 'Minute', 'Norden'], 'Das Zeichen ° bedeutet „Grad“.');
+  mc('e2', 'Paris liegt auf 49° N / 2° O. Was bedeutet „49° N“?', 'Paris liegt 49° nördlich vom Äquator.', ['Paris liegt 49° östlich vom Nullmeridian.', 'Paris liegt 49 km nördlich von London.', 'Paris liegt auf dem Nullmeridian.'], 'Die 1. Zahl ist der Breitengrad: 49° nördliche Breite.');
+  mc('e2', 'Paris liegt auf 49° N / 2° O. Was bedeutet „2° O“?', 'Paris liegt 2° östlich vom Nullmeridian.', ['Paris liegt 2° nördlich vom Äquator.', 'Paris liegt 2 km östlich von London.', 'Paris hat 2 Grad Celsius.'], 'Die 2. Zahl ist der Längengrad: 2° östliche Länge.');
+  mc('e2', 'Was bedeutet S bei einer Koordinate?', 'südlich vom Äquator', ['südlich vom Nullmeridian', 'Sonnensystem', 'Stadt'], 'N = nördlich vom Äquator, S = südlich vom Äquator.');
+  mc('e2', 'Was bedeutet W bei einer Koordinate?', 'westlich vom Nullmeridian', ['westlich vom Äquator', 'Weltmeer', 'Winter'], 'O = östlich, W = westlich vom Nullmeridian.');
+  tf('e2', 'Alle Breitengrade sind gleich lang.', false, 'Falsch: Der Äquator ist der längste, zu den Polen hin werden sie kürzer. Gleich lang sind die Längengrade.');
+  tf('e2', 'Alle Längengrade sind gleich lang.', true, 'Stimmt: alle ca. 20 000 km.');
+  tf('e2', 'Bei Koordinaten schreibt man zuerst die Länge, dann die Breite.', false, 'Falsch: zuerst die Breite (N/S), dann die Länge (O/W).');
+  tf('e2', 'Himmelsrichtungen geben die Richtung, aber auch die Lage eines Ortes an.', true, 'Stimmt.');
+  mc('e2', 'Wie heißt die Zeichnung mit allen Himmelsrichtungen?', 'Windrose', ['Legende', 'Suchgitter', 'Gradnetz'], 'Himmelsrichtungen werden in einer Windrose dargestellt.');
+  mc('e2', 'Welche Himmelsrichtung liegt zwischen Norden und Osten?', 'Nordosten', ['Nordwesten', 'Südosten', 'Südwesten'], 'Zwischen Norden und Osten liegt Nordosten.');
+  mc('e2', 'Welche Himmelsrichtung liegt zwischen Süden und Westen?', 'Südwesten', ['Südosten', 'Nordwesten', 'Nordosten'], 'Zwischen Süden und Westen liegt Südwesten.');
+  mc('e2', 'Welche Richtung liegt genau gegenüber von Nordosten?', 'Südwesten', ['Südosten', 'Nordwesten', 'Westen'], 'Gegenüber von Nordosten liegt Südwesten.');
+  mc('e2', 'Welche Richtung liegt genau gegenüber von Osten?', 'Westen', ['Norden', 'Süden', 'Südosten'], 'Osten und Westen liegen einander gegenüber.');
+  mc('e2', 'Wie viele Haupthimmelsrichtungen gibt es?', '4', ['8', '2', '6'], '4 Haupthimmelsrichtungen: Norden, Osten, Süden, Westen.');
+  DIRS.forEach(d => add('e2', 'rose', { target: d[0], q: 'Klicke in der Windrose auf <b>' + d[1] + '</b>.' }));
+  for (let i = 0; i < 8; i++) add('e2', 'coord', { q: 'Welche Koordinaten hat der rote Punkt?' });
+  for (let i = 0; i < 4; i++) add('e2', 'coordclick', { q: 'Klicke auf den Punkt mit diesen Koordinaten:' });
+  add('e2', 'lineclick', { target: 'aeq', q: 'Klicke auf den <b>Äquator</b>.' });
+  add('e2', 'lineclick', { target: 'null', q: 'Klicke auf den <b>Nullmeridian</b>.' });
+  add('e2', 'hemi', { ns: 'N', ow: 'W', q: 'Klicke auf einen Ort, der <b>nördlich vom Äquator</b> und <b>westlich vom Nullmeridian</b> liegt.' });
+  add('e2', 'hemi', { ns: 'S', ow: 'O', q: 'Klicke auf einen Ort, der <b>südlich vom Äquator</b> und <b>östlich vom Nullmeridian</b> liegt.' });
+  add('e2', 'hemi', { ns: 'S', ow: 'W', q: 'Klicke auf einen Ort mit den Angaben <b>S</b> und <b>W</b>.' });
+  add('e2', 'hemi', { ns: 'N', ow: 'O', q: 'Klicke auf einen Ort mit den Angaben <b>N</b> und <b>O</b>.' });
+  add('e2', 'match', { q: 'Breitengrade oder Längengrade? Ordne zu.', pairs: [['verlaufen vom Nordpol zum Südpol', 'Längengrade'], ['Kreise, die sich um die Erde legen', 'Breitengrade'], ['alle gleich lang', 'Längengrade'], ['werden zu den Polen hin kürzer', 'Breitengrade']] });
+
+  // ---------------- Unsere Erde · Teil 3 ----------------
+  mc('e3', 'Was zeigen Landkarten?', 'kleinere und vereinfachte Ausschnitte der Erdoberfläche', ['die Erde genau so groß wie in Wirklichkeit', 'nur die Weltmeere', 'Fotos von Städten'], 'Landkarten zeigen kleinere und vereinfacht dargestellte Ausschnitte der Erdoberfläche.');
+  mc('e3', 'Wozu benutzen wir Landkarten?', 'um uns zu orientieren und Informationen zu bekommen', ['nur zum Anmalen', 'um die Uhrzeit abzulesen', 'um Wörter zu übersetzen'], 'Wir benutzen Karten, um uns zu orientieren oder Informationen über Orte, Länder und Kontinente zu bekommen.');
+  add('e3', 'match', { q: 'Die Bestandteile einer Karte: Ordne zu.', pairs: [['Titel', 'sagt, was die Karte zeigt'], ['Legende', 'erklärt die Symbole der Karte'], ['Maßstab', 'zeigt, wie stark die Karte verkleinert ist'], ['Gradnetz', 'Breiten- und Längengrade mit Koordinaten'], ['Suchgitter', 'Felder mit Buchstaben und Zahlen am Kartenrand']] });
+  mc('e3', 'Welcher Teil der Karte erklärt die Symbole?', 'die Legende', ['der Titel', 'der Maßstab', 'das Suchgitter'], 'Die Legende erklärt die Symbole, z. B. Staatsgrenze, Fluss, Burg, Flughafen.');
+  mc('e3', 'Welcher Teil der Karte sagt, was die Karte zeigt?', 'der Titel', ['die Legende', 'das Gradnetz', 'der Maßstab'], 'Der Titel sagt, was die Karte zeigt.');
+  mc('e3', 'Was zeigt der Maßstab?', 'wie stark die Karte verkleinert ist', ['was die Symbole bedeuten', 'wo Norden ist', 'auf welcher Seite der Ort steht'], 'Der Maßstab zeigt, wie stark etwas im Gegensatz zur Wirklichkeit verkleinert oder vergrößert ist.');
+  mc('e3', 'Was findest du in der Legende?', 'Symbole wie Staatsgrenze, Fluss, Burg und Flughafen', ['das Namensregister', 'die Seitenzahlen des Atlas', 'den Titel der Karte'], 'Die Legende erklärt Symbole, z. B. Staatsgrenze, Fluss, Burg, Flughafen, Berg mit Höhenangabe, Städte nach Einwohnerzahl.');
+  mc('e3', 'Wo steht das Namensregister im Atlas?', 'ganz hinten, alphabetisch geordnet', ['ganz vorne, nach Seiten geordnet', 'in der Mitte, nach Ländern geordnet', 'auf jeder Karte unten'], 'Das Namensregister ist ganz hinten im Atlas und alphabetisch geordnet.');
+  mc('e3', 'Im Namensregister steht: „Traunsee 27 E3“. Was bedeutet 27?', 'Seite 27', ['27 km lang', 'Feld 27', '27 Meter tief'], 'Traunsee 27 E3 = Seite 27, im Suchgitter Feld E3.');
+  mc('e3', 'Im Namensregister steht: „Traunsee 27 E3“. Was bedeutet E3?', 'Feld E3 im Suchgitter', ['Seite E3', 'Einwohner: 3', 'Höhe: 3 m'], 'E3 ist das Feld im Suchgitter.');
+  [['Wolfgangsee', 28, 'C4'], ['Großglockner', 32, 'B2'], ['Graz', 41, 'D3'], ['Neusiedler See', 45, 'F2'], ['Dachstein', 30, 'A3']].forEach(([n, s, f]) => {
+    mc('e3', 'Im Namensregister steht: „' + n + ' ' + s + ' ' + f + '“. Wo findest du ' + n + '?', 'auf Seite ' + s + ', im Feld ' + f, ['auf Seite ' + f.slice(1) + ', im Feld ' + f[0] + s, 'im Feld ' + s + ', auf Seite ' + f, 'auf Seite ' + (s + 10) + ', im Feld ' + f], 'Die Zahl ist die Seite, Buchstabe + Zahl ist das Feld im Suchgitter.');
+  });
+  for (let i = 0; i < 4; i++) add('e3', 'gridfind', { q: 'In welchem Feld des Suchgitters liegt …?' });
+  for (let i = 0; i < 4; i++) add('e3', 'gridclick', { q: 'Klicke im Suchgitter auf das Feld:' });
+  add('e3', 'sort', { q: 'Verkleinerung, Vergrößerung oder gleich groß?', cats: ['Verkleinerung', 'Vergrößerung', 'gleich groß'], items: [['1 : 1000', 'Verkleinerung'], ['2 : 1', 'Vergrößerung'], ['1 : 1', 'gleich groß'], ['1 : 50 000', 'Verkleinerung'], ['10 : 1', 'Vergrößerung'], ['1 : 25', 'Verkleinerung']] });
+  mc('e3', 'Was bedeutet der Maßstab 1 : 1000?', 'Verkleinerung', ['Vergrößerung', 'gleich groß wie in Wirklichkeit', '1000 Kilometer'], '1 : 1000 = Verkleinerung.');
+  mc('e3', 'Was bedeutet der Maßstab 2 : 1?', 'Vergrößerung', ['Verkleinerung', 'gleich groß wie in Wirklichkeit', '2 Kilometer'], '2 : 1 = Vergrößerung.');
+  mc('e3', 'Was bedeutet der Maßstab 1 : 1?', 'gleich groß wie in Wirklichkeit', ['Verkleinerung', 'Vergrößerung', 'halb so groß'], '1 : 1 = gleich groß wie in Wirklichkeit.');
+  [['#5aa84f', 'Tiefland'], ['#f0dc78', 'Hügelland'], ['#d9a15b', 'Bergland'], ['#7a4b22', 'Hochgebirge'], ['#ffffff', 'Gletscher'], ['#4f8fd6', 'Meer']].forEach(([col, n]) => add('e3', 'swatch', { col, a: n, q: 'Welche Höhen- oder Tiefenstufe zeigt diese Farbe auf einer physischen Karte?' }));
+  mc('e3', 'Was zeigen die Höhen- und Tiefenstufen?', 'wie hoch oder tief ein Ort liegt', ['wie viele Menschen dort wohnen', 'wie warm es dort ist', 'wie alt ein Ort ist'], 'Höhen- und Tiefenstufen zeigen, wie hoch oder tief ein Ort liegt.');
+  mc('e3', 'Je höher ein Gebiet liegt, desto …', 'dunkler braun ist es gefärbt.', ['heller grün ist es gefärbt.', 'dunkler blau ist es gefärbt.', 'weißer ist es gefärbt.'], 'Je höher, desto dunkler braun.');
+  mc('e3', 'Je tiefer das Meer, desto …', 'dunkler blau ist es gefärbt.', ['heller blau ist es gefärbt.', 'dunkler braun ist es gefärbt.', 'grüner ist es gefärbt.'], 'Je tiefer das Meer, desto dunkler blau.');
+  mc('e3', 'Welche Farbe hat das Tiefland?', 'grün', ['gelb', 'hellbraun', 'weiß'], 'Tiefland = grün.');
+  mc('e3', 'Welche Farbe hat ein Gletscher auf der Karte?', 'weiß', ['dunkelbraun', 'hellblau', 'grün'], 'Gletscher = weiß.');
+  add('e3', 'order', { q: 'Ordne die Höhenstufen von unten (tief) nach oben (hoch).', items: ['Tiefland (grün)', 'Hügelland (gelb)', 'Bergland (hellbraun)', 'Hochgebirge (dunkelbraun)'] });
+  mc('e3', 'Welche Karte zeigt die Erdoberfläche mit ihren Höhen in verschiedenen Farben?', 'die physische Karte', ['die thematische Karte', 'das Namensregister', 'die Legende'], 'Physische Karten zeigen Höhen, Gewässer, Orte und Grenzen. Sie dienen der Orientierung.');
+  mc('e3', 'Welche Karte gibt Auskunft über ein bestimmtes Thema, z. B. Wirtschaft oder Religion?', 'die thematische Karte', ['die physische Karte', 'der Maßstab', 'das Suchgitter'], 'Thematische Karten geben Auskunft über ein Thema. Sie dienen nicht der Orientierung.');
+  tf('e3', 'Thematische Karten dienen der Orientierung.', false, 'Falsch: Physische Karten dienen der Orientierung, thematische nicht.');
+  tf('e3', 'Physische Karten zeigen auch Gewässer, Orte und Grenzen.', true, 'Stimmt.');
+  add('e3', 'sort', { q: 'Physische oder thematische Karte?', cats: ['physisch', 'thematisch'], items: [['Karte der Religionen in Europa', 'thematisch'], ['Karte mit Gebirgen, Flüssen und Seen Österreichs', 'physisch'], ['Karte der Wirtschaft in Österreich', 'thematisch'], ['Karte, die Tiefland und Hochgebirge in Farben zeigt', 'physisch'], ['Karte der Staaten Afrikas', 'thematisch'], ['Karte zur Orientierung mit Höhen, Orten und Grenzen', 'physisch']] });
+
+  // ---------------- Die Schöpfung · Teil 1 ----------------
+  mc('s1', 'Wann begann unser Universum mit dem Urknall?', 'vor ca. 13,8 Milliarden Jahren', ['vor ca. 4,6 Milliarden Jahren', 'vor ca. 300 000 Jahren', 'vor ca. 230 Millionen Jahren'], 'Das Universum begann vor ca. 13,8 Milliarden Jahren mit dem Urknall.');
+  mc('s1', 'Wie war das Universum am Anfang?', 'extrem heiß und dicht', ['eiskalt und leer', 'voller Dinosaurier', 'genau so wie heute'], 'Das Universum war extrem heiß und dicht.');
+  mc('s1', 'Was passiert seit dem Urknall mit dem Universum?', 'Es dehnt sich aus und kühlt ab.', ['Es wird kleiner und heißer.', 'Es bleibt gleich groß.', 'Es dreht sich um die Erde.'], 'Seitdem dehnt sich das Universum aus und kühlt ab.');
+  tf('s1', 'Der Urknall war eine Explosion an einem bestimmten Ort.', false, 'Falsch: Der Urknall war keine Explosion an einem bestimmten Ort. Der Raum selbst begann sich auszudehnen.');
+  tf('s1', 'Beim Urknall begann sich der Raum selbst auszudehnen.', true, 'Stimmt.');
+  mc('s1', 'Woraus entstanden die ersten Sterne?', 'aus Gaswolken', ['aus Wasser', 'aus Eis', 'aus Steinkohle'], 'Die ersten Sterne entstehen aus Gaswolken.');
+  mc('s1', 'Was bilden viele Sterne zusammen?', 'Galaxien', ['Planeten', 'Monde', 'Kontinente'], 'Viele Sterne bilden Galaxien.');
+  mc('s1', 'Wann entstanden die Sonne und die Erde?', 'vor ca. 4,6 Milliarden Jahren', ['vor ca. 13,8 Milliarden Jahren', 'vor ca. 3,5 Milliarden Jahren', 'vor ca. 66 Millionen Jahren'], 'Vor 4,6 Mrd. Jahren entstanden die Sonne und die Planeten, auch die Erde.');
+  mc('s1', 'Woraus entstanden die Planeten?', 'aus Staub und Gesteinsbrocken', ['aus Gaswolken und Eis', 'aus Wasser und Luft', 'aus anderen Sternen'], 'Aus Staub und Gesteinsbrocken entstanden die Planeten, auch die Erde.');
+  mc('s1', 'In welcher Galaxie ist unsere Sonne entstanden?', 'in der Milchstraße', ['im Sonnensystem', 'im Andromedanebel', 'im Pazifik'], 'Unsere Sonne entstand in der Milchstraße, unserer Galaxie.');
+  mc('s1', 'Wann gab es das erste Leben?', 'vor ca. 3,5 Milliarden Jahren', ['vor ca. 13,8 Milliarden Jahren', 'vor ca. 230 Millionen Jahren', 'vor ca. 300 000 Jahren'], 'Vor 3,5 Mrd. Jahren: erstes Leben – winzige, einfache Lebewesen im Wasser.');
+  mc('s1', 'Wie sah das erste Leben aus?', 'winzige, einfache Lebewesen im Wasser', ['große Dinosaurier an Land', 'Menschen in Höhlen', 'Bäume und Blumen'], 'Das erste Leben waren winzige, einfache Lebewesen im Wasser.');
+  mc('s1', 'Wann erschienen die ersten Dinosaurier?', 'vor ca. 230 Millionen Jahren', ['vor ca. 3,5 Milliarden Jahren', 'vor ca. 300 000 Jahren', 'vor ca. 13,8 Milliarden Jahren'], 'Vor 230 Mio. Jahren erschienen die ersten Dinosaurier.');
+  mc('s1', 'Seit wann gibt es den modernen Menschen (Homo sapiens)?', 'seit ca. 300 000 Jahren', ['seit ca. 230 Millionen Jahren', 'seit ca. 4,6 Milliarden Jahren', 'seit ca. 3 000 Jahren'], 'Der Homo sapiens erschien vor ca. 300 000 Jahren – ein sehr später Neuankömmling.');
+  inp('s1', 'Wie heißt der moderne Mensch mit wissenschaftlichem Namen?', ['Homo sapiens'], 'Der moderne Mensch heißt Homo sapiens.');
+  add('s1', 'order', { q: 'Bringe die Ereignisse in die richtige Reihenfolge – das älteste zuerst.', items: ['Urknall: Das Universum beginnt.', 'Die ersten Sterne entstehen aus Gaswolken.', 'Die Sonne und die Erde entstehen.', 'Erstes Leben im Wasser', 'Die ersten Dinosaurier erscheinen.', 'Der Homo sapiens erscheint.'] });
+  add('s1', 'match', { q: 'Wann war das? Ordne zu.', pairs: [['Urknall', 'vor 13,8 Mrd. Jahren'], ['Sonne und Erde entstehen', 'vor 4,6 Mrd. Jahren'], ['erstes Leben', 'vor 3,5 Mrd. Jahren'], ['erste Dinosaurier', 'vor 230 Mio. Jahren'], ['Homo sapiens', 'vor 300 000 Jahren']] });
+  add('s1', 'order', { q: 'Ordne vom Größten zum Kleinsten.', items: ['Universum', 'Milchstraße', 'Sonnensystem', 'Erde'] });
+  mc('s1', 'Was ist die Milchstraße?', 'unsere Galaxie', ['ein Planet', 'ein Weltmeer', 'ein Komet'], 'Die Milchstraße ist unsere Galaxie.');
+  mc('s1', 'Was ist die Sonne?', 'ein Stern', ['ein Planet', 'ein Mond', 'eine Galaxie'], 'Die Sonne ist ein Stern.');
+  mc('s1', 'Wie viele Planeten gibt es im Sonnensystem (mit der Erde)?', '8', ['7', '9', '12'], 'Die Erde und sieben weitere Planeten – also 8.');
+  mc('s1', 'Was gehört NICHT zum Sonnensystem?', 'andere Galaxien', ['Monde', 'Zwergplaneten', 'Kometen'], 'Zum Sonnensystem gehören Sonne, Planeten, Monde, Zwergplaneten, Asteroiden und Kometen.');
+  tf('s1', 'Zum Sonnensystem gehören auch Asteroiden und Kometen.', true, 'Stimmt.');
+  tf('s1', 'Menschen haben den Urknall selbst beobachtet.', false, 'Falsch: Niemand war dabei. Forschende sammeln Spuren.');
+  mc('s1', 'Woher wissen wir, was beim Urknall war?', 'Forschende sammeln Spuren und entwickeln Modelle.', ['Jemand hat es aufgeschrieben.', 'Es gibt Fotos davon.', 'Man hat es im Fernsehen gesehen.'], 'Niemand war dabei. Forschende sammeln Spuren und bilden wissenschaftliche Modelle.');
+  add('s1', 'sort', { q: 'Welche Spuren untersuchen Forschende? (passt / passt nicht)', cats: ['passt', 'passt nicht'], items: [['das Licht weit entfernter Sterne', 'passt'], ['das Alter von Gesteinen', 'passt'], ['Fossilien', 'passt'], ['Fotos vom Urknall', 'passt nicht'], ['Berichte von Augenzeugen des Urknalls', 'passt nicht']] });
+  tf('s1', 'Wissenschaftliche Modelle können durch neue Entdeckungen genauer werden.', true, 'Stimmt.');
+  tf('s1', 'Der Homo sapiens ist auf der Erde ein sehr später Neuankömmling.', true, 'Stimmt.');
+
+  // ---------------- Die Schöpfung · Teil 2 ----------------
+  add('s2', 'order', { q: 'Bringe die vier Erdzeitalter in die richtige Reihenfolge – das älteste zuerst.', items: ['Erdurzeit', 'Erdaltertum', 'Erdmittelalter', 'Erdneuzeit'] });
+  add('s2', 'match', { q: 'Wann begann das Erdzeitalter? Ordne zu.', pairs: [['Erdurzeit', 'vor ca. 4,6 Mrd. Jahren'], ['Erdaltertum', 'vor ca. 540 Mio. Jahren'], ['Erdmittelalter', 'vor ca. 252 Mio. Jahren'], ['Erdneuzeit', 'vor ca. 66 Mio. Jahren – bis heute']] });
+  mc('s2', 'Wie alt ist die Erde ungefähr?', 'ca. 4,6 Milliarden Jahre', ['ca. 13,8 Milliarden Jahre', 'ca. 66 Millionen Jahre', 'ca. 300 000 Jahre'], 'Die Erde ist ca. 4,6 Mrd. Jahre alt.');
+  const ERA = ['Erdurzeit', 'Erdaltertum', 'Erdmittelalter', 'Erdneuzeit'];
+  const ERAFACTS = [
+    ['Die Erde ist glühend heiß, Vulkane brechen aus.', 0], ['Meteoriten schlagen ein.', 0], ['Eine feste Erdkruste bildet sich.', 0], ['Es regnet sehr lange, die ersten Meere entstehen.', 0], ['Die ersten Einzeller leben im Wasser.', 0], ['Einzeller erzeugen mit Sonnenlicht Sauerstoff.', 0],
+    ['Im Meer leben Trilobiten, Fische und Muscheln.', 1], ['Das Leben geht an Land: Fisch ➜ Amphibie ➜ Reptil.', 1], ['Riesige Farnwälder wachsen.', 1], ['Alle Kontinente bilden den Urkontinent Pangäa.', 1], ['Am Ende gibt es ein großes Massenaussterben.', 1],
+    ['Zeit der Dinosaurier', 2], ['Flugsaurier und Meeresreptilien', 2], ['Erste kleine Säugetiere und erste Vögel', 2], ['Ein riesiger Asteroid schlägt ein.', 2],
+    ['Säugetiere breiten sich überall aus (Mammut, Wal, Fledermaus).', 3], ['Die Kontinente wandern in ihre heutige Lage.', 3], ['Es gibt mehrere Eiszeiten.', 3], ['Die Vorfahren des Menschen entwickeln sich in Afrika.', 3], ['Den Homo sapiens gibt es seit ca. 300 000 Jahren.', 3]
+  ];
+  ERAFACTS.forEach(([t, e]) => mc('s2', 'In welchem Erdzeitalter war das? <br><i>„' + t + '“</i>', ERA[e], ERA.filter((x, i) => i !== e), t + ' → ' + ERA[e]));
+  for (let i = 0; i < 3; i++) add('s2', 'sort', { q: 'Ordne den Erdzeitaltern zu.', cats: ERA, gen: 'era' });
+  mc('s2', 'Warum sind die Dinosaurier ausgestorben?', 'Vor ca. 66 Mio. Jahren schlug ein riesiger Asteroid ein.', ['Es wurde zu heiß durch die Sonne.', 'Die Menschen haben sie gejagt.', 'Sie hatten nichts mehr zu trinken.'], 'Ein riesiger Asteroid schlug vor ca. 66 Mio. Jahren ein: Massenaussterben.');
+  mc('s2', 'Welche Dinosaurier haben überlebt?', 'die Vögel', ['die Langhalsdinosaurier', 'die Raubdinosaurier', 'die Flugsaurier'], 'Alle Dinosaurier außer den Vögeln starben aus.');
+  mc('s2', 'Wann schlug der Asteroid ein, der die Dinosaurier aussterben ließ?', 'vor ca. 66 Mio. Jahren', ['vor ca. 252 Mio. Jahren', 'vor ca. 540 Mio. Jahren', 'vor ca. 300 000 Jahren'], 'Vor ca. 66 Mio. Jahren – damit endet das Erdmittelalter.');
+  add('s2', 'order', { q: 'Wie ging das Leben an Land? Bringe in die richtige Reihenfolge.', items: ['Fisch', 'Amphibie', 'Reptil'] });
+  add('s2', 'order', { q: 'So entsteht Steinkohle: Bringe die Schritte in die richtige Reihenfolge.', items: ['Riesige Wälder aus Farnen wachsen.', 'Die Pflanzen sterben ab. Schlamm und Erde decken sie zu.', 'Nach Millionen von Jahren ist daraus Steinkohle geworden.'] });
+  mc('s2', 'Woraus ist Steinkohle entstanden?', 'aus riesigen Farnwäldern', ['aus Dinosaurierknochen', 'aus Vulkanasche', 'aus Meerwasser'], 'Aus den Farnwäldern des Erdaltertums wurde später Steinkohle.');
+  mc('s2', 'Wie heißt der Urkontinent, den alle Kontinente im Erdaltertum bildeten?', 'Pangäa', ['Antarktis', 'Atlantis', 'Eurasien'], 'Alle Kontinente bildeten den Urkontinent Pangäa.');
+  mc('s2', 'Wo entwickelten sich die Vorfahren des Menschen?', 'in Afrika', ['in Europa', 'in Australien', 'in der Antarktis'], 'Die Vorfahren des Menschen entwickelten sich in Afrika.');
+  mc('s2', 'Wodurch entstand der erste Sauerstoff?', 'Einzeller erzeugten ihn mit Sonnenlicht.', ['Vulkane bliesen ihn aus.', 'Meteoriten brachten ihn mit.', 'Die Dinosaurier atmeten ihn aus.'], 'Die ersten Einzeller erzeugten mit Sonnenlicht Sauerstoff.');
+  mc('s2', 'Stell dir die Erdgeschichte als einen Tag vor. Bis wann dauert die Erdurzeit?', 'fast bis 21 Uhr', ['bis 6 Uhr früh', 'bis Mittag', 'bis 23:59 Uhr'], 'Die Erdurzeit dauert fast bis 21 Uhr!');
+  mc('s2', 'Erdgeschichte als ein Tag: Wann sterben die Dinosaurier aus?', 'um ca. 23:39 Uhr', ['um ca. 12 Uhr', 'um ca. 21 Uhr', 'um 0 Uhr'], 'Die Dinosaurier sterben um ca. 23:39 Uhr aus.');
+  mc('s2', 'Erdgeschichte als ein Tag: Wann erscheint der moderne Mensch?', '6 Sekunden vor Mitternacht', ['um 12 Uhr Mittag', 'eine Stunde vor Mitternacht', 'um 0 Uhr'], 'Der moderne Mensch erscheint erst 6 Sekunden vor Mitternacht.');
+  tf('s2', 'Im Erdmittelalter lebten schon Mammuts.', false, 'Falsch: Mammuts gehören zur Erdneuzeit.');
+  tf('s2', 'Im Erdaltertum lebten im Meer Trilobiten.', true, 'Stimmt.');
+  tf('s2', 'Die Menschen lebten gleichzeitig mit den Dinosauriern.', false, 'Falsch: Die Dinosaurier starben vor ca. 66 Mio. Jahren aus, den Homo sapiens gibt es erst seit ca. 300 000 Jahren.');
+  tf('s2', 'Am Ende des Erdaltertums gab es ein großes Massenaussterben.', true, 'Stimmt.');
+
+  // ---------------- Die Schöpfung · Teil 3 ----------------
+  mc('s3', 'Was sind Quellen?', 'Überreste aus der Vergangenheit', ['Orte, an denen Wasser aus der Erde kommt', 'Bücher aus der Bücherei von heute', 'Erfindungen der Zukunft'], 'Quellen sind Überreste aus der Vergangenheit. Aus Quellen erfahren wir, wie Menschen früher lebten.');
+  mc('s3', 'Wie arbeiten Forscherinnen und Forscher mit Quellen?', 'wie Detektive – sie setzen viele Hinweise zusammen', ['wie Zauberer – sie erfinden die Geschichte', 'wie Köche – sie mischen alles', 'wie Maler – sie malen, was sie glauben'], 'Sie arbeiten wie Detektive und setzen viele Hinweise zusammen.');
+  const QA = ['Sachquelle', 'Schriftquelle', 'Bildquelle', 'Mündliche Quelle'];
+  const QEX = [['Steinbeil', 0], ['Münze', 0], ['Tonkrug', 0], ['Babyschuh', 0], ['Brief', 1], ['Tagebuch', 1], ['Urkunde', 1], ['Zeugnis', 1], ['Höhlenmalerei', 2], ['Foto', 2], ['Gemälde', 2], ['Babyfoto', 2], ['Interview mit Opa', 3], ['Sage', 3], ['Erzählung deiner Eltern', 3]];
+  QEX.forEach(([t, k]) => mc('s3', 'Welche Quellenart ist das? <b>' + t + '</b>', QA[k], QA.filter((x, i) => i !== k), t + ' ist eine ' + QA[k] + '.'));
+  add('s3', 'match', { q: 'Welche Frage passt zu welcher Quellenart?', pairs: [['Sachquelle', 'Kann ich es anfassen?'], ['Schriftquelle', 'Kann ich es lesen?'], ['Bildquelle', 'Kann ich es anschauen?'], ['Mündliche Quelle', 'Kann ich es hören?']] });
+  for (let i = 0; i < 3; i++) add('s3', 'sort', { q: 'Ordne den Quellenarten zu.', cats: ['Sach', 'Schrift', 'Bild', 'mündlich'], gen: 'quelle' });
+  mc('s3', 'Was ist eine Sachquelle?', 'ein Gegenstand, den Menschen hergestellt oder benutzt haben', ['ein Text aus der Vergangenheit', 'ein Bild aus der Vergangenheit', 'eine Erzählung von Zeitzeugen'], 'Sachquellen sind Gegenstände, die Menschen hergestellt oder benutzt haben.');
+  mc('s3', 'Was ist eine mündliche Quelle?', 'eine Erzählung von Menschen, die etwas selbst erlebt haben', ['ein alter Brief', 'ein Gemälde', 'eine Münze'], 'Mündliche Quellen sind Erzählungen von Menschen, die etwas selbst erlebt haben.');
+  add('s3', 'order', { q: 'So arbeiten Archäologen bei einer Ausgrabung: Bringe die Schritte in die richtige Reihenfolge.', items: ['Man sucht einen Ort, an dem früher Menschen lebten.', 'Die Erde wird Schicht für Schicht abgetragen.', 'Der Fund wird vorsichtig mit dem Pinsel freigelegt.', 'Der Fund wird vermessen, fotografiert und beschriftet.', 'Im Labor wird der Fund genau untersucht.'] });
+  mc('s3', 'Womit legen Archäologen einen Fund vorsichtig frei?', 'mit dem Pinsel', ['mit dem Bagger', 'mit dem Hammer', 'mit Wasser'], 'Der Fund wird vorsichtig mit dem Pinsel freigelegt – nicht mit dem Bagger!');
+  mc('s3', 'Was passiert mit dem Fund, nachdem er freigelegt wurde?', 'Er wird vermessen, fotografiert und beschriftet.', ['Er wird sofort verkauft.', 'Er wird wieder vergraben.', 'Er wird abgewaschen und weggeworfen.'], 'Der Fund wird vermessen, fotografiert und beschriftet – dann im Labor untersucht.');
+  mc('s3', 'Ein Fund liegt sehr tief in der Erde. Was gilt meistens?', 'Er ist älter.', ['Er ist jünger.', 'Er ist wertlos.', 'Er ist aus Plastik.'], 'Je tiefer ein Fund in der Erde liegt, desto älter ist er meistens.');
+  for (let i = 0; i < 4; i++) add('s3', 'layers', { q: '' });
+  tf('s3', 'Archäologen graben schnell mit dem Bagger.', false, 'Falsch: Sie graben langsam und vorsichtig, nicht mit dem Bagger!');
+  mc('s3', 'Was sind Fossilien?', 'versteinerte Reste von Pflanzen und Tieren', ['alte Münzen', 'Höhlenmalereien', 'alte Briefe'], 'Fossilien sind versteinerte Reste von Pflanzen und Tieren.');
+  mc('s3', 'Wer erforscht Fossilien?', 'Paläontologinnen und Paläontologen', ['Astronautinnen und Astronauten', 'Bäckerinnen und Bäcker', 'Geografinnen und Geografen'], 'Fossilien werden von Paläontologinnen und Paläontologen erforscht.');
+  mc('s3', 'Wovon erzählen uns Fossilien?', 'von den Erdzeitaltern', ['vom Mittelalter mit Rittern', 'von der Zukunft', 'vom Wetter morgen'], 'Fossilien erzählen uns von den Erdzeitaltern.');
+  mc('s3', 'Warum vergleichen Forschende mehrere Quellen?', 'weil Erinnerungen von Zeitzeugen nicht immer genau stimmen', ['weil Quellen immer falsch sind', 'weil es lustig ist', 'weil eine Quelle zu wenig kostet'], 'Erinnerungen von Zeitzeugen stimmen nicht immer ganz genau – deshalb vergleicht man mehrere Quellen.');
+  tf('s3', 'Erinnerungen von Zeitzeugen stimmen immer ganz genau.', false, 'Falsch: Sie stimmen nicht immer ganz genau. Deshalb vergleicht man mehrere Quellen.');
+  add('s3', 'match', { q: 'Auch dein Leben hat Quellen! Ordne zu.', pairs: [['Babyschuh', 'Sachquelle'], ['Zeugnis', 'Schriftquelle'], ['Babyfoto', 'Bildquelle'], ['Erzählung deiner Eltern', 'mündliche Quelle']] });
+
+  // =====================================================================================
+  // Aufgaben darstellen und prüfen
+  // =====================================================================================
+  let cur = null;            // aktuelle Aufgabe (Instanz)
+  let answered = false;
+  const qa = () => $('qarea');
+
+  function instance(q) {
+    // erzeugt eine konkrete Aufgabe (zufällige Teile, gemischte Antworten)
+    const it = { q, max: 1, sol: '', user: null };
+    if (q.type === 'mc') it.opts = shuffle(q.opts);
+    if (q.type === 'mapname') it.opts = shuffle([q.target].concat(shuffle(CONTS.filter(c => c !== q.target)).slice(0, 3)));
+    if (q.type === 'swatch') it.opts = shuffle([q.a].concat(shuffle(['Tiefland', 'Hügelland', 'Bergland', 'Hochgebirge', 'Gletscher', 'Meer'].filter(x => x !== q.a)).slice(0, 3)));
+    if (q.type === 'order') { it.max = 2; let s; do { s = shuffle(q.items); } while (s.join() === q.items.join()); it.pool = s; it.seq = []; }
+    if (q.type === 'match') { it.max = 2; it.rows = shuffle(q.pairs); it.rights = shuffle([...new Set(q.pairs.map(p => p[1]))]); }
+    if (q.type === 'sort') {
+      it.max = 2;
+      if (q.gen === 'era') it.items = shuffle(ERA.map((e, k) => pick(ERAFACTS.filter(f => f[1] === k))).map(f => [f[0], ERA[f[1]]]).concat([pick(ERAFACTS)].map(f => [f[0], ERA[f[1]]]))).filter((x, i, a) => a.findIndex(y => y[0] === x[0]) === i);
+      else if (q.gen === 'quelle') { const c = ['Sach', 'Schrift', 'Bild', 'mündlich']; it.items = shuffle(c.map((n, k) => { const f = pick(QEX.filter(x => x[1] === k)); return [f[0], n]; })); }
+      else it.items = shuffle(q.items);
+    }
+    if (q.type === 'coord' || q.type === 'coordclick') {
+      const lats = [60, 30, -30, -60], lons = [-150, -120, -90, -60, -30, 30, 60, 90, 120, 150];
+      const mk = () => ({ lat: pick(lats), lon: pick(lons) });
+      let p; do { p = mk(); } while (Math.abs(p.lat) === Math.abs(p.lon));
+      it.p = p;
+      const fmt = (la, lo) => Math.abs(la) + '° ' + (la > 0 ? 'N' : 'S') + ' / ' + Math.abs(lo) + '° ' + (lo > 0 ? 'O' : 'W');
+      it.correct = fmt(p.lat, p.lon);
+      if (q.type === 'coord') {
+        const d = [fmt(-p.lat, p.lon), fmt(p.lat, -p.lon)];
+        if (Math.abs(p.lon) <= 90) d.push(fmt(Math.sign(p.lat) * Math.abs(p.lon), Math.sign(p.lon) * Math.abs(p.lat))); else d.push(fmt(-p.lat, -p.lon));
+        it.opts = shuffle([it.correct].concat(d));
+      } else {
+        const pts = [p]; let guard = 0;
+        while (pts.length < 4 && guard++ < 200) { const x = mk(); if (!pts.some(y => y.lat === x.lat && y.lon === x.lon)) pts.push(x); }
+        it.pts = shuffle(pts).map((x, i) => Object.assign({ label: 'ABCD'[i] }, x));
+        it.answerLabel = it.pts.find(x => x.lat === p.lat && x.lon === p.lon).label;
+      }
+    }
+    if (q.type === 'gridfind' || q.type === 'gridclick') {
+      const fields = shuffle(COLS.split('').flatMap(c => [1, 2, 3, 4].map(r => c + r)));
+      const syms = shuffle(SYMS).slice(0, 4);
+      it.items = syms.map((s, i) => ({ sym: s[0], name: s[1], f: fields[i] }));
+      it.target = it.items[0];
+      if (q.type === 'gridclick') it.field = fields[5];
+      if (q.type === 'gridfind') it.opts = shuffle([it.target.f, it.target.f[0] + (((+it.target.f[1]) % 4) + 1), COLS[(COLS.indexOf(it.target.f[0]) + 2) % 6] + it.target.f[1], it.target.f[1] + it.target.f[0]]);
+    }
+    if (q.type === 'layers') {
+      it.finds = shuffle(FINDS).slice(0, 4);
+      it.ask = pick(['alt', 'jung']);
+      it.answer = it.ask === 'alt' ? 3 : 0;
+    }
+    return it;
+  }
+
+  function optButtons(opts) {
+    return '<div class="opts">' + opts.map((o, i) => '<button type="button" class="opt" data-i="' + i + '">' + esc(o) + '</button>').join('') + '</div>';
+  }
+  function bindOpts(it) {
+    qa().querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+      if (answered) return;
+      qa().querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+      b.classList.add('sel'); it.user = it.opts[+b.dataset.i];
+      if (state.mode === 'test') updateMain();
+      else check();
+    }));
+  }
+
+  function render(it) {
+    cur = it; answered = false;
+    const q = it.q;
+    let prompt = q.q || '', html = '';
+    switch (q.type) {
+      case 'mc': html = optButtons(it.opts); break;
+      case 'tf': prompt = 'Stimmt das?'; it.opts = ['stimmt', 'stimmt nicht']; html = '<div class="statement">' + q.s + '</div>' + optButtons(it.opts); break;
+      case 'input': html = '<input class="txt" id="txtIn" type="text" autocomplete="off" placeholder="Antwort eingeben …"><div class="hos-muted" style="font-size:.85rem">Mit Enter bestätigen.</div>'; break;
+      case 'mapclick': html = '<div class="fig">' + mapSVG({ colors: q.kind === 'cont', clickLand: true, clickWater: true }) + '</div>'; break;
+      case 'mapname': html = '<div class="fig" style="max-height:240px">' + mapSVG({ highlight: q.target }) + '</div>' + optButtons(it.opts.map(c => CNAME[c] || c)); it.opts = it.opts.map(c => CNAME[c] || c); break;
+      case 'coord': html = '<div class="fig" style="max-height:250px">' + mapSVG({ grid: true, gridLabels: true, points: [Object.assign({ label: '' }, it.p)] }) + '</div>' + optButtons(it.opts); break;
+      case 'coordclick': prompt = q.q + ' <b>' + it.correct + '</b>'; html = '<div class="fig">' + mapSVG({ grid: true, gridLabels: true, points: it.pts, clickPoints: true }) + '</div>'; break;
+      case 'lineclick': html = '<div class="fig">' + mapSVG({ grid: true, clickLand: true, clickWater: true }) + '</div><div class="hos-muted" style="font-size:.85rem">Die gestrichelten Linien sind Breiten- und Längenkreise.</div>'; break;
+      case 'hemi': html = '<div class="fig">' + mapSVG({ grid: true, strong: true, gridLabels: true, clickLand: true, clickWater: true }) + '</div>'; break;
+      case 'rose': html = '<div class="fig">' + roseSVG(false) + '</div>'; break;
+      case 'gridfind': prompt = 'In welchem Feld liegt <b>' + it.target.name + '</b> ' + it.target.sym + '?'; html = '<div class="fig">' + gridSVG(it.items) + '</div>' + optButtons(it.opts); break;
+      case 'gridclick': prompt = q.q + ' <b>' + it.field + '</b>'; html = '<div class="fig">' + gridSVG(it.items) + '</div>'; break;
+      case 'swatch': html = '<div style="display:flex;gap:14px;align-items:center"><div style="width:120px;height:70px;border-radius:12px;border:2px solid #94a3b8;background:' + q.col + '"></div></div>' + optButtons(it.opts); break;
+      case 'layers': prompt = 'Archäologen haben in vier Erdschichten gegraben. Klicke auf die Schicht mit dem <b>' + (it.ask === 'alt' ? 'ältesten' : 'jüngsten') + '</b> Fund.'; html = '<div class="fig">' + layersSVG(it.finds) + '</div>'; break;
+      case 'order':
+        html = '<div class="ord-wrap"><div class="ord-col"><h4>Tippe der Reihe nach an:</h4><div class="ord-list" id="ordPool"></div></div><div class="ord-col"><h4>Deine Reihenfolge (zum Zurücklegen antippen):</h4><div class="ord-list" id="ordSeq"></div></div></div>';
+        break;
+      case 'match':
+        html = '<div class="rows">' + it.rows.map((p, i) => '<div class="row" data-i="' + i + '"><span class="lab">' + esc(p[0]) + '</span><select data-i="' + i + '"><option value="">– wählen –</option>' + it.rights.map(r => '<option>' + esc(r) + '</option>').join('') + '</select></div>').join('') + '</div>';
+        break;
+      case 'sort':
+        html = '<div class="rows">' + it.items.map((p, i) => '<div class="row" data-i="' + i + '"><span class="lab">' + esc(p[0]) + '</span><div class="catbtns">' + q.cats.map(c => '<button type="button" data-i="' + i + '" data-c="' + esc(c) + '">' + esc(c) + '</button>').join('') + '</div></div>').join('') + '</div>';
+        it.user = it.items.map(() => null);
+        break;
+    }
+    $('qprompt').innerHTML = prompt;
+    qa().innerHTML = html;
+    // Interaktion
+    if (q.type === 'input') { const t = $('txtIn'); t.focus(); t.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); mainAction(); } }); t.addEventListener('input', () => { it.user = t.value; }); }
+    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind'].includes(q.type)) bindOpts(it);
+    const svg = qa().querySelector('svg');
+    if (q.type === 'mapclick' || q.type === 'lineclick' || q.type === 'hemi') {
+      svg.addEventListener('click', ev => {
+        if (answered) return;
+        const p = svgPoint(svg, ev); const lon = p.x / 2 - 180, lat = 84 - p.y / 2;
+        const land = ev.target.dataset && ev.target.dataset.c;
+        it.user = { x: p.x, y: p.y, lon, lat, land };
+        dropMark(svg, p.x, p.y, null);
+        if (state.mode === 'test') { svg.querySelector('#marks circle').setAttribute('fill', '#334155'); updateMain(); } else check();
+      });
+    }
+    if (q.type === 'coordclick') svg.querySelectorAll('[data-p]').forEach(g => g.addEventListener('click', () => { if (answered) return; it.user = g.dataset.p; svg.querySelectorAll('[data-p] circle').forEach(c => c.setAttribute('fill', '#dc2626')); g.querySelector('circle').setAttribute('fill', '#334155'); if (state.mode === 'test') updateMain(); else check(); }));
+    if (q.type === 'rose') svg.querySelectorAll('[data-d]').forEach(a => a.addEventListener('click', () => { if (answered) return; it.user = a.dataset.d; svg.querySelectorAll('[data-d]').forEach(x => x.style.opacity = ''); a.style.opacity = .55; if (state.mode === 'test') updateMain(); else check(); }));
+    if (q.type === 'gridclick') svg.querySelectorAll('[data-f]').forEach(r => r.addEventListener('click', () => { if (answered) return; it.user = r.dataset.f; svg.querySelectorAll('[data-f]').forEach(x => x.style.stroke = ''); r.style.stroke = '#334155'; r.style.strokeWidth = 4; if (state.mode === 'test') updateMain(); else check(); }));
+    if (q.type === 'layers') svg.querySelectorAll('[data-l]').forEach(r => r.addEventListener('click', () => { if (answered) return; it.user = +r.dataset.l; svg.querySelectorAll('[data-l]').forEach(x => x.style.opacity = ''); r.style.opacity = .7; if (state.mode === 'test') updateMain(); else check(); }));
+    if (q.type === 'order') {
+      const draw = () => {
+        $('ordPool').innerHTML = it.pool.map((t, i) => '<button type="button" class="chip" data-i="' + i + '">' + esc(t) + '</button>').join('');
+        $('ordSeq').innerHTML = it.seq.map((t, i) => '<button type="button" class="chip" data-i="' + i + '"><span class="n">' + (i + 1) + '</span>' + esc(t) + '</button>').join('');
+        $('ordPool').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { if (answered) return; it.seq.push(it.pool.splice(+b.dataset.i, 1)[0]); draw(); updateMain(); }));
+        $('ordSeq').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { if (answered) return; it.pool.push(it.seq.splice(+b.dataset.i, 1)[0]); draw(); updateMain(); }));
+      };
+      it.draw = draw; draw();
+    }
+    if (q.type === 'match') qa().querySelectorAll('select').forEach(s => s.addEventListener('change', updateMain));
+    if (q.type === 'sort') qa().querySelectorAll('.catbtns button').forEach(b => b.addEventListener('click', () => {
+      if (answered) return;
+      const i = +b.dataset.i; it.user[i] = b.dataset.c;
+      b.parentNode.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === b)); updateMain();
+    }));
+    setFeedback('', state.mode === 'test' ? 'Probetest – die Auflösung gibt es am Ende.' : 'Los geht\'s!');
+    updateMain();
+  }
+
+  // Ist eine Antwort gegeben?
+  function hasAnswer(it) {
+    const t = it.q.type;
+    if (t === 'order') return it.pool.length === 0;
+    if (t === 'match') return [...qa().querySelectorAll('select')].every(s => s.value);
+    if (t === 'sort') return it.user.every(Boolean);
+    if (t === 'input') return !!(it.user && it.user.trim());
+    return it.user !== null && it.user !== undefined;
+  }
+
+  // Bewertung: gibt { pts, ok, sol } zurück
+  function grade(it) {
+    const q = it.q;
+    let ok = false, pts = 0, sol = '';
+    switch (q.type) {
+      case 'mc': case 'swatch': ok = it.user === q.a; sol = q.a; break;
+      case 'tf': ok = (it.user === 'stimmt') === q.a; sol = q.a ? 'stimmt' : 'stimmt nicht'; break;
+      case 'mapname': ok = it.user === (CNAME[q.target] || q.target); sol = CNAME[q.target] || q.target; break;
+      case 'input': ok = q.a.some(a => norm(a) === norm(it.user || '')); sol = q.a[0]; break;
+      case 'coord': ok = it.user === it.correct; sol = it.correct; break;
+      case 'coordclick': ok = it.user === it.answerLabel; sol = 'Punkt ' + it.answerLabel + ' (' + it.correct + ')'; break;
+      case 'mapclick': {
+        const u = it.user || {};
+        if (q.kind === 'cont') { ok = u.land === q.target; it.hit = u.land || ('Wasser: ' + oceanAt(u.lon, u.lat)); }
+        else { const o = u.land ? null : oceanAt(u.lon, u.lat); ok = o === q.target; it.hit = u.land || o; }
+        sol = q.kind === 'cont' ? (CNAME[q.target] || q.target) : (ONAME[q.target] || q.target);
+        break;
+      }
+      case 'lineclick': { const u = it.user || {}; ok = q.target === 'aeq' ? Math.abs(u.y - py(0)) <= 9 : Math.abs(u.x - px(0)) <= 9; sol = q.target === 'aeq' ? 'die Linie bei 0° Breite (waagrecht in der Mitte)' : 'die Linie bei 0° Länge (senkrecht, durch Greenwich/London)'; break; }
+      case 'hemi': { const u = it.user || {}; ok = (q.ns === 'N' ? u.lat > 1 : u.lat < -1) && (q.ow === 'O' ? u.lon > 1 : u.lon < -1); sol = (q.ns === 'N' ? 'oberhalb' : 'unterhalb') + ' des Äquators und ' + (q.ow === 'O' ? 'rechts' : 'links') + ' vom Nullmeridian'; break; }
+      case 'rose': ok = it.user === q.target; sol = DIRS.find(d => d[0] === q.target)[1] + ' (' + q.target + ')'; break;
+      case 'gridfind': ok = it.user === it.target.f; sol = 'Feld ' + it.target.f; break;
+      case 'gridclick': ok = it.user === it.field; sol = 'Feld ' + it.field + ' (Buchstabe = Spalte, Zahl = Zeile)'; break;
+      case 'layers': ok = it.user === it.answer; sol = (it.ask === 'alt' ? 'die unterste Schicht (' + it.finds[3][1] + ')' : 'die oberste Schicht (' + it.finds[0][1] + ')') + ' – je tiefer, desto älter'; break;
+      case 'order': {
+        const right = it.seq.filter((t, i) => t === q.items[i]).length;
+        ok = right === q.items.length; pts = ok ? 2 : right >= Math.ceil(q.items.length / 2) ? 1 : 0;
+        sol = q.items.map((t, i) => (i + 1) + '. ' + t).join(' · ');
+        return { ok, pts, sol, right, total: q.items.length };
+      }
+      case 'match': {
+        const sel = [...qa().querySelectorAll('select')];
+        const right = sel.filter((s, i) => s.value === it.rows[i][1]).length;
+        ok = right === it.rows.length; pts = ok ? 2 : right >= Math.ceil(it.rows.length / 2) ? 1 : 0;
+        sol = it.rows.map(p => p[0] + ' → ' + p[1]).join(' · ');
+        return { ok, pts, sol, right, total: it.rows.length };
+      }
+      case 'sort': {
+        const right = it.items.filter((p, i) => it.user[i] === p[1]).length;
+        ok = right === it.items.length; pts = ok ? 2 : right >= Math.ceil(it.items.length / 2) ? 1 : 0;
+        sol = it.items.map(p => p[0] + ' → ' + p[1]).join(' · ');
+        return { ok, pts, sol, right, total: it.items.length };
+      }
+    }
+    return { ok, pts: ok ? 1 : 0, sol };
+  }
+
+  // Lösung anzeigen (Übungsmodus)
+  function showSolution(it, g) {
+    const q = it.q;
+    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind'].includes(q.type)) {
+      qa().querySelectorAll('.opt').forEach(b => { const o = it.opts[+b.dataset.i]; if (o === g.sol) b.classList.add('right'); else if (o === it.user) b.classList.add('wrong'); });
+    }
+    if (q.type === 'input') $('txtIn').classList.add(g.ok ? 'right' : 'wrong');
+    const svg = qa().querySelector('svg');
+    if (q.type === 'mapclick') {
+      dropMark(svg, it.user.x, it.user.y, g.ok);
+      if (!g.ok && q.kind === 'cont') svg.querySelectorAll('[data-c="' + q.target + '"]').forEach(p => { p.setAttribute('stroke', '#16a34a'); p.setAttribute('stroke-width', '3'); });
+      if (!g.ok && q.kind === 'ocean') {
+        const C = { 'Pazifischer Ozean': [-140, 0], 'Atlantischer Ozean': [-35, 20], 'Indischer Ozean': [78, -25], 'Arktischer Ozean': [-10, 78], 'Südlicher Ozean': [30, -63] }[q.target];
+        svg.querySelector('#marks').innerHTML += '<circle class="mark" cx="' + px(C[0]) + '" cy="' + py(C[1]) + '" r="16" fill="none" stroke="#16a34a" stroke-width="4"/>';
+      }
+    }
+    if (q.type === 'lineclick' || q.type === 'hemi') {
+      dropMark(svg, it.user.x, it.user.y, g.ok);
+      if (!g.ok) svg.querySelector('#marks').innerHTML += q.type === 'lineclick' ? (q.target === 'aeq' ? '<line class="mark" x1="0" y1="' + py(0) + '" x2="' + MW + '" y2="' + py(0) + '" stroke="#16a34a" stroke-width="4"/>' : '<line class="mark" x1="' + px(0) + '" y1="0" x2="' + px(0) + '" y2="' + MH + '" stroke="#16a34a" stroke-width="4"/>')
+        : '<rect class="mark" x="' + (q.ow === 'O' ? px(0) : 0) + '" y="' + (q.ns === 'N' ? 0 : py(0)) + '" width="' + (MW / 2) + '" height="' + (py(0) - (q.ns === 'N' ? 0 : 0)) + '" fill="#16a34a" opacity=".18"/>';
+    }
+    if (q.type === 'coordclick') svg.querySelectorAll('[data-p]').forEach(gp => { if (gp.dataset.p === it.answerLabel) gp.querySelector('circle').setAttribute('fill', '#16a34a'); });
+    if (q.type === 'rose') { svg.querySelectorAll('[data-d]').forEach(a => { if (a.dataset.d === q.target) a.setAttribute('fill', '#16a34a'); else if (a.dataset.d === it.user) a.setAttribute('fill', '#dc2626'); }); }
+    if (q.type === 'gridclick' || q.type === 'gridfind') svg.querySelectorAll('[data-f]').forEach(r => { if (r.dataset.f === (q.type === 'gridclick' ? it.field : it.target.f)) r.setAttribute('fill', '#bbf7d0'); else if (r.dataset.f === it.user) r.setAttribute('fill', '#fecaca'); });
+    if (q.type === 'layers') svg.querySelectorAll('[data-l]').forEach(r => { if (+r.dataset.l === it.answer) { r.setAttribute('stroke', '#16a34a'); r.setAttribute('stroke-width', '5'); } });
+    if (q.type === 'order') {
+      $('ordSeq').querySelectorAll('.chip').forEach((b, i) => b.classList.add(it.seq[i] === q.items[i] ? 'right' : 'wrong'));
+    }
+    if (q.type === 'match') qa().querySelectorAll('.row').forEach((r, i) => { const s = r.querySelector('select'); const ok = s.value === it.rows[i][1]; r.classList.add(ok ? 'right' : 'wrong'); s.disabled = true; if (!ok) r.insertAdjacentHTML('beforeend', '<span></span><span class="sol">richtig: ' + esc(it.rows[i][1]) + '</span>'); });
+    if (q.type === 'sort') qa().querySelectorAll('.row').forEach((r, i) => { const ok = it.user[i] === it.items[i][1]; r.classList.add(ok ? 'right' : 'wrong'); if (!ok) r.insertAdjacentHTML('beforeend', '<span></span><span class="sol">richtig: ' + esc(it.items[i][1]) + '</span>'); });
+  }
+
+  // =====================================================================================
+  // Ablauf: Üben (adaptiv) und Probetest
+  // =====================================================================================
+  const state = { theme: 'erde', part: null, mode: 'start', queue: [], test: null };
+  let mastered = R.load('mastered', {});   // id → true
+  let tries = R.load('tries', {});         // id → Anzahl falsch
+
+  function partItems(p) { return BANK.filter(q => q.part === p); }
+  function partProgress(p) { const a = partItems(p); return { done: a.filter(q => mastered[q.id]).length, total: a.length }; }
+
+  function startPractice(p) {
+    state.part = p; state.mode = 'ueben';
+    state.theme = p[0] === 'e' ? 'erde' : 'schoepfung';
+    const items = partItems(p);
+    // Noch nicht Gekonntes zuerst, häufig Falsches öfter
+    const open = shuffle(items.filter(q => !mastered[q.id]));
+    const rest = shuffle(items.filter(q => mastered[q.id]));
+    state.queue = open.concat(rest);
+    state.count = 0;
+    buildChrome();
+    next();
+  }
+  function next() {
+    if (state.mode === 'ueben') {
+      if (!state.queue.length) startPractice(state.part);
+      const q = state.queue.shift();
+      state.count++;
+      $('qcount').textContent = 'Aufgabe ' + state.count;
+      render(instance(q));
+    } else if (state.mode === 'test') {
+      const t = state.test;
+      if (t.i >= t.items.length) return finishTest();
+      $('qcount').textContent = 'Frage ' + (t.i + 1) + ' von ' + t.items.length;
+      render(t.items[t.i]);
+      $('testProg').style.width = (t.i / t.items.length * 100) + '%';
+    }
+  }
+
+  function check() {
+    if (answered || !cur || !hasAnswer(cur)) return;
+    answered = true;
+    const g = grade(cur);
+    const q = cur.q;
+    showSolution(cur, g);
+    R.answer(g.ok, PARTS[q.part].short);
+    if (g.ok) {
+      if (!tries[q.id]) mastered[q.id] = true; else { tries[q.id] = Math.max(0, tries[q.id] - 1); if (!tries[q.id]) mastered[q.id] = true; }
+      setFeedback('good', pick(['Richtig!', 'Super!', 'Genau!', 'Stark!']) + ' ' + (q.why || ''));
+    } else {
+      tries[q.id] = (tries[q.id] || 0) + 1; delete mastered[q.id];
+      // Falsches kommt bald wieder – und später noch einmal
+      state.queue.splice(Math.min(3, state.queue.length), 0, q);
+      state.queue.splice(Math.min(9, state.queue.length), 0, q);
+      const extra = q.type === 'mapclick' && cur.hit ? ' Du hast auf <b>' + esc(cur.hit === 'Nebenmeer' ? 'ein Nebenmeer (kein Weltmeer)' : cur.hit) + '</b> geklickt.' : '';
+      const part = g.total ? ' (' + g.right + ' von ' + g.total + ' richtig)' : '';
+      setFeedback('bad', 'Leider falsch' + part + '.' + extra + ' Richtig: ' + esc(g.sol) + (q.why && !g.total ? ' – ' + q.why : ''));
+    }
+    R.save('mastered', mastered); R.save('tries', tries);
+    const pp = partProgress(q.part);
+    if (pp.done === pp.total && !R.isDone(PARTS[q.part].name)) { R.done(PARTS[q.part].name); setFeedback('good', '🎉 ' + PARTS[q.part].name + ' geschafft – du hast jede Aufgabe einmal richtig gelöst! Übe weiter oder mach den Probetest.'); }
+    drawSide();
+    updateMain();
+  }
+
+  // ---------- Probetest ----------
+  function startTest() {
+    state.mode = 'test'; state.part = null;
+    const parts = THEMES[state.theme].parts;
+    const items = [];
+    parts.forEach(p => {
+      // je Teil 6 Aufgaben, möglichst verschiedene Aufgabenarten
+      const pool = shuffle(partItems(p)); const used = {}; const take = [];
+      pool.forEach(q => { if (take.length < 6 && (used[q.type] || 0) < 2) { take.push(q); used[q.type] = (used[q.type] || 0) + 1; } });
+      pool.forEach(q => { if (take.length < 6 && !take.includes(q)) take.push(q); });
+      take.forEach(q => items.push(instance(q)));
+    });
+    state.test = { items: shuffle(items), i: 0, res: [] };
+    buildChrome();
+    next();
+  }
+  function saveTestAnswer() {
+    if (!cur || !hasAnswer(cur)) return;
+    const g = grade(cur);
+    state.test.res.push({ it: cur, g });
+    R.answer(g.ok, PARTS[cur.q.part].short);
+    state.test.i++;
+    next();
+  }
+  function promptText(it) {
+    const q = it.q;
+    if (q.type === 'tf') return 'Stimmt das? „' + q.s + '“';
+    if (q.type === 'coord') return 'Koordinaten des roten Punktes';
+    if (q.type === 'coordclick') return 'Punkt mit ' + it.correct;
+    if (q.type === 'gridfind') return 'Feld von ' + it.target.name;
+    if (q.type === 'gridclick') return 'Feld ' + it.field + ' anklicken';
+    if (q.type === 'swatch') return 'Höhenstufe zur Farbe';
+    if (q.type === 'layers') return (it.ask === 'alt' ? 'ältester' : 'jüngster') + ' Fund';
+    if (q.type === 'mapname') return 'markierter Kontinent';
+    return (q.q || '').replace(/<[^>]+>/g, '');
+  }
+  function finishTest() {
+    const res = state.test.res;
+    const max = res.reduce((a, r) => a + r.it.max, 0), pts = res.reduce((a, r) => a + r.g.pts, 0);
+    const pc = Math.round(pts / max * 100);
+    const byPart = {};
+    res.forEach(r => { const p = r.it.q.part; byPart[p] = byPart[p] || [0, 0]; byPart[p][0] += r.g.pts; byPart[p][1] += r.it.max; });
+    const wrong = res.filter(r => !r.g.ok);
+    R.round({ score: pts, total: max, label: 'Probetest ' + THEMES[state.theme].name, wrong: wrong.map(r => promptText(r.it) + ' → ' + r.g.sol) });
+    $('testProg').style.width = '100%';
+    const msg = pc >= 90 ? 'Ausgezeichnet – du bist bestens vorbereitet! 🏆' : pc >= 75 ? 'Sehr gut! Schau dir die Fehler unten noch einmal an.' : pc >= 50 ? 'Gut gemacht – aber übe die schwächeren Teile noch.' : 'Da geht noch mehr. Übe die Teile mit wenig Punkten noch einmal.';
+    $('qprompt').innerHTML = 'Probetest beendet: ' + esc(THEMES[state.theme].name);
+    qa().innerHTML = '<div class="result"><div><span class="bigscore">' + pts + ' / ' + max + '</span> <span class="hos-pill">' + pc + ' %</span></div><div class="hos-merke">' + msg + '</div>' +
+      '<div class="partlist">' + THEMES[state.theme].parts.filter(p => byPart[p]).map(p => { const [a, b] = byPart[p]; return '<div class="pl"><span>' + PARTS[p].name + '</span><span>' + a + ' / ' + b + '</span><div class="hos-progress"><span style="width:' + (a / b * 100) + '%"></span></div></div>'; }).join('') + '</div>' +
+      (wrong.length ? '<h4 style="margin:4px 0 0">Das solltest du noch üben:</h4><div class="reslist">' + wrong.map(r => '<div>' + esc(promptText(r.it)) + '<br>→ <b>' + esc(r.g.sol) + '</b></div>').join('') + '</div>' : '<div class="hos-pill good">Alles richtig! 🎉</div>') + '</div>';
+    state.mode = 'result';
+    setFeedback(pc >= 75 ? 'good' : 'warn', 'Dein Ergebnis ist unter „📋 Meine Ergebnisse“ gespeichert.');
+    updateMain();
+  }
+
+  // ---------- Oberfläche ----------
+  function setFeedback(kind, html) { const f = $('feedback'); f.className = 'hos-feedback' + (kind ? ' ' + kind : ''); f.innerHTML = html; }
+  function updateMain() {
+    const b = $('mainBtn'), tip = $('tipBtn');
+    tip.hidden = state.mode !== 'ueben';
+    if (state.mode === 'start') { b.textContent = 'Los geht\'s'; b.disabled = false; return; }
+    if (state.mode === 'result') { b.textContent = 'Neuer Probetest'; b.disabled = false; return; }
+    if (state.mode === 'test') { b.textContent = state.test.i + 1 >= state.test.items.length ? 'Abgeben ✓' : 'Weiter ➜'; b.disabled = !(cur && hasAnswer(cur)); return; }
+    if (answered) { b.textContent = 'Weiter ➜'; b.disabled = false; }
+    else { b.textContent = 'Prüfen'; b.disabled = !(cur && hasAnswer(cur)); }
+  }
+  function mainAction() {
+    if (state.mode === 'start') return startPractice(THEMES[state.theme].parts[0]);
+    if (state.mode === 'result') return startTest();
+    if (state.mode === 'test') return saveTestAnswer();
+    if (answered) next(); else check();
+  }
+  $('mainBtn').addEventListener('click', mainAction);
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT' && !$('mainBtn').disabled && !document.getElementById('hosr-ov')) { e.preventDefault(); mainAction(); } });
+  $('tipBtn').addEventListener('click', () => {
+    if (!cur || state.mode !== 'ueben') return;
+    const box = $('merkeBox'); if (box) { box.open = true; box.scrollIntoView({ block: 'nearest' }); }
+    setFeedback('warn', '💡 Schau rechts in den Merkkasten – dort steht alles, was du für diese Aufgabe brauchst.');
+  });
+
+  function buildChrome() {
+    document.querySelectorAll('#themeSeg button').forEach(b => b.classList.toggle('active', b.dataset.theme === state.theme));
+    const parts = THEMES[state.theme].parts;
+    $('partSteps').innerHTML = parts.map(p => {
+      const pp = partProgress(p);
+      return '<button type="button" class="hos-step' + (state.part === p && state.mode === 'ueben' ? ' current' : '') + (pp.done === pp.total ? ' done' : '') + '" data-p="' + p + '">' + PARTS[p].short + '</button>';
+    }).join('') + '<button type="button" class="hos-step' + (state.mode === 'test' || state.mode === 'result' ? ' current' : '') + '" data-test="1">📝 Probetest</button>';
+    $('partSteps').querySelectorAll('[data-p]').forEach(b => b.addEventListener('click', () => startPractice(b.dataset.p)));
+    $('partSteps').querySelector('[data-test]').addEventListener('click', startTest);
+    $('modePill').innerHTML = state.mode === 'ueben' ? '🔁 Üben – Falsches kommt öfter' : state.mode === 'test' || state.mode === 'result' ? '📝 Probetest – wie bei der LZK' : '👋 Start';
+    if (state.mode !== 'start') {
+      $('qpanel').innerHTML = '<div class="qhead"><span class="tag" id="qpart"></span><span class="hos-muted" id="qcount"></span>' + (state.mode === 'test' ? '<span class="hos-spacer"></span><div class="hos-progress" style="width:200px"><span id="testProg"></span></div>' : '') + '</div><p class="qprompt" id="qprompt"></p><div class="qarea" id="qarea"></div>';
+      $('qpart').textContent = state.mode === 'ueben' ? PARTS[state.part].name : 'Probetest: ' + THEMES[state.theme].name;
+    }
+    drawSide();
+    updateMain();
+  }
+
+  function drawSide() {
+    const parts = THEMES[state.theme].parts;
+    let h = '<div class="hos-panel-title">Dein Fortschritt</div><div class="partlist">' + parts.map(p => {
+      const pp = partProgress(p);
+      return '<div class="pl' + (p === state.part ? ' cur' : '') + '"><span>' + PARTS[p].short + '</span><span>' + pp.done + ' / ' + pp.total + '</span><div class="hos-progress"><span style="width:' + (pp.done / pp.total * 100) + '%"></span></div></div>';
+    }).join('') + '</div>';
+    if (state.mode === 'ueben') {
+      const P2 = PARTS[state.part];
+      h += '<details class="hos-merke merke" id="merkeBox"><summary><b>MERKE</b> – zum Nachschauen</summary><ul>' + P2.merke.map(m => '<li>' + m + '</li>').join('') + '</ul></details>';
+      h += '<div class="hoshint"><img src="/assets/minihos/' + P2.img + '.webp?v=2" alt="" onerror="this.remove()"><span>Jede Aufgabe einmal richtig = Balken voll. Was du falsch hast, kommt bald wieder.</span></div>';
+      h += '<img class="deco" src="assets/' + state.part + '.webp" alt="" onerror="this.remove()">';
+    } else if (state.mode === 'test') {
+      h += '<div class="hos-merke">Im Probetest gibt es keine Tipps und keine Auflösung zwischendurch – wie bei der echten LZK. Am Ende siehst du deine Punkte und deine Fehler.</div>';
+    }
+    $('side').innerHTML = h;
+  }
+
+  function welcome() {
+    state.mode = 'start'; state.part = null;
+    buildChrome();
+    const t = THEMES[state.theme];
+    $('qpanel').innerHTML = '<div class="welcome"><div class="hos-panel"><h3>👋 So lernst du für die LZK</h3><ul>' +
+      '<li><b>Üben:</b> Wähle oben einen Teil. Jede Aufgabe zeigt dir sofort, ob du richtig liegst – mit Erklärung.</li>' +
+      '<li>Was du falsch hast, kommt bald noch einmal. Der Balken ist voll, wenn du alles einmal richtig gelöst hast.</li>' +
+      '<li><b>💡 Tipp</b> öffnet den Merkkasten.</li><li><b>📝 Probetest:</b> 18 gemischte Fragen wie bei der LZK, Auflösung am Ende.</li>' +
+      '<li>Unter <b>📋 Meine Ergebnisse</b> siehst du, was du schon geschafft hast.</li></ul></div>' +
+      '<div class="hos-panel"><h3>' + (state.theme === 'erde' ? '🌍' : '✨') + ' ' + t.name + '</h3><ul>' + t.parts.map(p => '<li>' + PARTS[p].name + '</li>').join('') + '</ul>' +
+      '<p class="hos-muted" style="margin:0">Gefragt wird nur, was in deiner Lernunterlage steht.</p>' +
+      '<img class="deco" src="assets/' + state.theme + '.webp" alt="" onerror="this.remove()" style="max-height:170px;object-fit:cover"></div></div>';
+    setFeedback('', 'Wähle oben einen Teil zum Üben oder starte den Probetest.');
+    updateMain();
+  }
+
+  document.querySelectorAll('#themeSeg button').forEach(b => b.addEventListener('click', () => { state.theme = b.dataset.theme; R.save('theme', state.theme); welcome(); }));
+  state.theme = R.load('theme', 'erde');
+  welcome();
+  window.__VU = { BANK, oceanAt, grade, instance, render, state, startPractice, check: () => check(), hasAnswer: () => hasAnswer(cur), cur: () => cur };
+})();
+</script>
+</body>
+</html>
