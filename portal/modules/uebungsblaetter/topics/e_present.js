@@ -399,20 +399,20 @@ I'm right, [aren't I]?`
     pools: {
       place: `The cat is sleeping {in|on|under} its basket.
 My books are {in|on|under} my bag.
-The picture is {on|in|under} the wall.
+The shoes are {under|on|in} the bed.
 The bus stop is {next to|between|in} the school.
-Lisa is sitting {between|next to|behind} Tom and Ben.
+The bank is {between|on|in} the bakery and the post office.
 We can't see the garden from the street. It's {behind|in front of|between} the house.
 Our car is parked {in front of|behind|between} the house, right next to the street.
 The lamp hangs {above|under|between} the table.
 The bank is {opposite|in|on} the post office, on the other side of the street.
 The dog is hiding {under|on|above} the bed. Only its nose is sticking out.
-The milk is {in|on|at} the fridge.
+The cat is {on|in|at} the roof.
 I'm waiting {at|in|on} the bus stop.`,
       time: `My birthday is [in] May.
 School starts [at] 7.45.
 We have English [on] Monday.
-I go skiing [in] winter.
+We have lunch [at] noon.
 We open our presents [at] Christmas.
 I was born [in] 2014.
 She gets up early [in] the morning.
@@ -487,7 +487,7 @@ Tom is ill. He [can't] go to school.
 dogs / fly :: ✗ => Dogs can't fly.
 my grandma / ride a bike :: ✓ => My grandma can ride a bike.
 babies / drive a car :: ✗ => Babies can't drive a car.
-I / play the guitar :: ✓ => I can play the guitar.
+my dad / cook :: ✓ => My dad can cook.
 elephants / jump :: ✗ => Elephants can't jump.
 my dog / catch a ball :: ✓ => My dog can catch a ball.
 snakes / climb trees :: ✓ => Snakes can climb trees.`,
@@ -509,13 +509,13 @@ We [have to] be at school at 7.45.
 They [don't have to] pay. It's free.
 My sister [has to] practise the piano every day.
 You [don't have to] shout. I can hear you.`,
-      should: `I've got a headache. :: rest => You should rest.
+      should: `I'm cold. :: put on a jumper => You should put on a jumper.
 I'm always tired. :: go to bed earlier => You should go to bed earlier.
 My tooth hurts. :: see a dentist => You should see a dentist.
-I eat too many sweets. :: eat more fruit => You should eat more fruit.
+I'm bored. :: read a book => You should read a book.
 I'm cold. :: put on a jacket => You should put on a jacket.
 I didn't learn for the test. :: not watch TV now => You shouldn't watch TV now.
-My room is a mess. :: tidy it => You should tidy it.
+My bike is broken. :: take it to a shop => You should take it to a shop.
 I'm bored. :: read a book => You should read a book.
 I always forget my homework. :: write it down => You should write it down.
 My phone battery is empty. :: charge it => You should charge it.`,

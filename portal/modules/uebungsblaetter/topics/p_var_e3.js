@@ -92,7 +92,7 @@ We know each other for ten years. => We have known each other for ten years.`
 
   ext('e-pastperfect', { more: {
     form: `The shop [had closed:close] when we got there.
-I didn't know the film because I [hadn't seen:not see] it.
+She was tired because she [hadn't slept:not sleep] well.
 When Mum came home, we [had cleaned:clean] the kitchen.
 He [had never been:never / be] on a plane before.
 They were tired because they [had walked:walk] for hours.
@@ -160,7 +160,7 @@ Linz is 120 km away. Vienna is 200 km away. :: not as … as / far => Linz is no
     text: `Our new flat is [bigger] than the old one, and it's [much] quieter. The kitchen is the [nicest] room.
 Mount Everest is the [highest] mountain in the world. The Großglockner is [much] smaller, but it is the [highest] mountain in Austria.
 Tom thinks maths is [more difficult] than English, but I think English is [the most difficult] subject.`,
-    trans: `Heute ist es viel wärmer als gestern. => Today it's much warmer than yesterday.
+    trans: `Mein Rucksack ist viel schwerer als deiner. => My rucksack is much heavier than yours.
 Er ist fast so groß wie sein Vater. => He is nearly as tall as his father.
 Das ist das schlechteste Essen der Welt. => This is the worst food in the world.
 Lisa ist nicht so sportlich wie ihr Bruder. => Lisa isn't as sporty as her brother.`,
@@ -195,11 +195,11 @@ There's {a little|a few} cheese in the fridge.
 Add {a little|a few} salt to the soup.
 I need {a few|a little} minutes to get ready.`,
     error: `How many money do you need? => How much money do you need?
-There isn't many water. => There isn't much water.
+I haven't got much friends. => I haven't got many friends.
 I've got a little friends. => I've got a few friends.
 I didn't see nobody. => I didn't see anybody.`,
     some: `I'm bored. There's [nothing] to do.
-Has [anybody] seen my pen?
+[Everybody] laughed at the joke.
 I want to go [somewhere] warm for the holidays.
 [Everybody] in my class likes our teacher.
 I knocked, but [nobody] opened the door.
@@ -315,7 +315,7 @@ If we {had left|left} earlier, we would have caught the train.`,
 If she had studied, she [would have passed:pass].
 If it [hadn't snowed:not snow], the plane would have left on time.
 We [would have won:win] if Tom had played.
-If I [had seen:see] you, I would have said hello.`,
+If you [had come:come] to the party, you would have met Lisa.`,
     text: `If you [come] to my party, I [will] make my famous pizza.
 If I [had] a time machine, I [would] visit the dinosaurs.
 If I [had] known about the test, I [would have] studied more.`,
@@ -347,7 +347,7 @@ Someone opened the door. => The door was opened.
 They built this school in 1970. => This school was built in 1970.`,
     mix: `The results [will be announced:announce] tomorrow.
 The tickets [have been sold:sell] out.
-Homework [must be done:do] by Friday.
+Homework [must be done:must / do] by Friday.
 The new library [will be opened:open] next month.
 Your bike [has been repaired:repair].
 Mobile phones [can't be used:not use] during the test.`,
@@ -360,11 +360,11 @@ Das Auto ist repariert worden. => The car has been repaired.
 Die Brücke wird nächstes Jahr gebaut. => The bridge will be built next year.`,
     err: `The window was broke. => The window was broken.
 The book was wrote by her. => The book was written by her.
-My bike has be stolen. => My bike has been stolen.`
+The window were broken. => The window was broken.`
   } });
 
   ext('e-reported', { more: {
-    st: `"I'm hungry." :: Ben said … => Ben said (that) he was hungry.
+    st: `"I am thirsty." :: Ben said … => Ben said (that) he was thirsty.
 "We are going to the zoo." :: The children said … => The children said (that) they were going to the zoo.`,
     saytell: `Lisa [told] her mum the truth.
 He [said] goodbye and left.
@@ -374,12 +374,12 @@ I [told] you so!
 Tom [said] he was sorry.`,
     cmd: `"Be quiet!" :: Dad told the kids … => Dad told the kids to be quiet.
 "Don't run!" :: The teacher told us … => The teacher told us not to run.
-"Wash your hands!" :: Mum told me … => Mum told me to wash my hands.`,
+"Don't eat in the classroom!" :: The teacher told us … => The teacher told us not to eat in the classroom.`,
     q: `"Where are you going?" :: She asked me … => She asked me where I was going.
 "Can you swim?" :: He asked me … => He asked me if I could swim.
 "What time is it?" :: Tom asked … => Tom asked what time it was.
 "Do you have a pet?" :: Lisa asked me … => Lisa asked me if I had a pet.
-"Why are you sad?" :: Mum asked me … => Mum asked me why I was sad.`,
+"What are you doing?" :: Dad asked me … => Dad asked me what I was doing.`,
     mix: `"I can't come," said Tom. => Tom said (that) he couldn't come.
 "Close the door!" Mum told me. => Mum told me to close the door.
 "Are you hungry?" she asked us. => She asked us if we were hungry.
@@ -394,7 +394,7 @@ We hope [to see:see] you soon.
 Do you mind [opening:open] the window?
 I'd like [to try:try] this jacket on.
 He finished [writing:write] his essay.
-They promised [to help:help] us.
+They promised [to write:write] to us.
 Stop [talking:talk], please!`,
     choose: `Would you like {to come|coming} to my party?
 He avoids {eating|to eat} sugar.
@@ -403,7 +403,7 @@ She keeps {forgetting|to forget} her keys.
 We plan {to visit|visiting} our grandma.
 Do you enjoy {dancing|to dance}?`,
     prep: `I'm afraid of [flying:fly].
-He's tired of [waiting:wait].
+How about [going:go] to the cinema?
 We're looking forward to [seeing:see] you.
 She's good at [singing:sing].
 Are you interested in [joining:join] our club?
@@ -412,7 +412,7 @@ He left without [saying:say] goodbye.`,
     text: `My little sister loves [dancing], but she hates [practising] the piano. She wants [to be] a dancer one day.
 I'm looking forward to [going] on holiday. We've decided [to travel] by train.`,
     trans: `Ich freue mich darauf, dich zu sehen. => I'm looking forward to seeing you.
-Er hat aufgehört zu rauchen. => He has stopped smoking.
+Sie lernt gern Sprachen. => She enjoys learning languages.
 Wir hoffen, bald zu gewinnen. => We hope to win soon.
 Sie ist gut im Zeichnen. => She's good at drawing.`,
     err: `I want playing football. => I want to play football.
@@ -424,7 +424,7 @@ I decided going home. => I decided to go home.`
   ext('e-linking', { more: {
     basic: `Do you want tea [or] coffee?
 I like dogs [and] cats.
-It was cold, [so] I put on a jacket.
+The shop was closed, [so] we went home.
 I'm tired [because] I went to bed late.
 She is small [but] very strong.
 We can go to the cinema [or] to the park.
@@ -444,11 +444,11 @@ I read a book [while] I was waiting.
 [First] I had breakfast, then I brushed my teeth.
 [After] school, I usually meet my friends.
 The phone rang [while] I was having a shower.
-I'll call you [as soon as] I get home.
+[As soon as] the film starts, please switch off your phone.
 [Before] the test, I was very nervous.
 [When] I was little, I lived in Linz.`,
     text: `{Although|Because} it was cold, we went swimming.
-{For example|However}, you can visit the castle.
+There is a lot to do in Salzburg. {For example|However}, you can visit the castle.
 I think school uniforms are good. {On the other hand|For example}, they are expensive.
 {Finally|First}, put the cake in the oven.`,
     prof: `[When] I got home, nobody was there. [First] I was worried, but [then] I found a note on the table.

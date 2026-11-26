@@ -59,8 +59,9 @@
         arr.forEach(x => { const kk = k(x); if (!byKey[kk]) { byKey[kk] = []; keys.push(kk); } byKey[kk].push(x); });
         const lk = hashString(keys.join('\u0001'));
         const deck = makeRng(deal.deck + '|' + lk + '|deck').shuffle(keys);
-        const N = deck.length, seg = Math.ceil(N / 6);
-        const start = (deal.slot * seg + (taken[lk] || 0)) % N;
+        // Startpunkte gleichmäßig über den Stapel verteilen (abrunden statt aufrunden: sonst landet Blatt 5/6 bei kleinen Stapeln wieder am Anfang)
+        const N = deck.length;
+        const start = (Math.floor(deal.slot * N / 6) + (taken[lk] || 0)) % N;
         const out = []; let i = 0;
         while (out.length < n && i < N) {
           const kk = deck[(start + i) % N]; i++;

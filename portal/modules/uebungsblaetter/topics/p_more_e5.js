@@ -46,7 +46,7 @@ That sounds well. => That sounds good.`
   } });
 
   ext('e-nouns', { more: {
-    aan: `I saw {an|a} elephant at the zoo.
+    aan: `We waited for {an|a} hour.
 She is {a|an} nurse.
 It takes {an|a} hour to get there.
 That's {a|an} useful tip.`,

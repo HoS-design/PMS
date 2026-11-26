@@ -128,7 +128,7 @@ If you don't water the plants, they will die. :: unless => Unless you water the 
 If it doesn't stop raining, we won't go out. :: unless => Unless it stops raining, we won't go out.
 If you don't say sorry, she won't talk to you. :: unless => Unless you say sorry, she won't talk to you.`,
       t2: `If I [had:have] a dog, I would walk it every day.
-If I were rich, I [would travel:travel] around the world.
+If we lived in Spain, we [would speak:speak] Spanish.
 If she [lived:live] in London, she would visit the museums.
 What [would you do:you / do] if you found 100 euros?
 If I [were:be] you, I would say sorry.
@@ -142,7 +142,7 @@ If I {won|would win} the lottery, I would buy a horse.
 If I {were|am} you, I would take an umbrella.
 If she {calls|will call}, I'll tell her the news.
 I {would help|will help} you if I had more time.
-If you {don't hurry|won't hurry}, you'll be late.
+If the weather {is|will be} nice, we'll go hiking.
 If I {had|have} wings, I would fly to school.
 {Unless|If} you practise, you won't get better.`,
       err: `If it will rain, we will stay at home. => If it rains, we will stay at home.
@@ -226,7 +226,7 @@ The test was hard, but I [was able to:be able to] answer all the questions.
 Last year we [were allowed to:be allowed to] go on a school trip to Vienna.`,
       fut: `Next year I [will be able to:be able to] speak better English.
 I [haven't been able to:not / be able to] sleep well this week.
-You [will be allowed to:be allowed to] use a calculator in the test.
+You [will be allowed to:be allowed to] use a calculator in tomorrow's test.
 [Will you be able to:you / be able to] come to my party?
 She [has been able to:be able to] ride a bike since she was five.
 When you are 18, you [will be allowed to:be allowed to] vote.

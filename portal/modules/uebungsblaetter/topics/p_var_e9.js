@@ -10,8 +10,8 @@ The bananas [are] yellow.
 I [am] in the school choir.
 The cinema [is] near the station.`,
     short: `He is my cousin. => He's my cousin.
-We are from Graz. => We're from Graz.
-It is very cold. => It's very cold.
+They are from Italy. => They're from Italy.
+It is my birthday today. => It's my birthday today.
 They are in the garden. => They're in the garden.
 You are a great friend. => You're a great friend.`,
     quest: `he / your brother => Is he your brother?
@@ -27,7 +27,7 @@ Our classroom [is] big. The walls [are] yellow and the windows [are] very large.
 "[Is] Tom at home?" – "No, he [isn't]. He [is] at the football club."`,
     trans: `Ich bin müde. => I'm tired.
 Sind deine Eltern zu Hause? => Are your parents at home?
-Wir sind nicht in der Schule. => We aren't at school.
+Ihr seid nicht zu spät. => You aren't late.
 Mein Lieblingsessen ist Pizza. => My favourite food is pizza.`
   } });
 
@@ -36,22 +36,22 @@ Mein Lieblingsessen ist Pizza. => My favourite food is pizza.`
 My cousins {have|has} got a swimming pool.
 She {hasn't|haven't} got a brother.`,
     form: `My uncle [has got] a red car.
-We [have got] two dogs.`,
-    neg: `She has got a bike. :: not => She hasn't got a bike.
+My cousins [have got] a big garden.`,
+    neg: `The car has got four doors. :: not => The car hasn't got four doors.
 We have got a pool. :: not => We haven't got a pool.`,
     quest: `your grandma / a cat => Has your grandma got a cat?
 they / a big house => Have they got a big house?
 you / any brothers => Have you got any brothers?
-Lisa / a new phone => Has Lisa got a new phone?
+your grandparents / a dog => Have your grandparents got a dog?
 the school / a gym => Has the school got a gym?`,
     answer: `Has your brother got a bike? – Yes, [he has].
-Have you got a cold? – No, [I haven't].`,
+Have your neighbours got a car? – No, [they haven't].`,
     text: `My aunt [has got] a farm. She [has got] cows and horses, but she [hasn't got] any sheep.
 "[Have] you [got] a pen?" – "No, I [haven't]. But Lisa [has got] one."
 Our flat [hasn't got] a garden, but it [has got] a big balcony.
 "[Has] your dog [got] a name?" – "Yes, it [has]. His name is Bello."`,
     err: `I has got a new bike. => I have got a new bike.
-Have she got a brother? => Has she got a brother?
+Our dog have got a long tail. => Our dog has got a long tail.
 They hasn't got a garden. => They haven't got a garden.`
   } });
 
@@ -62,7 +62,7 @@ Can you help [us] with our homework?
 Lisa and Mia are here. Say hello to [them].`,
     choose: `{They|Them} are very funny.
 Wait for {me|I}!
-I can't see {him|he}.`,
+{We|Us} are best friends.`,
     poss: `Lisa has got a cat. [Her] cat is very old.
 We live in Graz. [Our] house is near the river.
 My grandparents have got a farm. [Their] farm is big.
@@ -70,9 +70,9 @@ I've got a dog. [My] dog's name is Max.
 Have you got [your] schoolbag?
 The bird is building [its] nest.
 Tom and Ben are brothers. [Their] mum is a teacher.`,
-    mine: `This is my bag. => This bag is mine.
+    mine: `This is our house. => This house is ours.
 That is your jacket. => That jacket is yours.
-These are their books. => These books are theirs.
+That is her umbrella. => That umbrella is hers.
 This is his cap. => This cap is his.
 Those are our bikes. => Those bikes are ours.`,
     self: `I hurt [myself] when I fell.
@@ -96,7 +96,7 @@ The dog is eating it's food. => The dog is eating its food.`
     aan: `She is {an|a} actress.
 We saw {a|an} horse.
 He's {an|a} only child.
-I need {a|an} pencil.`,
+She is {an|a} honest girl.`,
     this: `{These|This} are my friends.
 Can you see {those|that} boats over there?
 {This|These} is my bedroom.`,
@@ -109,8 +109,8 @@ I've got [an] uncle in London. He's got two [children] and a big dog.
 "Are [these] your shoes?" – "No, [those] shoes over there are mine."
 Look at the [geese] on the lake! There's [a] white one and [an] old grey one.`,
     trans: `Ich habe zwei Füße. => I've got two feet.
-Das ist das Auto meiner Eltern. => That's my parents' car.
-Diese Äpfel sind süß. => These apples are sweet.
+Das ist das Zimmer meiner Schwester. => That's my sister's room.
+Diese Schuhe sind zu klein. => These shoes are too small.
 Ich esse eine Orange. => I'm eating an orange.
 Die Kinder spielen im Garten. => The children are playing in the garden.`
   } });
@@ -121,28 +121,28 @@ There {is|are} a spider on the wall.
 There {are|is} lots of people at the concert.
 There {is|are} some milk in the fridge.
 There {are|is} three windows in my room.`,
-    neg: `There is a lamp on the desk. :: not => There isn't a lamp on the desk.
-There are some trees in the garden. :: not => There aren't any trees in the garden.`,
+    neg: `There is a sofa in the kitchen. :: not => There isn't a sofa in the kitchen.
+There are some cups in the cupboard. :: not => There aren't any cups in the cupboard.`,
     quest: `a cinema / in your town => Is there a cinema in your town?
-any shops / near the school => Are there any shops near the school?
+a bus stop / in your street => Is there a bus stop in your street?
 a computer / in your room => Is there a computer in your room?
 any milk / in the fridge => Is there any milk in the fridge?
 any students / in the classroom => Are there any students in the classroom?`,
-    answer: `Is there a lake near your village? – Yes, [there is].
+    answer: `Is there a swimming pool at your school? – No, [there isn't].
 Are there any cookies in the tin? – No, [there aren't].
 Is there a pet in your family? – Yes, [there is].
 Are there any mountains in your country? – Yes, [there are].
 Is there a lift in your school? – No, [there isn't].
 Are there any trees in your street? – No, [there aren't].`,
-    someany: `We haven't got {any|some} sugar.
-There are {some|any} children in the pool.
+    someany: `Can I have {some|any} more chips, please?
+There are {some|any} ducks on the lake.
 Are there {any|some} good films on TV tonight?`,
     text: `In my bedroom [there is] a bed and [there are] two shelves, but [there isn't] a TV.
 "[Is there] a bakery near here?" – "Yes, [there is]. It's next to the bank."
 [There aren't] any clouds today. [There is] only blue sky.
 In our class [there are] twelve girls and [there are] ten boys.`,
     trans: `Gibt es einen Park in der Nähe? => Is there a park nearby?
-Auf dem Tisch liegen drei Bücher. => There are three books on the table.`,
+Im Kühlschrank ist keine Milch. => There isn't any milk in the fridge.`,
     err: `There is two cats in the garden. => There are two cats in the garden.
 Is there any apples? => Are there any apples?
 There aren't some cookies left. => There aren't any cookies left.
@@ -152,14 +152,14 @@ There are a big tree in the park. => There is a big tree in the park.`
   ext('e-presentsimple', { more: {
     gap: `Lisa [plays:play] the guitar every day.
 My parents [don't like:not like] loud music.
-The bus [leaves:leave] at 7.30.
+The shop [closes:close] at 6 p.m.
 He [goes:go] to bed at nine.
-Our cat [catches:catch] mice.
+My dad [fixes:fix] old bikes.
 It [rains:rain] a lot in April.
 My brother [doesn't eat:not eat] fish.
 Grandpa [fixes:fix] everything.
 [Does she speak:she / speak] French?`,
-    dodoes: `{Do|Does} your friends like pizza?
+    dodoes: `{Does|Do} your teacher give a lot of homework?
 He {doesn't|don't} play the piano.`,
     neg: `She likes cats. :: not => She doesn't like cats.
 I play the piano. :: not => I don't play the piano.
@@ -168,27 +168,27 @@ We go to school on Saturday. :: not => We don't go to school on Saturday.
 Tom speaks Spanish. :: not => Tom doesn't speak Spanish.
 The cat sleeps in my room. :: not => The cat doesn't sleep in my room.`,
     quest: `she / like chocolate => Does she like chocolate?
-you / walk to school => Do you walk to school?
+you / play an instrument => Do you play an instrument?
 your parents / work on Saturdays => Do your parents work on Saturdays?
 it / snow in winter => Does it snow in winter?
-Tom / speak English => Does Tom speak English?`,
+your sister / go to university => Does your sister go to university?`,
     text: `My sister [plays] the violin. She [practises] every day, but she [doesn't] like concerts.
 "[Do] you like horses?" – "Yes, I [do]. I [ride] every Saturday."
 On Sundays we [visit] our grandparents. Grandma always [makes] a cake.
 Mr Smith [teaches] English. He [comes] from London and he [speaks] very fast.`,
     trans: `Wir essen um sechs Uhr zu Abend. => We have dinner at six o'clock.
 Sie mag keine Spinnen. => She doesn't like spiders.
-Wohnst du in Graz? => Do you live in Graz?
+Kocht dein Vater gern? => Does your father like cooking?
 Der Bus kommt um acht. => The bus comes at eight.`,
     err: `She don't like apples. => She doesn't like apples.
-Do he play tennis? => Does he play tennis?
+Does they live here? => Do they live here?
 My mum work in a shop. => My mum works in a shop.
 He doesn't plays football. => He doesn't play football.`
   } });
 
   ext('e-progressive', { more: {
     gap: `Mum [is cooking:cook] dinner right now.
-The children [are playing:play] in the snow.
+Grandma [is knitting:knit] a scarf.
 I [am not watching:not watch] TV at the moment.
 [Are you doing:you / do] your homework?
 Look! Tom [is climbing:climb] the tree.
@@ -196,8 +196,8 @@ We [are waiting:wait] for the train.
 It [is raining:rain] again.`,
     neg: `I am sleeping. :: not => I'm not sleeping.
 The dog is barking. :: not => The dog isn't barking.
-They are playing outside. :: not => They aren't playing outside.
-She is wearing a hat. :: not => She isn't wearing a hat.
+The baby is sleeping. :: not => The baby isn't sleeping.
+I am reading a comic. :: not => I'm not reading a comic.
 It is snowing. :: not => It isn't snowing.`,
     simpprog: `Look! The bus {is coming|comes}.
 I usually {walk|am walking} to school.
@@ -241,14 +241,14 @@ Er spielt am Nachmittag im Garten. => He plays in the garden in the afternoon.`
   ext('e-questions', { more: {
     choose: `{Where|When|Who} do you live? – In Vienna.
 {When|Where|Why} is the party? – On Friday.
-{Who|What|Where} is your teacher? – Mrs Smith.
+{When|Where|Who} does the film start? – At eight.
 {Why|How|When} are you late? – Because I missed the bus.
 {How much|How many|How old} is the ticket? – Five euros.
 {What time|How long|How often} does school start? – At eight.
 {How|What|Who} do you go to school? – By bike.`,
-    word: `[Whose] bag is this? – It's Lisa's.
+    word: `[Whose] turn is it? – It's Ben's.
 [How old] is your sister? – Ten.
-[Which] colour do you like best, red or blue? – Red.
+[Which] bus goes to the station, the 3 or the 7? – The 7.
 [How often] do you play tennis? – Twice a week.
 [Where] are my shoes? – Under the bed.`,
     ask: `We play football on Saturdays. :: When? => When do you play football?
@@ -258,7 +258,7 @@ They are late. :: Why? => Why are they late?
 My sister has got three cats. :: How many? => How many cats has your sister got?
 The film starts at eight. :: What time? => What time does the film start?
 Ben goes to bed at nine. :: When? => When does Ben go to bed?`,
-    tags: `Lisa can swim, [can't she]?
+    tags: `Tom is from Linz, [isn't he]?
 It isn't raining, [is it]?
 You were at the party, [weren't you]?
 They don't live here, [do they]?`,
@@ -273,9 +273,9 @@ Do you can swim? => Can you swim?`
   } });
 
   ext('e-prepositions', { more: {
-    how: `We went to Italy [by] car.
+    how: `My aunt travels to work [by] train.
 My uncle travels [by] plane.
-I go to school [on] foot.
+We came home [on] foot.
 They came [by] bus.
 Grandma sent the parcel [by] post.`,
     time: `The concert is [on] Saturday.
@@ -296,7 +296,7 @@ Das Geschäft ist neben der Bank. => The shop is next to the bank.`
 
   ext('e-modals', { more: {
     can: `Cats [can] see in the dark.
-I [can't] hear you – the music is too loud!
+My grandma [can't] use a smartphone.
 [Can] your brother ride a bike?
 Snakes [can't] fly.
 We [can] go to the cinema tonight.`,
@@ -304,18 +304,18 @@ We [can] go to the cinema tonight.`,
 my mum / speak French :: ✓ => My mum can speak French.
 I / whistle :: ✓ => I can whistle.`,
     must: `You {mustn't|don't have to} run in the corridor.
-We {don't have to|mustn't} get up early on Sunday.
-You {mustn't|don't have to} touch the animals at the zoo.
-I {don't have to|mustn't} pay. It's free!
+You {don't have to|mustn't} bring food. We've got enough.
+You {mustn't|don't have to} cross the road when the light is red.
+We {don't have to|mustn't} wear a uniform at our school.
 Students {mustn't|don't have to} eat in the computer room.
 You {don't have to|mustn't} bring food. There's a café.
 You {mustn't|don't have to} talk during the test.`,
     should: `I'm always tired. :: go to bed earlier => You should go to bed earlier.
 My tooth hurts. :: see a dentist => You should see a dentist.
-I play computer games all day. :: not play so much => You shouldn't play so much.
+I've got a toothache. :: go to the dentist => You should go to the dentist.
 I'm bored. :: read a book => You should read a book.`,
     mix: `{Can|Should} you play the piano?
-It's late. You {should|can} go home now.
+You look tired. You {should|can't} go to bed early.
 We {have to|can} wear a helmet when we ride our bikes.
 My grandma {can't|mustn't} hear very well.
 I {can|have to} speak three languages.
@@ -330,8 +330,8 @@ Tomorrow is Sunday, so we [don't have to] get up early.`,
 Ich kann nicht kommen. => I can't come.
 Du musst das nicht machen. => You don't have to do that.`,
     err: `You must to go now. => You must go now.
-Can you to help me? => Can you help me?
-She cans swim. => She can swim.
+They can to speak French. => They can speak French.
+She don't can dance. => She can't dance.
 He have to work today. => He has to work today.`
   } });
 
@@ -352,11 +352,11 @@ Last week I [found] an old box in the attic. Inside, there [was] a letter that m
   } });
 
   ext('e-pastsimple', { more: {
-    waswere: `My parents [were] at work yesterday.
-[Was] the test difficult?
+    waswere: `The shops [were] closed on Sunday.
+[Was] your brother at school today?
 I [wasn't] at home on Sunday.`,
     gap: `We [visited:visit] the museum last week.
-She [didn't like:not like] the food.
+We [didn't watch:not watch] the news.
 I [watched:watch] a film yesterday evening.
 [Did you see:you / see] the football match?
 The bus [arrived:arrive] late.
@@ -366,7 +366,7 @@ My brother [broke:break] my favourite cup.`,
     neg: `She went to the party. :: not => She didn't go to the party.
 We had fun. :: not => We didn't have fun.
 Tom called me. :: not => Tom didn't call me.
-I saw the film. :: not => I didn't see the film.
+Tom bought a new bike. :: not => Tom didn't buy a new bike.
 The shop opened at eight. :: not => The shop didn't open at eight.
 They ate all the cake. :: not => They didn't eat all the cake.`,
     quest: `you / sleep well => Did you sleep well?
@@ -385,17 +385,17 @@ On Monday I [woke] up late, so I [ran] to the bus stop. Luckily, the bus [was] l
     trans: `Wir waren letzte Woche in Wien. => We were in Vienna last week.
 Hast du gestern deine Oma besucht? => Did you visit your grandma yesterday?
 Sie hat den Film nicht gesehen. => She didn't see the film.
-Ich habe ein Buch gelesen. => I read a book.
+Wir haben einen Schneemann gebaut. => We built a snowman.
 Er ist um sieben Uhr aufgestanden. => He got up at seven o'clock.`,
     err: `We goed to the beach. => We went to the beach.
 Did he finished his homework? => Did he finish his homework?
-They was very happy. => They were very happy.
+I were at the cinema. => I was at the cinema.
 I stoped the car. => I stopped the car.`
   } });
 
   ext('e-pastprogressive', { more: {
-    form: `At 7 o'clock we [were having:have] breakfast.
-It [was raining:rain] when we left the house.
+    form: `At 9 p.m. my parents [were watching:watch] the news.
+The sun [was shining:shine] when we arrived.
 I [wasn't listening:not listen] when the teacher explained it.`,
     when: `While I [was reading:read], the lights [went:go] out.
 When Tom [came:come] in, we [were watching:watch] TV.
@@ -409,7 +409,7 @@ We {were watching|watched} a film when Dad came home.
 Yesterday I {went|was going} to the dentist.
 When I {opened|was opening} the door, the cat ran out.
 At 9 p.m. I {was doing|did} my homework.
-She {fell|was falling} asleep during the film.
+I {cut|was cutting} my finger while I was cooking.
 The sun {was shining|shone} when we woke up.`,
     usedto: `My mum [used to] have long hair.
 [Did] you [use to] go to kindergarten?
@@ -443,7 +443,7 @@ She {'s going to|'ll} have a baby in May.
 The phone is ringing. – I {'ll|'m going to} answer it.
 We've bought paint. We {'re going to|'ll} paint the kitchen.
 Careful! You {'re going to|'ll} drop the plates!
-I promise I {'ll|'m going to} help you.
+Wait, I {'ll|'m going to} open the door for you.
 He has saved money. He {'s going to|'ll} buy a new bike.`,
     arr: `My grandparents [are coming:come] for dinner tonight.
 We [are flying:fly] to London on Friday.
@@ -457,19 +457,19 @@ It's very cloudy. I think it [is going to] rain.
 Our train [leaves] at 7.15 tomorrow morning, so we [are going to] get up early.`,
     trans: `Morgen wird es sonnig sein. => It will be sunny tomorrow.
 Ich treffe am Freitag meine Freunde. (fix vereinbart) => I'm meeting my friends on Friday.`,
-    err: `I will to help you. => I will help you.
+    err: `It will to be sunny tomorrow. => It will be sunny tomorrow.
 It's going rain. => It's going to rain.
 We going to the cinema tonight. => We're going to the cinema tonight.
-He will comes tomorrow. => He will come tomorrow.`
+They will visits us next week. => They will visit us next week.`
   } });
 
   ext('e-presentperfect', { more: {
     ever: `Have you ever been to London? :: ✓ => Yes, I have.
 Has your mum ever met a famous person? :: ✗ => No, she hasn't.
-Have your parents ever flown to America? :: ✓ => Yes, they have.
+Has your brother ever ridden a horse? :: ✓ => Yes, he has.
 Has Lisa ever seen the sea? :: ✗ => No, she hasn't.
 Have you ever broken your arm? :: ✗ => No, I haven't.`,
-    forsince: `I have lived here [since] 2015.
+    forsince: `My dad has worked at the bank [for] ten years.
 She has been ill [for] three days.
 We have known each other [since] primary school.
 They have been married [for] twenty years.
@@ -480,39 +480,39 @@ We have waited [for] an hour.`,
     tense: `I {saw|have seen} Lisa yesterday.
 {Have you finished|Did you finish} your homework yet?
 She {has lived|lives} in Graz since 2020.
-We {went|have gone} to Spain last summer.
+I {lost|have lost} my wallet yesterday.
 Columbus {discovered|has discovered} America in 1492.
 They {have been|are} friends for ten years.
 When {did you arrive|have you arrived}?`,
-    prog: `She [has been learning:learn] English for three years.
-We [have been waiting:wait] for the bus for twenty minutes.
+    prog: `Grandpa [has been working:work] in the garden all day.
+It [has been raining:rain] since lunchtime.
 It [has been raining:rain] all day.
-They [have been playing:play] tennis since two o'clock.
+My sister [has been talking:talk] on the phone for an hour.
 I'm tired because I [have been running:run].`,
     text: `I [have] never [been] to Italy, but my sister [has visited] Rome twice.
 "[Have] you [seen] my keys?" – "Yes, I [saw] them on the table this morning."
 We [have lived] in this house [since] 2018.
 "Have you done your homework [yet]?" – "Yes, I [have] [just] finished it."`,
-    err: `Have you ever went to Rome? => Have you ever been to Rome?
+    err: `I have saw this film twice. => I have seen this film twice.
 I have saw this film twice. => I have seen this film twice.`
   } });
 
   ext('e-pastperfect', { more: {
     form: `When we arrived, the film [had started:start].
-She was sad because she [had lost:lose] her cat.
+I was nervous because I [hadn't flown:not fly] before.
 I [had never seen:never / see] snow before that winter.
 After he [had finished:finish] his homework, he went out.
 The streets were wet because it [had rained:rain].
-By the time the police came, the thief [had run:run] away.
+When I opened the fridge, somebody [had eaten:eat] my yoghurt.
 We [had already eaten:already / eat] when Dad came home.
 [Had you met:you / meet] him before?`,
     join: `First I finished my homework. Then I played football. :: After … => After I had finished my homework, I played football.
-First the film started. Then we got to the cinema. :: When … already => When we got to the cinema, the film had already started.
+First the guests left. Then we cleaned the kitchen. :: After … => After the guests had left, we cleaned the kitchen.
 First she lost her key. Then she couldn't get in. :: because => She couldn't get in because she had lost her key.
 First they ate all the cake. Then I came home. :: When … => When I came home, they had eaten all the cake.
-First he read the book. Then he saw the film. :: After … => After he had read the book, he saw the film.`,
+First she did her homework. Then she went out. :: After … => After she had done her homework, she went out.`,
     choose: `When I got home, my sister {had already gone|already goes} to bed.
-She was happy because she {had passed|passes} the test.
+She couldn't pay because she {had forgotten|has forgotten} her purse.
 I {had never flown|never fly} before that trip.
 After the guests {had left|leave}, we tidied up.
 The ground was white because it {had snowed|snows} during the night.
@@ -525,8 +525,8 @@ She [had] never [seen] the sea before she [went] to Croatia.`,
 Sie hatte den Film schon gesehen. => She had already seen the film.
 Als wir ankamen, war der Zug schon abgefahren. => When we arrived, the train had already left.`,
     err: `When I came, they had leave. => When I came, they had left.
-I had saw it before. => I had seen it before.
-After she had finish, she went home. => After she had finished, she went home.
+The film had began when we arrived. => The film had begun when we arrived.
+They had never flew before. => They had never flown before.
 We had went there before. => We had gone there before.`
   } });
 })();

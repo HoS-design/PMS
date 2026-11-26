@@ -199,7 +199,7 @@ There {are|is} two bathrooms in our house.
 There {are|is} lots of tourists in Salzburg.`,
       someany: `Are there {any|some} questions?
 Could I have {some|any} more juice, please?
-I didn't buy {any|some} vegetables.
+Can you buy {some|any} bread on your way home?
 There are {some|any} letters for you on the table.`,
       text: `In my room [there is] a bed and a desk. [There are] two posters on the wall, but [there isn't] a TV.
 "[Is there] a bakery near here?" – "Yes, [there is]. It's next to the bank."
@@ -295,7 +295,7 @@ Tom normally [walks] to school, but today he [is going] by bike because he [is] 
 "Why [is] the dog [barking]?" – "Because someone [is standing] at the door."`,
       trans: `Was machst du gerade? => What are you doing?
 Ich lese gerade ein Buch. => I'm reading a book at the moment.
-Schau! Es regnet. => Look! It's raining.
+Hör zu! Das Baby weint. => Listen! The baby is crying.
 Sie spielt jeden Tag Klavier, aber jetzt schläft sie. => She plays the piano every day, but now she's sleeping.
 Wir warten auf den Bus. => We're waiting for the bus.
 Hörst du mir zu? => Are you listening to me?
@@ -447,7 +447,7 @@ Take an umbrella. It [might] rain later.`,
 Du darfst hier nicht rauchen. => You mustn't smoke here.
 Wir müssen morgen nicht in die Schule. => We don't have to go to school tomorrow.
 Du solltest mehr Wasser trinken. => You should drink more water.
-Darf ich das Fenster öffnen? => Can / May I open the window?
+Musst du heute arbeiten? => Do you have to work today?
 Er musste gestern arbeiten. => He had to work yesterday.
 Es könnte morgen schneien. => It might snow tomorrow.
 Als ich klein war, konnte ich nicht lesen. => When I was little, I couldn't read.`,

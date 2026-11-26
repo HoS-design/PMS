@@ -6,7 +6,7 @@
     form: `Our teacher [is] very nice.
 The children [are] in the playground.
 I [am] twelve years old.
-My shoes [are] under the bed.
+The keys [are] on the table.
 The weather [is] great today.
 You [are] my best friend.
 Mr Brown [is] our neighbour.
@@ -51,7 +51,7 @@ Is the shop open? – No, [it isn't].
 Are you and Tom in the same class? – Yes, [we are].
 Is Mr Smith your teacher? – No, [he isn't].`,
     err: `My friends is at the cinema. => My friends are at the cinema.
-He are twelve years old. => He is twelve years old.
+We is in the same class. => We are in the same class.
 I is in the garden. => I am in the garden.
 Is you tired? => Are you tired?`
   } });
@@ -59,7 +59,7 @@ Is you tired? => Are you tired?`
   ext('e-havegot', { more: {
     choose: `{Has|Have} Lisa got a brother?
 They {have|has} got a big garden.
-My cat {has|have} got green eyes.
+My uncles {have|has} got a boat.
 {Have|Has} we got any milk?
 He {hasn't|haven't} got a computer.
 I {have|has} got two sisters.
@@ -93,7 +93,7 @@ your town / a park => Has your town got a park?`,
     answer: `Have you got a pet? – Yes, [I have].
 Has your sister got a phone? – No, [she hasn't].
 Have we got any homework? – No, [we haven't].
-Has the house got a garden? – Yes, [it has].
+Has your phone got a camera? – Yes, [it has].
 Have the children got a ball? – Yes, [they have].
 Has your dad got a car? – No, [he hasn't].
 Have you and Lisa got a dog? – Yes, [we have].`,
@@ -190,7 +190,7 @@ I want {an|a} ice cream.
 She has got {a|an} uncle in London.
 That's {an|a} interesting book.
 He's got {a|an} new phone.
-I saw {an|a} elephant at the zoo.`,
+We waited for {an|a} hour.`,
     this: `{These|This} shoes are too small.
 {That|Those} is my school over there.
 {This|These} book is really good.
@@ -210,7 +210,7 @@ My [feet:foot] are cold.
 The dentist checks my [teeth:tooth].
 There are three [men:man] at the door.
 How many [people:person] are coming?
-Autumn [leaves:leaf] are red and yellow.
+Two [wolves:wolf] live in the forest.
 We caught five [fish:fish] in the lake.`
   } });
 
@@ -363,7 +363,7 @@ Ich trinke jeden Morgen Milch. => I drink milk every morning.`
 [How much] is this T-shirt? – Ten euros.
 [What time] does the film start? – At eight.
 [How] do you get to school? – By bus.`,
-    subj: `Someone called me. :: Who? => Who called you?
+    subj: `Something broke the window. :: What? => What broke the window?
 Lisa called someone. :: Who? => Who did Lisa call?
 Something fell off the table. :: What? => What fell off the table?
 Tom saw something. :: What? => What did Tom see?
@@ -376,7 +376,7 @@ It's cold today, [isn't it]?
 Tom doesn't play tennis, [does he]?
 You've got a dog, [haven't you]?
 We were late, [weren't we]?
-He went to the party, [didn't he]?
+It was a great film, [wasn't it]?
 Lisa will help us, [won't she]?`,
     trans: `Wo wohnst du? => Where do you live?
 Warum bist du müde? => Why are you tired?
@@ -437,7 +437,7 @@ We [can] see the mountains from our window.
 Elephants [can't] jump.`,
     ability: `penguins / fly :: ✗ => Penguins can't fly.
 my sister / ride a horse :: ✓ => My sister can ride a horse.
-I / play the guitar :: ✓ => I can play the guitar.
+my dad / cook :: ✓ => My dad can cook.
 dogs / climb trees :: ✗ => Dogs can't climb trees.
 my grandpa / cook :: ✓ => My grandpa can cook.
 my baby brother / walk :: ✗ => My baby brother can't walk.
@@ -452,7 +452,7 @@ Students [have to] be quiet in the library.`,
     should: `I've got a headache. :: take a break => You should take a break.
 I always forget my homework. :: write it down => You should write it down.
 I eat too many sweets. :: not eat so many sweets => You shouldn't eat so many sweets.
-My room is a mess. :: tidy it => You should tidy it.
+My bike is broken. :: take it to a shop => You should take it to a shop.
 I'm cold. :: put on a jumper => You should put on a jumper.
 I watch TV until midnight. :: not watch TV so late => You shouldn't watch TV so late.
 I've got a test tomorrow. :: study tonight => You should study tonight.`,
@@ -519,7 +519,7 @@ My sister [was taking:take] a shower when the lights went out.
 They [weren't listening:not listen] to the teacher.
 [Was he sleeping:he / sleep] when you came home?
 The children [were singing:sing] in the car.
-Mum [was cooking:cook] dinner when I came home.`,
+The dog [was sleeping:sleep] when the postman came.`,
     usedto: `My grandpa [used to] work on a farm.
 I [didn't use to] like vegetables, but now I do.
 [Did] you [use to] play with dolls?

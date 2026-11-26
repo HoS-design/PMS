@@ -21,8 +21,8 @@ After [eating:eat], we went for a walk.
 Instead of [watching:watch] TV, let's play a game.
 She apologised for [breaking:break] the vase.
 I'm worried about [failing:fail] the test.
-We talked about [going:go] to Italy.
-Are you good at [cooking:cook]?
+He's famous for [telling:tell] funny stories.
+She dreams of [becoming:become] a pilot.
 He insisted on [paying:pay] for the meal.`,
     text: `I'm not very good at [cooking], but I enjoy [baking] cakes. Tomorrow I'm planning [to bake] a chocolate cake.
 We decided [to go] for a walk instead of [watching] TV. It was a great idea!`,
@@ -96,7 +96,7 @@ Where is my bag? Have you seen [it]?
 Mrs Gruber is ill. Let's send [her] a card.
 Wait for [me]!
 Tom is my best friend. I tell [him] everything.`,
-    mine: `This car is their car. => This car is theirs.
+    mine: `This pencil is his pencil. => This pencil is his.
 That room is his room. => That room is his.`,
     self: `He hurt [himself] when he fell off his bike.
 We built the tree house [ourselves].

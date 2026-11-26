@@ -96,7 +96,7 @@ I don't know [anything] about computers.
 Let's go [somewhere] nice for lunch.
 [Everything] is ready for the party.`,
     error: `I haven't got many time. => I haven't got much time.
-There isn't many juice left. => There isn't much juice left.
+We need a few sugar for the cake. => We need a little sugar for the cake.
 How much brothers have you got? => How many brothers have you got?
 I need a few salt. => I need a little salt.
 We bought a little apples. => We bought a few apples.`
@@ -164,8 +164,8 @@ This is the park [where] we play football.`
   ext('e-conditionals', { more: {
     t1: `If it [rains:rain], we will stay at home.
 If you study hard, you [will pass:pass] the test.
-I [will call:call] you if I have time.
-If we [hurry:hurry], we will catch the bus.
+We [will miss:miss] the film if we don't leave now.
+If Grandma [comes:come], she will bake a cake.
 If you eat too much, you [will feel:feel] sick.
 She [won't come:not come] if you don't invite her.
 If the weather [is:be] nice, we will go swimming.
@@ -176,14 +176,14 @@ If she lived in London, she [would visit:visit] the museums.
 I [would buy:buy] a big house if I won the lottery.
 If we [were:be] rich, we would travel around the world.
 If you [practised:practise] more, you would play better.
-He [wouldn't be:not be] so tired if he went to bed earlier.
+My parents [would buy:buy] a bigger car if they had more money.
 If I [could:can] fly, I would fly to Australia.
 What [would you do:you / do] if you saw a ghost?`,
     t3: `If we had left earlier, we [wouldn't have missed:not miss] the train.
 If he [had listened:listen], he would have understood.
 She [would have come:come] if you had invited her.
 If I [had known:know], I would have helped you.
-If they had played better, they [would have won:win].
+If it hadn't rained, we [would have played:play] tennis.
 If you [hadn't forgotten:not forget] your key, we would have got in.`,
     trans: `Wenn ich Zeit habe, rufe ich dich an. => If I have time, I'll call you.
 Wenn ich reich wäre, würde ich ein Pferd kaufen. => If I were rich, I would buy a horse.
@@ -204,7 +204,7 @@ The match [was won:win] by our team.
 The cars [were washed:wash] on Saturday.`,
     active: `Someone stole my bike. => My bike was stolen.
 The teacher corrected the tests. => The tests were corrected by the teacher.
-They speak English in Australia. => English is spoken in Australia.
+They sell newspapers at the kiosk. => Newspapers are sold at the kiosk.
 A dog bit the postman. => The postman was bitten by a dog.
 They make cars in this factory. => Cars are made in this factory.
 Shakespeare wrote Romeo and Juliet. => Romeo and Juliet was written by Shakespeare.
@@ -221,18 +221,18 @@ Das Buch wurde von J. K. Rowling geschrieben. => The book was written by J. K. R
   ext('e-reported', { more: {
     st: `"I am tired." :: Tom said … => Tom said (that) he was tired.
 "I like football." :: Lisa said … => Lisa said (that) she liked football.
-"I live in Graz." :: Ben said … => Ben said (that) he lived in Graz.
-"The test is easy." :: Mia said … => Mia said (that) the test was easy.
+"My dog is ill." :: Lena said … => Lena said (that) her dog was ill.
+"The shop is closed." :: Dad said … => Dad said (that) the shop was closed.
 "We are at home." :: They said … => They said (that) they were at home.
-"I am cold." :: My sister said … => My sister said (that) she was cold.
+"I like horror films." :: My sister said … => My sister said (that) she liked horror films.
 "I like your shoes." :: Anna said … => Anna said (that) she liked my shoes.
 "I live near the school." :: Max said … => Max said (that) he lived near the school.
 "I am late." :: Dad said … => Dad said (that) he was late.
 "The film is easy to understand." :: The teacher said … => The teacher said (that) the film was easy to understand.
-"We are at the zoo." :: The children said … => The children said (that) they were at the zoo.
+"I live with my grandma." :: Emma said … => Emma said (that) she lived with her grandma.
 "I don't like rain." :: Grandma said … => Grandma said (that) she didn't like rain.
 "I am happy." :: Lena said … => Lena said (that) she was happy.
-"We live in a big house." :: My cousins said … => My cousins said (that) they lived in a big house.
+"We are at the station." :: My parents said … => My parents said (that) they were at the station.
 "I like this song." :: Paul said … => Paul said (that) he liked that song.`,
     q: `"Are you hungry?" :: Mum asked me … => Mum asked me if I was hungry.
 "What is your name?" :: The teacher asked me … => The teacher asked me what my name was.
@@ -253,9 +253,9 @@ They plan [to visit:visit] London.
 My brother finished [doing:do] his homework.
 I'd love [to come:come] to your party.
 Avoid [running:run] near the pool!`,
-    prep: `She's interested in [learning:learn] Chinese.
+    prep: `Thank you for [listening:listen].
 Thank you for [helping:help] me.
-I'm looking forward to [seeing:see] you.
+I'm sorry for [being:be] late.
 He's bad at [cooking:cook].
 We talked about [going:go] to the cinema.
 They left without [paying:pay].
@@ -357,7 +357,7 @@ health => healthy`,
     family: `She is a very [creative:create] girl.
 The [teacher:teach] explained the rule again.
 It was a [wonderful:wonder] day.
-Please be [careful:care] with the glass!
+It was a [sunny:sun] day.
 The [singer:sing] has a great voice.
 My brother is [unhappy:happy] today.
 This medicine is [useless:use] – it doesn't work.
@@ -527,37 +527,37 @@ Frühstück essen => have breakfast`
   } });
 
   ext('e-phrases', { more: {
-    p1: `Du begrüßt am Morgen deine Lehrerin. => Good morning!
-Du fragst, wie es jemandem geht. => How are you?
+    p1: `Du fragst, wo jemand wohnt. => Where do you live?
+Du sagst, dass es dir gut geht. => I'm fine, thanks.
 Du verabschiedest dich. => Goodbye! / See you!
 Du bedankst dich. => Thank you! / Thanks!
 Du entschuldigst dich, weil du zu spät bist. => Sorry I'm late.
 Du fragst, ob du aufs WC gehen darfst. => Can I go to the toilet, please?
-Du hast etwas nicht verstanden. => Sorry, I don't understand. / Can you say that again, please?
+Du fragst, ob du mitspielen darfst. => Can I play too?
 Du fragst, was ein Wort bedeutet. => What does … mean?
-Du fragst nach dem Namen. => What's your name?
+Du fragst, ob jemand Geschwister hat. => Have you got any brothers or sisters?
 Du wünschst ein schönes Wochenende. => Have a nice weekend!
 Du sagst, wie alt du bist. => I'm … years old.`,
-    polite: `{Can you help me, please?|Help me!}
-{Excuse me, where is the station?|Where is the station?}
+    polite: `{Good morning, Mrs Smith!|Hi, teacher!}
+{Could you pass the salt, please?|Salt!}
 {Could you open the window, please?|Open the window!}
 {No, thank you.|No.}
-{Can I have some water, please?|Give me water!}`,
-    p2: `Du fragst, was etwas kostet. => How much is it? / How much does it cost?
+{Excuse me, is this seat free?|Is this free?}`,
+    p2: `Du fragst, ob es das T-Shirt auch in Blau gibt. => Have you got this T-shirt in blue?
 Du fragst nach dem Weg zum Bahnhof. => Excuse me, how do I get to the station?
-Du möchtest mit Karte bezahlen. => Can I pay by card?
+Du fragst, ob du bar zahlen kannst. => Can I pay in cash?
 Du fragst nach einer anderen Größe. => Have you got this in a bigger size?
 Du bestellst ein Glas Wasser. => Can I have a glass of water, please?
-Du fragst, wann der Bus fährt. => When does the bus leave?
+Du fragst, welcher Bus zum Zoo fährt. => Which bus goes to the zoo?
 Du lädst jemanden zu deiner Party ein. => Would you like to come to my party?
 Du sagst, dass du nur schaust. => I'm just looking, thanks.`,
     reply: `Thank you so much! => You're welcome!
-I'm sorry I'm late. => That's OK. / No problem.
+I'm so tired today. => Why don't you have a rest?
 Happy birthday! => Thank you!
 How are you? => I'm fine, thanks. And you?
-Would you like some cake? => Yes, please! / No, thank you.
-I passed my test! => Well done! / Congratulations!
-I've got a cold. => Oh no! Get well soon!
+Are you ready? => Yes, let's go! / Not yet, just a minute.
+I'm going on holiday tomorrow. => Have a great time!
+Let's go to the cinema! => Good idea! / Sorry, I can't.
 Can you help me? => Of course!`
   } });
 
@@ -574,7 +574,7 @@ I [made] my bed this morning.`,
     choose: `Can I {borrow|lend} your bike?
 Could you {lend|borrow} me a pen?
 Please {bring|take} your swimming things to school tomorrow.
-Don't forget to {take|bring} an umbrella when you go out.
+Can you {bring|take} me a glass of water, please?
 My friend {lent|borrowed} me his phone.
 I {borrowed|lent} a book from Lisa.
 {Take|Bring} the rubbish out, please.

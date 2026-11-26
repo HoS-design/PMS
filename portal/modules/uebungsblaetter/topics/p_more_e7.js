@@ -158,7 +158,7 @@ Please [tell] your parents about the trip.
 My friend [told] me a secret.
 Did he [say] anything about the test?
 The teacher [told] us to be quiet.`,
-    cmd: `"Don't run!" :: The teacher told the children … => The teacher told the children not to run.
+    cmd: `"Turn off the TV!" :: Mum told my brother … => Mum told my brother to turn off the TV.
 "Wash your hands!" :: Mum told us … => Mum told us to wash our hands.
 "Please wait here." :: The man asked me … => The man asked me to wait there.`,
     q: `"Do you have a pet?" :: Lisa asked me … => Lisa asked me if I had a pet.

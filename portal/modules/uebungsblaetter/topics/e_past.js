@@ -189,7 +189,7 @@ the children / like the cake => Did the children like the cake?`,
 What [did] you [eat] for lunch? – Spaghetti.
 When [did] the film [start]? – At eight.
 Who [did] you [meet] in town? – Lisa.
-Why [did] Tom [leave] early? – He was tired.
+Where [did] you [buy] that jacket? – In Vienna.
 How [did] you [get] home? – By bus.
 What time [did] you [get up] today? – At seven.
 Where [did] your parents [meet]? – At university.`,
@@ -317,7 +317,7 @@ What [are you going to do:you / do] in the holidays?
 We [are going to have:have] a party on Saturday.`,
       will: `I think it [will be:be] sunny tomorrow.
 Don't worry, I [will help:help] you.
-In 2050 people [will live:live] on Mars.
+I think it [will snow:snow] tomorrow.
 I'm sure you [will pass:pass] the test.
 The phone is ringing. – I ['ll get:get] it!
 I'm tired. I think I ['ll go:go] to bed.

@@ -45,7 +45,7 @@ My marks are badder than yours. => My marks are worse than yours.`
   // ------------------------------------------------------------------ quantity
   ext('e-quantity', {
     more: {
-      muchmany: `I don't have {much|many} homework today.
+      muchmany: `How {many|much} languages do you speak?
 There weren't {many|much} children in the park.
 How {much|many} sugar do you take in your tea?
 She doesn't eat {much|many} sweets.`,
@@ -160,13 +160,13 @@ If I [were] rich, I [would] buy a big house by the sea. But I'm not rich, so I [
 If you [had] listened to me, you [wouldn't] have got lost!
 I [would] help you if I [had] time, but I'm really busy today.
 If we [leave] now, we [will] catch the train. If we [had left] earlier, we [wouldn't] be in such a hurry.`,
-      trans: `Wenn es morgen regnet, bleiben wir zu Hause. => If it rains tomorrow, we will stay at home.
+      trans: `Wenn du mich anrufst, komme ich. => If you call me, I'll come.
 Wenn ich du wäre, würde ich mich entschuldigen. => If I were you, I would apologise.
 Wenn ich Zeit hätte, würde ich dir helfen. => If I had time, I would help you.
 Wenn du gelernt hättest, hättest du den Test bestanden. => If you had studied, you would have passed the test.
 Was würdest du tun, wenn du eine Million gewinnen würdest? => What would you do if you won a million?
 Wenn wir den Bus verpassen, kommen wir zu spät. => If we miss the bus, we will be late.`,
-      err: `If it will rain, we stay at home. => If it rains, we will stay at home.
+      err: `If I will see him, I tell him. => If I see him, I will tell him.
 If I would be rich, I would travel. => If I were rich, I would travel.
 If you had came, you would have seen him. => If you had come, you would have seen him.
 If I have time, I would help you. => If I had time, I would help you.

@@ -133,7 +133,7 @@ My mum [has got] a new car.
 You and Ben [have got] the same shoes.
 Our teacher [has got] a dog.
 The rabbits [have got] long ears.`,
-      neg: `I have got a dog. :: not => I haven't got a dog.
+      neg: `My grandparents have got a farm. :: not => My grandparents haven't got a farm.
 She has got a phone. :: not => She hasn't got a phone.
 We have got a car. :: not => We haven't got a car.
 Tom has got a sister. :: not => Tom hasn't got a sister.
@@ -154,7 +154,7 @@ you / a pencil => Have you got a pencil?
 your parents / a car => Have your parents got a car?
 Mia / a cold => Has Mia got a cold?`,
       answer: `Have you got a pet? – Yes, [I have].
-Has she got a sister? – No, [she hasn't].
+Have the twins got bikes? – Yes, [they have].
 Have they got a garden? – Yes, [they have].
 Has Tom got a phone? – No, [he hasn't].
 Have you got a ruler? – No, [I haven't].

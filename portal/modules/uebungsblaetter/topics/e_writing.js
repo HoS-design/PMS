@@ -32,7 +32,7 @@ Our teacher {is|has got} always friendly.
 My grandpa {has got|is} a grey beard.
 Tom {is|has got} quite shy.
 Lisa {has got|is} freckles on her nose.
-My dog {has got|is} a long tail.
+My grandma {is|has got} very kind.
 My cousin {is|has got} twelve years old.
 My mum {wears|has got} glasses.
 Our house {has got|is} a big garden.`,
@@ -96,7 +96,7 @@ Yours faithfully,|F
 Write soon!|I
 I look forward to hearing from you.|F
 How are you?|I
-Could you please send me …?|F
+See you soon!|I
 See you soon!|I
 Yours sincerely,|F
 Guess what!|I
@@ -180,7 +180,7 @@ Write a story about a day when everything went wrong. => first problem ; then �
         ichkann: ['Du kannst die Teile einer Geschichte in die richtige Reihenfolge bringen.', 'Du verwendest Zeitwörter wie One day, Suddenly, In the end.'],
         tasks: [
           { type: 'order', pool: 'order', n: 1, title: 'Put the story in order.', instr: 'Number the parts.' },
-          { type: 'gap', pool: 'link', n: 6, wordbox: true, title: 'Linking words', instr: 'Use the words from the box.' },
+          { type: 'gap', pool: 'link', n: 6, wordbox: true, title: 'Linking words', instr: 'Use the words from the box. Sometimes more than one word fits.' },
           { type: 'write', pool: 'write', n: 1, lines: 6, filter: x => !/ends:/.test(x.q), title: 'Write the beginning of a story.', instr: '' }
         ]
       },
@@ -222,8 +222,8 @@ Parents have to buy extra clothes.|C`,
 [In conclusion], I think short homework is the best solution.`,
       choose: `{In my opinion|In the end}, mobile phones should be allowed at school.
 I don't like zoos {because|but} the animals have no freedom.
-{On the other hand|First of all}, zoos help to protect rare animals.
-{For example|However}, some animals live in very small cages.
+Zoos have disadvantages. {On the other hand|In conclusion}, they help to protect rare animals.
+Zoos have problems too. {For example|However}, some animals live in very small cages.
 {To sum up|Suddenly}, I am against zoos.
 Some people say school should start later. {I agree|I'm agree} with them.`,
       write: `Should students have to wear school uniforms? Write your opinion. => introduction with your opinion ; 2 arguments with examples ; 1 counter-argument ; conclusion
@@ -240,7 +240,7 @@ Should school start at 9 o'clock? Write a post for an online forum. => Hi everyo
             { type: 'sort', pool: 'sortHw', n: 8, opts: [['P', 'for homework'], ['C', 'against homework']], title: 'For or against homework?', instr: 'Sort the arguments.' },
             { type: 'sort', pool: 'sortPhone', n: 8, opts: [['P', 'for phones at school'], ['C', 'against phones at school']], title: 'For or against phones at school?', instr: 'Sort the arguments.' }
           ] },
-          { type: 'gap', pool: 'phrase', n: 6, wordbox: true, title: 'Useful phrases', instr: 'Use the phrases from the box.' }
+          { type: 'gap', pool: 'phrase', n: 6, wordbox: true, title: 'Useful phrases', instr: 'Use the phrases from the box. Sometimes more than one phrase fits.' }
         ]
       },
       2: {

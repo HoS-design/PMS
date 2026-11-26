@@ -69,13 +69,13 @@ If Lisa [comes:come], we will play cards.
 If you touch the dog, it [will bark:bark].
 If they [win:win] the match, they will celebrate.
 I [will buy:buy] you an ice cream if you help me.
-If it [snows:snow], we will build a snowman.
+If the bus [is:be] late, I'll walk.
 If you [don't wear:not wear] a hat, you will get cold.
 She [won't be:not be] happy if you forget her birthday.
 If we [take:take] the train, we will be there at ten.
 If you eat too much, you [will feel:feel] sick.
 If I [find:find] your book, I will give it back.`,
-    t2: `If I [had:have] more time, I would learn the guitar.
+    t2: `If people [ate:eat] less meat, it would be better for the planet.
 If it [were:be] warmer, we would go swimming.
 She [would buy:buy] a horse if she had enough money.
 If you [practised:practise] more, you would play better.
@@ -88,7 +88,7 @@ He [would be:be] happier if he had more friends.
 If I [knew:know] her number, I would call her.`,
     choose: `If you mix red and blue, you {get|would get} purple.
 If I {were|am} a teacher, I would give no homework.
-If it {doesn't rain|won't rain}, we'll go for a walk.
+If you {press|will press} this button, the machine starts.
 She would come if you {asked|ask} her.
 If we {had|would have} a car, we could drive to the lake.
 If you {had studied|studied} harder, you would have passed.`,

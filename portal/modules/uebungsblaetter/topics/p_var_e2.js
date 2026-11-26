@@ -175,7 +175,7 @@ How much brothers have you got? => How many brothers have you got?`
 There is a lamp {next to|in|under} the sofa.
 The car is {in front of|in|on} the house.
 The ball is {behind|in|on} the tree.
-The milk is {in|on|at} the fridge.
+The cat is {on|in|at} the roof.
 Our school is {opposite|in|under} the park.
 The picture is {above|in|under} the bed.
 The bank is {between|in|on} the café and the bakery.`,
@@ -213,7 +213,7 @@ Ich bin im Juni geboren. => I was born in June.`
     can: `My baby sister [can't] talk yet.
 [Can] you help me, please?
 Cats [can] see in the dark.
-I'm sorry, I [can't] come to your party.
+Penguins [can't] fly.
 Penguins [can] swim very well.
 My dad [can] speak three languages.
 We [can't] go out. It's raining.
@@ -240,7 +240,7 @@ I [don't have to] do my homework today. There isn't any!
 I'm cold. :: put on a jacket => You should put on a jacket.
 I've got a test tomorrow. :: study tonight => You should study tonight.
 My room is a mess. :: tidy it up => You should tidy it up.
-I eat too many sweets. :: eat more fruit => You should eat more fruit.`,
+I'm bored. :: read a book => You should read a book.`,
     mix: `You {must|can} wear a helmet when you ride a bike. It's the law.
 {Can|Must} I borrow your pen, please?
 You {shouldn't|mustn't} eat so much chocolate. It isn't good for you.
@@ -323,7 +323,7 @@ Yesterday my dog [ran] away. We [looked] for him everywhere. In the end, my neig
 Wir haben am Samstag Pizza gegessen. => We ate pizza on Saturday.
 Sie hat das Spiel nicht gewonnen. => She didn't win the game.
 Wo warst du letzte Woche? => Where were you last week?`,
-    err: `I didn't went to school. => I didn't go to school.
+    err: `She didn't knew the answer. => She didn't know the answer.
 She was at home yesterday? => Was she at home yesterday?
 They play football yesterday. => They played football yesterday.`
   } });

@@ -127,10 +127,10 @@ The road [has been closed:close] because of the snow.
 Pets [must be kept:keep] on a lead in the park.
 The bridge [was built:build] 100 years ago.
 The film [can be watched:watch] online.
-This castle [has been visited:visit] by many famous people.`,
+Since 1900, this castle [has been visited:visit] by many famous people.`,
     text: `Paper [was invented] in China. Today millions of books [are printed] every year.
 Our house [is being painted] at the moment. It [will be finished] next week.
-The Mona Lisa [was painted] by Leonardo da Vinci. It [is visited] by millions of people in Paris every year.
+This bridge [was built] in 1900. Today it [is used] by thousands of cars every day.
 Many animals [are killed] by cars every year. New bridges for animals [have been built].`,
     trans: `Die Hausübung wird jeden Tag kontrolliert. => The homework is checked every day.
 Das Fenster wurde gestern repariert. => The window was repaired yesterday.
@@ -145,7 +145,7 @@ The book was written from my uncle. => The book was written by my uncle.`
   } });
 
   ext('e-linking', { more: {
-    basic: `I like cats [and] dogs.
+    basic: `Do you want tea [or] coffee?
 It was sunny, [so] we went to the beach.
 He was late [because] he missed the bus.
 Do you want to walk [or] take the bus?
@@ -163,7 +163,7 @@ Would you like to stay [or] go?`,
 I like Lisa. She's funny. :: because => I like Lisa because she's funny.
 The test was hard. I passed it. :: but => The test was hard, but I passed it.`,
     mid: `[Before] you leave, close the window.
-[When] it snows, we go sledging.
+[When] the film ended, we went home.
 I'll help you [if] you help me.
 [While] we were walking, it started to rain.
 [Although] he was tired, he kept running.
@@ -178,7 +178,7 @@ I always listen to music [while] I'm doing my homework.
 Call me [when] you get home.`,
     text: `{Then|Because} we went home.
 It was a nice day. {However|So}, it was very windy.
-{For example|However}, you could ride a bike to school.
+There are easy ways to help the environment. {For example|However}, you could ride a bike to school.
 He didn't study. {As a result|Although}, he failed the test.
 {Despite|Although} the cold, we had a picnic.
 I'll go {unless|if not} it rains.`,

@@ -103,7 +103,7 @@ While we [were waiting] for the bus, it [started] to rain. We [didn't have] an u
       trans: `Ich habe ferngesehen, als du angerufen hast. => I was watching TV when you called.
 Während sie kochte, las er die Zeitung. => While she was cooking, he was reading the newspaper.
 Früher hatte ich lange Haare. => I used to have long hair.
-Was hast du gestern um acht Uhr gemacht? => What were you doing at eight o'clock yesterday?
+Ich las gerade, als das Licht ausging. => I was reading when the lights went out.
 Es regnete, als wir das Haus verließen. => It was raining when we left the house.
 Früher haben wir in Linz gewohnt. => We used to live in Linz.
 Er ist vom Rad gefallen, als er nach Hause fuhr. => He fell off his bike when he was riding home.`,
@@ -143,7 +143,7 @@ Keine Sorge, ich helfe dir! => Don't worry, I'll help you!
 Wir treffen uns morgen um drei. (fest vereinbart) => We're meeting tomorrow at three.
 Der Zug fährt um 7 Uhr ab. => The train leaves at 7 o'clock.
 Was wirst du am Wochenende machen? => What are you going to do at the weekend?
-Pass auf! Du wirst fallen! => Be careful! You're going to fall!
+Wir werden nächstes Jahr umziehen. => We're going to move next year.
 Sie wird nicht kommen. => She won't come.`,
       err: `I will to visit my grandma. => I will visit my grandma.
 It's going rain. => It's going to rain.

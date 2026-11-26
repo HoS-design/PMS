@@ -146,15 +146,15 @@ Du stellst dich vor. => Hi, I'm … / My name is …
 Du fragst jemanden nach seinem Namen. => What's your name?
 Du wünschst ein schönes Wochenende. => Have a nice weekend!
 Du hast etwas nicht verstanden. => Sorry, can you say that again, please?
-Du fragst, woher jemand kommt. => Where are you from?`,
+Du sagst, was dein Lieblingsfach ist. => My favourite subject is …`,
     polite: `{Could you|You must} help me, please?
 {Sorry, I don't understand.|What?}
 {May I|I will} open the window?
-{Thank you very much!|OK.}`,
+{After you!|Move!}`,
     p2: `Du fragst nach einer Tüte. => Can I have a bag, please?
 Du möchtest etwas anprobieren. => Can I try it on?
 Du suchst die Umkleidekabine. => Where are the changing rooms?
-Du bestellst eine Pizza. => I'd like a pizza, please.
+Du fragst nach der Speisekarte. => Can I see the menu, please?
 Du möchtest die Rechnung. => Can I have the bill, please?
 Du fragst, ob etwas billiger ist. => Have you got anything cheaper?
 Du sagst, dass du nur schaust. => I'm just looking, thanks.`,
@@ -167,16 +167,16 @@ Du fragst nach der Telefonnummer. => What's your phone number?
 Du sagst, dass Tom nicht da ist. => Sorry, Tom isn't here at the moment.`,
     p4: `Am Bahnhof: Du fragst, wann der nächste Zug fährt. => When does the next train leave?
 Auf der Straße: Du fragst nach dem Weg zum Museum. => Excuse me, how do I get to the museum?
-Beim Arzt: Du hast Kopfschmerzen. => I've got a headache.
+Beim Arzt: Du hast dir den Fuß verletzt. => I've hurt my foot.
 Im Hotel: Du möchtest ein Zimmer für zwei Nächte. => I'd like a room for two nights, please.
 Im Café: Du fragst nach dem WLAN-Passwort. => What's the Wi-Fi password, please?
 In der Schule: Du hast deine Hausübung vergessen. => I'm sorry, I've forgotten my homework.`,
     reply: `Happy birthday! => Thank you!
-Can I sit here? => Sure, go ahead.
-Have a nice day! => Thanks, you too!
-I've passed my test! => Congratulations! / Well done!
+Could you take a photo of us? => Of course! Smile!
+Sorry, I've broken your pencil. => Never mind. / Don't worry.
+I don't feel well. => Oh no! Do you want to sit down?
 I've got a cold. => Oh, I'm sorry to hear that. Get well soon!
-Would you like some tea? => Yes, please. / No, thank you.`
+Shall I carry your bag? => Oh, thank you! That's very kind.`
   } });
 
   ext('e-confusing', { more: {
@@ -260,8 +260,8 @@ Our neighbour [is] old and friendly.
 Tom [has got] freckles and red hair.
 My friends [are] very funny.
 My little brother [is] a bit cheeky.`,
-    better: `The room is nice. => My room is small but cosy – it has got a big window and lots of posters on the walls.
-She is pretty. => She has got long dark hair, big green eyes and a lovely smile.
+    better: `The kitchen is nice. => Our kitchen is big and bright, with a wooden table where we eat together.
+My grandpa is old. => My grandpa is eighty, but he is still fit and goes for a walk every day.
 The town is old. => Our little town has got narrow streets, an old church and a castle on the hill.`
   } });
 
@@ -331,8 +331,8 @@ People talk less face to face.|C`,
 Zoos are important. {However|Because}, some animals are unhappy there.
 {In conclusion|First of all}, I think we need a new playground.
 I like living in the city {because|although} there is a lot to do.`,
-    rewrite: `School is boring. => In my opinion, some lessons could be more interesting if we did more projects.
-Fast food is bad. => I believe that eating too much fast food is unhealthy because it contains a lot of fat and sugar.
+    rewrite: `Projects are fun. => I think projects are fun because we can work in teams and be creative.
+Cars are bad. => In my view, cars are bad for the environment because they cause air pollution.
 TV is good. => I think watching TV can be useful because you can learn a lot from documentaries.`
   } });
 })();

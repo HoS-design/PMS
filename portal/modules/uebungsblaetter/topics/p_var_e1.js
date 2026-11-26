@@ -12,7 +12,7 @@ You [are] my best friend.`,
     short: `He is my cousin. => He's my cousin.
 They are at the cinema. => They're at the cinema.
 It is very cold today. => It's very cold today.
-You are late! => You're late!
+She is my aunt. => She's my aunt.
 I am not ready. => I'm not ready.
 She is not here. => She isn't here.
 We are not tired. => We aren't tired.
@@ -72,7 +72,7 @@ They [haven't got] a car.`,
     neg: `He has got a sister. :: not => He hasn't got a sister.
 They have got a garden. :: not => They haven't got a garden.
 Lisa has got a cat. :: not => Lisa hasn't got a cat.
-You have got a pen. :: not => You haven't got a pen.
+Lisa has got long hair. :: not => Lisa hasn't got long hair.
 My school has got a pool. :: not => My school hasn't got a pool.
 We have got time. :: not => We haven't got time.`,
     quest: `he / a dog => Has he got a dog?

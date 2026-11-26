@@ -328,7 +328,7 @@ If we [miss:miss] the train, we will be late.
 If you [are:be] tired, you can go to bed.
 Mum [will be:be] angry if we don't tidy up.`,
       t2: `If I [had:have] a dog, I would walk it every day.
-If I were rich, I [would travel:travel] around the world.
+If we lived in Spain, we [would speak:speak] Spanish.
 If she [lived:live] in Vienna, she would go to the opera.
 What [would you do:you / do] if you found 100 euros?
 If I [were:be] you, I would say sorry.
@@ -350,7 +350,7 @@ If I {were|am} you, I would take an umbrella.
 If she {calls|will call}, I'll tell her the news.
 If we {had|have} more time yesterday, we would have visited you.
 I {would help|will help} you if I had time.
-If you {don't hurry|won't hurry}, you'll be late.`,
+If the weather {is|will be} nice, we'll go hiking.`,
       write: `What would you do if you were the head teacher of your school? Write 5 sentences. => If I were the head teacher, I would … ; would + infinitive ; past simple in the if-clause
 What will you do if it is sunny at the weekend? Write 5 sentences. => If it is sunny, I will … ; will + infinitive ; present simple in the if-clause
 What would you do if you could be invisible for a day? Write 5 sentences. => If I could be invisible, I would … ; would + infinitive`
@@ -465,9 +465,9 @@ Mobile phones [must be switched off:switch off] in class.`
 "I'm going to the cinema." :: Tom told us … => Tom told us (that) he was going to the cinema.
 "My parents are at work." :: Anna said … => Anna said (that) her parents were at work.`,
       q: `"Are you ready?" :: She asked me … => She asked me if I was ready.
-"Where do you live?" :: He asked me … => He asked me where I lived.
+"How old are you?" :: The doctor asked me … => The doctor asked me how old I was.
 "Do you like football?" :: Tom asked Lisa … => Tom asked Lisa if she liked football.
-"What time is it?" :: She asked … => She asked what time it was.
+"Where is the toilet?" :: A boy asked … => A boy asked where the toilet was.
 "Have you finished?" :: The teacher asked us … => The teacher asked us if we had finished.
 "Why are you late?" :: Mum asked me … => Mum asked me why I was late.
 "Can you help me?" :: Ben asked me … => Ben asked me if I could help him.`,
@@ -520,7 +520,7 @@ What did the teacher [say]?`
       gap: `I enjoy [reading:read] comics.
 We want [to go:go] to the beach.
 She hates [getting up:get up] early.
-I hope [to see:see] you soon.
+We can't afford [to buy:buy] a new car.
 Have you finished [doing:do] your homework?
 They decided [to stay:stay] at home.
 My brother loves [playing:play] video games.
@@ -536,11 +536,11 @@ Lisa is learning [to drive:drive].`,
       prep: `I'm good at [drawing:draw].
 She's interested in [learning:learn] Spanish.
 Thank you for [helping:help] me.
-He's afraid of [flying:fly].
+She's proud of [winning:win] the race.
 We're looking forward to [seeing:see] you.
 I'm tired of [waiting:wait].
 How about [going:go] to the cinema?
-She left without [saying:say] goodbye.
+We're used to [getting:get] up early.
 Tom is bad at [singing:sing].
 I'm thinking of [buying:buy] a new bike.`,
       choose: `I enjoy {swimming|to swim} in the lake.
