@@ -25,6 +25,29 @@
     .opt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); }
     .statement { font-size: clamp(1.15rem, 1.8vw, 1.4rem); font-weight: 700; background: #f8fafc; border: 1px solid var(--hos-line); padding: 16px 18px; border-radius: 14px; }
     .txt { font-size: 1.25rem; font-weight: 700; padding: 12px 16px; border-radius: 14px; border: 2px solid var(--hos-line); width: min(480px, 100%); outline: none; }
+    .clues ul { margin: 0; padding-left: 20px; } .clues li { margin: 2px 0; }
+    .cloze { line-height: 2.3; }
+    .gap { font: inherit; font-weight: 800; padding: 2px 8px; margin: 0 3px; border: 0; border-bottom: 3px solid var(--subject-line); background: var(--subject-soft); border-radius: 8px 8px 0 0; outline: none; text-align: center; color: var(--hos-ink); }
+    .gap:focus { border-bottom-color: var(--subject); background: #fff7d6; }
+    .gap.right { border-bottom-color: var(--hos-good); background: var(--hos-good-soft); color: var(--hos-good); }
+    .gap.wrong { border-bottom-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); text-decoration: line-through; }
+    .gapsol { font-weight: 800; color: var(--hos-good); margin-right: 4px; }
+    .fehler { line-height: 2.2; }
+    .tok { font: inherit; font-weight: 700; border: 2px solid transparent; background: #fff; border-radius: 10px; padding: 2px 6px; cursor: pointer; color: var(--hos-ink); }
+    .tok:hover { border-color: var(--subject-line); background: var(--subject-soft); }
+    .tok.sel { border-color: #334155; }
+    .tok.right { border-color: var(--hos-good); background: var(--hos-good-soft); color: var(--hos-good); text-decoration: line-through; }
+    .tok.miss { border-color: var(--hos-bad); background: var(--hos-bad-soft); color: var(--hos-bad); text-decoration: line-through; }
+    .tok.wrong { border-color: var(--hos-bad); }
+    .fix { font-weight: 800; color: var(--hos-good); }
+    .lzkfig { max-height: 250px; }
+    .lzkwrap { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+    .lzkwrap .rows { gap: 4px; }
+    .lzkwrap .row { padding: 2px 8px; }
+    .lzkwrap .row select { padding: 3px 6px; }
+    .lzkwrap .row { grid-template-columns: 26px minmax(0, 1fr) auto; }
+    .lzkwrap .row .lab { text-align: center; background: #111; color: #fff; border-radius: 50%; width: 26px; height: 26px; line-height: 26px; font-size: .85rem; }
+    .lzkwrap .row .sol { white-space: nowrap; }
     .txt:focus { border-color: var(--subject); box-shadow: 0 0 0 4px var(--subject-soft); }
     .txt.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .txt.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
     /* Reihenfolge */
@@ -37,14 +60,16 @@
     .chip.right { border-color: var(--hos-good); background: var(--hos-good-soft); } .chip.wrong { border-color: var(--hos-bad); background: var(--hos-bad-soft); }
     /* Zuordnen / Sortieren */
     .rows { display: flex; flex-direction: column; gap: 6px; }
-    .row { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr); gap: 10px; align-items: center; border: 1px solid var(--hos-line); border-radius: 12px; padding: 4px 10px; background: #fff; }
+    .row { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr) auto; gap: 10px; align-items: center; border: 1px solid var(--hos-line); border-radius: 12px; padding: 4px 10px; background: #fff; }
     .row.right { background: var(--hos-good-soft); border-color: var(--hos-good-line); } .row.wrong { background: var(--hos-bad-soft); border-color: var(--hos-bad-line); }
     .row select { width: 100%; font-size: .95rem; }
     .row .lab { font-weight: 700; }
-    .row .sol { font-size: .85rem; color: var(--hos-bad); font-weight: 700; }
+    .row .sol { font-size: .85rem; color: var(--hos-good); font-weight: 800; white-space: nowrap; }
     .catbtns { display: flex; flex-wrap: wrap; gap: 4px; }
     .catbtns button { border: 1px solid var(--hos-line); background: #fafaf9; border-radius: 8px; padding: 4px 8px; font-weight: 700; font-size: .85rem; cursor: pointer; }
     .catbtns button.sel { background: var(--subject); border-color: var(--subject); color: #fff; }
+    .catbtns button.ok { background: var(--hos-good); border-color: var(--hos-good); color: #fff; }
+    .catbtns button.bad { background: #fff; border-color: var(--hos-bad); color: var(--hos-bad); text-decoration: line-through; }
     /* Karten und Skizzen */
     .fig { display: flex; justify-content: center; align-items: flex-start; min-height: 0; }
     .fig svg { width: 100%; max-width: 760px; height: auto; max-height: 100%; user-select: none; }
@@ -566,6 +591,159 @@
   add('s3', 'match', { q: 'Auch dein Leben hat Quellen! Ordne zu.', pairs: [['Babyschuh', 'Sachquelle'], ['Zeugnis', 'Schriftquelle'], ['Babyfoto', 'Bildquelle'], ['Erzählung deiner Eltern', 'mündliche Quelle']] });
 
 
+  // =====================================================================================
+  // Erweiterung: LZK-Karte, Lückentexte, Fehler finden, Rätsel, Koordinaten in Worten
+  // (neue Aufgaben stehen am Ende, damit gespeicherte Fortschritte gültig bleiben)
+  // =====================================================================================
+  // Nummern wie auf der LZK-Weltkarte: 1–7 Kontinente, A–E Weltmeere
+  const LZKC = [['Asien', 95, 50], ['Nordamerika', -100, 45], ['Europa', 20, 52], ['Antarktis', 40, -77], ['Südamerika', -60, -15], ['Australien', 133, -25], ['Afrika', 20, 5]];
+  const LZKO = [['Atlantischer Ozean', -38, 25], ['Südlicher Ozean', -110, -63], ['Pazifischer Ozean', -140, 5], ['Indischer Ozean', 70, -25], ['Arktischer Ozean', 5, 78]];
+  const SYN = {
+    'Australien': ['Australien', 'Ozeanien', 'Australien (Ozeanien)'],
+    'Pazifischer Ozean': ['Pazifischer Ozean', 'Pazifik', 'Stiller Ozean'],
+    'Atlantischer Ozean': ['Atlantischer Ozean', 'Atlantik'],
+    'Indischer Ozean': ['Indischer Ozean'],
+    'Arktischer Ozean': ['Arktischer Ozean', 'Nordpolarmeer'],
+    'Südlicher Ozean': ['Südlicher Ozean', 'Antarktischer Ozean']
+  };
+  const syn = (n) => SYN[n] || [n];
+  function lzkMapSVG(mark) {
+    let s = '<svg viewBox="0 0 ' + MW + ' ' + MH + '" xmlns="http://www.w3.org/2000/svg"><rect width="' + MW + '" height="' + MH + '" fill="#fff"/>';
+    for (const c of CONTS) LAND[c].forEach(poly => { s += '<path d="' + P(poly) + '" fill="#ececec" stroke="#334155" stroke-width=".8"/>'; });
+    s += '<rect width="' + MW + '" height="' + MH + '" fill="none" stroke="#334155" stroke-width="1.2"/>';
+    const tag = (lon, lat, t) => {
+      const on = mark === t, x = px(lon), y = py(lat);
+      return '<circle cx="' + x + '" cy="' + y + '" r="' + (on ? 15 : 11) + '" fill="' + (on ? 'var(--subject)' : '#fff') + '" stroke="' + (on ? 'var(--subject-strong)' : '#111') + '" stroke-width="' + (on ? 2.5 : 1.6) + '"/>' +
+        '<text x="' + x + '" y="' + (y + (on ? 6 : 5)) + '" text-anchor="middle" font-size="' + (on ? 16 : 13) + '" font-weight="800" fill="' + (on ? '#fff' : '#111') + '">' + t + '</text>';
+    };
+    LZKC.forEach(([, lo, la], i) => { s += tag(lo, la, String(i + 1)); });
+    LZKO.forEach(([, lo, la], i) => { s += tag(lo, la, 'ABCDE'[i]); });
+    return s + '</svg>';
+  }
+  LZKC.forEach(([n], i) => add('e1', 'input', { lzk: String(i + 1), q: 'Wie heißt der Kontinent mit der <b>Nummer ' + (i + 1) + '</b>?', a: syn(n), why: 'Nummer ' + (i + 1) + ' ist ' + (CNAME[n] || n) + '.' }));
+  LZKO.forEach(([n], i) => add('e1', 'input', { lzk: 'ABCDE'[i], q: 'Wie heißt das Weltmeer mit dem <b>Buchstaben ' + 'ABCDE'[i] + '</b>?', a: syn(n), why: 'Buchstabe ' + 'ABCDE'[i] + ' ist der ' + (ONAME[n] || n) + '.' }));
+  add('e1', 'match', { lzk: true, keep: true, q: 'Beschrifte die Weltkarte: Wie heißen die Kontinente 1–7?', pairs: LZKC.map(([n], i) => [String(i + 1), CNAME[n] || n]) });
+  add('e1', 'match', { lzk: true, keep: true, q: 'Beschrifte die Weltkarte: Wie heißen die Weltmeere A–E?', pairs: LZKO.map(([n], i) => ['ABCDE'[i], n]) });
+
+  // ---------- Lückentexte: [Antwort|Alternative] – bei anyOrder dürfen die Lücken vertauscht sein
+  const cloze = (part, s, anyOrder) => add(part, 'cloze', { s, anyOrder: !!anyOrder, q: 'Ergänze die Lücken.' });
+  cloze('e1', 'Es gibt [7|sieben] Kontinente und [5|fünf] Weltmeere.');
+  cloze('e1', 'Der größte Kontinent ist [Asien], der kleinste ist [Australien|Ozeanien].');
+  cloze('e1', 'Der [Pazifische|Pazifik|Stille] Ozean ist das größte und tiefste Weltmeer. Seine tiefste Stelle ist der [Marianengraben].');
+  cloze('e1', 'Die [Antarktis] hat keine ständigen Einwohner. Sie wird nur für die [Forschung] genutzt.');
+  cloze('e1', 'In Südamerika liegen der [Amazonas]-Regenwald und die hohen [Anden].');
+  cloze('e1', 'Der Atlantische Ozean liegt zwischen Europa/Afrika und [Amerika]. Er ist eine wichtige [Handelsroute].');
+  cloze('e2', 'Das Gradnetz ist ein gedachtes Gitternetz aus [Breitenkreisen|Breitenkreise|Breitengraden|Breitengrade] und [Längenkreisen|Längenkreise|Längengraden|Längengrade].', true);
+  cloze('e2', 'Der [Äquator] ist der längste Breitengrad. Er ist rund [40 000|40000] km lang.');
+  cloze('e2', 'Längengrade verlaufen vom [Nordpol] zum [Südpol]. Sie sind alle gleich lang.', true);
+  cloze('e2', 'Der wichtigste Längengrad ist der [Nullmeridian]. Er verläuft durch [Greenwich], einen Stadtteil von London.');
+  cloze('e2', 'Bei Koordinaten nennt man zuerst die [Breite|Breitengrad|Breitengrade] und dann die [Länge|Längengrad|Längengrade].');
+  cloze('e2', 'Ein anderes Wort für Längengrad ist [Meridian]. Das Zeichen ° bedeutet [Grad].');
+  cloze('e3', 'Die [Legende] erklärt die Symbole der Karte. Der [Maßstab] zeigt, wie stark die Karte verkleinert ist.');
+  cloze('e3', 'Das [Namensregister|Register] steht ganz hinten im Atlas und ist [alphabetisch] geordnet.');
+  cloze('e3', 'Je höher ein Gebiet liegt, desto dunkler [braun] ist es. Je tiefer das Meer, desto dunkler [blau] ist es.');
+  cloze('e3', '[Physische] Karten dienen der Orientierung, [thematische] Karten nicht.');
+  cloze('e3', 'Tiefland ist [grün], Hügelland ist [gelb] und Gletscher sind [weiß].');
+  cloze('s1', 'Vor ca. [13,8] Milliarden Jahren begann das Universum mit dem [Urknall].');
+  cloze('s1', 'Der Urknall war keine [Explosion] an einem bestimmten Ort. Der [Raum] selbst begann sich auszudehnen.');
+  cloze('s1', 'Die ersten Sterne entstanden aus [Gaswolken|Gaswolke|Gas]. Viele Sterne bilden [Galaxien|Galaxie].');
+  cloze('s1', 'Unsere Galaxie heißt [Milchstraße]. Die Sonne ist ein [Stern].');
+  cloze('s1', 'Vor ca. [4,6] Milliarden Jahren entstanden die Sonne und die Erde.');
+  cloze('s1', 'Forschende untersuchen das Licht weit entfernter [Sterne], das Alter von [Gesteinen|Gestein|Steinen] und [Fossilien|Fossile].', true);
+  cloze('s2', 'Die Erde ist ca. [4,6] Milliarden Jahre alt.');
+  cloze('s2', 'Im Erdaltertum bildeten alle Kontinente den Urkontinent [Pangäa|Pangaea|Pangea].');
+  cloze('s2', 'Vor ca. [66] Millionen Jahren schlug ein riesiger [Asteroid|Asteroiden] ein. Die Dinosaurier starben aus – außer den [Vögeln|Vögel].');
+  cloze('s2', 'Aus riesigen [Farnwäldern|Farnwälder|Farnwald|Farnen] wurde nach Millionen von Jahren [Steinkohle|Kohle].');
+  cloze('s2', 'Die ersten [Einzeller] erzeugten mit Sonnenlicht [Sauerstoff].');
+  cloze('s2', 'Die Vorfahren des Menschen entwickelten sich in [Afrika]. Den Homo sapiens gibt es seit ca. [300 000|300000] Jahren.');
+  cloze('s3', 'Quellen sind [Überreste|Reste] aus der Vergangenheit.');
+  cloze('s3', 'Eine [Sachquelle] kann ich anfassen, eine [Schriftquelle] kann ich lesen.');
+  cloze('s3', 'Eine [Bildquelle] kann ich anschauen, eine [mündliche] Quelle kann ich hören.');
+  cloze('s3', 'Je [tiefer] ein Fund in der Erde liegt, desto [älter] ist er meistens.');
+  cloze('s3', 'Fossilien sind [versteinerte] Reste von Pflanzen und Tieren. Sie werden von [Paläontologen|Paläontologinnen|Paläontologe|Paläontologin] erforscht.');
+  cloze('s3', 'Den Fund legt man vorsichtig mit dem [Pinsel] frei – nicht mit dem [Bagger].');
+
+  // ---------- Fehler finden: {falsch|richtig}
+  const fehler = (part, s) => add(part, 'fehler', { s, q: 'Finde den Fehler: Klicke auf das falsche Wort.' });
+  fehler('e1', 'Der {Atlantische|Pazifische} Ozean ist das größte und tiefste Weltmeer.');
+  fehler('e1', 'Afrika ist der zweitgrößte Kontinent und hat {48|54} Länder.');
+  fehler('e1', '{Europa|Australien} ist der kleinste Kontinent.');
+  fehler('e1', 'Der Indische Ozean hat {kaltes|warmes} Wasser und viele Inseln.');
+  fehler('e1', 'Der Arktische Ozean liegt rund um den {Südpol|Nordpol} und ist meist von Eis bedeckt.');
+  fehler('e1', 'Die höchsten Berge der Erde stehen in {Südamerika|Asien}.');
+  fehler('e2', 'Der Äquator ist rund {20 000|40 000} km lang.');
+  fehler('e2', 'Alle {Breitengrade|Längengrade} sind gleich lang.');
+  fehler('e2', 'Der Nullmeridian verläuft durch Greenwich, einen Stadtteil von {Paris|London}.');
+  fehler('e2', 'Vom Nullmeridian gibt es 180 Längengrade nach Osten und {90|180} nach Westen.');
+  fehler('e2', 'Bei Koordinaten steht immer zuerst der {Längengrad|Breitengrad}.');
+  fehler('e2', 'Zwischen Norden und Osten liegt {Nordwesten|Nordosten}.');
+  fehler('e3', 'Der {Titel|Maßstab} zeigt, wie stark die Karte verkleinert ist.');
+  fehler('e3', 'Das Namensregister steht ganz {vorne|hinten} im Atlas.');
+  fehler('e3', 'Der Maßstab 2 : 1 bedeutet eine {Verkleinerung|Vergrößerung}.');
+  fehler('e3', 'Tiefland ist auf der Karte {gelb|grün} gefärbt.');
+  fehler('e3', '{Thematische|Physische} Karten dienen der Orientierung.');
+  fehler('e3', 'Je tiefer das Meer, desto {heller|dunkler} blau ist es auf der Karte.');
+  fehler('s1', 'Das Universum begann vor ca. 13,8 {Millionen|Milliarden} Jahren mit dem Urknall.');
+  fehler('s1', 'Die Sonne ist ein {Planet|Stern}.');
+  fehler('s1', 'Die ersten Sterne entstanden aus {Gesteinsbrocken|Gaswolken}.');
+  fehler('s1', 'Unsere Galaxie heißt {Sonnensystem|Milchstraße}.');
+  fehler('s1', 'Seit dem Urknall dehnt sich das Universum aus und {erhitzt sich|kühlt ab}.');
+  fehler('s1', 'Das erste Leben waren winzige, einfache Lebewesen {an Land|im Wasser}.');
+  fehler('s2', 'Die Dinosaurier starben durch einen riesigen {Vulkan|Asteroiden} aus.');
+  fehler('s2', 'Im {Erdmittelalter|Erdaltertum} wuchsen riesige Farnwälder.');
+  fehler('s2', 'Den Homo sapiens gibt es seit ca. {3 000|300 000} Jahren.');
+  fehler('s2', 'Mammuts lebten in der {Erdurzeit|Erdneuzeit}.');
+  fehler('s2', 'Die ersten Einzeller erzeugten mit Sonnenlicht {Steinkohle|Sauerstoff}.');
+  fehler('s2', 'Die Vorfahren des Menschen entwickelten sich in {Europa|Afrika}.');
+  fehler('s3', 'Ein Tagebuch ist eine {Sachquelle|Schriftquelle}.');
+  fehler('s3', 'Archäologen legen Funde vorsichtig mit dem {Bagger|Pinsel} frei.');
+  fehler('s3', 'Je tiefer ein Fund liegt, desto {jünger|älter} ist er meistens.');
+  fehler('s3', 'Eine Sage ist eine {Bildquelle|mündliche Quelle}.');
+  fehler('s3', 'Erinnerungen von Zeitzeugen stimmen {immer|nicht immer} ganz genau.');
+  fehler('s3', 'Fossilien sind {bemalte|versteinerte} Reste von Pflanzen und Tieren.');
+
+  // ---------- Rätsel: Hinweise lesen, Begriff eintippen
+  const raetsel = (part, q, clues, a, why) => add(part, 'input', { q, clues, a: [].concat(a), why });
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich habe 54 Länder.', 'Ich bin der zweitgrößte Kontinent.', 'Bei mir gibt es viele Wüsten, z. B. die Sahara.'], 'Afrika');
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich bin der größte Kontinent.', 'Ich habe 48 Länder.', 'Bei mir stehen die höchsten Berge der Erde.'], 'Asien');
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich habe 44 Länder.', 'Ich liege in der gemäßigten Klimazone.', 'Österreich liegt auf mir.'], 'Europa');
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich habe 23 Länder.', 'Zu mir gehören die USA, Kanada und Mexiko.'], 'Nordamerika');
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich habe 12 Länder.', 'Bei mir liegt der Amazonas-Regenwald.', 'Ich habe die hohen Anden.'], 'Südamerika');
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich bin der kleinste Kontinent.', 'Ich habe 14 Länder.', 'Zu mir gehören viele Inseln im Pazifik.'], syn('Australien'));
+  raetsel('e1', 'Welcher Kontinent ist gemeint?', ['Ich habe keine ständigen Einwohner.', 'Ich bin von Eis bedeckt.', 'Ich werde nur für die Forschung genutzt.'], 'Antarktis');
+  raetsel('e1', 'Welches Weltmeer ist gemeint?', ['Ich bin das größte und tiefste Weltmeer.', 'Bei mir liegt der Marianengraben.'], syn('Pazifischer Ozean'));
+  raetsel('e1', 'Welches Weltmeer ist gemeint?', ['Ich bin das zweitgrößte Weltmeer.', 'Ich liege zwischen Europa/Afrika und Amerika.', 'Ich bin eine wichtige Handelsroute.'], syn('Atlantischer Ozean'));
+  raetsel('e1', 'Welches Weltmeer ist gemeint?', ['Ich bin das drittgrößte Weltmeer.', 'Ich liege zwischen Afrika, Asien und Australien.', 'Mein Wasser ist warm.'], syn('Indischer Ozean'));
+  raetsel('e1', 'Welches Weltmeer ist gemeint?', ['Ich bin das kleinste und flachste Weltmeer.', 'Ich liege rund um den Nordpol.'], syn('Arktischer Ozean'));
+  raetsel('e1', 'Welches Weltmeer ist gemeint?', ['Ich umgebe die Antarktis.', 'Ich habe kaltes Wasser und starke Meeresströmungen.'], syn('Südlicher Ozean'));
+  raetsel('e2', 'Was ist gemeint?', ['Ich bin der längste Breitengrad.', 'Ich bin rund 40 000 km lang.'], 'Äquator');
+  raetsel('e2', 'Was ist gemeint?', ['Ich bin der wichtigste Längengrad.', 'Ich verlaufe durch Greenwich.'], 'Nullmeridian');
+  raetsel('e2', 'Was ist gemeint?', ['Ich bin ein gedachtes Gitternetz um die Erde.', 'Ich bestehe aus Breitenkreisen und Längenkreisen.'], 'Gradnetz');
+  raetsel('e2', 'Was ist gemeint?', ['In mir sind alle Himmelsrichtungen eingezeichnet.', 'Ich zeige N, O, S, W und NO, SO, SW, NW.'], 'Windrose');
+  raetsel('e3', 'Welcher Teil der Karte ist gemeint?', ['Ich erkläre die Symbole der Karte.', 'Bei mir findest du z. B. Staatsgrenze, Fluss und Burg.'], 'Legende');
+  raetsel('e3', 'Welcher Teil der Karte ist gemeint?', ['Ich zeige, wie stark die Karte verkleinert ist.', 'Ich sehe z. B. so aus: 1 : 1000.'], 'Maßstab');
+  raetsel('e3', 'Welcher Teil der Karte ist gemeint?', ['Ich bestehe aus Feldern.', 'Am Kartenrand stehen bei mir Buchstaben und Zahlen, z. B. E3.'], 'Suchgitter');
+  raetsel('e3', 'Was ist gemeint?', ['Ich stehe ganz hinten im Atlas.', 'Ich bin alphabetisch geordnet.', 'Bei mir steht z. B.: Traunsee 27 E3.'], ['Namensregister', 'Register']);
+  raetsel('s1', 'Was ist gemeint?', ['Mit mir begann vor ca. 13,8 Milliarden Jahren das Universum.', 'Ich war keine Explosion an einem bestimmten Ort.'], 'Urknall');
+  raetsel('s1', 'Was ist gemeint?', ['Ich bin unsere Galaxie.', 'In mir ist die Sonne entstanden.'], 'Milchstraße');
+  raetsel('s1', 'Was ist gemeint?', ['Ich bin ein Stern.', 'Um mich kreisen die Erde und sieben weitere Planeten.'], 'Sonne');
+  raetsel('s2', 'Welches Erdzeitalter ist gemeint?', ['Die Erde ist glühend heiß.', 'Vulkane brechen aus, Meteoriten schlagen ein.', 'Die ersten Meere entstehen.'], 'Erdurzeit');
+  raetsel('s2', 'Welches Erdzeitalter ist gemeint?', ['Im Meer leben Trilobiten.', 'Das Leben geht an Land.', 'Riesige Farnwälder wachsen.'], 'Erdaltertum');
+  raetsel('s2', 'Welches Erdzeitalter ist gemeint?', ['Es ist die Zeit der Dinosaurier.', 'Die ersten Vögel und kleinen Säugetiere leben.', 'Am Ende schlägt ein Asteroid ein.'], 'Erdmittelalter');
+  raetsel('s2', 'Welches Erdzeitalter ist gemeint?', ['Säugetiere wie das Mammut breiten sich aus.', 'Es gibt mehrere Eiszeiten.', 'Es dauert bis heute.'], 'Erdneuzeit');
+  raetsel('s3', 'Welche Quellenart ist gemeint?', ['Man kann mich anfassen.', 'Beispiele: Steinbeil, Münze, Tonkrug'], ['Sachquelle', 'Sach']);
+  raetsel('s3', 'Welche Quellenart ist gemeint?', ['Man kann mich lesen.', 'Beispiele: Brief, Tagebuch, Urkunde'], ['Schriftquelle', 'Schrift']);
+  raetsel('s3', 'Welche Quellenart ist gemeint?', ['Man kann mich anschauen.', 'Beispiele: Höhlenmalerei, Foto, Gemälde'], ['Bildquelle', 'Bild']);
+  raetsel('s3', 'Welche Quellenart ist gemeint?', ['Man kann mich hören.', 'Beispiele: Interview mit Opa, Sage'], ['mündliche Quelle', 'mündlich']);
+  raetsel('s3', 'Was ist gemeint?', ['Wir sind versteinerte Reste von Pflanzen und Tieren.', 'Wir erzählen von den Erdzeitaltern.'], ['Fossilien', 'Fossil']);
+
+  // ---------- Koordinaten in Worten (Kurzform ↔ Langform)
+  for (let i = 0; i < 3; i++) add('e2', 'coordtext', { dir: 'kurz' });
+  for (let i = 0; i < 3; i++) add('e2', 'coordtext', { dir: 'lang' });
+
+  // ---------- Erdgeschichte als ein Tag
+  add('s2', 'match', { q: 'Die Erdgeschichte als ein Tag: Was passiert wann?', pairs: [['0 Uhr', 'Die Erde entsteht.'], ['fast 21 Uhr', 'Die Erdurzeit ist zu Ende.'], ['ca. 23:39 Uhr', 'Die Dinosaurier sterben aus.'], ['6 Sekunden vor Mitternacht', 'Der moderne Mensch erscheint.']] });
+
   // -------------------------------------------------------------------------------------
   // Einige Fragen werden zu Eintipp-Aufgaben (kleine Rechtschreibfehler sind erlaubt)
   // -------------------------------------------------------------------------------------
@@ -639,7 +817,7 @@
   // 'exact' | 'typo' | false
   // Fachbegriffe, die eine andere (falsche) Antwort sein können – ein Tippfehler darf nie einen davon „treffen“
   const KNOWN = [...new Set([].concat(
-    BANK.filter(q => q.type === 'input').flatMap(q => q.a), DIRS.map(d => d[1]), CONTS, OCEANS, ERA, QA,
+    BANK.filter(q => q.type === 'input').flatMap(q => q.a), BANK.filter(q => q.type === 'cloze').flatMap(q => q.s.match(/\[([^\]]+)\]/g).flatMap(g => g.slice(1, -1).split('|'))), DIRS.map(d => d[1]), CONTS, OCEANS, ERA, QA,
     ['Tiefland', 'Hügelland', 'Bergland', 'Hochgebirge', 'Gletscher', 'Meer', 'gelb', 'hellbraun', 'dunkelbraun', 'blau', 'Vergrößerung', 'Verkleinerung', 'Legende', 'Titel', 'Maßstab', 'Gradnetz', 'Suchgitter', 'Äquator', 'Nullmeridian']
   ).map(clean))];
   function matchInput(user, answers) {
@@ -673,7 +851,7 @@
     if (q.type === 'mapname') it.opts = shuffle([q.target].concat(shuffle(CONTS.filter(c => c !== q.target)).slice(0, 3)));
     if (q.type === 'swatch') it.opts = shuffle([q.a].concat(shuffle(['Tiefland', 'Hügelland', 'Bergland', 'Hochgebirge', 'Gletscher', 'Meer'].filter(x => x !== q.a)).slice(0, 3)));
     if (q.type === 'order') { it.max = 2; let s; do { s = shuffle(q.items); } while (s.join() === q.items.join()); it.pool = s; it.seq = []; }
-    if (q.type === 'match') { it.max = 2; it.rows = shuffle(q.pairs); it.rights = shuffle([...new Set(q.pairs.map(p => p[1]))]); }
+    if (q.type === 'match') { it.max = 2; it.rows = q.keep ? q.pairs.slice() : shuffle(q.pairs); it.rights = shuffle([...new Set(q.pairs.map(p => p[1]))]); }
     if (q.type === 'sort') {
       it.max = 2;
       if (q.gen === 'era') it.items = shuffle(ERA.map((e, k) => pick(ERAFACTS.filter(f => f[1] === k))).map(f => [f[0], ERA[f[1]]]).concat([pick(ERAFACTS)].map(f => [f[0], ERA[f[1]]]))).filter((x, i, a) => a.findIndex(y => y[0] === x[0]) === i);
@@ -706,6 +884,33 @@
       if (q.type === 'gridclick') it.field = fields[5];
       if (q.type === 'gridfind') it.opts = shuffle([it.target.f, it.target.f[0] + (((+it.target.f[1]) % 4) + 1), COLS[(COLS.indexOf(it.target.f[0]) + 2) % 6] + it.target.f[1], it.target.f[1] + it.target.f[0]]);
     }
+    if (q.type === 'cloze') {
+      const bits = q.s.split(/\[([^\]]+)\]/);
+      it.text = bits.filter((b, i) => i % 2 === 0);
+      it.gaps = bits.filter((b, i) => i % 2 === 1).map(g => g.split('|'));
+      it.user = it.gaps.map(() => '');
+      if (it.gaps.length > 1) it.max = 2;
+    }
+    if (q.type === 'fehler') {
+      const m = q.s.match(/^(.*)\{([^|}]+)\|([^}]+)\}(.*)$/);
+      const words = (t) => t.split(/\s+/).filter(Boolean);
+      it.before = words(m[1]); it.after = words(m[4]); it.wrongWord = m[2]; it.rightWord = m[3];
+      it.tokens = it.before.concat([m[2]], it.after);
+      it.answer = it.before.length;
+    }
+    if (q.type === 'coordtext') {
+      const nums = [10, 20, 30, 40, 50, 60, 70, 80], lons = [10, 20, 30, 40, 50, 60, 70, 80, 100, 120, 140, 160];
+      let la, lo; do { la = pick(nums); lo = pick(lons); } while (la === lo);
+      const ns = pick(['N', 'S']), ow = pick(['O', 'W']);
+      const kurz = (a, b, n, o) => a + '° ' + n + ' / ' + b + '° ' + o;
+      const lang = (a, b, n, o) => a + '° ' + (n === 'N' ? 'nördlicher' : 'südlicher') + ' Breite / ' + b + '° ' + (o === 'O' ? 'östlicher' : 'westlicher') + ' Länge';
+      const flip = { N: 'S', S: 'N', O: 'W', W: 'O' };
+      const f = q.dir === 'kurz' ? kurz : lang, g = q.dir === 'kurz' ? lang : kurz;
+      it.given = g(la, lo, ns, ow);
+      it.correct = f(la, lo, ns, ow);
+      it.opts = shuffle([it.correct, f(la, lo, flip[ns], ow), f(la, lo, ns, flip[ow]), f(lo, la, ns, ow)]);
+      it.prompt = q.dir === 'kurz' ? 'Wie schreibt man diese Koordinaten <b>kurz</b>?' : 'Was bedeuten diese Koordinaten?';
+    }
     if (q.type === 'layers') {
       it.finds = shuffle(FINDS).slice(0, 4);
       it.ask = pick(['alt', 'jung']);
@@ -734,7 +939,22 @@
     switch (q.type) {
       case 'mc': html = optButtons(it.opts); break;
       case 'tf': prompt = 'Stimmt das?'; it.opts = ['stimmt', 'stimmt nicht']; html = '<div class="statement">' + q.s + '</div>' + optButtons(it.opts); break;
-      case 'input': html = '<input class="txt" id="txtIn" type="text" autocomplete="off" placeholder="Antwort eingeben …"><div class="hos-muted" style="font-size:.85rem">Mit Enter bestätigen.</div>'; break;
+      case 'input':
+        html = (q.lzk ? '<div class="fig lzkfig">' + lzkMapSVG(q.lzk) + '</div>' : '') +
+          (q.clues ? '<div class="statement clues"><ul>' + q.clues.map(c => '<li>' + esc(c) + '</li>').join('') + '</ul></div>' : '') +
+          '<input class="txt" id="txtIn" type="text" autocomplete="off" spellcheck="false" placeholder="Antwort eingeben …"><div class="hos-muted" style="font-size:.85rem">Mit Enter bestätigen.</div>';
+        break;
+      case 'cloze':
+        html = '<div class="statement cloze">' + it.text.map((t, i) => esc(t) + (i < it.gaps.length ? '<input class="gap" data-g="' + i + '" type="text" autocomplete="off" spellcheck="false" style="width:' + Math.max(5, Math.max(...it.gaps[i].map(a => a.length)) + 2) + 'ch">' : '')).join('') + '</div>' +
+          '<div class="hos-muted" style="font-size:.85rem">' + (q.anyOrder ? 'Die Reihenfolge der Lücken ist hier egal. ' : '') + 'Mit Enter springst du zur nächsten Lücke.</div>';
+        break;
+      case 'fehler':
+        html = '<div class="statement fehler">' + it.tokens.map((t, i) => '<button type="button" class="tok" data-t="' + i + '">' + esc(t) + '</button>').join(' ') + '</div>';
+        break;
+      case 'coordtext':
+        prompt = it.prompt;
+        html = '<div class="statement" style="text-align:center;font-size:1.5rem">' + esc(it.given) + '</div>' + optButtons(it.opts);
+        break;
       case 'mapclick': html = '<div class="fig">' + mapSVG({ colors: q.kind === 'cont', clickLand: true, clickWater: true }) + '</div>'; break;
       case 'mapname': html = '<div class="fig" style="max-height:290px">' + mapSVG({ highlight: q.target }) + '</div>' + optButtons(it.opts.map(c => CNAME[c] || c)); it.opts = it.opts.map(c => CNAME[c] || c); break;
       case 'coord': html = '<div class="fig" style="max-height:300px">' + mapSVG({ grid: true, gridLabels: true, points: [Object.assign({ label: '' }, it.p)] }) + '</div>' + optButtons(it.opts); break;
@@ -750,7 +970,7 @@
         html = '<div class="ord-wrap"><div class="ord-col"><h4>Tippe der Reihe nach an:</h4><div class="ord-list" id="ordPool"></div></div><div class="ord-col"><h4>Deine Reihenfolge (zum Zurücklegen antippen):</h4><div class="ord-list" id="ordSeq"></div></div></div>';
         break;
       case 'match':
-        html = '<div class="rows">' + it.rows.map((p, i) => '<div class="row" data-i="' + i + '"><span class="lab">' + esc(p[0]) + '</span><select data-i="' + i + '"><option value="">– wählen –</option>' + it.rights.map(r => '<option>' + esc(r) + '</option>').join('') + '</select></div>').join('') + '</div>';
+        html = (q.lzk ? '<div class="lzkwrap"><div class="fig">' + lzkMapSVG(null) + '</div>' : '') + '<div class="rows">' + it.rows.map((p, i) => '<div class="row" data-i="' + i + '"><span class="lab">' + esc(p[0]) + '</span><select data-i="' + i + '"><option value="">– wählen –</option>' + it.rights.map(r => '<option>' + esc(r) + '</option>').join('') + '</select></div>').join('') + '</div>' + (q.lzk ? '</div>' : '');
         break;
       case 'sort':
         html = '<div class="rows">' + it.items.map((p, i) => '<div class="row" data-i="' + i + '"><span class="lab">' + esc(p[0]) + '</span><div class="catbtns">' + q.cats.map(c => '<button type="button" data-i="' + i + '" data-c="' + esc(c) + '">' + esc(c) + '</button>').join('') + '</div></div>').join('') + '</div>';
@@ -761,7 +981,26 @@
     qa().innerHTML = html;
     // Interaktion
     if (q.type === 'input') { const t = $('txtIn'); t.focus(); t.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); mainAction(); } }); t.addEventListener('input', () => { it.user = t.value; updateMain(); }); }
-    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind'].includes(q.type)) bindOpts(it);
+    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind', 'coordtext'].includes(q.type)) bindOpts(it);
+    if (q.type === 'cloze') {
+      const gs = [...qa().querySelectorAll('.gap')];
+      gs.forEach((g, i) => {
+        g.addEventListener('input', () => { it.user[i] = g.value; updateMain(); });
+        g.addEventListener('keydown', e => {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          const nextEmpty = gs.find((x, k) => k > i && !x.value.trim()) || gs.find(x => !x.value.trim());
+          if (nextEmpty) nextEmpty.focus(); else mainAction();
+        });
+      });
+      gs[0].focus();
+    }
+    if (q.type === 'fehler') qa().querySelectorAll('.tok').forEach(b => b.addEventListener('click', () => {
+      if (answered) return;
+      it.user = +b.dataset.t;
+      qa().querySelectorAll('.tok').forEach(x => x.classList.toggle('sel', x === b));
+      if (state.mode === 'test') updateMain(); else check();
+    }));
     const svg = qa().querySelector('svg');
     if (q.type === 'mapclick' || q.type === 'lineclick' || q.type === 'hemi') {
       svg.addEventListener('click', ev => {
@@ -803,6 +1042,7 @@
     if (t === 'match') return [...qa().querySelectorAll('select')].every(s => s.value);
     if (t === 'sort') return it.user.every(Boolean);
     if (t === 'input') return !!(it.user && it.user.trim());
+    if (t === 'cloze') return it.user.every(v => v && v.trim());
     return it.user !== null && it.user !== undefined;
   }
 
@@ -815,7 +1055,23 @@
       case 'tf': ok = (it.user === 'stimmt') === q.a; sol = q.a ? 'stimmt' : 'stimmt nicht'; break;
       case 'mapname': ok = it.user === (CNAME[q.target] || q.target); sol = CNAME[q.target] || q.target; break;
       case 'input': { const m = matchInput(it.user, q.a); ok = !!m; it.typo = m === 'typo'; const u = clean(it.user || ''); it.near = q.a.slice().sort((x, y) => lev(u, clean(x)) - lev(u, clean(y)))[0]; sol = q.a[0]; break; }
-      case 'coord': ok = it.user === it.correct; sol = it.correct; break;
+      case 'coord': case 'coordtext': ok = it.user === it.correct; sol = it.correct; break;
+      case 'fehler': ok = it.user === it.answer; sol = '„' + it.wrongWord + '“ ist falsch – richtig ist „' + it.rightWord + '“'; break;
+      case 'cloze': {
+        const res = it.gaps.map(() => null); const used = new Set(); const near = [];
+        it.user.forEach((u, i) => {
+          const tryGap = (k) => { const m = matchInput(u, it.gaps[k]); if (m) { res[i] = { k, m }; used.add(k); return true; } return false; };
+          if (q.anyOrder) { for (let k = 0; k < it.gaps.length; k++) if (!used.has(k) && tryGap(k)) break; }
+          else tryGap(i);
+        });
+        res.forEach(r => { if (r && r.m === 'typo') near.push(it.gaps[r.k][0]); });
+        it.res = res; it.typo = near.length > 0; it.near = near.join(', ');
+        const right = res.filter(Boolean).length, total = it.gaps.length;
+        ok = right === total;
+        pts = it.max === 1 ? (ok ? 1 : 0) : ok ? 2 : right >= Math.ceil(total / 2) ? 1 : 0;
+        sol = it.text.map((t, i) => t + (i < total ? it.gaps[i][0] : '')).join('');
+        return total > 1 ? { ok, pts, sol, right, total } : { ok, pts, sol };
+      }
       case 'coordclick': ok = it.user === it.answerLabel; sol = 'Punkt ' + it.answerLabel + ' (' + it.correct + ')'; break;
       case 'mapclick': {
         const u = it.user || {};
@@ -856,10 +1112,20 @@
   // Lösung anzeigen (Übungsmodus)
   function showSolution(it, g) {
     const q = it.q;
-    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind'].includes(q.type)) {
+    if (['mc', 'tf', 'mapname', 'coord', 'swatch', 'gridfind', 'coordtext'].includes(q.type)) {
       qa().querySelectorAll('.opt').forEach(b => { const o = it.opts[+b.dataset.i]; if (o === g.sol) b.classList.add('right'); else if (o === it.user) b.classList.add('wrong'); });
     }
     if (q.type === 'input') $('txtIn').classList.add(g.ok ? 'right' : 'wrong');
+    if (q.type === 'cloze') qa().querySelectorAll('.gap').forEach((x, i) => {
+      x.disabled = true;
+      const r = it.res[i];
+      x.classList.add(r ? 'right' : 'wrong');
+      if (!r) x.insertAdjacentHTML('afterend', '<span class="gapsol">' + esc(q.anyOrder ? it.gaps.filter((gp, k) => !it.res.some(z => z && z.k === k)).map(gp => gp[0]).join(' / ') : it.gaps[i][0]) + '</span>');
+    });
+    if (q.type === 'fehler') qa().querySelectorAll('.tok').forEach((b, i) => {
+      if (i === it.answer) { b.classList.add(g.ok ? 'right' : 'miss'); b.insertAdjacentHTML('afterend', ' <span class="fix">' + esc(it.rightWord) + '</span>'); }
+      else if (i === it.user) b.classList.add('wrong');
+    });
     const svg = qa().querySelector('svg');
     if (q.type === 'mapclick') {
       dropMark(svg, it.user.x, it.user.y, g.ok);
@@ -881,8 +1147,11 @@
     if (q.type === 'order') {
       $('ordSeq').querySelectorAll('.chip').forEach((b, i) => b.classList.add(it.seq[i] === q.items[i] ? 'right' : 'wrong'));
     }
-    if (q.type === 'match') qa().querySelectorAll('.row').forEach((r, i) => { const s = r.querySelector('select'); const ok = s.value === it.rows[i][1]; r.classList.add(ok ? 'right' : 'wrong'); s.disabled = true; if (!ok) r.insertAdjacentHTML('beforeend', '<span></span><span class="sol">richtig: ' + esc(it.rows[i][1]) + '</span>'); });
-    if (q.type === 'sort') qa().querySelectorAll('.row').forEach((r, i) => { const ok = it.user[i] === it.items[i][1]; r.classList.add(ok ? 'right' : 'wrong'); if (!ok) r.insertAdjacentHTML('beforeend', '<span></span><span class="sol">richtig: ' + esc(it.items[i][1]) + '</span>'); });
+    if (q.type === 'match') qa().querySelectorAll('.row').forEach((r, i) => { const s = r.querySelector('select'); const ok = s.value === it.rows[i][1]; r.classList.add(ok ? 'right' : 'wrong'); s.disabled = true; if (!ok) r.insertAdjacentHTML('beforeend', '<span class="sol">→ ' + esc(it.rows[i][1]) + '</span>'); });
+    if (q.type === 'sort') qa().querySelectorAll('.row').forEach((r, i) => {
+      const ok = it.user[i] === it.items[i][1]; r.classList.add(ok ? 'right' : 'wrong');
+      r.querySelectorAll('.catbtns button').forEach(b => { if (b.dataset.c === it.items[i][1]) b.classList.add('ok'); else if (b.dataset.c === it.user[i]) b.classList.add('bad'); });
+    });
   }
 
   // =====================================================================================
@@ -940,7 +1209,7 @@
       state.queue.splice(Math.min(9, state.queue.length), 0, q);
       const extra = q.type === 'mapclick' && cur.hit ? ' Du hast auf <b>' + esc(cur.hit === 'Nebenmeer' ? 'ein Nebenmeer (kein Weltmeer)' : cur.hit) + '</b> geklickt.' : '';
       const part = g.total ? ' (' + g.right + ' von ' + g.total + ' richtig)' : '';
-      setFeedback('bad', 'Leider falsch' + part + '.' + extra + ' Richtig: ' + esc(g.sol) + (q.why && !g.total ? ' – ' + q.why : ''));
+      setFeedback('bad', 'Leider falsch' + part + '.' + extra + (g.total && q.type !== 'cloze' ? ' Die richtigen Lösungen sind oben grün markiert.' : ' Richtig: ' + esc(g.sol) + (q.why && !g.total ? ' – ' + q.why : '')));
     }
     R.save('mastered', mastered); R.save('tries', tries);
     const pp = partProgress(q.part);
@@ -983,6 +1252,10 @@
     if (q.type === 'swatch') return 'Höhenstufe zur Farbe';
     if (q.type === 'layers') return (it.ask === 'alt' ? 'ältester' : 'jüngster') + ' Fund';
     if (q.type === 'mapname') return 'markierter Kontinent';
+    if (q.type === 'coordtext') return it.given;
+    if (q.type === 'fehler') return 'Fehler finden: „' + q.s.replace(/\{([^|}]+)\|[^}]+\}/, '$1') + '“';
+    if (q.type === 'cloze') return 'Lückentext: ' + q.s.replace(/\[[^\]]+\]/g, '___');
+    if (q.lzk && q.type === 'input') return 'LZK-Karte: ' + (/^\d$/.test(q.lzk) ? 'Nummer ' : 'Buchstabe ') + q.lzk;
     return (q.q || '').replace(/<[^>]+>/g, '');
   }
   function finishTest() {
