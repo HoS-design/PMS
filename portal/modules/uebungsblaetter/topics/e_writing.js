@@ -235,7 +235,11 @@ Should school start at 9 o'clock? Write a post for an online forum. => Hi everyo
       1: {
         ichkann: ['Du kannst Argumente für und gegen etwas unterscheiden.', 'Du kennst Wendungen, um deine Meinung zu sagen.'],
         tasks: [
-          { type: 'sort', pool: 'sort', n: 8, opts: [['P', 'for school uniforms'], ['C', 'against school uniforms']], title: 'For or against?', instr: 'Sort the arguments.' },
+          { oneOf: [
+            { type: 'sort', pool: 'sort', n: 8, opts: [['P', 'for school uniforms'], ['C', 'against school uniforms']], title: 'For or against school uniforms?', instr: 'Sort the arguments.' },
+            { type: 'sort', pool: 'sortHw', n: 8, opts: [['P', 'for homework'], ['C', 'against homework']], title: 'For or against homework?', instr: 'Sort the arguments.' },
+            { type: 'sort', pool: 'sortPhone', n: 8, opts: [['P', 'for phones at school'], ['C', 'against phones at school']], title: 'For or against phones at school?', instr: 'Sort the arguments.' }
+          ] },
           { type: 'gap', pool: 'phrase', n: 6, wordbox: true, title: 'Useful phrases', instr: 'Use the phrases from the box.' }
         ]
       },

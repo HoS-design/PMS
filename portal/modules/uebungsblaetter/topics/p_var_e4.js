@@ -300,13 +300,13 @@ The sun {was shining|shone} and the birds were singing.`
   } });
 
   ext('e-w-opinion', { more: {
-    sort: `Homework helps you to remember what you learned.|P
+    sortHw: `Homework helps you to remember what you learned.|P
 Students have less time for hobbies.|C
 You can practise at your own speed.|P
 Homework can be stressful.|C
 Parents can see what you are learning.|P
-Some students don't have help at home.|C
-Phones are useful in an emergency.|P
+Some students don't have help at home.|C`,
+    sortPhone: `Phones are useful in an emergency.|P
 Phones can distract students in class.|C
 You can look things up quickly.|P
 Some students play games instead of learning.|C

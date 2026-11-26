@@ -36,7 +36,6 @@ lang => länger – am längsten
 klug => klüger – am klügsten
 stark => stärker – am stärksten
 sauer => saurer – am sauersten
-heiß => heißer – am heißesten
 arm => ärmer – am ärmsten`,
     dekl: `Die [kleine:klein] Katze schläft auf dem [weichen:weich] Sofa.
 Ich trinke gern [kalten:kalt] Saft.
