@@ -132,7 +132,7 @@ Schreibe eine **Werbeanzeige** für eine neue Eissorte. Verwende Alliteration, �
         ichkann: ['Du erkennst Vergleich, Metapher, Personifikation, Übertreibung und Alliteration.', 'Du erklärst die Bedeutung von Metaphern.'],
         tasks: [
           { type: 'merk', title: 'Stilmittel', html: '<b>Vergleich</b>: mit „wie“ (stark wie ein Bär). <b>Metapher</b>: Vergleich ohne „wie“ (ein Meer aus Blumen). <b>Personifikation</b>: Der Wind heult. <b>Übertreibung</b>: tausendmal. <b>Alliteration</b>: Milch macht müde Männer munter.' },
-          { type: 'choice', pool: 'erkennen', keys: ['V', 'M', 'P', 'U', 'A'], cover: true, n: 7, opts: STIL.slice(0, 5), title: 'Welches Stilmittel ist das?', instr: 'Kreuze an.' },
+          { type: 'choice', pool: 'erkennen', keys: ['V', 'M', 'P', 'U', 'A'], cover: true, n: 6, opts: STIL.slice(0, 5), title: 'Welches Stilmittel ist das?', instr: 'Kreuze an.' },
           { type: 'pair', pool: 'metapher', n: 4, inline: true, head: 'sprachliches Bild', col: 'Was bedeutet das?', title: 'Was ist gemeint?', instr: 'Erkläre die Metaphern mit eigenen Worten.' }
         ]
       },

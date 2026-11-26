@@ -40,7 +40,7 @@ denn durch Wiederholen festigt sich das Gelernte.|G
 Zum Beispiel kann man den Eltern Bescheid geben, wenn der Bus ausfällt.|BSP
 Wer zum Beispiel jeden Tag Rad fährt, ist meist fitter.|BSP
 Unsere Nachbarschule erntet zum Beispiel jedes Jahr eigene Kartoffeln.|BSP
-Wer Vokabeln mehrmals wiederholt, kann sie beim Test zum Beispiel viel sicherer.|BSP`;
+Wer zum Beispiel Vokabeln jeden Tag wiederholt, weiß sie beim Test viel sicherer.|BSP`;
 
   const argOrder = `Haustiere sind gut für Kinder. >> Sie lernen dabei, Verantwortung zu übernehmen. >> Wer einen Hund hat, muss zum Beispiel jeden Tag mit ihm spazieren gehen – auch bei Regen.
 Die Schule sollte später beginnen. >> Viele Jugendliche sind am frühen Morgen noch sehr müde. >> In der ersten Stunde gähnen zum Beispiel oft fast alle in der Klasse.

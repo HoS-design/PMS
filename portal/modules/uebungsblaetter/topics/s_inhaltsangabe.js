@@ -21,7 +21,7 @@
       einl: 'In der Kurzgeschichte „Das Geheimnis im Keller“ von Sabine Kern geht es um ein neugieriges Mädchen, das zu früh ein Geschenk ihres Großvaters entdeckt.',
       kern: ['Opa verbringt jeden Abend heimlich Zeit im Keller.', 'Hannah nimmt den Schlüssel und schleicht in den Keller.', 'Sie entdeckt ein Puppenhaus, das Opa für sie gebaut hat.', 'Opa ertappt sie, Hannah schämt sich und umarmt ihn.'] }
   ];
-  const text = (rng) => (rng.text = rng.text || rng.pick(TEXTE));
+  const text = (rng) => (rng.text = rng.text || rng.fresh(TEXTE, 1, x => '#text#' + x.t)[0]);
   const box = (x) => '<div class="story"><h4>' + esc(x.t) + ' <span class="hint">(Kurzgeschichte von ' + esc(x.a) + ')</span></h4>' + esc(x.text) + '</div>';
 
   const lesen = (rng) => { const x = text(rng); return { title: 'Lies die Kurzgeschichte.', instr: 'Lies zweimal und unterstreiche die wichtigsten Handlungsschritte.', body: box(x), sol: box(x) }; };

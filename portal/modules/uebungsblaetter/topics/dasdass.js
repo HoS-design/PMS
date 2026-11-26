@@ -157,8 +157,10 @@
     const nItems = level === 1 ? 8 : (level === 4 ? 5 : 9);
     if (level === 4) level = 3;
     const pool = ITEMS.filter(x => types.includes(x.t));
-    const first = types.map(t => rng.pick(pool.filter(x => x.t === t)));
-    const its = rng.shuffle(first.concat(rng.sample(pool.filter(x => !first.includes(x)), nItems - first.length)));
+    // je Art mindestens ein Satz; über die 6 Blätter verteilt (fresh) statt pro Blatt zufällig
+    const first = [];
+    types.forEach(t => { const x = rng.fresh(pool.filter(y => y.t === t), 1, y => y.s)[0]; if (x && !first.includes(x)) first.push(x); });
+    const its = rng.shuffle(first.concat(rng.fresh(pool, nItems - first.length, y => y.s).filter(x => !first.includes(x))));
     if (level < 3) {
       return {
         title: 'das oder dass?',

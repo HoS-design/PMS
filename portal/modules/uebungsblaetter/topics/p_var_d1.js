@@ -290,7 +290,7 @@ sie ist => sie wäre
 er muss => er müsste
 ich weiß => ich wüsste
 wir sind => wir wären
-ihr habt => ihr hättet
+ich lerne => ich würde lernen
 sie darf => sie dürfte
 es gibt => es gäbe`,
     verg: `Wenn es nicht [geregnet hätte:regnen], [wären:sein] wir wandern gegangen.

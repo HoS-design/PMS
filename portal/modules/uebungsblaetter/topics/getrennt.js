@@ -33,7 +33,7 @@ Lena hat versprochen, {pünktlich zu sein|pünktlichzusein}.
 Der Unterricht hat schon {angefangen|an gefangen}.
 Er will {Auto fahren|autofahren} lernen.
 Die Klasse will beim Theaterstück {mitmachen|mit machen}.
-Die Kinder sollen im Garten {spielen gehen|spielengehen}.
+{Irgendwer|Irgend wer} hat mein Heft genommen.
 Nach dem Turnen sind alle {müde geworden|müdegeworden}.
 Wir haben uns {gestern Abend|gesternabend} getroffen.`,
     regel: `Rad fahren|NV

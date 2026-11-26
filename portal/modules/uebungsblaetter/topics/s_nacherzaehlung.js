@@ -32,7 +32,7 @@
   ];
 
   function story(rng) {
-    if (!rng.fabel) rng.fabel = rng.pick(FABELN);
+    if (!rng.fabel) rng.fabel = rng.fresh(FABELN, 1, x => '#fabel#' + x.t)[0];
     return rng.fabel;
   }
   const storyBox = (f) => '<div class="story"><h4>' + esc(f.t) + ' <span class="hint">(Fabel nach Äsop)</span></h4>' + esc(f.text) + '</div>';

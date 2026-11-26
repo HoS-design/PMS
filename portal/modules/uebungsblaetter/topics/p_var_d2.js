@@ -43,7 +43,7 @@ Gruß|L
 draußen|L`,
     probe: `der Prei? => der Preis – die Preise
 das Schlo? => das Schloss – die Schlösser
-der Grü? => der Gruß – die Grüße
+der Bi? => der Biss – die Bisse
 das Gla? => das Glas – die Gläser`,
     text4: `Mein Gro{ß|ss|s}vater lie{ß|ss|s} mich gestern Rad fahren.
 Wir mü{ss|ß|s}en die Tür schlie{ß|ss|s}en.

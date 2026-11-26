@@ -131,9 +131,10 @@
 
   // mindestens ein Satz je Fall (soweit die Stufe sie verwendet)
   function pickSentences(rng, n, cases) {
-    const pool = SENTENCES.filter(x => cases.includes(x.c) && !rng.used.has(x.s));
-    const first = cases.map(c => rng.pick(pool.filter(x => x.c === c)));
-    const rest = rng.sample(pool.filter(x => !first.includes(x)), n - first.length);
+    const pool = SENTENCES.filter(x => cases.includes(x.c));
+    const first = [];
+    cases.forEach(c => { const x = rng.fresh(pool.filter(y => y.c === c), 1, y => y.s)[0]; if (x && !first.includes(x)) first.push(x); });
+    const rest = rng.fresh(pool, n - first.length, y => y.s).filter(x => !first.includes(x));
     const all = first.concat(rest);
     all.forEach(x => rng.used.add(x.s));
     return rng.shuffle(all);
@@ -153,9 +154,10 @@
   }
 
   function pick4(rng, n) {
-    const pool = SENT4.filter(x => !rng.used.has(x.s));
-    const first = [1, 2, 3, 4].map(c => rng.pick(pool.filter(x => x.c === c)));
-    const all = rng.shuffle(first.concat(rng.sample(pool.filter(x => !first.includes(x)), n - 4)));
+    const pool = SENT4;
+    const first = [];
+    [1, 2, 3, 4].forEach(c => { const x = rng.fresh(pool.filter(y => y.c === c), 1, y => y.s)[0]; if (x && !first.includes(x)) first.push(x); });
+    const all = rng.shuffle(first.concat(rng.fresh(pool, n - first.length, y => y.s).filter(x => !first.includes(x))));
     all.forEach(x => rng.used.add(x.s));
     return all;
   }
@@ -181,7 +183,7 @@
   }
 
   function taskTabelle4(rng) {
-    const ns = rng.sample(ADJ4, 3);
+    const ns = rng.fresh(ADJ4, 3, x => '#adj4#' + x[0]);
     const head = [''].concat(ns.map(n => '<b>' + esc(n[0]) + '</b>'));
     return {
       title: 'Begleiter, Adjektiv und Nomen',
@@ -219,7 +221,7 @@
   }
 
   function taskTabelle(level, rng) {
-    const ns = rng.sample(NOUNS, 3);
+    const ns = rng.fresh(NOUNS, 3, x => '#nomen#' + x[0]);
     const head = [''].concat(ns.map(n => '<b>' + esc(n[0]) + '</b>'));
     const label = (c) => level === 3 ? CASES[c].fach : CASES[c].de + ' <span class="hint">' + CASES[c].frage + '</span>';
     return {

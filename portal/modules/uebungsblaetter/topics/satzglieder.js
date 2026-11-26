@@ -174,7 +174,7 @@
   }
 
   function taskBauplan(rng) {
-    const p = rng.pick(POOL.filter(x => x.length >= 4));
+    const p = rng.fresh(POOL.filter(x => x.length >= 4), 1, sentence)[0];
     const plan = p.map(x => ROLES[x.role].kurz === 'P' ? 'P' : (x.frage || ROLES[x.role].frage)).join(' – ');
     return {
       title: 'Satzbauplan',

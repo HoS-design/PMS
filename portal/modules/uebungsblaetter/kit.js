@@ -80,12 +80,17 @@
     const its = itemsFor(def, spec);
     const n = spec.n || 6;
     if (spec.cover && spec.keys) {
+      // Jede Kategorie mindestens einmal – aber über die 6 Blätter verteilt (fresh mit gleichbleibender Liste),
+      // nicht pro Blatt zufällig, sonst landen seltene Kategorien immer auf denselben Sätzen.
       const first = [];
       spec.keys.forEach(k => {
-        const c = its.filter(x => x.k === k && !rng.used.has(keyOf(x)) && !first.includes(x));
-        if (c.length && first.length < n) { const x = rng.pick(c); first.push(x); rng.used.add(keyOf(x)); }
+        if (first.length >= n) return;
+        const c = its.filter(x => x.k === k);
+        if (!c.some(x => !rng.used.has(keyOf(x)))) return;
+        const x = rng.fresh(c, 1, keyOf)[0];
+        if (x && !first.includes(x)) first.push(x);
       });
-      const rest = rng.fresh(its.filter(x => !first.includes(x) && !first.some(f => keyOf(f) === keyOf(x))), n - first.length, keyOf);
+      const rest = rng.fresh(its, n - first.length, keyOf).filter(x => !first.includes(x));
       return rng.shuffle(first.concat(rest));
     }
     return rng.fresh(its, n, keyOf);
@@ -330,8 +335,20 @@
   UB.simple = function (def) {
     def.build = function (level, rng) {
       return (def.levels[level].tasks || []).map(spec0 => {
-        const spec = spec0.oneOf ? rng.pick(spec0.oneOf) : spec0;
+        // Varianten (oneOf) über die 6 Blätter verteilen: jede Variante bekommt eine Gruppe benachbarter Blätter,
+        // innerhalb der Gruppe teilen sich die Blätter den Pool der Variante (rng.dealSub).
+        let spec = spec0;
+        if (spec0.oneOf) {
+          const m = spec0.oneOf.length;
+          if (rng.deal) {
+            const perm = UB.makeRng(rng.deal.deck + '|oneOf|' + spec0.oneOf.map(s => s.pool || s.title || '').join('/')).shuffle(spec0.oneOf.map((s, i) => i));
+            const sl = rng.deal.slot % 6, g = Math.floor(sl * m / 6), first = Math.ceil(g * 6 / m), last = Math.ceil((g + 1) * 6 / m);
+            spec = spec0.oneOf[perm[g]];
+            rng.dealSub = { slot: sl - first, count: last - first };
+          } else spec = rng.pick(spec0.oneOf);
+        }
         const t = T[spec.type](def, spec, rng, level);
+        rng.dealSub = null;
         return { title: t.title || spec.title, instr: t.instr || spec.instr || '', body: t.body, sol: t.sol };
       });
     };

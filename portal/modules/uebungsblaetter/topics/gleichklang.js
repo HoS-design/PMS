@@ -21,7 +21,7 @@ der Zwer{g|k} → die Zwerge
 der Stau{b|p} → staubig
 der Hu{t|d} → die Hüte
 klu{g|k} → klüger`,
-    verlFrei: `der Han? => der Hand – die Hände
+    verlFrei: `der Hun? => der Hund – die Hunde
 gel? => gelb – gelber
 der Ber? => der Berg – die Berge
 das Pfer? => das Pferd – die Pferde

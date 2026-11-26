@@ -69,7 +69,7 @@
   }
 
   function taskZustand(rng) {
-    const zs = rng.shuffle(rng.sample(ZUSTAND.filter(x => x[1] === 'Z'), 3).concat(rng.sample(ZUSTAND.filter(x => x[1] === 'V'), 2)));
+    const zs = rng.shuffle(rng.fresh(ZUSTAND.filter(x => x[1] === 'Z'), 3, x => '#zustand#' + x[0]).concat(rng.fresh(ZUSTAND.filter(x => x[1] === 'V'), 2, x => '#zustand#' + x[0])));
     return {
       title: 'Vorgang oder Zustand?',
       instr: 'Vorgangspassiv (werden + Partizip II): Etwas geschieht gerade. Zustandspassiv (sein + Partizip II): Das Ergebnis ist schon da. Kreuze an.',

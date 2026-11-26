@@ -51,6 +51,8 @@
     const sm = /^(.*)\|(b|v)(\d+)$/.exec(seedText);
     const deal = sm ? (sm[2] === 'b' ? { deck: sm[1] + '|b', slot: +sm[3] - 1 } : { deck: sm[1] + '|v' + Math.floor(+sm[3] / 6), slot: +sm[3] % 6 }) : null;
     const taken = {};
+    rng.deal = deal;      // für Varianten (oneOf): welches Blatt ist das?
+    rng.dealSub = null;   // gesetzt, wenn nur ein Teil der Blätter diesen Pool nutzt
     rng.fresh = (arr, n, key) => {
       const k = key || ((x) => typeof x === 'string' ? x : JSON.stringify(x));
       if (deal && arr.length > n) {
@@ -61,7 +63,8 @@
         const deck = makeRng(deal.deck + '|' + lk + '|deck').shuffle(keys);
         // Startpunkte gleichmäßig über den Stapel verteilen (abrunden statt aufrunden: sonst landet Blatt 5/6 bei kleinen Stapeln wieder am Anfang)
         const N = deck.length;
-        const start = (Math.floor(deal.slot * N / 6) + (taken[lk] || 0)) % N;
+        const sub = rng.dealSub;
+        const start = ((sub ? Math.floor(sub.slot * N / sub.count) : Math.floor(deal.slot * N / 6)) + (taken[lk] || 0)) % N;
         const out = []; let i = 0;
         while (out.length < n && i < N) {
           const kk = deck[(start + i) % N]; i++;
