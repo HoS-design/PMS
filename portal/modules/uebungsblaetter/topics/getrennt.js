@@ -1,11 +1,10 @@
-/* Getrennt- und Zusammenschreibung – 3./4. Klasse (Entwurf: bitte prüfen) */
+/* Getrennt- und Zusammenschreibung – 3./4. Klasse */
 UB.simple({
-  id: 'getrennt-zusammen', title: 'Getrennt oder zusammen?', area: 'rechtschreibung', klassen: [3, 4], img: 'MiniHoS_Gesicht_Nachdenken-Idee', review: true,
-  merk: '<b>Getrennt</b> schreibt man meist: Nomen + Verb (Rad fahren, Klavier spielen, Ski fahren), Verb + Verb (spazieren gehen, schwimmen lernen), Zeitangaben (heute Abend, morgen früh), Fügungen mit „sein“ (da sein, zusammen sein). <b>Zusammen</b> schreibt man: Wörter mit irgend- (irgendwann, irgendwo, irgendetwas), Verben mit verblasstem Nomen (teilnehmen, stattfinden, heimgehen, eislaufen), zu-Infinitive von trennbaren Verben (aufzuräumen, mitzukommen) und Verbindungen mit neuer Gesamtbedeutung (krankschreiben, schwarzfahren). Bei „kennenlernen“ ist beides erlaubt.',
+  id: 'getrennt-zusammen', title: 'Getrennt oder zusammen?', area: 'rechtschreibung', klassen: [3, 4], img: 'MiniHoS_Gesicht_Nachdenken-Idee',
+  merk: '<b>Getrennt</b> schreibt man meist: Nomen + Verb (Rad fahren, Klavier spielen, Auto fahren), Verb + Verb (spazieren gehen, schwimmen lernen), Zeitangaben (heute Abend, morgen früh), Fügungen mit „sein“ (da sein, zusammen sein). <b>Zusammen</b> schreibt man: Wörter mit irgend- (irgendwann, irgendwo, irgendetwas), Verben mit verblasstem Nomen (teilnehmen, stattfinden, heimgehen, eislaufen), zu-Infinitive von trennbaren Verben (aufzuräumen, mitzukommen) und Verbindungen mit neuer Gesamtbedeutung (krankschreiben, schwarzfahren). Bei „kennenlernen“ ist beides erlaubt.',
   pools: {
     wahl: `Wir gehen am Sonntag {Rad fahren|radfahren}.
 Lena möchte {Klavier spielen|klavierspielen} lernen.
-Im Winter gehen wir {Ski fahren|skifahren}.
 Nach dem Essen wollen wir {spazieren gehen|spazierengehen}.
 Mein kleiner Bruder will {schwimmen lernen|schwimmenlernen}.
 Wir treffen uns {heute Abend|heuteabend}.
@@ -32,12 +31,41 @@ Wir gehen jetzt {einkaufen|ein kaufen}.
 Ich habe keine Lust, {mitzuspielen|mit zu spielen}.
 Lena hat versprochen, {pünktlich zu sein|pünktlichzusein}.
 Der Unterricht hat schon {angefangen|an gefangen}.
-Wir wollen {Ski fahren|skifahren} lernen.
 Er will {Auto fahren|autofahren} lernen.
 Die Klasse will beim Theaterstück {mitmachen|mit machen}.
 Die Kinder sollen im Garten {spielen gehen|spielengehen}.
 Nach dem Turnen sind alle {müde geworden|müdegeworden}.
-Wir haben uns {gestern Abend|gesternabend} getroffen.`
+Wir haben uns {gestern Abend|gesternabend} getroffen.`,
+    regel: `Rad fahren|NV
+Fußball spielen|NV
+Auto fahren|NV
+spazieren gehen|VV
+schwimmen lernen|VV
+einkaufen gehen|VV
+heute Abend|Z
+morgen früh|Z
+gestern Abend|Z
+irgendwann|I
+irgendwo|I
+irgendjemand|I
+aufzuräumen|ZI
+mitzukommen|ZI
+anzufangen|ZI
+schwarzfahren|NB
+krankschreiben|NB
+sitzenbleiben (die Klasse wiederholen)|NB`,
+    fehler: `Wir gehen am Nachmittag radfahren. => Wir gehen am Nachmittag Rad fahren.
+Irgend wann komme ich dich besuchen. => Irgendwann komme ich dich besuchen.
+Das Konzert wird morgen statt finden. => Das Konzert wird morgen stattfinden.
+Wir treffen uns heuteabend. => Wir treffen uns heute Abend.
+Hast du Lust, mit zu spielen? => Hast du Lust, mitzuspielen?
+Mein Bruder will schwimmenlernen. => Mein Bruder will schwimmen lernen.
+Wir wollen beim Turnier teil nehmen. => Wir wollen beim Turnier teilnehmen.
+Ich möchte klavierspielen lernen. => Ich möchte Klavier spielen lernen.
+Im Winter gehen wir Eis laufen. => Im Winter gehen wir eislaufen.
+Er ist ohne Fahrkarte schwarz gefahren. => Er ist ohne Fahrkarte schwarzgefahren.
+Ich habe irgend etwas vergessen. => Ich habe irgendetwas vergessen.
+Vergiss nicht, das Licht aus zu machen! => Vergiss nicht, das Licht auszumachen!`
   },
   levels: {
     1: {
@@ -57,7 +85,15 @@ Wir haben uns {gestern Abend|gesternabend} getroffen.`
     3: {
       ichkann: ['Du erkennst Verbindungen mit neuer Gesamtbedeutung.', 'Du kannst deine Entscheidung mit einer Regel begründen.'],
       tasks: [
-        { type: 'gap', pool: 'wahl', n: 10, title: 'Getrennt oder zusammen?', instr: 'Kreise ein. Schreibe bei drei Sätzen die Regel an den Rand.' }
+        { type: 'gap', pool: 'wahl', n: 10, title: 'Getrennt oder zusammen?', instr: 'Kreise ein. Schreibe bei drei Sätzen die Regel an den Rand.' },
+        { type: 'choice', pool: 'regel', n: 6, asText: true, head: 'Schreibung', col: 'Regel', w: 14, opts: [['NV', 'Nomen + Verb: getrennt'], ['VV', 'Verb + Verb: getrennt'], ['Z', 'Zeitangabe: getrennt'], ['I', 'irgend-: zusammen'], ['ZI', 'zu-Infinitiv: zusammen'], ['NB', 'neue Bedeutung: zusammen']], title: 'Welche Regel gilt?', instr: 'Schreibe die passende Regel dazu: Nomen + Verb, Verb + Verb, Zeitangabe, irgend-, zu-Infinitiv oder neue Bedeutung.' }
+      ]
+    },
+    4: {
+      ichkann: ['Du begründest die Getrennt- und Zusammenschreibung mit einer Regel.', 'Du findest und verbesserst Fehler.'],
+      tasks: [
+        { type: 'choice', pool: 'regel', n: 8, asText: true, head: 'Schreibung', col: 'Regel', w: 14, opts: [['NV', 'Nomen + Verb: getrennt'], ['VV', 'Verb + Verb: getrennt'], ['Z', 'Zeitangabe: getrennt'], ['I', 'irgend-: zusammen'], ['ZI', 'zu-Infinitiv: zusammen'], ['NB', 'neue Bedeutung: zusammen']], title: 'Welche Regel gilt?', instr: 'Schreibe die passende Regel dazu.' },
+        { type: 'error', pool: 'fehler', n: 4, title: 'Finde den Fehler.', instr: 'In jedem Satz ist ein Wort falsch getrennt oder zusammengeschrieben. Schreibe den Satz richtig.' }
       ]
     }
   }

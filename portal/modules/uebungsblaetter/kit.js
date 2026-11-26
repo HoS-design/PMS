@@ -168,7 +168,8 @@
   };
 
   T.ab = (def, spec, rng) => {
-    const its = pick(def, spec, rng);
+    // a und b zufällig vertauschen, damit die richtige Lösung nicht immer an derselben Stelle steht
+    const its = pick(def, spec, rng).map(x => rng.next() < 0.5 ? Object.assign({}, x, { a: x.b, b: x.a, k: x.k === 'a' ? 'b' : 'a' }) : x);
     const one = (x, solution) => '<div class="ab">' +
       ['a', 'b'].map(k => '<div class="ab-opt">' + (solution ? (x.k === k ? sol('✗') : '<span class="cbox"></span>') : box) +
         ' <b>' + k.toUpperCase() + '</b> ' + mark(x[k]) + '</div>').join('') +
