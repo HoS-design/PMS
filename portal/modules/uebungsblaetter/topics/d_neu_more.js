@@ -20,8 +20,8 @@ Meine Füße sind Eisklötze.|M
 Das ist der beste Tag aller Zeiten!|U
 Es hat eine Million Grad.|U
 Ich bin vor Lachen fast gestorben.|U
-Wir warten schon seit Stunden – seit Jahren!|U
-Die Hausübung dauert ewig.|U`,
+Die Schlange an der Kassa war kilometerlang.|U
+Vor Freude sprang er bis zum Mond.|U`,
     vergleich: `Er ist frei wie ein [Vogel].
 Sie ist stolz wie ein [Pfau].
 Die Seife ist glatt wie ein [Aal].
@@ -163,7 +163,7 @@ Zahnspange|A
 Grübchen|A
 breite Schultern|A
 spitze Nase|A
-graue Locken|A
+Tattoo am Arm|A
 klein und zierlich|A
 Lachfalten|A
 gepflegter Bart|A
@@ -180,7 +180,7 @@ höflich|C
 faul|C
 fleißig|C
 stur|C
-witzig|C
+launisch|C
 egoistisch|C
 treu|C
 geizig|C

@@ -23,7 +23,7 @@ Sehr geehrte Damen und Herren, Ich möchte mich beschweren. || Sehr geehrte Dame
 Können sie mir helfen? || Können Sie mir helfen? || b || Höflichkeitsform groß
 Tschüss, ciao! || Mit freundlichen Grüßen || b || passende Grußformel im formellen Brief
 Betreff: Frage || Betreff: Anfrage zur Klassenfahrt am 12. Mai || b || genauer Betreff
-Ich will wissen, was das kostet. || Ich möchte Sie bitten, mir die Preise mitzuteilen. || b || höflich formulieren
+Ich brauche das bis morgen. || Ich wäre Ihnen dankbar, wenn ich es bis morgen erhalten könnte. || b || Konjunktiv macht die Bitte höflich
 Danke im Voraus und so. || Vielen Dank im Voraus für Ihre Mühe. || b || keine Umgangssprache
 Sehr geehrter Herr Bürgermeister, wie gehts? || Sehr geehrter Herr Bürgermeister, ich wende mich mit einer Bitte an Sie. || b || sachlicher Einstieg
 Bitte schreiben sie mir bald. || Bitte schreiben Sie mir bald. || b || Höflichkeitsform groß`,

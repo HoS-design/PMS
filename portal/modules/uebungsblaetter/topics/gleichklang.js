@@ -3,7 +3,7 @@ UB.simple({
   id: 'gleich-klingend', title: 'Ähnlich klingende Laute', area: 'rechtschreibung', klassen: [1, 2], img: 'MiniHoS_Gesicht_Zwinkern',
   merk: '<b>b oder p, d oder t, g oder k?</b> Verlängere das Wort: der Hund – die Hunde, gelb – gelber, der Berg – die Berge. <b>ä oder e, äu oder eu?</b> Suche ein verwandtes Wort mit a oder au: die Hände – die Hand, die Häuser – das Haus. Gibt es keines, schreibt man meist e oder eu: die Leute, heute. <b>end- oder ent-?</b> end- kommt von „Ende“ (endlich, endgültig), sonst schreibt man die Vorsilbe ent- (entdecken, entlang).',
   pools: {
-    verl: `der Han{d|t} → die Hände
+    verl: `der Wal{d|t} → die Wälder
 das Bil{d|t} → die Bilder
 der Ber{g|k} → die Berge
 gel{b|p} → gelber

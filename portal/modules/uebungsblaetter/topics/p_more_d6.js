@@ -15,11 +15,11 @@ Erzähle die Geschichte oben **mit einem anderen Schluss** nach. Der Anfang blei
   ext('inhaltsangabe', { more: {
     merkmal: `Antworten auf die W-Fragen|J
 Nebensachen weglassen|J
-indirekte Rede für wichtige Aussagen|J
+Absätze sinnvoll gliedern|J
 Zusammenhänge erklären (weil, deshalb)|J
 Spannung aufbauen|N
 Gefühle ausmalen|N
-Ich-Form|N
+Umgangssprache (voll cool, krass)|N
 Ausrufe und Fragen an die Leserinnen und Leser|N`,
     deutung: `Welche Figur der Geschichte oben findest du am interessantesten? Begründe deine Meinung in einem **Schlussteil** (4–5 Sätze). => Figur benennen ; Begründung mit Textstellen ; eigene Meinung ; Präsens
 Schreibe einen **Schlussteil**, in dem du die Geschichte oben mit deinem eigenen Leben vergleichst (4–5 Sätze). => Botschaft benennen ; Vergleich mit eigenen Erfahrungen ; Begründung ; Präsens`

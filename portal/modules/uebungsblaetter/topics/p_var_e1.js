@@ -111,7 +111,7 @@ Where are my shoes? I can't find [them].
 Can you help [me], please?
 Tom and I are here. Can you see [us]?
 This is Ben. Do you know [him]?
-These cookies are great. I love [them].
+These biscuits are great. I love [them].
 The cat is hungry. Can you feed [it]?
 We are going to the cinema. Do you want to come with [us]?`,
     choose: `Is this bike {yours|your}?
@@ -224,7 +224,7 @@ There are {some|any} children in the park.
 Can I have {some|any} water, please?
 We didn't buy {any|some} vegetables.`,
     text: `In our town [there is] a big park. [There are] lots of trees, but [there aren't] any benches.
-"[Are there] any cookies left?" – "No, [there aren't]. But [there is] some cake."
+"[Are there] any biscuits left?" – "No, [there aren't]. But [there is] some cake."
 [There is] a new pupil in our class. [There are] now twenty-three of us.`,
     trans: `Es gibt zwei Kinos in Graz. => There are two cinemas in Graz.
 Gibt es hier eine Bushaltestelle? => Is there a bus stop here?

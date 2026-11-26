@@ -235,7 +235,7 @@ There is a bus stop in our street. :: not => There isn't a bus stop in our stree
 There are some flowers in the vase. :: not => There aren't any flowers in the vase.
 There is a clock in the classroom. :: not => There isn't a clock in the classroom.`,
     someany: `There are {some|any} flowers in the garden.
-Are there {any|some} cookies left?
+Are there {any|some} biscuits left?
 I need {some|any} help, please.
 There aren't {any|some} buses on Sundays.
 Would you like {some|any} tea?
@@ -254,7 +254,7 @@ There are {some|any} nice shops in the city centre.`,
 Gibt es hier eine Bank? => Is there a bank here?
 In meiner Klasse sind 24 Kinder. => There are 24 children in my class.
 Es gibt keine Äpfel mehr. => There aren't any apples left.
-Sind Kekse in der Dose? => Are there any cookies in the tin?
+Sind Kekse in der Dose? => Are there any biscuits in the tin?
 In unserer Straße gibt es einen Supermarkt. => There is a supermarket in our street.`
   } });
 
@@ -396,7 +396,7 @@ The dog is {in front of|on|in} the door.
 The bus stop is {opposite|on|under} the school.
 My shoes are {under|on|between} the chair.`,
     time: `My birthday is [in] March.
-The film starts [at] seven o'clock.
+The shops close [at] midnight.
 We go skiing [in] winter.
 I get up early [on] Monday mornings.
 School starts [in] September.

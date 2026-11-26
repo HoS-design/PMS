@@ -106,7 +106,7 @@ Spielst du ein Instrument?|J
 Warum weinst du?|E
 Kommst du morgen?|J
 Wie heißt dein Hund?|E
-Ist das dein Fahrrad?|J
+Gefällt dir das Buch?|J
 Wer hat angerufen?|E
 Darf ich mitspielen?|J`
   },

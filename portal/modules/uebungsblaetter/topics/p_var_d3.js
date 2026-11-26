@@ -187,8 +187,8 @@ warten (du / ihr) => Warte! – Wartet!
 sprechen (du / ihr) => Sprich! – Sprecht!
 rufen (du / ihr) => Ruf! – Ruft!
 öffnen (du / ihr) => Öffne! – Öffnet!`,
-    art: `Wir wollen morgen **schwimmen**.|N
-**Komm** sofort her!|B
+    art: `Kannst du mir **helfen**?|N
+**Wasch** dir die Hände!|B
 Du **singst** sehr schön.|P`,
     befehl: `Du gibst mir das Buch. => Gib mir das Buch!
 Du liest den Text laut vor. => Lies den Text laut vor!
@@ -275,9 +275,9 @@ Im Winter ist es kälter {als|wie} im Sommer.
 Lisa ist so alt {wie|als} ich.
 Ein Auto ist teurer {als|wie} ein Fahrrad.
 Das Buch ist nicht so spannend {wie|als} der Film.`,
-    stufe: `Mein Bruder ist **größer** als ich.|V
-Der Gepard ist das **schnellste** Tier.|H
-Das Wasser ist **kalt**.|G
+    stufe: `Die Donau ist **breiter** als die Mur.|V
+Das ist das **teuerste** Handy im Geschäft.|H
+Die Wiese ist **grün**.|G
 Pizza esse ich am **liebsten**.|H`,
     dekl: `Wir wohnen in einem [kleinen:klein] Haus mit einem [schönen:schön] Garten.
 Ich esse gern [frisches:frisch] Brot.
@@ -314,13 +314,13 @@ Ich wünsche [mir] einen Hund.`,
 Der Hund, **der** bellt, ist klein.|Rel
 Das ist **unser** Haus.|Poss
 **Er** spielt Fußball.|Pers
-Wir freuen **uns** auf morgen.|Refl
+Setz **dich** bitte hin!|Refl
 **Jener** Mann dort ist mein Onkel.|Dem
-Die Frau, **die** dort steht, ist Ärztin.|Rel
+Das Kind, **dem** ich geholfen habe, war froh.|Rel
 Habt ihr **eure** Jacken?|Poss
-Ich gebe **ihm** den Ball.|Pers
-Du sollst **dich** beeilen.|Refl
-**Diese** Jacke ist zu klein.|Dem`,
+Kannst du **uns** helfen?|Pers
+Ich ärgere **mich** über den Regen.|Refl
+**Solche** Schuhe möchte ich auch.|Dem`,
     text4: `Das ist die Lehrerin, [die] uns Deutsch unterrichtet. [Ihr] Unterricht macht Spaß.
 Tom hat [seinen:sein] Schlüssel verloren. Wir suchen [ihn] gemeinsam.
 Die Kinder freuen [sich], weil [ihre:ihr] Oma kommt.
@@ -328,15 +328,15 @@ Kennst du das Mädchen, [das] dort singt? [Ihre] Stimme ist wunderschön.`
   } });
 
   ext('satzarten', { more: {
-    frage: `Wann beginnt der Film?|E
-Kommst du morgen mit?|J
+    frage: `Wie viele Geschwister hast du?|E
+Schläft das Baby schon?|J
 Wo wohnt deine Oma?|E
 Hast du Hunger?|J
 Warum weinst du?|E
 Magst du Pizza?|J
 Was machst du am Wochenende?|E
 Kann ich dir helfen?|J
-Wie alt ist dein Bruder?|E
+Woher kommt dein Vater?|E
 Regnet es draußen?|J`,
     zeichen: `Morgen fahren wir ans Meer{.|?|!}
 Hast du deine Jause dabei{?|.|!}
@@ -347,12 +347,12 @@ Komm sofort her{!|.|?}
 Ich lese gern Comics{.|?|!}
 Wie spät ist es{?|.|!}`,
     art: `Die Katze schläft.|AU
-Hast du Zeit?|F
-Räum bitte dein Zimmer auf!|AF
-Juhu, es schneit!|AR
+Spielst du ein Instrument?|F
+Komm sofort her!|AF
+Ach, wie schade!|AR
 Wir fahren morgen nach Linz.|AU
-Wann kommst du?|F
-Setz dich hin!|AF
+Wem gehört diese Mütze?|F
+Vergiss deine Jause nicht!|AF
 Au, das tut weh!|AR`,
     umformen: `Lisa trinkt Tee. :: Entscheidungsfrage => Trinkt Lisa Tee?
 Du räumst auf. :: Aufforderungssatz => Räum auf!
@@ -385,9 +385,9 @@ Lena geht zu {ihrer|ihre|ihren} Freundin.
 Wir kämpfen gegen {den|dem|des} Wind.
 Der Brief ist von {meinem|meinen|meines} Onkel.
 Ich spiele mit {meinen|meinem|meine} Freunden.
-Er wohnt bei {seiner|seine|seinen} Tante.
+Ich gehe mit {meinem|meinen|mein} Bruder ins Kino.
 Sie geht ohne {ihren|ihrem|ihres} Hund spazieren.
-Nach {dem|den|der} Essen putze ich die Zähne.`,
+Das Geschenk ist für {meine|meiner|meinen} Schwester.`,
     gen: `Wegen [des Regens:der Regen] bleiben wir zu Hause.
 Trotz [der Kälte:die Kälte] gehen wir schwimmen.
 Während [des Films:der Film] war es ganz still.
@@ -503,9 +503,9 @@ Die Lehrerin erklärt es. Morgen fällt Turnen aus. :: dass => Die Lehrerin erkl
 Wir gehen nicht schwimmen. Das Wasser ist zu kalt. :: weil => Wir gehen nicht schwimmen, weil das Wasser zu kalt ist.
 Es ist schön. Du bist wieder gesund. :: dass => Es ist schön, dass du wieder gesund bist.
 Lisa lacht. Der Film ist lustig. :: weil => Lisa lacht, weil der Film lustig ist.`,
-    erkennen: `**Ich bleibe zu Hause**, weil ich krank bin.|H
+    erkennen: `**Lisa trägt eine Mütze**, damit sie nicht friert.|H
 Ich bleibe zu Hause, **weil ich krank bin**.|N
-**Als es dunkel wurde**, gingen wir heim.|N
+**Seit wir einen Hund haben**, gehen wir oft spazieren.|N
 Als es dunkel wurde, **gingen wir heim**.|H
 Ich glaube, **dass du recht hast**.|N
 **Der Hund bellt**, wenn es läutet.|H
@@ -513,11 +513,11 @@ Das Buch, **das ich lese**, ist spannend.|N`,
     art: `Ich gehe schlafen, weil ich müde bin.|G
 Es regnet, aber wir gehen hinaus.|R
 Ich ziehe eine Jacke an, denn es ist kalt.|R
-Obwohl es kalt ist, gehen wir baden.|G
+Bevor wir essen, waschen wir die Hände.|G
 Lena liest und Tom malt.|R
 Ich hoffe, dass du kommst.|G
 Wir spielen Fußball, sobald die Schule aus ist.|G
-Der Bus kam zu spät, deshalb verpassten wir den Film.|R`,
+Ich war hungrig, also machte ich mir ein Brot.|R`,
     komma4: `Als wir ankamen, sahen wir, dass das Tor geschlossen war.
 Ich weiß nicht, ob er kommt, weil er krank ist.
 Obwohl es regnete, gingen wir hinaus, denn wir wollten spielen.
@@ -622,11 +622,11 @@ wir spielen => wir würden spielen
 sie (Mehrzahl) dürfen => sie dürften`,
     zurueck: `Tom sagt, er habe keinen Hunger. => Tom sagt: „Ich habe keinen Hunger.“
 Oma erzählt, sie sei früher Lehrerin gewesen. => Oma erzählt: „Ich war früher Lehrerin.“`,
-    erkennen: `Er sagt, er **sei** müde.|K1
+    erkennen: `Mama sagt, das Essen **sei** fertig.|K1
 Sie meint, sie **habe** keine Zeit.|K1
-Wenn ich reich **wäre**, kaufte ich ein Pferd.|K2
+An deiner Stelle **ginge** ich zum Arzt.|K2
 Wir **gehen** heute ins Kino.|I
-Er behauptet, er **könne** zaubern.|K1
+Die Lehrerin erklärt, der Test **finde** am Montag statt.|K1
 Ich **würde** gern mitkommen.|K2
 Tom **spielt** Fußball.|I`,
     um4: `Die Lehrerin sagt: „Morgen schreiben wir einen Test.“ => Die Lehrerin sagt, morgen würden wir einen Test schreiben.
@@ -654,7 +654,7 @@ Wenn er schneller gelaufen wäre, hätte er den Bus erreichen. => Wenn er schnel
 Wenn wir mehr Geld hätten, wir würden ein Haus kaufen. => Wenn wir mehr Geld hätten, würden wir ein Haus kaufen.
 Wenn sie früher aufgestanden hätte, wäre sie pünktlich. => Wenn sie früher aufgestanden wäre, wäre sie pünktlich.
 Ich wünschte, ich habe mehr Zeit. => Ich wünschte, ich hätte mehr Zeit.
-Wenn du mich gefragt hast, hätte ich dir geholfen. => Wenn du mich gefragt hättest, hätte ich dir geholfen.`,
+Wenn wir früher losgefahren sind, hätten wir den Zug erwischt. => Wenn wir früher losgefahren wären, hätten wir den Zug erwischt.`,
     hoeflich: `Mach das Fenster zu! => Könntest du bitte das Fenster zumachen?
 Leihen Sie mir einen Stift! => Würden Sie mir bitte einen Stift leihen?
 Wartet auf mich! => Könntet ihr bitte auf mich warten?`,

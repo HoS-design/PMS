@@ -14,7 +14,7 @@ Wir treffen uns {heute|Heute} {Nachmittag|nachmittag}.
 Zum {Lesen|lesen} brauche ich Ruhe.
 Er wünscht ihr alles {Liebe|liebe}.`,
     fehler4: `beim spielen hat lena etwas wichtiges vergessen. => Beim Spielen hat Lena etwas Wichtiges vergessen.
-am sonntag morgen fahren wir zum wandern. => Am Sonntagmorgen fahren wir zum Wandern.
+am sonntagmorgen fahren wir zum wandern. => Am Sonntagmorgen fahren wir zum Wandern.
 liebe frau berger, danke für ihre hilfe! => Liebe Frau Berger, danke für Ihre Hilfe!
 das lesen macht mir viel spaß. => Das Lesen macht mir viel Spaß.`
   } });
@@ -144,9 +144,9 @@ Oh, wie schön ist das!
 Das Wetter ist kalt, aber sonnig.
 Tom, Lisa und Ben spielen Fußball.
 Ja, ich komme gern mit.`,
-    regel: `Ich weiß, dass du recht hast.|N
+    regel: `Weil es regnete, blieben wir drinnen.|N
 Lena, meine beste Freundin, kommt heute.|E
-Er lernt, um die Prüfung zu schaffen.|I
+Wir beeilten uns, um den Zug zu erreichen.|I
 Hurra, wir haben gewonnen!|R`,
     profi: `Als wir am Bahnhof ankamen, war der Zug, auf den wir gewartet hatten, schon weg.
 „Kommst du mit?“, fragte Tom, „oder bleibst du lieber hier?“
@@ -190,7 +190,7 @@ Der {Computer|Kompjuter|Computa} ist neu.
 Im {Theater|Teater|Theather} sahen wir ein Stück.
 Das {Physik|Fysik|Phisik}-Buch ist schwer.
 Meine Schwester spielt {Klavier|Klawier|Clavier}.
-Der {Ingenieur|Ingeneur|Inschenör} plant die Brücke.
+Die {Chance|Schanse|Tschanse} ist groß.
 Wir haben ein {Problem|Probleem|Prohblem}.`,
     satz: `Die [Polizei] ermittelt in dem Fall.
 Ich habe meinen [Computer] neu gestartet.
@@ -202,10 +202,10 @@ Der [Trainer] lobt die Mannschaft.`
 
   ext('erzaehlung', { more: {
     merkmal: `spannender Höhepunkt|J
-treffende Verben|J
+passende Vergleiche (wie ein …)|J
 Stichwörter statt ganzer Sätze|N
-Gefühle der Figuren|J
-nur Fakten, keine Spannung|N
+Geräusche und Gerüche beschreiben|J
+den Schluss mitten im Satz abbrechen|N
 Überschrift, die neugierig macht|J`,
     verben: `Vor Freude [hüpfte] Lena durch den Garten.
 Der Wind [heulte] um das Haus.
@@ -226,7 +226,7 @@ dunkelblau|Fa
 silbern|Fa
 gestreift|Fa
 hellgrün|Fa
-hölzern|M
+aus Marmor|M
 aus Metall|M
 aus Kunststoff|M
 aus Leder|M`,
@@ -296,7 +296,7 @@ Sehr geehrter Herr Bürgermeister,|F
 Hi Lisa,|P
 Sehr geehrte Damen und Herren,|F
 Mit freundlichen Grüßen|F
-Bis bald, deine Lena|P`,
+Schreib mir bald zurück!|P`,
     anrede: `Können {Sie|sie} mir bitte helfen?
 Wie geht es {Ihnen|ihnen}?
 Ich bedanke mich bei {Ihnen|ihnen} für die Einladung.
@@ -319,11 +319,11 @@ Die Pizza war kalt und eklig. => Leider war die gelieferte Pizza kalt.`
   } });
 
   ext('nacherzaehlung', { more: {
-    merkmal: `eigene Ideen dazuerfinden|N
+    merkmal: `den Text in Reimen schreiben|N
 die wichtigsten Ereignisse wiedergeben|J
-im Präsens schreiben|N
+Smileys einfügen|N
 die Spannung erhalten|J
-den Schluss verändern|N`
+nur den Anfang erzählen|N`
   } });
 
   ext('bericht', { more: {
@@ -348,7 +348,7 @@ Der Dieb ist einfach abgehauen, unglaublich! => Der Täter flüchtete.`
   } });
 
   ext('inhaltsangabe', { more: {
-    merkmal: `Einleitung mit Titel, Autorin und Thema|J
+    merkmal: `Fachbegriffe wie Erzähler oder Hauptfigur verwenden|J
 spannende Ausschmückungen|N
 sachliche Sprache|J
 Zusammenfassung des Wesentlichen|J
@@ -386,7 +386,7 @@ Bücher sind spannend. [Außerdem] verbessern sie die Rechtschreibung.
     einl: `Handys sind schlecht, das weiß jeder. || Immer mehr Jugendliche verbringen täglich mehrere Stunden am Handy. Ist das ein Problem? || b || sachlicher Einstieg mit Frage
 So, das war jetzt meine Erörterung. || Zusammenfassend lässt sich sagen, dass die Vorteile überwiegen. || b || Fazit statt Ankündigung`,
     besser: `Tablets sind cool. || Tablets sind praktisch, weil man viele Bücher in einem Gerät hat. || b || Begründung statt Wertung`,
-    konn: `[Einerseits] ist das Handy praktisch, [andererseits] lenkt es ab.
+    konn: `[Zwar] ist das Auto bequem, [aber] es schadet der Umwelt.
 Viele Schüler wünschen sich einen späteren Unterrichtsbeginn, [weil] sie morgens müde sind.
 [Darüber hinaus] fördert Sport den Teamgeist.
 [Dagegen] spricht, dass die Kosten sehr hoch sind.
@@ -403,8 +403,8 @@ Viele Schüler wünschen sich einen späteren Unterrichtsbeginn, [weil] sie morg
     lebenslauf: `Staatsbürgerschaft|J
 Lieblingsfarbe|N
 Sprachkenntnisse|J
-Name der besten Freundin|N
-Praktika / Schnuppertage|J
+Lieblingssüßigkeit|N
+Mopedausweis|J
 Hobbys und Interessen|J
 Kontostand|N
 Lieblingsserie|N`,

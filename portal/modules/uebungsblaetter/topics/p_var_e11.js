@@ -119,4 +119,6 @@ My plants are dying. :: water them more often => You should water them more ofte
   ext('e-vocab', { more: { coll: `einen Ausflug machen => go on a trip` } });
   ext('e-phrases', { more: { p1: `Du sagst, dass du Hunger hast. => I'm hungry.`, reply: `Do you want to come with us? => I'd love to!` } });
   ext('e-w-email', { more: { style: `Talk soon!|I` } });
+  ext('e-prepositions', { more: { time: `School starts again [in] September.
+We usually eat pancakes [on] Shrove Tuesday.` } });
 })();

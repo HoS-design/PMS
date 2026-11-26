@@ -5,7 +5,7 @@
   ext('e-quantity', { more: {
     sort: `bag|C
 potato|C
-cookie|C
+biscuit|C
 cat|C
 desk|C
 flower|C

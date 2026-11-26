@@ -620,7 +620,7 @@ short|A
 curly hair|A
 freckles|A
 slim|A
-beard|A
+a scar|A
 blue eyes|A
 glasses|A
 friendly|C
@@ -635,7 +635,7 @@ bossy|C`
   ext('e-w-email', { more: {
     order: `Hi Lisa, >> Thanks for your message! >> Guess what – we've got a new puppy! He's very small and cute. >> Do you want to come and see him on Sunday? >> Write back soon! >> Love, Mia
 Dear Grandma, >> Thank you so much for the birthday present! >> I love the book. I've already read half of it. >> How are you and Grandpa? >> I hope to see you soon. >> Love, Tom`,
-    style: `Hi Ben!|I
+    style: `Hey!|I
 Dear Sir or Madam,|F
 See you soon!|I
 I look forward to hearing from you.|F
@@ -645,7 +645,7 @@ Yours sincerely,|F
 What's up?|I
 Could you please send me …|F
 Bye for now!|I
-I am writing to …|F
+I would appreciate it if …|F
 Take care!|I
 Thank you for your help.|F
 Cheers,|I`,

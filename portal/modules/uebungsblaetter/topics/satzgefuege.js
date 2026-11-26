@@ -3,41 +3,41 @@ UB.simple({
   id: 'satzgefuege', title: 'Hauptsatz und Nebensatz', area: 'sprache', klassen: [2, 3], img: 'MiniHoS_Erklaeren_Tafel-Idee',
   merk: 'Im <b>Hauptsatz</b> steht das gebeugte Verb an 2. Stelle: <i>Wir bleiben drinnen.</i> Im <b>Nebensatz</b> steht es am Ende: <i>…, weil es regnet.</i> Ein Nebensatz kann nicht allein stehen. Er beginnt oft mit einer Konjunktion (weil, dass, wenn, obwohl, als, damit) oder einem Relativpronomen (der, die, das). <b>Satzreihe</b>: Hauptsatz + Hauptsatz (verbunden mit und, oder, aber, denn, sondern). <b>Satzgefüge</b>: Hauptsatz + Nebensatz. Haupt- und Nebensatz trennt man immer mit einem Beistrich.',
   pools: {
-    erkennen: `**Wir bleiben zu Hause**, weil es regnet.|H
+    erkennen: `**Mama ruft an**, sobald sie angekommen ist.|H
 Wir bleiben zu Hause, **weil es regnet**.|N
-**Als ich nach Hause kam**, war niemand da.|N
+**Bevor das Spiel beginnt**, wärmen wir uns auf.|N
 Als ich nach Hause kam, **war niemand da**.|H
 Ich weiß, **dass du recht hast**.|N
-**Ich weiß**, dass du recht hast.|H
-**Wenn die Sonne scheint**, gehen wir baden.|N
+**Der Lehrer erklärt**, wie die Aufgabe geht.|H
+**Weil ich verschlafen habe**, kam ich zu spät.|N
 Wenn die Sonne scheint, **gehen wir baden**.|H
-**Lena lernt fleißig**, damit sie den Test schafft.|H
+**Tim spart sein Taschengeld**, weil er ein Fahrrad kaufen will.|H
 Lena lernt fleißig, **damit sie den Test schafft**.|N
 Das ist der Hund, **der immer bellt**.|N
-**Obwohl er müde war**, spielte er weiter.|N
+**Obwohl es kalt war**, gingen wir schwimmen.|N
 Obwohl er müde war, **spielte er weiter**.|H
 **Ich komme mit**, wenn ich Zeit habe.|H
-**Ich putze die Zähne**, bevor ich schlafen gehe.|H
+**Oma backt einen Kuchen**, weil heute Sonntag ist.|H
 Ich putze die Zähne, **bevor ich schlafen gehe**.|N
-**Weil der Bus Verspätung hatte**, kamen wir zu spät.|N
+**Als das Licht ausging**, schrien alle.|N
 Weil der Bus Verspätung hatte, **kamen wir zu spät**.|H
-**Max fragt**, ob du mitkommst.|H
+**Ich hoffe**, dass morgen die Sonne scheint.|H
 Max fragt, **ob du mitkommst**.|N
-**Nachdem wir gegessen hatten**, spielten wir Karten.|N
+**Nachdem der Film zu Ende war**, gingen wir nach Hause.|N
 Nachdem wir gegessen hatten, **spielten wir Karten**.|H
-**Ich freue mich**, dass du da bist.|H
+**Paul fragt mich**, ob ich Zeit habe.|H
 Ich freue mich, **dass du da bist**.|N
-**Falls es schneit**, bauen wir einen Schneemann.|N
+**Falls du Hilfe brauchst**, ruf mich an.|N
 Falls es schneit, **bauen wir einen Schneemann**.|H
 Das Mädchen, **das neben mir sitzt**, heißt Emma.|N
-**Während Papa kocht**, deckt Lena den Tisch.|N
+**Während wir schliefen**, fiel viel Schnee.|N
 Während Papa kocht, **deckt Lena den Tisch**.|H
-**Sie lacht**, obwohl sie traurig ist.|H
+**Der Hund bellt**, wenn es an der Tür läutet.|H
 Sie lacht, **obwohl sie traurig ist**.|N
 Der Kuchen, **den Oma gebacken hat**, schmeckt toll.|N
-**Wir warten**, bis der Regen aufhört.|H
+**Die Kinder spielen im Hof**, bis es dunkel wird.|H
 Wir warten, **bis der Regen aufhört**.|N`,
-    verbinden: `Es regnet. Wir bleiben drinnen. :: weil => Wir bleiben drinnen, weil es regnet.
+    verbinden: `Es ist kalt. Ich ziehe eine Jacke an. :: weil => Ich ziehe eine Jacke an, weil es kalt ist.
 Ich habe Hunger. Ich esse einen Apfel. :: weil => Ich esse einen Apfel, weil ich Hunger habe.
 Das Wetter ist schön. Wir fahren ins Freibad. :: wenn => Wenn das Wetter schön ist, fahren wir ins Freibad.
 Max ist krank. Er geht in die Schule. :: obwohl => Obwohl Max krank ist, geht er in die Schule.

@@ -73,8 +73,8 @@ Die Zeitung schreibt, die Brücke **sei** gesperrt.|K1
 Lena erzählt, ihr Bruder **habe** Fieber.|K1
 Wenn ich reich **wäre**, würde ich ein Pferd kaufen.|K2
 Ich **hätte** gern ein Eis.|K2
-**Würdest** du mir helfen?|K2
-Wenn er Zeit **hätte**, käme er mit.|K2
+**Dürfte** ich kurz stören?|K2
+Wenn wir ein Auto **hätten**, führen wir ans Meer.|K2
 Er **kommt** morgen.|I
 Sie **weiß** die Antwort.|I
 Wir **haben** Hunger.|I

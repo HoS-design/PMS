@@ -225,9 +225,9 @@ die Chips (Kartoffelchips) => crisps`
   } });
 
   ext('e-w-describe', { more: {
-    sort: `fat|A
+    sort: `well-built|A
 blond|A
-curly|A
+spiky hair|A
 friendly|C
 lazy|C
 shy|C
@@ -235,9 +235,9 @@ funny|C
 clever|C
 honest|C
 old|A
-straight|A
+straight hair|A
 freckles|A
-beard|A
+a scar|A
 moody|C
 bossy|C
 generous|C
@@ -273,7 +273,7 @@ Love,|I
 I am writing to ask about …|F
 How are you?|I
 Could you please send me …|F
-Write back soon!|I`,
+Have a great weekend!|I`,
     fix: `Hey Sir, I want info about the course. => Dear Sir or Madam, I would like some information about the course.
 Dear Tom, … Yours faithfully, Lisa => Dear Tom, … Love / Best wishes, Lisa
 Dear Mrs Smith, gimme the price. => Dear Mrs Smith, could you please tell me the price?`,

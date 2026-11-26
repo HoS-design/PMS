@@ -64,7 +64,7 @@ Das {Rechnen|rechnen} fällt mir leicht.
 Ich kann gut {rechnen|Rechnen}.
 Beim {Laufen|laufen} habe ich Seitenstechen bekommen.
 Wir haben viel {Schönes|schönes} erlebt.
-Er mag das {Rote|rote} am liebsten.
+Das {Blau|blau} des Meeres ist wunderschön.
 Vom {Schreien|schreien} bin ich heiser.
 Lass das {Lachen|lachen}!
 Sie {lachen|Lachen} laut.
@@ -123,7 +123,7 @@ Am {Dienstag|dienstag} haben wir Musik.
 Wir haben {dienstags|Dienstags} Musik.
 Heute {Morgen|morgen} hat es geschneit.
 {Morgens|morgens} trinke ich Tee.
-Ich trinke {morgens|Morgens} Tee.
+Wir haben {montags|Montags} Turnen.
 Am {Wochenende|wochenende} fahren wir weg.
 Gestern {Nachmittag|nachmittag} war ich beim Training.
 Wir gehen {abends|Abends} spazieren.

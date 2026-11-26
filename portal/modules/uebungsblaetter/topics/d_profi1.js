@@ -178,8 +178,8 @@ Hast du dein Hausübung? => Hast du deine Hausübung?`
   // ------------------------------------------------------------------ Satzarten
   ext('satzarten', {
     more: {
-      wfrage: `**Lena** fährt morgen nach Wien. => Wer fährt morgen nach Wien?
-Lena fährt **morgen** nach Wien. => Wann fährt Lena nach Wien?
+      wfrage: `**Der Postbote** bringt ein Paket. => Wer bringt ein Paket?
+Das Konzert beginnt **um acht Uhr**. => Wann beginnt das Konzert?
 Lena fährt morgen **nach Wien**. => Wohin fährt Lena morgen?
 Der Hund gehört **meinem Bruder**. => Wem gehört der Hund?
 Wir bleiben **wegen des Regens** zu Hause. => Warum bleibt ihr zu Hause?

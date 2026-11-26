@@ -71,9 +71,9 @@ Ich treffe mir morgen mit Tom. => Ich treffe mich morgen mit Tom.`
   } });
 
   ext('brief', { more: {
-    art: `Hallo Lena,|P
+    art: `Servus Jakob,|P
 Sehr geehrter Herr Professor,|F
-Bis zum nächsten Mal!|P
+Ich vermisse dich!|P
 Für Rückfragen stehe ich Ihnen gerne zur Verfügung.|F
 Grüß deine Eltern von mir!|P
 Ich erlaube mir, Ihnen folgende Frage zu stellen.|F`,

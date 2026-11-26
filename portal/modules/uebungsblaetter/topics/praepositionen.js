@@ -46,12 +46,12 @@ Seit {einer|eine|einem} Woche regnet es.
 Das Buch ist von {meiner|meine|meinem} Oma.
 Ohne {meine|meiner|meinem} Brille sehe ich nichts.
 Wir kaufen Blumen für {die|der|den} Lehrerin.
-Nach {der|die|dem} Schule spielen wir Fußball.
+Seit {einer|eine|einem} Woche ist er krank.
 Er läuft gegen {die|der|dem} Wand.
 Ich wohne bei {meinen|meine|meiner} Eltern.
 Lena kommt aus {dem|den|der} Kino.
 Wegen {des|dem|den} Sturms fällt der Unterricht aus.
-Trotz {der|die|dem} Kälte gehen wir hinaus.
+Wegen {des|dem|den} Gewitters fiel das Spiel aus.
 Statt {eines|einem|einen} Kuchens backen wir Kekse.
 Während {des|dem|den} Films war es still.
 Wir sitzen um {den|dem|des} Tisch herum.
@@ -77,8 +77,8 @@ Lena setzt sich neben **ihre Freundin**.|A
 Lena sitzt neben **ihrer Freundin**.|D
 Das Auto fährt hinter **das Haus**.|A
 Das Auto parkt hinter **dem Haus**.|D
-Ich lege das Buch auf **den Tisch**.|A
-Das Buch liegt auf **dem Tisch**.|D
+Ich stelle das Fahrrad in **den Keller**.|A
+Das Fahrrad lehnt an **der Mauer**.|D
 Die Kinder laufen hinter **das Haus**.|A
 Die Kinder spielen hinter **dem Haus**.|D
 Mama hängt die Lampe über **den Tisch**.|A

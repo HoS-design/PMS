@@ -11,7 +11,7 @@ Ehrenamt (z. B. Jugendfeuerwehr)|J
 Lieblingsband|N
 Kleidergröße|N
 Ferialjobs|J
-Sprachkurse|J
+Anzahl der Follower|N
 Punktestand im Lieblingsspiel|N
 Mitgliedschaft im Sportverein|J
 Sternzeichen|N`,
@@ -39,7 +39,7 @@ Schreibe eine **Stellungnahme**: „Sollen Schülerinnen und Schüler ihren Unte
 
   ext('vorgangsbeschreibung', { more: {
     verben: `Du [schneidest] das Brot in Scheiben.
-Du [schraubst] den Deckel fest zu.
+Du [streust] Zucker über den Kuchen.
 Du [bestreichst] das Brot mit Butter.
 Du [knetest] den Teig mit den Händen.
 Du [misst] einen halben Liter Milch ab.

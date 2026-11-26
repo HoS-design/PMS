@@ -450,7 +450,7 @@ Is there {any|some} cheese on the pizza?
 She has got {some|any} good ideas.
 They don't have {any|some} homework today.`,
       neg: `There is a TV in my room. :: not => There isn't a TV in my room.
-There are some cookies. :: not => There aren't any cookies.
+There are some biscuits. :: not => There aren't any biscuits.
 There is a garden. :: not => There isn't a garden.
 There are some students in the classroom. :: not => There aren't any students in the classroom.
 There is a bus stop near my house. :: not => There isn't a bus stop near my house.

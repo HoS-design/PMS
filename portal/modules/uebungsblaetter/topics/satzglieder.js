@@ -67,7 +67,7 @@
     'Der Fahrer|S / öffnet|P / den Fahrgästen|O3 / die Tür|O4',
     'Am Nachmittag|ZE / füttert|P / Lena|S / ihre Hasen|O4',
     'Vor dem Haus|OE / parkt|P / ein rotes Auto|S',
-    'Schnell|AE / lief|P / der Hase|S / über die Wiese|OE|Wohin?',
+    'Schnell|AE / lief|P / der Hase|S / in den Wald|OE|Wohin?',
     'Wegen der Hitze|BE / schließen|P / wir|S / die Fenster|O4',
     'Jeden Morgen|ZE / trinkt|P / Opa|S / einen Kaffee|O4',
     'In der Pause|ZE / essen|P / die Kinder|S / ihre Jause|O4',

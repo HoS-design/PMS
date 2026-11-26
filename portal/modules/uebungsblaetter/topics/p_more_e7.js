@@ -22,7 +22,7 @@ Do you go to school [on] foot?
 My grandma came [by] bus.
 We crossed the lake [by] ship.`,
     time: `My sister was born [in] March.
-The lesson starts [at] 10 o'clock.
+I'll see you [at] the weekend.
 We go to church [on] Sunday.
 Leaves fall [in] autumn.
 I'll see you [at] the weekend.

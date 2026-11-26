@@ -72,7 +72,7 @@
     merk: '<b>Nacherzählung</b>: Erzähle eine Geschichte mit eigenen Worten nach. Halte die Reihenfolge ein und erfinde nichts dazu. Erzählzeit ist das Präteritum. Wichtige wörtliche Reden darfst du übernehmen. Tipp: Lies den Text zweimal, mach dir einen Stichwortzettel und erzähle dann ohne Vorlage. <b>Fabel</b>: kurze Geschichte, in der Tiere wie Menschen handeln; am Ende steht eine Lehre.',
     pools: {
       merkmal: `in eigenen Worten erzählen|J
-Reihenfolge der Handlung einhalten|J
+die Figuren richtig benennen|J
 Erzählzeit Präteritum|J
 neue Figuren dazuerfinden|N
 das Ende verändern|N

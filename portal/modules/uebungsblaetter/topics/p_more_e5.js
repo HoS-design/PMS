@@ -53,7 +53,7 @@ That's {a|an} useful tip.`,
     this: `{This|These} is my new bike.
 {Those|That} mountains are very high.
 Can you see {that|those} plane in the sky?
-{These|This} cookies are delicious!
+{These|This} biscuits are delicious!
 Is {that|those} your brother over there?
 I don't like {these|this} trousers.
 {This|These} room is too small.

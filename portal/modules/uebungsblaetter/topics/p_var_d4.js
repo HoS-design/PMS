@@ -20,7 +20,7 @@ Ich wünsche dir alles {Gute|gute}.
 Wir fahren {montags|Montags} zum Training.
 Im {Großen|großen} und Ganzen bin ich zufrieden.`,
     satz: `Der {Hund|hund} {bellt|Bellt} am {Zaun|zaun}.
-Im {Winter|winter} ist es {kalt|Kalt}.
+Am {Abend|abend} lese ich {gern|Gern}.
 Meine {Oma|oma} {backt|Backt} einen {Kuchen|kuchen}.
 Die {Vögel|vögel} {singen|Singen} am {Morgen|morgen}.
 Wir {essen|Essen} {heute|Heute} {Nudeln|nudeln}.
@@ -51,7 +51,7 @@ das schönste am urlaub war das meer. => Das Schönste am Urlaub war das Meer.`
     einsetzen: `Der Fu{ß|ss|s}ball ist rund.
 Wir e{ss|ß|s}en zu Mittag.
 Das Gra{s|ss|ß} ist grün.
-Die Stra{ß|ss|s}e ist nass.
+Der Fu{ß|ss|s}ball ist rund.
 Der Flu{ss|ß|s} ist breit.
 Ich mu{ss|ß|s} lernen.
 Die Kla{ss|ß|s}e ist laut.
@@ -122,9 +122,9 @@ Die {Sonne|Sone} scheint.
 Wir {spielen|spilen} im Garten.
 Der {Löffel|Löfel} liegt auf dem Tisch.
 Das {Meer|Mer} ist blau.
-Die {Mutter|Muter} kocht.
+Das {Zimmer|Zimer} ist hell.
 Ich brauche einen {Kamm|Kam}.
-Der {Kaffee|Kafee} ist heiß.
+Der {Tee|Te} ist heiß.
 Das {Bett|Bet} ist weich.
 Die {Puppe|Pupe} hat blonde Haare.
 Mein {Lehrer|Lerer} ist nett.
@@ -281,14 +281,14 @@ Sie ging früh schlafen, um ausgeschlafen zu sein.
 „Wo warst du?“, fragte Papa.
 Graz, die Hauptstadt der Steiermark, liegt an der Mur.
 Ohne ein Wort zu sagen, ging er hinaus.`,
-    regel: `Ich kaufe Brot, Milch und Käse.|A
-Mama, hilfst du mir?|R
-Das Zimmer ist klein, aber hell.|G
+    regel: `Lisa, Ben und Mia spielen Fangen.|A
+Paul, kommst du mit?|R
+Ich wollte kommen, doch ich war krank.|G
 Ich komme, sobald ich fertig bin.|N
-Herr Maier, unser Nachbar, ist Arzt.|E
-Sie spart, um ein Rad zu kaufen.|I
+Wien, die Hauptstadt Österreichs, ist groß.|E
+Er öffnete das Fenster, um frische Luft hereinzulassen.|I
 Nicht du, sondern ich bin dran.|G
-Oh, wie schön!|R`,
+Frau Berger, darf ich etwas fragen?|R`,
     profi: `Als wir nach Hause kamen, merkten wir, dass jemand die Tür offen gelassen hatte.
 Mein Bruder, der in Wien studiert, kommt am Wochenende, um uns zu besuchen.
 Ja, ich habe verstanden, was du meinst.
@@ -302,7 +302,7 @@ Tom, hast du gesehen, wo ich meinen Schlüssel hingelegt habe?`
 {Seit|Seid} gestern bin ich krank.
 Wir wohnen in einer großen {Stadt|statt}.
 {Statt|Stadt} Saft trinke ich Wasser.
-Das Glas {fiel|viel} auf den Boden.
+Im Herbst {fiel|viel} das Laub von den Bäumen.
 Ich habe {viel|fiel} Hunger.
 Er {isst|ist} gern Nudeln.
 Das Wetter {ist|isst} schön.
@@ -378,12 +378,12 @@ Die [Temperatur] ist gestiegen.`
   } });
 
   ext('erzaehlung', { more: {
-    merkmal: `eine spannende Überschrift|J
-wörtliche Rede verwenden|J
+    merkmal: `Spannungswörter wie plötzlich oder auf einmal|J
+Absätze für Einleitung, Hauptteil und Schluss|J
 treffende Verben und Adjektive|J
-den Höhepunkt ausführlich erzählen|J
+eine Erzählperspektive durchhalten (ich oder er/sie)|J
 Einleitung mit Ort, Zeit und Personen|J
-immer wieder „und dann“ schreiben|N
+Figuren ohne Namen und ohne Beschreibung|N
 die Zeitform wechseln, wie es gerade passt|N
 alles ganz kurz in einem Satz erzählen|N`,
     besser: `Es war einmal ein Tag. || An einem stürmischen Herbstabend klopfte es plötzlich an unserer Tür. || b || spannender Anfang
@@ -406,17 +406,17 @@ eckig|Fo
 oval|Fo
 quadratisch|Fo
 rechteckig|Fo
-kugelförmig|Fo
+würfelförmig|Fo
 länglich|Fo
 dreieckig|Fo
 dunkelblau|Fa
 hellgrün|Fa
 silbern|Fa
-golden|Fa
+dunkelgrau|Fa
 rötlich|Fa
 türkis|Fa
 beige|Fa
-schwarz-weiß|Fa
+himmelblau|Fa
 aus Holz|M
 aus Metall|M
 aus Glas|M
@@ -448,7 +448,7 @@ gewellt|H
 Pferdeschwanz|H
 Zöpfe|H
 Glatze|H
-Seitenscheitel|H
+Igelfrisur|H
 kurz geschnitten|H
 Sommersprossen|G
 Grübchen|G
@@ -505,11 +505,11 @@ Man stellt die Form in den Ofen. => Die Form wird in den Ofen gestellt.`
     art: `Liebe Oma,|P
 Mit freundlichen Grüßen|F
 Sehr geehrte Damen und Herren,|F
-Hallo Lisa,|P
+Liebe Tante Eva,|P
 Bussi und bis bald!|P
 Ich bedanke mich für Ihre Unterstützung.|F
 Wie geht es dir?|P
-Ich bitte Sie um eine kurze Antwort.|F
+Ich wende mich mit folgendem Anliegen an Sie.|F
 Hab dich lieb!|P`,
     anrede: `Können {Sie|sie} mir bitte helfen?
 Ich danke {Ihnen|ihnen} für das Geschenk.
@@ -529,13 +529,13 @@ Das Ding funktioniert nicht. => Leider funktioniert das Gerät nicht.`
   } });
 
   ext('inhaltsangabe', { more: {
-    merkmal: `Präsens verwenden|J
+    merkmal: `sachliche Überleitungen (danach, schließlich)|J
 in eigenen Worten schreiben|J
-keine wörtliche Rede|J
+Orts- und Zeitangaben nennen|J
 die wichtigsten Personen nennen|J
-Einleitung mit Titel, Autor und Thema|J
-die eigene Meinung ausführlich einbauen|N
-spannende Stellen ausschmücken|N
+auch das Ende der Geschichte verraten|J
+Vermutungen, wie es weitergehen könnte|N
+Smileys und Abkürzungen|N
 jedes Detail genau nacherzählen|N`,
     praesens: `Lisa lief nach Hause. => Lisa läuft nach Hause.
 Der König sprach mit dem Diener. => Der König spricht mit dem Diener.
@@ -547,10 +547,10 @@ Jugendbuch – „Rico, Oskar und die Tieferschatten“ – Andreas Steinhöfel 
 
   ext('nacherzaehlung', { more: {
     merkmal: `die Reihenfolge der Handlung einhalten|J
-im Präteritum erzählen|J
+die Hauptfigur beibehalten|J
 wichtige Stellen nicht weglassen|J
-ein ganz neues Ende erfinden|N
-die Geschichte in der Gegenwart erzählen|N`
+die Namen der Figuren ändern|N
+Stichwörter statt Sätze schreiben|N`
   } });
 
   ext('bericht', { more: {
@@ -613,19 +613,19 @@ Viele sind dagegen. [Dennoch] überwiegen die Vorteile.
   } });
 
   ext('bewerbung', { more: {
-    lebenslauf: `Name und Adresse|J
+    lebenslauf: `Geburtsort|J
 Geburtsdatum|J
-Schulbildung|J
+Bewerbungsfoto|J
 Lieblingsessen|N
-Computerkenntnisse|J
-Hobbys|J
-Schnuppertage und Praktika|J
-Namen aller Freunde|N
-Fremdsprachen|J
+Größe und Gewicht|N
+Haarfarbe|N
+Lieblingsfilm|N
+Noten aller Schularbeiten|N
+Name des Haustiers|N
 Lieblingsserie|N
-Ehrenamt (z. B. Feuerwehrjugend)|J
+Datum und Unterschrift|J
 Erste-Hilfe-Kurs|J
-Schuhgröße|N
+Lieblingsemoji|N
 Höhe des Taschengelds|N`,
     besser: `Ich hab Bock auf den Job. || Ich interessiere mich sehr für diesen Beruf. || b || keine Umgangssprache
 Ich bin halt ganz okay in Mathe. || In Mathematik habe ich die Note „Gut“. || b || genaue Angaben

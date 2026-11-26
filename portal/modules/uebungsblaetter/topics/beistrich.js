@@ -49,7 +49,7 @@ Die Jacke, die du trägst, ist sehr schön.
 Bevor du gehst, mach bitte das Licht aus.
 Weil es regnet, nehmen wir den Bus.
 Ich weiß nicht, ob er kommt.
-Er spielte weiter, obwohl er müde war.
+Ich weiß nicht, ob er heute kommt.
 Wir warten, bis du fertig bist.
 Die Frau, die dort steht, ist meine Tante.
 Wenn du willst, kannst du mitkommen.
@@ -111,7 +111,7 @@ Ich glaube, dass es regnet.|N
 Als es dunkel wurde, gingen wir heim.|N
 Herr Huber, unser Nachbar, ist nett.|E
 Er lernt, um den Test zu bestehen.|I
-Sie ging, ohne sich umzudrehen.|I
+Statt zu lernen, spielte er am Handy.|I
 Der Hund, der bellt, heißt Rex.|N`
   },
   levels: {

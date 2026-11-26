@@ -122,7 +122,7 @@ Sie ist so groß als ich. => Sie ist so groß wie ich.`
     besitz: `Wir besuchen [unsere:unser] Großeltern.
 Habt ihr [eure:euer] Bücher dabei?`,
     art: `Wir sehen **uns** morgen.|Refl
-Das ist **mein** Fahrrad.|Poss
+**Meine** Oma wohnt in Linz.|Poss
 **Sie** wohnt in Graz.|Pers
 Er wäscht **sich** die Hände.|Refl
 Ist das **dein** Hund?|Poss
@@ -146,7 +146,7 @@ Gib mich bitte das Buch! => Gib mir bitte das Buch!`
 Wo ist meine Jacke{?|.|!}`,
     frage: `Hast du Hunger?|J
 Warum weinst du?|E
-Spielst du Gitarre?|J
+Fährst du mit dem Bus?|J
 Wie heißt dein Hund?|E`,
     wfrage: `Tom spielt **am Nachmittag** Fußball. => Wann spielt Tom Fußball?
 **Die Katze** schläft auf dem Sofa. => Wer schläft auf dem Sofa?

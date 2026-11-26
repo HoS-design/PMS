@@ -129,7 +129,7 @@ a computer / in your room => Is there a computer in your room?
 any milk / in the fridge => Is there any milk in the fridge?
 any students / in the classroom => Are there any students in the classroom?`,
     answer: `Is there a swimming pool at your school? – No, [there isn't].
-Are there any cookies in the tin? – No, [there aren't].
+Are there any biscuits in the tin? – No, [there aren't].
 Is there a pet in your family? – Yes, [there is].
 Are there any mountains in your country? – Yes, [there are].
 Is there a lift in your school? – No, [there isn't].
@@ -145,7 +145,7 @@ In our class [there are] twelve girls and [there are] ten boys.`,
 Im Kühlschrank ist keine Milch. => There isn't any milk in the fridge.`,
     err: `There is two cats in the garden. => There are two cats in the garden.
 Is there any apples? => Are there any apples?
-There aren't some cookies left. => There aren't any cookies left.
+There aren't some biscuits left. => There aren't any biscuits left.
 There are a big tree in the park. => There is a big tree in the park.`
   } });
 
@@ -446,7 +446,7 @@ Careful! You {'re going to|'ll} drop the plates!
 Wait, I {'ll|'m going to} open the door for you.
 He has saved money. He {'s going to|'ll} buy a new bike.`,
     arr: `My grandparents [are coming:come] for dinner tonight.
-We [are flying:fly] to London on Friday.
+My grandparents [are coming:come] for dinner tonight.
 Tom [is meeting:meet] his friends at 6.
 I [am playing:play] football on Saturday morning.
 [Are you doing:you / do] anything this weekend?

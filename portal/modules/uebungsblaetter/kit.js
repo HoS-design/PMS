@@ -36,7 +36,7 @@
       }).join(' / ') + '</span>';
     });
     h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => {
-      const i = inner.indexOf(':');
+      const i = inner === ':' ? -1 : inner.indexOf(':');  // „[:]“ = Lücke für einen Doppelpunkt
       const ans = i < 0 ? inner : inner.slice(0, i);
       const hint = i < 0 ? '' : inner.slice(i + 1);
       const w = bw || Math.max(3, Math.round(ans.length * 0.62) + 2);
@@ -44,7 +44,7 @@
     });
     return h;
   }
-  const answersOf = (s) => (s.match(/\[([^\[\]]+)\]/g) || []).map(x => x.slice(1, -1).split(':')[0]);
+  const answersOf = (s) => (s.match(/\[([^\[\]]+)\]/g) || []).map(x => x === '[:]' ? ':' : x.slice(1, -1).split(':')[0]);
 
   // ---------------------------------------------------------------- Pools
   function parseLines(src) {
@@ -252,7 +252,7 @@
   function markQ(s) {
     let h = esc(s).replace(/\*\*(.+?)\*\*/g, '<b class="mk">$1</b>');
     h = h.replace(/\{([^{}]+)\}/g, (m, inner) => '(' + inner.split('|').slice().sort((a, b) => a.localeCompare(b, 'de')).join(' / ') + ')');
-    h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => { const i = inner.indexOf(':'); return '<span class="cgap"></span>' + (i < 0 ? '' : ' <span class="hint">(' + inner.slice(i + 1) + ')</span>'); });
+    h = h.replace(/\[([^\[\]]+)\]/g, (m, inner) => { const i = inner === ':' ? -1 : inner.indexOf(':'); return '<span class="cgap"></span>' + (i < 0 ? '' : ' <span class="hint">(' + inner.slice(i + 1) + ')</span>'); });
     return h;
   }
   // Karten-Antwort aus einer Mathe-Lösung: nur das Ergebnis, nicht die ganze Rechnung mit den Zahlen der Angabe

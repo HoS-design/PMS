@@ -70,9 +70,9 @@ laufen → Nomen (Person) => der Läufer`
   } });
 
   ext('bewerbung', { more: {
-    lebenslauf: `Telefonnummer und E-Mail-Adresse|J
+    lebenslauf: `Auszeichnungen (z. B. Lesewettbewerb)|J
 Lieblingsfarbe|N
-Spitzname aus der Klasse|N
+Lieblingsurlaubsland|N
 Kurse in der Freizeit (z. B. Musikschule)|J`
   } });
 
@@ -95,7 +95,7 @@ zylinderförmig|Fo
 herzförmig|Fo
 sternförmig|Fo
 halbrund|Fo
-spitz|Fo
+gewölbt|Fo
 orange|Fa
 violett|Fa
 rosa|Fa
@@ -111,7 +111,7 @@ aus Aluminium|M`
   } });
 
   ext('personenbeschreibung', { more: {
-    wortfeld: `Locken|H
+    wortfeld: `Undercut|H
 Stirnfransen|H
 Dutt|H
 schulterlang|H
@@ -119,12 +119,12 @@ grau meliert|H
 Narbe|G
 Lachfalten|G
 hohe Stirn|G
-schmales Kinn|G
+Segelohren|G
 volle Lippen|G
 muskulös|S
 athletisch|S
 hager|S
-zart gebaut|S
+drahtig|S
 untersetzt|S`
   } });
 
@@ -304,9 +304,9 @@ Wenn ihr mir [geholfen hättet:helfen], [wäre:sein] ich schneller fertig gewese
     art: `Liebe Grüße|P
 Sehr geehrte Frau Direktorin,|F
 Ich freue mich auf deine Antwort!|P
-Ich ersuche Sie um eine Rückmeldung.|F
+Anbei sende ich Ihnen meine Unterlagen.|F
 Hey du!|P
-Für Ihre Bemühungen danke ich Ihnen.|F`,
+Sehr geehrte Frau Mag. Berger,|F`,
     anrede: `Wir laden {Sie|sie} herzlich ein.
 Gefällt {Ihnen|ihnen} das Geschenk?`
   } });
@@ -332,7 +332,7 @@ Die {Ente|Ende} schwimmt im Teich.`
   ext('satzarten', { more: {
     zeichen: `Pass auf das Auto auf{!|.|?}
 Wo wohnst du{?|.|!}`,
-    frage: `Wohin fährst du?|E
+    frage: `Womit schreibst du?|E
 Bist du müde?|J`,
     umformen: `Wir gehen ins Kino. :: Entscheidungsfrage => Gehen wir ins Kino?
 Du schreibst leise. :: Aufforderungssatz => Schreib leise!`
