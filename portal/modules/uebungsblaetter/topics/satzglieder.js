@@ -98,10 +98,10 @@
   function taskBestimmen(level, rng) {
     const its = rng.fresh(level === 4 ? POOL.filter(p => p.length >= 4) : pickPool(level), level === 4 ? 4 : 4, sentence);
     const label = (r) => ROLES[r].kurz;
-    const instr = level === 1 ? 'Die Satzglieder sind schon getrennt. Schreibe S (Subjekt) und P (Prädikat) unter die richtigen Satzglieder. Frage: Wer oder was? – Was tut …?' :
+    const instr = level === 1 ? 'Die Satzglieder sind schon getrennt. Schreibe S (Subjekt) und P (Prädikat) unter die richtigen Satzglieder, unter alle anderen einen Strich (–). Frage: Wer oder was? – Was tut …?' :
       (level === 2 ? 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3 oder O4.' : 'Schreibe die Abkürzung unter jedes Satzglied: S, P, O3, O4, ZE, OE, AE oder BE.');
     const row = (parts, filled) => '<div class="sg-row">' + parts.map(p => '<span class="sg"><span class="sg-t">' + esc(p.text) + '</span><span class="sg-l">' +
-      (filled ? ((level === 1 && !['S', 'P'].includes(p.role)) ? '' : sol(esc(label(p.role)))) : '&nbsp;') + '</span></span>').join('') + '<span class="sg-dot">.</span></div>';
+      (filled ? ((level === 1 && !['S', 'P'].includes(p.role)) ? sol('–') : sol(esc(label(p.role)))) : '&nbsp;') + '</span></span>').join('') + '<span class="sg-dot">.</span></div>';
     return {
       title: 'Bestimme die Satzglieder.',
       instr,
