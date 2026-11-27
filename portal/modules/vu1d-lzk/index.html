@@ -241,13 +241,16 @@
   const CNAME = { 'Australien': 'Australien (Ozeanien)' };
 
   // Welches Meer liegt an dieser Stelle? (nur für Klicks aufs Wasser)
+  // westlichster Küstenpunkt Amerikas auf dieser Breite – direkt aus den Kartenumrissen berechnet
   function westCoast(lat) {
-    const T = [[66, -165], [60, -150], [50, -127], [40, -124], [30, -116], [20, -105], [15, -94], [10, -85], [8, -79], [0, -80], [-10, -78], [-20, -71], [-30, -72], [-40, -74], [-55, -72], [-60, -66]];
-    for (let i = 0; i < T.length - 1; i++) {
-      const [a, x] = T[i], [b, y] = T[i + 1];
-      if (lat <= a && lat >= b) return x + (y - x) * (a - lat) / (a - b);
-    }
-    return -70;
+    let w = Infinity;
+    [LAND['Nordamerika'][0], LAND['Südamerika'][0]].forEach(poly => {
+      for (let i = 0; i < poly.length; i++) {
+        const [x1, y1] = poly[i], [x2, y2] = poly[(i + 1) % poly.length];
+        if ((y1 <= lat && lat < y2) || (y2 <= lat && lat < y1)) { const x = x1 + (x2 - x1) * (lat - y1) / (y2 - y1); if (x < w) w = x; }
+      }
+    });
+    return w === Infinity ? -68 : w;   // südlich von Südamerika: Grenze bei Kap Hoorn
   }
   function oceanAt(lon, lat) {
     if (lat >= 67) return 'Arktischer Ozean';
@@ -258,6 +261,7 @@
     if (lon > 9 && lon < 31 && lat > 53) return 'Nebenmeer';                   // Ostsee
     if (lon > 32 && lon < 44 && lat > 12 && lat < 30) return 'Nebenmeer';      // Rotes Meer
     if (lon >= 147 || lon <= -170) return 'Pazifischer Ozean';
+    if (lat >= 50 && lon < -100) return 'Pazifischer Ozean';                // Golf von Alaska, Beringmeer
     if (lon >= 100 && lat >= -8) return 'Pazifischer Ozean';
     if (lon < westCoast(lat)) return 'Pazifischer Ozean';
     if (lon >= 20 && lon < 147 && lat < 30) return 'Indischer Ozean';
@@ -391,7 +395,9 @@
   // ---------------- Unsere Erde · Teil 1 ----------------
   CONTS.forEach(c => add('e1', 'mapclick', { kind: 'cont', target: c, q: 'Klicke auf der Weltkarte auf: <b>' + (CNAME[c] || c) + '</b>' }));
   CONTS.forEach(c => add('e1', 'mapname', { target: c, q: 'Welcher Kontinent ist auf der Karte markiert?' }));
-  OCEANS.forEach(o => add('e1', 'mapclick', { kind: 'ocean', target: o, q: 'Klicke auf der Weltkarte auf den <b>' + (ONAME[o] || o) + '</b>.' }));
+  const OAKK = { 'Pazifischer Ozean': 'Pazifischen Ozean (Stillen Ozean)', 'Atlantischer Ozean': 'Atlantischen Ozean', 'Indischer Ozean': 'Indischen Ozean', 'Arktischer Ozean': 'Arktischen Ozean (Nordpolarmeer)', 'Südlicher Ozean': 'Südlichen Ozean (Antarktischen Ozean)' };
+  const ONOM = { 'Pazifischer Ozean': 'der Pazifische Ozean (Stille Ozean)', 'Atlantischer Ozean': 'der Atlantische Ozean', 'Indischer Ozean': 'der Indische Ozean', 'Arktischer Ozean': 'der Arktische Ozean (Nordpolarmeer)', 'Südlicher Ozean': 'der Südliche Ozean (Antarktische Ozean)' };
+  OCEANS.forEach(o => add('e1', 'mapclick', { kind: 'ocean', target: o, q: 'Klicke auf der Weltkarte auf den <b>' + OAKK[o] + '</b>.' }));
   mc('e1', 'Wie viele Kontinente gibt es?', '7', ['5', '6', '8'], 'Es gibt 7 Kontinente.');
   mc('e1', 'Wie viele Weltmeere gibt es?', '5', ['3', '4', '7'], 'Es gibt 5 Weltmeere.');
   mc('e1', 'Welcher Kontinent ist der größte?', 'Asien', ['Afrika', 'Nordamerika', 'Europa'], 'Asien ist der größte Kontinent.');
@@ -544,7 +550,7 @@
   const ERA = ['Erdurzeit', 'Erdaltertum', 'Erdmittelalter', 'Erdneuzeit'];
   const ERAFACTS = [
     ['Die Erde ist glühend heiß, Vulkane brechen aus.', 0], ['Meteoriten schlagen ein.', 0], ['Eine feste Erdkruste bildet sich.', 0], ['Es regnet sehr lange, die ersten Meere entstehen.', 0], ['Die ersten Einzeller leben im Wasser.', 0], ['Einzeller erzeugen mit Sonnenlicht Sauerstoff.', 0],
-    ['Im Meer leben Trilobiten, Fische und Muscheln.', 1], ['Das Leben geht an Land: Fisch → Amphibie → Reptil.', 1], ['Riesige Farnwälder wachsen.', 1], ['Alle Kontinente bilden den Urkontinent Pangäa.', 1], ['Am Ende gibt es ein großes Massenaussterben.', 1],
+    ['Im Meer leben Trilobiten, Fische und Muscheln.', 1], ['Das Leben geht an Land: Fisch → Amphibie → Reptil.', 1], ['Riesige Farnwälder wachsen.', 1], ['Alle Kontinente bilden den Urkontinent Pangäa.', 1], ['Am Ende gibt es ein großes Massenaussterben – noch vor der Zeit der Dinosaurier.', 1],
     ['Zeit der Dinosaurier', 2], ['Flugsaurier und Meeresreptilien', 2], ['Erste kleine Säugetiere und erste Vögel', 2], ['Ein riesiger Asteroid schlägt ein.', 2],
     ['Säugetiere breiten sich überall aus (Mammut, Wal, Fledermaus).', 3], ['Die Kontinente wandern in ihre heutige Lage.', 3], ['Es gibt mehrere Eiszeiten.', 3], ['Die Vorfahren des Menschen entwickeln sich in Afrika.', 3], ['Den Homo sapiens gibt es seit ca. 300 000 Jahren.', 3]
   ];
@@ -572,7 +578,7 @@
   mc('s3', 'Wie arbeiten Forscherinnen und Forscher mit Quellen?', 'wie Detektive – sie setzen viele Hinweise zusammen', ['wie Zauberer – sie erfinden die Geschichte', 'wie Köche – sie mischen alles', 'wie Maler – sie malen, was sie glauben'], 'Sie arbeiten wie Detektive und setzen viele Hinweise zusammen.');
   const QA = ['Sachquelle', 'Schriftquelle', 'Bildquelle', 'Mündliche Quelle'];
   const QEX = [['Steinbeil', 0], ['Münze', 0], ['Tonkrug', 0], ['Babyschuh', 0], ['Brief', 1], ['Tagebuch', 1], ['Urkunde', 1], ['Zeugnis', 1], ['Höhlenmalerei', 2], ['Foto', 2], ['Gemälde', 2], ['Babyfoto', 2], ['Interview mit Opa', 3], ['Sage', 3], ['Erzählung deiner Eltern', 3]];
-  QEX.forEach(([t, k]) => mc('s3', 'Welche Quellenart ist das? <b>' + t + '</b>', QA[k], QA.filter((x, i) => i !== k), t + ' ist eine ' + QA[k] + '.'));
+  QEX.forEach(([t, k]) => mc('s3', 'Welche Quellenart ist das? <b>' + t + '</b>', QA[k], QA.filter((x, i) => i !== k), t + ' ist eine ' + QA[k].replace('Mündliche', 'mündliche') + '.'));
   add('s3', 'match', { q: 'Welche Frage passt zu welcher Quellenart?', pairs: [['Sachquelle', 'Kann ich es anfassen?'], ['Schriftquelle', 'Kann ich es lesen?'], ['Bildquelle', 'Kann ich es anschauen?'], ['Mündliche Quelle', 'Kann ich es hören?']] });
   for (let i = 0; i < 3; i++) add('s3', 'sort', { q: 'Ordne den Quellenarten zu.', cats: ['Sach', 'Schrift', 'Bild', 'mündlich'], gen: 'quelle' });
   mc('s3', 'Was ist eine Sachquelle?', 'ein Gegenstand, den Menschen hergestellt oder benutzt haben', ['ein Text aus der Vergangenheit', 'ein Bild aus der Vergangenheit', 'eine Erzählung von Zeitzeugen'], 'Sachquellen sind Gegenstände, die Menschen hergestellt oder benutzt haben.');
@@ -599,12 +605,12 @@
   const LZKC = [['Asien', 95, 50], ['Nordamerika', -100, 45], ['Europa', 20, 52], ['Antarktis', 40, -77], ['Südamerika', -60, -15], ['Australien', 133, -25], ['Afrika', 20, 5]];
   const LZKO = [['Atlantischer Ozean', -38, 25], ['Südlicher Ozean', -110, -63], ['Pazifischer Ozean', -140, 5], ['Indischer Ozean', 70, -25], ['Arktischer Ozean', 5, 78]];
   const SYN = {
-    'Australien': ['Australien', 'Ozeanien', 'Australien (Ozeanien)'],
+    'Australien': ['Australien', 'Ozeanien', 'Australien (Ozeanien)', 'Australien und Ozeanien'],
     'Pazifischer Ozean': ['Pazifischer Ozean', 'Pazifik', 'Stiller Ozean'],
     'Atlantischer Ozean': ['Atlantischer Ozean', 'Atlantik'],
-    'Indischer Ozean': ['Indischer Ozean'],
+    'Indischer Ozean': ['Indischer Ozean', 'Indik'],
     'Arktischer Ozean': ['Arktischer Ozean', 'Nordpolarmeer'],
-    'Südlicher Ozean': ['Südlicher Ozean', 'Antarktischer Ozean']
+    'Südlicher Ozean': ['Südlicher Ozean', 'Antarktischer Ozean', 'Südpolarmeer']
   };
   const syn = (n) => SYN[n] || [n];
   function lzkMapSVG(mark) {
@@ -621,7 +627,7 @@
     return s + '</svg>';
   }
   LZKC.forEach(([n], i) => add('e1', 'input', { lzk: String(i + 1), q: 'Wie heißt der Kontinent mit der <b>Nummer ' + (i + 1) + '</b>?', a: syn(n), why: 'Nummer ' + (i + 1) + ' ist ' + (CNAME[n] || n) + '.' }));
-  LZKO.forEach(([n], i) => add('e1', 'input', { lzk: 'ABCDE'[i], q: 'Wie heißt das Weltmeer mit dem <b>Buchstaben ' + 'ABCDE'[i] + '</b>?', a: syn(n), why: 'Buchstabe ' + 'ABCDE'[i] + ' ist der ' + (ONAME[n] || n) + '.' }));
+  LZKO.forEach(([n], i) => add('e1', 'input', { lzk: 'ABCDE'[i], q: 'Wie heißt das Weltmeer mit dem <b>Buchstaben ' + 'ABCDE'[i] + '</b>?', a: syn(n), why: 'Buchstabe ' + 'ABCDE'[i] + ' ist ' + ONOM[n] + '.' }));
   add('e1', 'match', { lzk: true, keep: true, q: 'Beschrifte die Weltkarte: Wie heißen die Kontinente 1–7?', pairs: LZKC.map(([n], i) => [String(i + 1), CNAME[n] || n]) });
   add('e1', 'match', { lzk: true, keep: true, q: 'Beschrifte die Weltkarte: Wie heißen die Weltmeere A–E?', pairs: LZKO.map(([n], i) => ['ABCDE'[i], n]) });
 
@@ -751,7 +757,7 @@
     'Wie viele Kontinente gibt es?': ['7', 'sieben'],
     'Wie viele Weltmeere gibt es?': ['5', 'fünf'],
     'Welcher Kontinent ist der größte?': ['Asien'],
-    'Welcher Kontinent ist der kleinste?': ['Australien', 'Ozeanien', 'Australien (Ozeanien)'],
+    'Welcher Kontinent ist der kleinste?': ['Australien', 'Ozeanien', 'Australien (Ozeanien)', 'Australien und Ozeanien'],
     'Welcher Kontinent ist der zweitgrößte?': ['Afrika'],
     'Auf welchem Kontinent liegt Österreich?': ['Europa'],
     'Welcher Kontinent hat keine ständigen Einwohner?': ['Antarktis'],
@@ -759,18 +765,18 @@
     'Auf welchem Kontinent liegt die Sahara?': ['Afrika'],
     'Welches Weltmeer ist das größte und tiefste?': ['Pazifischer Ozean', 'Pazifik', 'Stiller Ozean'],
     'Welches Weltmeer ist das kleinste und flachste?': ['Arktischer Ozean', 'Nordpolarmeer'],
-    'Welches Weltmeer umgibt die Antarktis?': ['Südlicher Ozean', 'Antarktischer Ozean'],
+    'Welches Weltmeer umgibt die Antarktis?': ['Südlicher Ozean', 'Antarktischer Ozean', 'Südpolarmeer'],
     'Wie heißt der Pazifische Ozean noch?': ['Stiller Ozean'],
     'Wie heißt der Arktische Ozean noch?': ['Nordpolarmeer'],
     'Wie viele Breitengrade gibt es vom Äquator bis zum Nordpol?': ['90', 'neunzig'],
-    'Wie viele Längengrade gibt es vom Nullmeridian nach Osten?': ['180'],
+    'Wie viele Längengrade gibt es vom Nullmeridian nach Osten?': ['180', 'hundertachtzig'],
     'Durch welchen Ort verläuft der Nullmeridian?': ['Greenwich', 'London'],
     'Wie heißen die beiden Angaben Breitengrad und Längengrad zusammen?': ['geographische Koordinaten', 'Koordinaten', 'geografische Koordinaten'],
     'Was bedeutet das Zeichen ° ?': ['Grad'],
     'Wie heißt die Zeichnung mit allen Himmelsrichtungen?': ['Windrose'],
-    'Welche Himmelsrichtung liegt zwischen Norden und Osten?': ['Nordosten', 'NO'],
-    'Welche Himmelsrichtung liegt zwischen Süden und Westen?': ['Südwesten', 'SW'],
-    'Welche Richtung liegt genau gegenüber von Osten?': ['Westen', 'W'],
+    'Welche Himmelsrichtung liegt zwischen Norden und Osten?': ['Nordosten', 'NO', 'Nordost'],
+    'Welche Himmelsrichtung liegt zwischen Süden und Westen?': ['Südwesten', 'SW', 'Südwest'],
+    'Welche Richtung liegt genau gegenüber von Osten?': ['Westen', 'W', 'West'],
     'Welcher Teil der Karte erklärt die Symbole?': ['Legende'],
     'Welcher Teil der Karte sagt, was die Karte zeigt?': ['Titel'],
     'Was bedeutet der Maßstab 1 : 1000?': ['Verkleinerung'],
@@ -810,8 +816,10 @@
   function lev(a, b) {
     const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
     for (let j = 1; j <= b.length; j++) d[0][j] = j;
-    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
       d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);  // Buchstabendreher = 1 Fehler
+    }
     return d[a.length][b.length];
   }
   // 'exact' | 'typo' | false
@@ -1178,7 +1186,7 @@
   }
   function next() {
     if (state.mode === 'ueben') {
-      if (!state.queue.length) startPractice(state.part);
+      if (!state.queue.length) return startPractice(state.part);
       const q = state.queue.shift();
       state.count++;
       $('qcount').textContent = 'Aufgabe ' + state.count;
