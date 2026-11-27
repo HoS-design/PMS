@@ -155,6 +155,20 @@
 .sec-ot .section-header { border-color: rgba(245, 158, 11, 0.25); }
 .sec-ot h2 { color: var(--ot-accent); }
 
+
+        /* --- Aufklappbare Fach-Sektionen (D, M, E) --- */
+        .section.collapsible .section-header { cursor: pointer; user-select: none; }
+        .section.collapsible .section-header:focus-visible { outline: 3px solid var(--ma-accent); outline-offset: 4px; border-radius: 6px; }
+        .section-toggle {
+            margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+            font-size: 13px; font-weight: 700; color: var(--muted);
+        }
+        .section-toggle .chev { display: inline-block; transition: transform 0.2s ease; font-size: 14px; }
+        .section.collapsible.open .section-toggle .chev { transform: rotate(180deg); }
+        .section.collapsible:not(.open) .grid { display: none; }
+        .section.collapsible:not(.open) .section-header { margin-bottom: 0; }
+        @media (prefers-reduced-motion: reduce) { .section-toggle .chev { transition: none; } }
+
         /* --- Grid & Cards --- */
         .grid {
             display: grid;
@@ -357,19 +371,21 @@
             </div>
         </div>
 
-        <div class="section sec-de" id="sec-deutsch">
-            <div class="section-header">
+        <div class="section sec-de collapsible" id="sec-deutsch">
+            <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grid-deutsch">
                 <h2>Deutsch</h2>
                 <span class="count-badge" id="count-de">0</span>
+                <span class="section-toggle"><span class="toggle-text">aufklappen</span><span class="chev" aria-hidden="true">▾</span></span>
             </div>
 
             <div class="grid" id="grid-deutsch"></div>
         </div>
 
-        <div class="section sec-ma" id="sec-mathe">
-            <div class="section-header">
+        <div class="section sec-ma collapsible" id="sec-mathe">
+            <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grid-mathe">
                 <h2>Mathematik</h2>
                 <span class="count-badge" id="count-ma">0</span>
+                <span class="section-toggle"><span class="toggle-text">aufklappen</span><span class="chev" aria-hidden="true">▾</span></span>
             </div>
 
             <div class="grid" id="grid-mathe"></div>
@@ -377,10 +393,11 @@
 
 
 
-<div class="section sec-en" id="sec-englisch">
-    <div class="section-header">
+<div class="section sec-en collapsible" id="sec-englisch">
+    <div class="section-header" role="button" tabindex="0" aria-expanded="false" aria-controls="grid-englisch">
         <h2>Englisch</h2>
         <span class="count-badge" id="count-en">0</span>
+                <span class="section-toggle"><span class="toggle-text">aufklappen</span><span class="chev" aria-hidden="true">▾</span></span>
     </div>
 
     <div class="grid" id="grid-englisch"></div>
@@ -775,13 +792,53 @@ andere: [
             updateCounts();
         }
 
+
+        // --- Aufklappen / Zuklappen der Fach-Sektionen ---
+        const OPEN_KEY = 'hos-portal-open-sections';
+        const collapsibles = document.querySelectorAll('.section.collapsible');
+        let openState = {};
+        try { openState = JSON.parse(localStorage.getItem(OPEN_KEY) || '{}') || {}; } catch (e) { openState = {}; }
+
+        function setOpen(sec, open) {
+            sec.classList.toggle('open', open);
+            const header = sec.querySelector('.section-header');
+            header.setAttribute('aria-expanded', open ? 'true' : 'false');
+            const txt = sec.querySelector('.toggle-text');
+            if (txt) txt.textContent = open ? 'zuklappen' : 'aufklappen';
+        }
+
+        function applySavedState() {
+            collapsibles.forEach(sec => setOpen(sec, !!openState[sec.id]));
+        }
+
+        collapsibles.forEach(sec => {
+            const header = sec.querySelector('.section-header');
+            const toggle = () => {
+                const open = !sec.classList.contains('open');
+                setOpen(sec, open);
+                if (!searchInput.value.trim()) {
+                    openState[sec.id] = open;
+                    try { localStorage.setItem(OPEN_KEY, JSON.stringify(openState)); } catch (e) {}
+                }
+            };
+            header.addEventListener('click', toggle);
+            header.addEventListener('keydown', ev => {
+                if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); }
+            });
+        });
+
         searchInput.addEventListener('input', (e) => {
-            filterCards(e.target.value.toLowerCase());
+            const term = e.target.value.toLowerCase();
+            filterCards(term);
+            // Bei einer Suche Fächer mit Treffern aufklappen, danach gespeicherten Zustand wiederherstellen
+            if (term.trim()) { collapsibles.forEach(sec => setOpen(sec, true)); }
+            else { applySavedState(); }
         });
 
         // Init
         renderCards();
         updateCounts();
+        applySavedState();
     </script>
 </body>
 </html>
